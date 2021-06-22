@@ -1,0 +1,22 @@
+images:
+  datahub-base-notebook:
+    image_name: davidzz/datahub-base-notebook
+    dbuild_env:
+      common:
+        placeholder: test_XXX
+      PYTHON38:
+        PY_VERSION: 3.8
+      PYTHON39:
+        PY_VERSION: 3.9
+
+  datascience-notebook:
+    image_name: davidzz/datascience-notebook
+    depend_on: datahub-base-notebook
+
+tags:
+  - PYTHON38:
+      tag_prefix: 2021.2
+      tag_stable_postfix: -stable
+  - PYTHON39:
+      tag_prefix: 2021.3
+      tag_stable_postfix: -stable
