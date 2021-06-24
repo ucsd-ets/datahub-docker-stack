@@ -8,15 +8,38 @@ images:
         PY_VERSION: 3.8
       PYTHON39:
         PY_VERSION: 3.9
+    manifests: [PY_VER, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
 
   datascience-notebook:
     image_name: davidzz/datascience-notebook
     depend_on: datahub-base-notebook
+    manifests: [PY_VER, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
+
+  scipy-ml-notebook:
+    image_name: davidzz/scipy-ml-notebook
+    depend_on: datascience-notebook
 
 tags:
-  - PYTHON38:
-      tag_prefix: 2021.2
-      tag_stable_postfix: -stable
-  - PYTHON39:
-      tag_prefix: 2021.3
-      tag_stable_postfix: -stable
+  PYTHON38: 
+    tag_prefix: 2021.2
+    tag_stable_postfix: -stable
+  PYTHON39:
+    tag_prefix: 2021.3
+    tag_stable_postfix: -stable
+
+manifests:
+  PY_VER:
+    description: Python Version
+    command: python --version
+  CONDA_INFO:
+    description: Conda Info
+    command: conda info
+  CONDA_LIST:
+    description: Conda Packages
+    command: conda list
+  APT_PKG_LIST:
+    description: System Packages
+    command: apt list --installed
+  CUDA_VERSION:
+    description: CUDA VERSION
+    command: 'conda list | grep "cuda\|cudnn\|nccl"'
