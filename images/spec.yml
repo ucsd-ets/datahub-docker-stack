@@ -5,9 +5,9 @@ images:
       common:
         placeholder: test_XXX
       PYTHON38:
-        PY_VERSION: 3.8
+        PYTHON_VERSION: python-3.8.8
       PYTHON39:
-        PY_VERSION: 3.9
+        PYTHON_VERSION: python-3.9.5
     manifests: [PY_VER, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
 
   datascience-notebook:
@@ -19,7 +19,7 @@ images:
     image_name: davidzz/scipy-ml-notebook
     depend_on: datascience-notebook
 
-tags:
+plans:
   PYTHON38: 
     tag_prefix: 2021.2
     tag_stable_postfix: -stable

@@ -59,3 +59,10 @@ images/
 
 - Clean structure with clear dependency. At any point in time, every image will have the same git-tagged tag. So no worry for dependency across builds.
 - Could take a long time to build. 
+
+## Other nice-to-haves
+
+- Separation of system and python packages, and in turn
+- Enable read/write access to conda environment `/opt/conda`, gid 100
+- Keeping system root locked
+- Pip/conda package version pinning
