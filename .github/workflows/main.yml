@@ -12,6 +12,17 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Sample step
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+
+      - name: Install pip dependencies
         run: |
-          echo "test"
+          python -m pip install --upgrade pip
+          pip install -r scripts/requirements.txt
+          echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
+
+      - name: Test Build
+        run: |
+          python scripts/docker_builder.py

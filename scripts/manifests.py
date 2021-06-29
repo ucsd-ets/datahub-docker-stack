@@ -1,14 +1,5 @@
-import yaml
-
 from scripts.docker_runner import DockerRunner
 
-def get_specs(f_yaml):
-    """
-    Parse specs from yaml file name to dict
-    """
-    with open(f_yaml, 'r') as f:
-        specs = yaml.safe_load(f)
-    return specs
 
 def run_outputs(specs, image_key, image=None):
     """
@@ -55,8 +46,7 @@ f"""
         f.write(stitched)
 
 
-    
-
 if __name__ == '__main__':
+    from scripts.utils import get_specs
     specs = get_specs('images\spec.yml')
-    run_report(specs, 'datahub-base-notebook', image='scipy-ml')
+    run_report(specs, 'datahub-base-notebook')
