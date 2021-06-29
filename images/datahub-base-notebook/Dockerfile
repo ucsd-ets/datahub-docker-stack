@@ -26,6 +26,8 @@ RUN apt-get update -y && \
 
 COPY /scripts /usr/share/datahub/scripts/
 COPY /scripts/jupyter_notebook_config.py /etc/jupyter/jupyter_notebook_config.py
+RUN chmod -R uga+x /usr/share/datahub/scripts/ && \
+    chmod -R uga+x /etc/jupyter/jupyter_notebook_config.py
 
 USER jovyan
 

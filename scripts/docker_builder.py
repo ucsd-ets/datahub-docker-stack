@@ -95,6 +95,7 @@ class DockerStackBuilder:
             # prep
             image_spec = self.specs['images'][short_name]
             path = pjoin(self.path, short_name)
+            # FIXME:
             image_tag = f"{image_spec['image_name']}:{self.specs['plans'][self.plan]['tag_prefix']}-111111"
             image_spec['image_tag'] = image_tag
             build_args = {}
@@ -120,7 +121,7 @@ class DockerStackBuilder:
                 )
                 self.images[short_name] = image
     
-    def __exit__(self):
+    def __exit__(self, exc_type, exc_value, traceback):
         pass
 
 if __name__ == '__main__':
