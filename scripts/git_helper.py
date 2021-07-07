@@ -21,6 +21,19 @@ class GitHelper:
         return git['log', -1, '--name-only', '--pretty=format:']().split()
 
 
+def get_changed_images():
+    changed_images = set()
+    changed_files = GitHelper.commit_changed_files
+    for file in changed_files:
+        dirs = file.split('/')
+        top_dir = dirs[0]
+        if top_dir == 'images':
+            image = dirs[1]
+            if image not in changed_images:
+                changed_images.add(image)
+    return list(changed_images)
+
+
 if __name__ == "__main__":
     print("Git hash:", GitHelper.commit_hash())
     print("Git hash shortened:", GitHelper.commit_hash_tag())
