@@ -1,7 +1,7 @@
 #!/bin/sh -x
 
-git clone https://github.com/ucsd-ets/local-env-backup.git /usr/share/datahub/local-env-backup
+git clone https://github.com/ucsd-ets/local-env-backup.git /tmp/local-env-backup
 
-pip install --no-cache-dir /usr/share/datahub/local-env-backup
+pip install --no-cache-dir /tmp/local-env-backup
 
-rm -rf /usr/share/datahub/local-env-backup
+rm -rf /tmp/local-env-backup
