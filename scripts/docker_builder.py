@@ -1,10 +1,6 @@
-from scripts.git_helper import get_changed_images
-from scripts.order import build_tree
-from scripts.utils import get_specs
 from docker.errors import BuildError
 from docker.utils.json_stream import json_stream
 import docker
-import json
 from collections import namedtuple
 import time
 import logging
@@ -13,6 +9,10 @@ import re
 import os
 from typing import NamedTuple
 pjoin = os.path.join
+
+from scripts.git_helper import get_changed_images
+from scripts.order import build_tree
+from scripts.utils import get_specs, read_var, store_dict
 
 
 logger = logging.getLogger(__name__)
@@ -129,20 +129,20 @@ class DockerStackBuilder:
     - tag (git-hash)
     """
 
-    def __init__(self, path, specs, plan, images_changed=[], dry_run=False):
+    def __init__(self, path, specs, git_suffix, images_changed=[], dry_run=False):
         self.path = path
         self.specs_fp = specs
         self.specs = get_specs(pjoin(path, specs))
-        self.plan = plan
+        self.git_suffix = git_suffix
         self.dry_run = dry_run
+        self.images_changed = images_changed
         self.images_order = self.get_build_order()
 
-        #self.images_order = [short_name for short_name in self.specs['images'].keys()]
         self.images = {}
         self.metas = {}
+        self.images_built = []
 
         # sanity check
-        assert plan in self.specs['plans'].keys()
         self.images_dirs = []
         with os.scandir(path) as it:
             for entry in it:
@@ -152,11 +152,10 @@ class DockerStackBuilder:
         # TODO: maybe more checks
 
     def get_build_order(self):
-        images_changed = get_changed_images()
         tree, root = build_tree(self.specs)
-        tree_order = root.get_level_order
+        tree_order = root.get_level_order()
         image_order = []
-        for image in images_changed:
+        for image in self.images_changed:
             image_def = tree[image]
             image_order.append((image_def, tree_order[image_def]))
         image_order.sort(key=lambda x: x[1])
@@ -170,12 +169,18 @@ class DockerStackBuilder:
     def __enter__(self):
         logger.info(
             f"Building image stack from {self.path} using {self.specs_fp}")
-        for short_name in self.images_order:
+        pairs = [
+            (plan, short_name)
+            for plan in self.specs['plans'].keys()
+            for short_name in self.images_order
+        ]
+        for plan, short_name in pairs:
             # prep
             image_spec = self.specs['images'][short_name]
             path = pjoin(self.path, short_name)
-            # FIXME: change to git-tag
-            image_tag = f"{image_spec['image_name']}:{self.specs['plans'][self.plan]['tag_prefix']}-111111"
+            tag = f"{self.specs['plans'][plan]['tag_prefix']}-{self.git_suffix}"
+            image_tag = f"{image_spec['image_name']}:{tag}"
+            self.images_built.append(image_tag)
             image_spec['image_tag'] = image_tag
             build_args = {}
 
@@ -190,8 +195,8 @@ class DockerStackBuilder:
                 dbuild_env = image_spec['dbuild_env']
                 if 'common' in dbuild_env.keys():
                     build_args.update(dbuild_env['common'])
-                if self.plan in dbuild_env.keys():
-                    build_args.update(dbuild_env[self.plan])
+                if plan in dbuild_env.keys():
+                    build_args.update(dbuild_env[plan])
 
             if not self.dry_run:
                 # Go to build
@@ -206,8 +211,19 @@ class DockerStackBuilder:
                 self.metas[short_name] = meta
 
     def __exit__(self, exc_type, exc_value, traceback):
-        with open(pjoin(self.path, 'builder-metainfo.json'), 'w') as f:
-            json.dump(self.metas, f)
+        store_dict('builder-metainfo.json', self.metas)
+        
+
+
+def run_build():
+    images_changed = read_var('IMAGES_CHANGED')
+    git_suffix = read_var('GIT_HASH_SHORT')
+    builder = DockerStackBuilder(
+        path='images', specs='spec.yml',
+        images_changed=images_changed, git_suffix=git_suffix
+    )
+    builder.__enter__()
+    builder.__exit__(None, None, None)
 
 
 if __name__ == '__main__':
@@ -221,7 +237,9 @@ if __name__ == '__main__':
     # print(image)
 
     logging.basicConfig(filename='builder.log', level=logging.INFO)
+    images_changed = read_var('IMAGES_CHANGED')
     builder = DockerStackBuilder(
-        path='images', specs='spec.yml', plan='PYTHON38')
+        path='images', specs='spec.yml',
+        images_changed=images_changed
+    )
     builder.__enter__()
-    builder.__exit__(None, None, None)

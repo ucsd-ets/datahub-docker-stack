@@ -25,4 +25,4 @@ jobs:
 
       - name: Test Build
         run: |
-          python scripts/docker_builder.py
+          doit build

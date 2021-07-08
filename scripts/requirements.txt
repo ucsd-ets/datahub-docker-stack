@@ -2,3 +2,4 @@ docker
 six
 pyyaml
 plumbum
+doit
