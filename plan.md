@@ -23,14 +23,16 @@ images/
 
 ## Pipeline
 
-1. Determine which image definitions are changed compared to last commit
-2. Output build order according to dependency and changed images
-3. Update base tags in Dockerfile to latest version
-4. Use new git-hash[:7] for new tags. Build the tree in the correct order
-5. Push new images to Dockerhub with git-hash tags
-6. Run manifests in each newly built images
-7. Run tests in each newly built images
-8. ? If tests success, tag all newly built images to stable and push ?
+| Step 	| Description                                                            	| Implemented in                       	|
+|------	|------------------------------------------------------------------------	|--------------------------------------	|
+| 1    	| Determine which image definitions are changed compared to last commit  	| `git_helper.py`                      	|
+| 2    	| Output build order according to dependency and changed images          	| `order.py`, `docker_builder.py`      	|
+| 3    	| Update base tags in Dockerfile to latest version                       	| thru `{build_args}`                  	|
+| 4    	| Use new git-hash[:7] for new tags. Build the tree in the correct order 	| `git_helper.py`, `docker_builder.py` 	|
+| 5    	| Push new images to Dockerhub with git-hash tags                        	| `docker_pusher.py`                   	|
+| 6    	| Run manifests in each newly built images                               	| `docker_runner.py`, `manifests.py`   	|
+| 7    	| Run tests in each newly built images                                   	|                                      	|
+| 8    	| ? If tests success, tag all newly built images to stable and push ?    	|                                      	|
 
 ## Tagging Tradeoffs Analysis
 
