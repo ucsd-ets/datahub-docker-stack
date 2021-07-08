@@ -1,17 +1,18 @@
+from docker.errors import BuildError
+from docker.utils.json_stream import json_stream
+import docker
+from collections import namedtuple
+import time
+import logging
 import itertools
 import re
 import os
-from typing import NamedTuple; pjoin = os.path.join
-import logging
-import time
-from collections import namedtuple
-import json
+from typing import NamedTuple
+pjoin = os.path.join
 
-import docker
-from docker.utils.json_stream import json_stream
-from docker.errors import BuildError
-
-from scripts.utils import get_specs
+from scripts.git_helper import get_changed_images
+from scripts.order import build_tree
+from scripts.utils import get_specs, read_var, store_dict
 
 
 logger = logging.getLogger(__name__)
@@ -21,8 +22,9 @@ LayerMeta = namedtuple(
     field_names=['CMD', 'START_T', 'FINISH_T', 'LOGS', 'ID']
 )
 
+
 def dbuild(
-    path: str, image_tag: str, build_args=None, 
+    path: str, image_tag: str, build_args=None,
     docker_client=docker.from_env(), verbose=True, nocache=False
 ):
     """
@@ -113,7 +115,7 @@ def dbuild(
         #         print(' ', l['stream'], end='')
         logger.error(f"Build failed when building {image_tag}: {err.msg}")
         raise err
-    
+
     except KeyboardInterrupt:
         logger.error('Interrupted')
         raise KeyboardInterrupt(f'{image_tag}')
@@ -126,19 +128,21 @@ class DockerStackBuilder:
     - image (directory)
     - tag (git-hash)
     """
-    def __init__(self, path, specs, plan, images_changed=[], dry_run=False):
+
+    def __init__(self, path, specs, git_suffix, images_changed=[], dry_run=False):
         self.path = path
         self.specs_fp = specs
         self.specs = get_specs(pjoin(path, specs))
-        self.plan = plan
+        self.git_suffix = git_suffix
         self.dry_run = dry_run
-        # TODO: replace ordering here, use subtree
-        self.images_order = [short_name for short_name in self.specs['images'].keys()]
+        self.images_changed = images_changed
+        self.images_order = self.get_build_order()
+
         self.images = {}
         self.metas = {}
+        self.images_built = []
 
         # sanity check
-        assert plan in self.specs['plans'].keys()
         self.images_dirs = []
         with os.scandir(path) as it:
             for entry in it:
@@ -146,15 +150,37 @@ class DockerStackBuilder:
                     self.images_dirs.append(entry)
         assert len(self.specs['images']) == len(self.images_dirs)
         # TODO: maybe more checks
-    
+
+    def get_build_order(self):
+        tree, root = build_tree(self.specs)
+        tree_order = root.get_level_order()
+        image_order = []
+        for image in self.images_changed:
+            image_def = tree[image]
+            image_order.append((image_def, tree_order[image_def]))
+        image_order.sort(key=lambda x: x[1])
+        build_order = []
+        for idx in range(len(image_order)):
+            curr_image_def = image_order[idx][0]
+            if image_order[idx][0] not in build_order:
+                build_order += (curr_image_def.subtree_order())
+        return build_order
+
     def __enter__(self):
-        logger.info(f"Building image stack from {self.path} using {self.specs_fp}")
-        for short_name in self.images_order:
+        logger.info(
+            f"Building image stack from {self.path} using {self.specs_fp}")
+        pairs = [
+            (plan, short_name)
+            for plan in self.specs['plans'].keys()
+            for short_name in self.images_order
+        ]
+        for plan, short_name in pairs:
             # prep
             image_spec = self.specs['images'][short_name]
             path = pjoin(self.path, short_name)
-            # FIXME: change to git-tag
-            image_tag = f"{image_spec['image_name']}:{self.specs['plans'][self.plan]['tag_prefix']}-111111"
+            tag = f"{self.specs['plans'][plan]['tag_prefix']}-{self.git_suffix}"
+            image_tag = f"{image_spec['image_name']}:{tag}"
+            self.images_built.append(image_tag)
             image_spec['image_tag'] = image_tag
             build_args = {}
 
@@ -163,18 +189,18 @@ class DockerStackBuilder:
                 base_full_tag = self.specs['images'][image_spec['depend_on']]['image_tag']
                 custom_tag = base_full_tag.split(':')[1]
                 build_args.update(BASE_TAG=custom_tag)
-            
+
             # fill buildargs for extra vars defined in spec.yml
             if 'dbuild_env' in image_spec:
                 dbuild_env = image_spec['dbuild_env']
                 if 'common' in dbuild_env.keys():
                     build_args.update(dbuild_env['common'])
-                if self.plan in dbuild_env.keys():
-                    build_args.update(dbuild_env[self.plan])
-            
+                if plan in dbuild_env.keys():
+                    build_args.update(dbuild_env[plan])
+
             if not self.dry_run:
                 # Go to build
-                logger.info('') # TODO: fill meta info
+                logger.info('')  # TODO: fill meta info
                 image, meta = dbuild(
                     path=path,
                     build_args=build_args,
@@ -183,10 +209,22 @@ class DockerStackBuilder:
                 )
                 self.images[short_name] = image
                 self.metas[short_name] = meta
-    
+
     def __exit__(self, exc_type, exc_value, traceback):
-        with open(pjoin(self.path, 'builder-metainfo.json'), 'w') as f:
-            json.dump(self.metas, f)
+        store_dict('builder-metainfo.json', self.metas)
+        
+
+
+def run_build():
+    images_changed = read_var('IMAGES_CHANGED')
+    git_suffix = read_var('GIT_HASH_SHORT')
+    builder = DockerStackBuilder(
+        path='images', specs='spec.yml',
+        images_changed=images_changed, git_suffix=git_suffix
+    )
+    builder.__enter__()
+    builder.__exit__(None, None, None)
+
 
 if __name__ == '__main__':
     # docker_client=docker.from_env()
@@ -198,8 +236,10 @@ if __name__ == '__main__':
     # )
     # print(image)
 
-
     logging.basicConfig(filename='builder.log', level=logging.INFO)
-    builder = DockerStackBuilder(path='images', specs='spec.yml', plan='PYTHON38')
+    images_changed = read_var('IMAGES_CHANGED')
+    builder = DockerStackBuilder(
+        path='images', specs='spec.yml',
+        images_changed=images_changed
+    )
     builder.__enter__()
-    builder.__exit__(None, None, None)
