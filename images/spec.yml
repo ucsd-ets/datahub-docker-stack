@@ -6,8 +6,10 @@ images:
         placeholder: test_XXX
       PYTHON38:
         PYTHON_VERSION: python-3.8.8
+        PY_VER_SHORT: "3.8"
       PYTHON39:
         PYTHON_VERSION: python-3.9.5
+        PY_VER_SHORT: "3.9"
     manifests: [PY_VER, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
 
   datascience-notebook:
