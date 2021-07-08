@@ -36,4 +36,4 @@ def read_var(name, parent='artifacts'):
 
 def store_dict(name, value, parent='artifacts'):
     with open(pjoin(parent, name), 'w') as f:
-        json.dump(value, pjoin(parent, name), indent=2)
+        json.dump(value, f, indent=2)
