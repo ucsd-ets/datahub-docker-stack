@@ -76,7 +76,7 @@ def dbuild(
                             FINISH_T=last_layer_finish_time,
                             LOGS=last_layer_logs,
                             ID=last_layer_id,
-                        ))
+                        )._asdict())
                         last_layer_cmd = None
                         last_layer_start_time = None
                         last_layer_finish_time = None
@@ -94,7 +94,7 @@ def dbuild(
                         FINISH_T=last_layer_finish_time,
                         LOGS=last_layer_logs,
                         ID=last_layer_id,
-                    ))
+                    )._asdict())
                     image_id = match_success.group(2)
                 else:
                     last_layer_logs.append(raw_output)
