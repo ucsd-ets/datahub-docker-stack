@@ -12,7 +12,7 @@ pjoin = os.path.join
 
 from scripts.git_helper import get_changed_images
 from scripts.order import build_tree
-from scripts.utils import get_specs, read_var, store_dict
+from scripts.utils import get_specs, read_var, store_dict, store_var
 
 
 logger = logging.getLogger(__name__)
@@ -167,20 +167,29 @@ class DockerStackBuilder:
         return build_order
 
     def __enter__(self):
-        logger.info(
-            f"Building image stack from {self.path} using {self.specs_fp}")
+
+        logger.info(f"Building image stack from {self.path} using {self.specs_fp}")
+
         pairs = [
             (plan, short_name)
             for plan in self.specs['plans'].keys()
             for short_name in self.images_order
         ]
+
         for plan, short_name in pairs:
+
             # prep
             image_spec = self.specs['images'][short_name]
             path = pjoin(self.path, short_name)
             tag = f"{self.specs['plans'][plan]['tag_prefix']}-{self.git_suffix}"
             image_tag = f"{image_spec['image_name']}:{tag}"
-            self.images_built.append(image_tag)
+
+            # skip if set
+            if 'skip_plans' in image_spec and plan in image_spec['skip_plans']:
+                logger.info(f"Skipped {image_tag}")
+                continue
+
+            # go for build
             image_spec['image_tag'] = image_tag
             build_args = {}
 
@@ -205,14 +214,17 @@ class DockerStackBuilder:
                     path=path,
                     build_args=build_args,
                     image_tag=image_tag,
-                    nocache=True
+                    nocache=False
                 )
+                if meta:
+                    self.images_built.append(image_tag)
+                    store_var('IMAGES_BUILT', self.images_built)
                 self.images[short_name] = image
                 self.metas[short_name] = meta
 
     def __exit__(self, exc_type, exc_value, traceback):
         store_dict('builder-metainfo.json', self.metas)
-        
+
 
 
 def run_build():

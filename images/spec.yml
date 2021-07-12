@@ -20,13 +20,14 @@ images:
   scipy-ml-notebook:
     image_name: davidzz/scipy-ml-notebook
     depend_on: datascience-notebook
+    skip_plans: ["PYTHON39"]
 
 plans:
-  PYTHON38: 
-    tag_prefix: 2021.2
-    tag_stable_postfix: -stable
   PYTHON39:
     tag_prefix: 2021.3
+    tag_stable_postfix: -stable
+  PYTHON38: 
+    tag_prefix: 2021.2
     tag_stable_postfix: -stable
 
 manifests:

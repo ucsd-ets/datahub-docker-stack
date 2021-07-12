@@ -52,6 +52,6 @@ def task_build():
     return {
         'actions': [run_build],
         'file_dep': ['artifacts/IMAGES_CHANGED'],
-        'targets': ['artifacts/builder-metainfo.json'],
+        'targets': ['artifacts/builder-metainfo.json', 'artifacts/IMAGES_BUILT'],
     }
 
