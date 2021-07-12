@@ -31,13 +31,15 @@ RUN chmod -R uga+x /usr/share/datahub/scripts/ && \
 
 USER jovyan
 
+ARG PY_VER_SHORT=3.8
+
 # nbconvert downgrade needed for nbgrader to work
 RUN /usr/share/datahub/scripts/install-python-all.sh && \
 	pip install pandas --upgrade && \
 	pip install nltk && \
     pip install nbconvert==5.6.1 && \
     pip install jupyterhub==0.9.2 && \
-	cat /usr/share/datahub/scripts/canvas_exporter.py > /opt/conda/lib/python3.8/site-packages/nbgrader/plugins/export.py && \
+	cat /usr/share/datahub/scripts/canvas_exporter.py > /opt/conda/lib/python$PY_VER_SHORT/site-packages/nbgrader/plugins/export.py && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
     chown -R jovyan:users /opt/conda/etc/jupyter/nbconfig && \
