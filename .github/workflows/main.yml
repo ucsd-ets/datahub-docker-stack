@@ -39,9 +39,13 @@ jobs:
           pip install -r scripts/requirements.txt
           echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
 
-      - name: Test build
+      - name: Build stack
         run: |
           doit build
+
+      - name: Push stack
+        run: |
+          doit push
 
       - name: Archive artifacts and logs
         uses: actions/upload-artifact@v2

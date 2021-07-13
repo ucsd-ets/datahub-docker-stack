@@ -4,6 +4,7 @@ from shutil import rmtree
 
 from scripts.git_helper import save_changed_images, save_git_info
 from scripts.docker_builder import run_build
+from scripts.docker_pusher import run_push
 
 
 DOIT_CONFIG = dict(
@@ -55,3 +56,10 @@ def task_build():
         'targets': ['artifacts/builder-metainfo.json', 'artifacts/IMAGES_BUILT'],
     }
 
+
+def task_push():
+    """Push all built images"""
+    return {
+        'actions': [run_push],
+        'file_dep': ['artifacts/IMAGES_BUILT']
+    }
