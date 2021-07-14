@@ -5,6 +5,7 @@ from shutil import rmtree
 from scripts.git_helper import save_changed_images, save_git_info
 from scripts.docker_builder import run_build
 from scripts.docker_pusher import run_push
+from scripts.manifests import run_manifests
 
 
 DOIT_CONFIG = dict(
@@ -22,10 +23,13 @@ def task_prep():
         if not os.path.exists('logs'):
             os.mkdir('logs')
             open(pjoin('logs', '.empty'), 'a').close()
+        if not os.path.exists('manifests'):
+            os.mkdir('manifests')
+            open(pjoin('manifests', '.empty'), 'a').close()
 
     return {
         'actions': [_prep],
-        'targets': ['artifacts/.empty', 'logs/.empty']
+        'targets': ['artifacts/.empty', 'logs/.empty', 'manifests/.empty']
     }
 
 def task_clear():
@@ -61,5 +65,15 @@ def task_push():
     """Push all built images"""
     return {
         'actions': [run_push],
-        'file_dep': ['artifacts/IMAGES_BUILT']
+        'file_dep': ['artifacts/IMAGES_BUILT'],
+        'targets': ['artifacts/IMAGES_PUSHED']
+    }
+
+
+def task_manifest():
+    """Build image manifests for all built images"""
+    return {
+        'actions': [run_manifests],
+        'file_dep': ['artifacts/IMAGES_BUILT'],
+        'targets': ['manifests/*.md']
     }
