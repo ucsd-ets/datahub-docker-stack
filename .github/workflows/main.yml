@@ -44,6 +44,8 @@ jobs:
           doit build
 
       - name: Push stack
+        env:
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
           doit push
 
