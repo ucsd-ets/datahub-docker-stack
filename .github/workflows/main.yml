@@ -37,11 +37,28 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r scripts/requirements.txt
-          echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
 
-      - name: Test build
+      - name: Set Python-specific environment variables
+        run: |
+          echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
+          echo "PYTHONUNBUFFERED=TRUE" >> $GITHUB_ENV
+
+      - name: Build stack
         run: |
           doit build
+
+      - name: Run manifests
+        run: |
+          doit manifest
+
+      - name: Push stack
+        if: >
+          !contains(github.base_ref , 'test') &&
+          !contains(github.base_ref , 'dev')
+        env:
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: |
+          doit push
 
       - name: Archive artifacts and logs
         uses: actions/upload-artifact@v2
@@ -50,3 +67,4 @@ jobs:
           path: |
             artifacts
             logs
+            manifests
