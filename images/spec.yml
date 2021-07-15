@@ -45,5 +45,5 @@ manifests:
     description: System Packages
     command: apt list --installed
   CUDA_VERSION:
-    description: CUDA VERSION
+    description: CUDA Version
     command: bash -c 'conda list | grep "cuda\|cudnn\|nccl"'

@@ -1,6 +1,7 @@
 import yaml
 import json
 from os.path import join as pjoin
+import bitmath
 
 
 def get_specs(f_yaml):
@@ -37,3 +38,11 @@ def read_var(name, parent='artifacts'):
 def store_dict(name, value, parent='artifacts'):
     with open(pjoin(parent, name), 'w') as f:
         json.dump(value, f, indent=2)
+
+
+def bytes_to_hstring(n_bytes):
+    return (
+        bitmath.Byte(int(n_bytes))
+        .best_prefix(bitmath.SI)
+        .format("{value:.1f} {unit}")
+    )

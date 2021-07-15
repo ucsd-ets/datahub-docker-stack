@@ -3,6 +3,8 @@ from os import path
 from scripts.utils import read_var
 from scripts.utils import get_specs
 from scripts.docker_runner import DockerRunner
+from scripts.git_helper import GitHelper
+from scripts.docker_info import get_layers_md_table
 
 
 def run_outputs(specs, image_key, image=None):
@@ -38,6 +40,9 @@ def run_report(specs, image_key, image=None, output_dir='manifests'):
     expandable_foot = """</details>\n"""
 
     sections = []
+
+    sections.append(get_layers_md_table(image))
+
     for output in outputs:
         is_long_output = output['output'].count('\n') > 30
         if is_long_output:
@@ -66,7 +71,8 @@ f"""
             )
 
     stitched = '\n'.join(sections).strip()
-    output_path = path.join(output_dir, f'{image_key}.md')
+    manifest_fn = image.replace('/', '-').replace(':', '-')
+    output_path = path.join(output_dir, f"{manifest_fn}.md")
     with open(output_path, 'w') as f:
         f.write(stitched)
 
@@ -82,6 +88,3 @@ def run_manifests():
         run_report(specs, image_key, image=image)
 
 
-if __name__ == '__main__':
-    specs = get_specs('images\spec.yml')
-    run_report(specs, 'datahub-base-notebook')
