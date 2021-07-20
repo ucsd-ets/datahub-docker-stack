@@ -2,6 +2,7 @@ import yaml
 import json
 from os.path import join as pjoin
 import bitmath
+from pandas import NaT
 
 
 def get_specs(f_yaml):
@@ -46,3 +47,22 @@ def bytes_to_hstring(n_bytes):
         .best_prefix(bitmath.SI)
         .format("{value:.1f} {unit}")
     )
+
+
+def strfdelta(tdelta):
+    s = ""
+    if tdelta is NaT:
+        return s
+
+    days = tdelta.days
+    hours, rem = divmod(tdelta.seconds, 3600)
+    minutes, seconds = divmod(rem, 60)
+
+    if days:
+        s = f"{days}d"
+    if hours:
+        s += f"{hours}h"
+    if minutes:
+        s += f"{minutes}m"
+
+    return s + f"{seconds}s"

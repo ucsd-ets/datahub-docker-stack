@@ -47,9 +47,24 @@ jobs:
         run: |
           doit build
 
+      - name: Clone Wiki
+        uses: actions/checkout@v2
+        with:
+          repository: ${{github.repository}}.wiki
+          path: wiki
+
       - name: Run manifests
         run: |
           doit manifest
+          cp manifests/*.md wiki/
+
+      - name: Push Wiki to GitHub
+        if: github.ref == 'refs/heads/master' || 
+            github.ref == 'refs/heads/main'
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "[ci skip] Automated publish for ${{github.sha}}"
+          repository: wiki/
 
       - name: Push stack
         if: >
@@ -61,6 +76,7 @@ jobs:
           doit push
 
       - name: Archive artifacts and logs
+        if: ${{ always() }}
         uses: actions/upload-artifact@v2
         with:
           name: build-artifacts

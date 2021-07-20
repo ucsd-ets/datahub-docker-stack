@@ -16,7 +16,6 @@ USER jovyan
 
 # CUDA 10.1
 RUN conda install cudatoolkit=10.1 \
-				  cudatoolkit-dev=10.1\
 				  cudnn \
 				  nccl \
 				  -y && \
