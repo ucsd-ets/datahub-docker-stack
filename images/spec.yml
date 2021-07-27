@@ -19,7 +19,7 @@ images:
 
   scipy-ml-notebook:
     image_name: davidzz/scipy-ml-notebook
-    depend_on: datascience-notebook
+    depend_on: datahub-base-notebook
     skip_plans: ["PYTHON39"]
     manifests: [PY_VER, CUDA_VERSION, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
 

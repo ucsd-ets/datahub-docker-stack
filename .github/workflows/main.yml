@@ -43,15 +43,15 @@ jobs:
           echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
           echo "PYTHONUNBUFFERED=TRUE" >> $GITHUB_ENV
 
-      - name: Build stack
-        run: |
-          doit build
-
       - name: Clone Wiki
         uses: actions/checkout@v2
         with:
           repository: ${{github.repository}}.wiki
           path: wiki
+
+      - name: Build stack
+        run: |
+          doit build
 
       - name: Run manifests
         run: |

@@ -1,6 +1,10 @@
+from genericpath import isfile
 from os import path
 
-from scripts.utils import read_var
+from yaml import dump
+
+from scripts.utils import read_var, read_dict, store_series, json2series
+from scripts.utils import csv_embed_markdown, strip_csv_from_md, csv_concat
 from scripts.utils import get_specs
 from scripts.docker_runner import DockerRunner
 from scripts.git_helper import GitHelper
@@ -79,6 +83,18 @@ f"""
 
 def run_manifests():
     images = read_var('IMAGES_BUILT')
+    image_deps = json2series(read_dict('image-dependency.json'), 'dep', 'image')
+    store_series(image_deps, 'image-dependency')
+
+    # Write image dependency table to wiki
+    dep_table_fp = 'wiki/Image Dependency.md'
+    if isfile(dep_table_fp):
+        old_csv = strip_csv_from_md(dep_table_fp)
+        csv_concat(old_csv, 'artifacts/image-dependency.csv', 'artifacts/image-dependency-updated.csv')
+        csv_embed_markdown('artifacts/image-dependency-updated.csv', dep_table_fp, 'Image Dependency')
+    else:
+        csv_embed_markdown('artifacts/image-dependency.csv', dep_table_fp, 'Image Dependency')
+
     
     specs = get_specs(path.join('images', 'spec.yml'))
     for image in images:
