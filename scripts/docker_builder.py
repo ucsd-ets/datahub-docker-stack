@@ -13,7 +13,7 @@ pjoin = os.path.join
 from scripts.docker_info import get_dependency
 from scripts.git_helper import get_changed_images
 from scripts.order import build_tree
-from scripts.utils import get_specs, read_var, store_dict
+from scripts.utils import get_specs, read_var, store_dict, store_var
 
 
 logger = logging.getLogger(__name__)
@@ -141,7 +141,8 @@ class DockerStackBuilder:
 
         self.images = {}
         self.metas = {}
-        self.images_built = {}
+        self.images_built = []
+        self.images_dep = {}
 
         # sanity check
         self.images_dirs = []
@@ -221,9 +222,11 @@ class DockerStackBuilder:
                     nocache=False
                 )
                 if meta:
+                    self.images_built.append(image_tag)
+                    store_var('IMAGES_BUILT', self.images_built)
                     if 'depend_on' in image_spec:
-                        self.images_built[image_tag] = base_full_tag
-                    store_dict('image-dependency.json', self.images_built)
+                        self.images_dep[image_tag] = base_full_tag
+                    store_dict('image-dependency.json', self.images_dep)
                 self.images[short_name] = image
                 self.metas[short_name] = meta
 
