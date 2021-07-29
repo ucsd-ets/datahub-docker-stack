@@ -107,7 +107,8 @@ def insert_history(markdown_fp):
     latest_row = compile_history()
     latest_doc = insert_row(doc_str, [latest_row])
 
-    print(latest_doc)
+    with open(path.join('wiki', 'Home.md'), 'w') as f:
+        f.write(latest_doc)
 
 
 def run_manifests():
