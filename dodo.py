@@ -39,6 +39,8 @@ def task_clear():
             rmtree('artifacts')
         if os.path.exists('logs'):
             rmtree('logs')
+        if os.path.exists('manifests'):
+            rmtree('manifests')
     
     return {
         'actions': [_clear]

@@ -124,10 +124,42 @@ def csv_to_pd(csv):
 
 def csv_concat(csv_old, fp_new, out_fp):
     fp_old = StringIO(csv_old)
-    print(csv_old)
     srs_old = read_csv(fp_old, index_col='image')
     srs_new = read_csv(fp_new, index_col='image')
-    print(srs_old)
-    print(srs_new)
     updated = concat([srs_new, srs_old])
     updated.to_csv(out_fp)
+
+
+def insert_row(md_str, new_content):
+    lines = md_str.splitlines()
+    table_i = [
+        i for i, line in enumerate(lines)
+        if line.strip() and line.strip()[0] == '|'
+    ]
+    header, content = lines[table_i[0]:table_i[0]+2], lines[table_i[0]+2:table_i[-1]+1]
+
+    n_columns = header[0].count('|') - 1
+    print(n_columns)
+    for line_tup in new_content:
+        print(line_tup)
+        assert len(line_tup) == n_columns
+        assert all(isinstance(s, str) for s in line_tup)
+
+    content = ['|'+'|'.join(line_tup)+'|' for line_tup in new_content] + content
+    table_lines = header + content
+    doc_lines = [line for i, line in enumerate(lines) if i not in table_i]
+    doc_lines = doc_lines[:table_i[0]] + table_lines + doc_lines[table_i[0]:]
+    doc = "\n".join(doc_lines)
+    return doc
+
+
+def list2cell(ls_str):
+    return '<br>'.join(ls_str)
+
+
+def url2mdlink(url, text):
+    return f"[{text}]({url})"
+
+
+def fulltag2fn(tag):
+    return tag.replace('/', '-').replace(':', '-')
