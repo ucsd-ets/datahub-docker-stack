@@ -53,6 +53,10 @@ jobs:
         run: |
           doit build
 
+      - name: Test stack
+        run: |
+          doit test
+
       - name: Run manifests
         run: |
           doit manifest
