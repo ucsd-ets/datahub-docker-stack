@@ -6,3 +6,5 @@ doit
 pandas
 bitmath
 tabulate
+pytest
+requests

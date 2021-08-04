@@ -25,8 +25,9 @@ RUN apt-get update -y && \
 	chmod 1777 /var/run/screen
 
 COPY /scripts /usr/share/datahub/scripts/
-COPY /scripts/jupyter_notebook_config.py /etc/jupyter/jupyter_notebook_config.py
-RUN chmod -R uga+x /usr/share/datahub/scripts/ && \
+COPY /scripts/jupyter_notebook_config.py /tmp/jupyter_notebook_config_extra.py
+RUN cat /tmp/jupyter_notebook_config_extra.py >> /etc/jupyter/jupyter_notebook_config.py && \
+    chmod -R uga+x /usr/share/datahub/scripts/ && \
     chmod -R uga+x /etc/jupyter/jupyter_notebook_config.py
 
 USER jovyan
@@ -44,11 +45,5 @@ RUN /usr/share/datahub/scripts/install-python-all.sh && \
     fix-permissions /home/$NB_USER && \
     chown -R jovyan:users /opt/conda/etc/jupyter/nbconfig && \
     chmod -R +r /opt/conda/etc/jupyter/nbconfig
-
-
-# testing directory
-# COPY /tests /usr/share/datahub/tests/datahub-base-notebook
-# RUN chown -R 1000:1000 /usr/share/datahub/tests/datahub-base-notebook && \
-#     chmod -R +rwx /usr/share/datahub/tests/datahub-base-notebook
 
 WORKDIR /home/jovyan
