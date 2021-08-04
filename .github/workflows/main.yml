@@ -73,7 +73,11 @@ jobs:
       - name: Push stack
         if: >
           !contains(github.base_ref , 'test') &&
-          !contains(github.base_ref , 'dev')
+          !contains(github.base_ref , 'dev') &&
+          (
+            github.ref == 'refs/heads/master' || 
+            github.ref == 'refs/heads/main'
+          )
         env:
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
