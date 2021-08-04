@@ -50,3 +50,5 @@ def run_test():
             
         store_var('IMAGES_TEST_PASSED', IMAGES_TEST_PASSED)
         store_var('IMAGES_TEST_ERROR', IMAGES_TEST_ERROR)
+
+    assert len(IMAGES_TEST_ERROR) == 0, f"Images did not pass tests: {IMAGES_TEST_ERROR}"
