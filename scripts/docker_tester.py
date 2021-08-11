@@ -1,19 +1,19 @@
 from os import path, environ
 import pytest
 
-from scripts.order import get_specs, build_tree
-from scripts.utils import read_var, store_var
+from scripts.utils import get_specs, read_var, store_var
+from model.spec import BuilderSpec
 
 
 def run_test():
     specs = get_specs(path.join('images', 'spec.yml'))
-    tree, root = build_tree(specs)
+    build_spec = BuilderSpec(specs)
     IMAGES_BUILT = read_var('IMAGES_BUILT')
 
     fulltag_to_key = {}
     for image_to_test in IMAGES_BUILT:
         # hacky solution for now
-        image_key = next(filter(lambda key: key in image_to_test, tree.keys()))
+        image_key = next(filter(lambda key: key in image_to_test, build_spec.imageDefs.keys()))
         fulltag_to_key[image_to_test] = image_key
 
     # Process test folders including parent nodes

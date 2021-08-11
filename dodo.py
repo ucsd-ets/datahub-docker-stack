@@ -68,8 +68,8 @@ def task_test():
     """Test built images"""
     return {
         'actions': [run_test],
-        # 'file_dep': ['artifacts/IMAGES_BUILT'],
-        # 'targets': ['artifacts/IMAGES_TEST_PASSED', 'artifacts/IMAGES_TEST_ERROR'],
+        'file_dep': ['artifacts/IMAGES_BUILT'],
+        'targets': ['artifacts/IMAGES_TEST_PASSED', 'artifacts/IMAGES_TEST_ERROR'],
     }
 
 
