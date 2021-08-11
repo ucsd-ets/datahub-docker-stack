@@ -1,5 +1,10 @@
+from scripts.utils import get_specs, read_var, store_dict, store_var
+from scripts.docker_info import get_dependency
+from scripts.utils import get_specs, read_var, store_dict, store_var, read_dict
+from scripts.git_helper import get_changed_images
 from docker.errors import BuildError
 from docker.utils.json_stream import json_stream
+from model.spec import BuilderSpec
 import docker
 from collections import namedtuple
 import time
@@ -9,11 +14,6 @@ import re
 import os
 from typing import NamedTuple
 pjoin = os.path.join
-
-from scripts.docker_info import get_dependency
-from scripts.git_helper import get_changed_images
-from scripts.order import build_tree
-from scripts.utils import get_specs, read_var, store_dict, store_var
 
 
 logger = logging.getLogger(__name__)
@@ -137,12 +137,13 @@ class DockerStackBuilder:
         self.git_suffix = git_suffix
         self.dry_run = dry_run
         self.images_changed = images_changed
-        self.images_order = self.get_build_order()
+        self.build_spec = BuilderSpec(self.specs)
 
         self.images = {}
         self.metas = {}
         self.images_built = []
         self.images_dep = {}
+        self.build_history = {}
 
         # sanity check
         self.images_dirs = []
@@ -150,93 +151,59 @@ class DockerStackBuilder:
             for entry in it:
                 if not entry.is_file() and not entry.name.startswith('.'):
                     self.images_dirs.append(entry)
-        assert len(self.specs['images']) <= len(self.images_dirs)
+        #assert len(self.specs['images']) == len(self.images_dirs)
         # TODO: maybe more checks
 
-    def get_build_order(self):
-        tree, root = build_tree(self.specs)
-        tree_order = root.get_level_order()
-        image_order = []
-        for image in self.images_changed:
-            image_def = tree[image]
-            image_order.append((image_def, tree_order[image_def]))
-        image_order.sort(key=lambda x: x[1])
-        build_order = []
-        for idx in range(len(image_order)):
-            curr_image_def = image_order[idx][0]
-            if image_order[idx][0] not in build_order:
-                build_order += (curr_image_def.subtree_order())
-        return build_order
+    def build_img(self, image_name, build_path, build_args, plan_name, image_tag):
+        # Go to build
+        print(f'\n*** Started building "{image_tag}" ***')
+        image, meta = dbuild(
+            path=build_path,
+            build_args=build_args,
+            image_tag=image_tag,
+            nocache=False
+        )
+        self.images[image_name] = image
+        self.images_built.append(image_tag)
+        self.build_history[image_name+plan_name] = image_tag
+        return meta
+
+    def process_meta(self, meta, image_name, build_args, image_tag):
+        if meta:
+            if 'BASE_TAG' in build_args:
+                dep_tag = build_args['BASE_TAG']
+                dep_img_name = self.build_spec.imageDefs[image_name].depend_on.img_name
+                dep_full_tag = f"{dep_img_name}:{dep_tag}"
+                self.images_dep[image_tag] = dep_full_tag
+            store_dict('image-dependency.json', self.images_dep)
+        self.metas[image_name] = meta
 
     def __enter__(self):
+        logger.info(
+            f"Building image stack from {self.path} using {self.specs_fp}")
 
-        logger.info(f"Building image stack from {self.path} using {self.specs_fp}")
-
-        pairs = [
-            (plan, short_name)
-            for plan in self.specs['plans'].keys()
-            for short_name in self.images_order
-        ]
-
-        for plan, short_name in pairs:
-
-            # prep
-            image_spec = self.specs['images'][short_name]
-            path = pjoin(self.path, short_name)
-            tag = f"{self.specs['plans'][plan]['tag_prefix']}-{self.git_suffix}"
-            image_tag = f"{image_spec['image_name']}:{tag}"
-
-            # skip if set
-            if 'skip_plans' in image_spec and plan in image_spec['skip_plans']:
-                logger.info(f"Skipped {image_tag}")
-                continue
-
-            # go for build
-            image_spec['image_tag'] = image_tag
-            build_args = {}
-
-            # fill buildargs for `$BASE_TAG`
-            if 'depend_on' in image_spec:
-                if 'image_tag' in self.specs['images'][image_spec['depend_on']]:
-                    base_full_tag = self.specs['images'][image_spec['depend_on']]['image_tag']
-                else:
-                    base_full_tag = get_dependency(image_tag)
-                custom_tag = base_full_tag.split(':')[1]
-                build_args.update(BASE_TAG=custom_tag)
-
-            # fill buildargs for extra vars defined in spec.yml
-            if 'dbuild_env' in image_spec:
-                dbuild_env = image_spec['dbuild_env']
-                if 'common' in dbuild_env.keys():
-                    build_args.update(dbuild_env['common'])
-                if plan in dbuild_env.keys():
-                    build_args.update(dbuild_env[plan])
-
+        build_params = self.build_spec.gen_build_args(
+            self.path, self.git_suffix, self.images_changed, logger)
+        for build_param in build_params:
+            image_name, build_path, build_args, plan_name, image_tag = build_param
             if not self.dry_run:
                 # Go to build
                 print(f'\n*** Started building "{image_tag}" ***')
-                image, meta = dbuild(
-                    path=path,
-                    build_args=build_args,
-                    image_tag=image_tag,
-                    nocache=False
-                )
-                if meta:
-                    self.images_built.append(image_tag)
-                    store_var('IMAGES_BUILT', self.images_built)
-                    if 'depend_on' in image_spec:
-                        self.images_dep[image_tag] = base_full_tag
-                    store_dict('image-dependency.json', self.images_dep)
-                self.images[short_name] = image
-                self.metas[short_name] = meta
+                meta = self.build_img(
+                    image_name, build_path, build_args, plan_name, image_tag)
+
+                store_var('IMAGES_BUILT', self.images_built)
+                self.process_meta(meta, image_name, build_args, image_tag)
 
     def __exit__(self, exc_type, exc_value, traceback):
         store_dict('builder-metainfo.json', self.metas)
-
+        store_dict('build_history.json', self.build_history)
 
 
 def run_build():
+    print('in main')
     images_changed = read_var('IMAGES_CHANGED')
+    print('changed images are', images_changed)
     git_suffix = read_var('GIT_HASH_SHORT')
     builder = DockerStackBuilder(
         path='images', specs='spec.yml',
@@ -255,7 +222,7 @@ if __name__ == '__main__':
     #     docker_client=docker_client
     # )
     # print(image)
-
+    '''
     logging.basicConfig(filename='builder.log', level=logging.INFO)
     images_changed = read_var('IMAGES_CHANGED')
     git_suffix = read_var('GIT_HASH_SHORT')
@@ -265,3 +232,5 @@ if __name__ == '__main__':
     )
     builder.__enter__()
     builder.__exit__(None, None, None)
+    '''
+    run_build()

@@ -6,10 +6,10 @@ images:
         placeholder: test_XXX
       PYTHON38:
         PYTHON_VERSION: python-3.8.8
-        PY_VER_SHORT: "3.8"
+        PY_VER_SHORT: '3.8'
       PYTHON39:
         PYTHON_VERSION: python-3.9.5
-        PY_VER_SHORT: "3.9"
+        PY_VER_SHORT: '3.9'
     manifests: [PY_VER, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
 
   datascience-notebook:
@@ -17,17 +17,11 @@ images:
     depend_on: datahub-base-notebook
     manifests: [PY_VER, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
 
-  scipy-ml-notebook:
-    image_name: davidzz/scipy-ml-notebook
-    depend_on: datahub-base-notebook
-    skip_plans: ["PYTHON39"]
-    manifests: [PY_VER, CUDA_VERSION, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
-
 plans:
   PYTHON39:
     tag_prefix: 2021.3
     tag_stable_postfix: -stable
-  PYTHON38: 
+  PYTHON38:
     tag_prefix: 2021.2
     tag_stable_postfix: -stable
 

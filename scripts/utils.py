@@ -30,13 +30,16 @@ def store_var(name, value, parent='artifacts'):
 
 
 def read_var(name, parent='artifacts'):
-    with open(pjoin(parent, name), 'r') as f:
-        content = f.read()
-
-    if '\n' not in content:
-        return content
+    filepath = pjoin(parent, name)
+    if isfile(filepath):
+        with open(filepath, 'r') as f:
+            content = f.read()
+        if '\n' not in content:
+            return content
+        else:
+            return content.split('\n')[:-1]
     else:
-        return content.split('\n')[:-1]
+        return None
 
 
 def store_dict(name, value, parent='artifacts'):
@@ -136,7 +139,8 @@ def insert_row(md_str, new_content):
         i for i, line in enumerate(lines)
         if line.strip() and line.strip()[0] == '|'
     ]
-    header, content = lines[table_i[0]:table_i[0]+2], lines[table_i[0]+2:table_i[-1]+1]
+    header, content = lines[table_i[0]:table_i[0] +
+                            2], lines[table_i[0]+2:table_i[-1]+1]
 
     n_columns = header[0].count('|') - 1
     print(n_columns)
@@ -145,7 +149,8 @@ def insert_row(md_str, new_content):
         assert len(line_tup) == n_columns
         assert all(isinstance(s, str) for s in line_tup)
 
-    content = ['|'+'|'.join(line_tup)+'|' for line_tup in new_content] + content
+    content = ['|'+'|'.join(line_tup) +
+               '|' for line_tup in new_content] + content
     table_lines = header + content
     doc_lines = [line for i, line in enumerate(lines) if i not in table_i]
     doc_lines = doc_lines[:table_i[0]] + table_lines + doc_lines[table_i[0]:]
@@ -163,3 +168,11 @@ def url2mdlink(url, text):
 
 def fulltag2fn(tag):
     return tag.replace('/', '-').replace(':', '-')
+
+
+def get_prev_tag(img_name, plan):
+    build_history = read_dict('build_history.json')
+    if img_name+plan in build_history:
+        return build_history[img_name+plan]
+    else:
+        return None
