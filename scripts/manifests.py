@@ -1,10 +1,13 @@
 from genericpath import isfile
-from os import path
+from os import path, environ
+from glob import glob
+from posixpath import basename
 
 from yaml import dump
 
-from scripts.utils import read_var, read_dict, store_series, json2series
+from scripts.utils import list2cell, read_var, read_dict, store_series, json2series
 from scripts.utils import csv_embed_markdown, strip_csv_from_md, csv_concat
+from scripts.utils import url2mdlink, fulltag2fn, insert_row
 from scripts.utils import get_specs
 from scripts.docker_runner import DockerRunner
 from scripts.git_helper import GitHelper
@@ -75,10 +78,37 @@ f"""
             )
 
     stitched = '\n'.join(sections).strip()
-    manifest_fn = image.replace('/', '-').replace(':', '-')
+    manifest_fn = fulltag2fn(image)
     output_path = path.join(output_dir, f"{manifest_fn}.md")
     with open(output_path, 'w') as f:
         f.write(stitched)
+
+
+def compile_history():
+    git_short_hash = GitHelper.commit_hash_tag_shortened()
+    repo_url = f"https://github.com/{environ['GITHUB_REPOSITORY']}"
+
+    cell_commit = url2mdlink(repo_url + '/commit/' + git_short_hash, f"`{git_short_hash}`")
+    cell_images = list2cell([f"`{image}`" for image in read_var('IMAGES_BUILT')])
+
+    manifests_dir = 'manifests'
+    manifests_fp = glob(path.join(manifests_dir, '*.md'))
+    manifests_doc_names = [path.splitext(path.basename(doc))[0] for doc in manifests_fp]
+    manifests_links = [url2mdlink(repo_url + '/wiki/' + name, 'Link') for name in manifests_doc_names]
+    cell_manifests = list2cell(manifests_links)
+
+    return cell_commit, cell_images, cell_manifests
+
+
+def insert_history(markdown_fp):
+    with open(path.join('wiki', 'Home.md'), 'r') as f:
+        doc_str = f.read()
+
+    latest_row = compile_history()
+    latest_doc = insert_row(doc_str, [latest_row])
+
+    with open(path.join('wiki', 'Home.md'), 'w') as f:
+        f.write(latest_doc)
 
 
 def run_manifests():
@@ -101,6 +131,8 @@ def run_manifests():
         keys = list(filter(lambda x: x in image, specs['images']))
         assert len(keys) == 1
         image_key = keys[0]
+        print('Running image manifest for', image)
         run_report(specs, image_key, image=image)
 
+    insert_history('wiki/Home.md')
 

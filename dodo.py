@@ -4,6 +4,7 @@ from shutil import rmtree
 
 from scripts.git_helper import save_changed_images, save_git_info
 from scripts.docker_builder import run_build
+from scripts.docker_tester import run_test
 from scripts.docker_pusher import run_push
 from scripts.manifests import run_manifests
 
@@ -39,6 +40,8 @@ def task_clear():
             rmtree('artifacts')
         if os.path.exists('logs'):
             rmtree('logs')
+        if os.path.exists('manifests'):
+            rmtree('manifests')
     
     return {
         'actions': [_clear]
@@ -58,6 +61,15 @@ def task_build():
         'actions': [run_build],
         'file_dep': ['artifacts/IMAGES_CHANGED'],
         'targets': ['artifacts/builder-metainfo.json', 'artifacts/IMAGES_BUILT'],
+    }
+
+
+def task_test():
+    """Test built images"""
+    return {
+        'actions': [run_test],
+        'file_dep': ['artifacts/IMAGES_BUILT'],
+        'targets': ['artifacts/IMAGES_TEST_PASSED', 'artifacts/IMAGES_TEST_ERROR'],
     }
 
 

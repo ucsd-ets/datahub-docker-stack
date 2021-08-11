@@ -34,6 +34,7 @@ def get_changed_images():
     changed_files = GitHelper.commit_changed_files()
     for file in changed_files:
         fp = PurePath(file)
+        # need to be under images and must be a folder
         if fp.parts[0] == 'images':
             image_ref = fp.parts[1]
             if image_ref not in changed_images:
@@ -66,3 +67,4 @@ if __name__ == "__main__":
     print("Git hash shortened:", GitHelper.commit_hash_tag_shortened())
     print("Git message:", GitHelper.commit_message())
     print("Git changed files:", GitHelper.commit_changed_files())
+    print('Git changed images', get_changed_images())
