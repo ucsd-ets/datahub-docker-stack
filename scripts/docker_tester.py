@@ -5,10 +5,9 @@ from scripts.utils import get_specs, read_var, store_var
 from model.spec import BuilderSpec
 
 
-def run_test():
-    specs = get_specs(path.join('images', 'spec.yml'))
+def _tests_collector(stack_dir, IMAGES_BUILT):
+    specs = get_specs(path.join(stack_dir, 'spec.yml'))
     build_spec = BuilderSpec(specs)
-    IMAGES_BUILT = read_var('IMAGES_BUILT')
 
     fulltag_to_key = {}
     for image_to_test in IMAGES_BUILT:
@@ -19,9 +18,9 @@ def run_test():
     # Process test folders including parent nodes
     test_params = {}
     for image_to_test in IMAGES_BUILT:
-        test_dirs = [path.join('images', 'tests_common')]
+        test_dirs = []
         image_key = fulltag_to_key[image_to_test]
-        _f_image_test_dir = lambda key: path.join('images', key, 'test')
+        _f_image_test_dir = lambda key: path.join(stack_dir, key, 'test')
 
         while True:
             if path.isdir(_f_image_test_dir(image_key)):
@@ -30,7 +29,16 @@ def run_test():
                 break
             image_key = specs['images'][image_key]['depend_on']
 
+        common_test_dir = path.join(stack_dir, 'tests_common')
+        if path.exists(common_test_dir):
+            test_dirs.insert(0, common_test_dir)
         test_params[image_to_test] = test_dirs
+    return test_params
+
+
+def run_test(stack_dir):
+    IMAGES_BUILT = read_var('IMAGES_BUILT')
+    test_params = _tests_collector(stack_dir, IMAGES_BUILT)
 
     IMAGES_TEST_PASSED = []
     IMAGES_TEST_ERROR = []

@@ -85,7 +85,7 @@ f"""
 
 
 def compile_history():
-    git_short_hash = GitHelper.commit_hash_tag_shortened()
+    git_short_hash = read_var('GIT_HASH_SHORT')
     repo_url = f"https://github.com/{environ['GITHUB_REPOSITORY']}"
 
     cell_commit = url2mdlink(repo_url + '/commit/' + git_short_hash, f"`{git_short_hash}`")
@@ -111,7 +111,7 @@ def insert_history(markdown_fp):
         f.write(latest_doc)
 
 
-def run_manifests():
+def run_manifests(stack_dir):
     images = read_var('IMAGES_BUILT')
     image_deps = json2series(read_dict('image-dependency.json'), 'dep', 'image')
     store_series(image_deps, 'image-dependency')
@@ -126,7 +126,7 @@ def run_manifests():
         csv_embed_markdown('artifacts/image-dependency.csv', dep_table_fp, 'Image Dependency')
 
     
-    specs = get_specs(path.join('images', 'spec.yml'))
+    specs = get_specs(path.join(stack_dir, 'spec.yml'))
     for image in images:
         keys = list(filter(lambda x: x in image, specs['images']))
         assert len(keys) == 1
