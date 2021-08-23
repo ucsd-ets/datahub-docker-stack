@@ -46,7 +46,7 @@ def save_changed_images():
     """
     side-effects: 
     """
-    images = ['datahub-base-notebook']  # FIXME: get_changed_images()
+    images = get_changed_images()
     print('Images changed:', images)
     store_var('IMAGES_CHANGED', images)
 
