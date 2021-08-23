@@ -1,0 +1,38 @@
+images:
+  base:
+    image_name: fakeuser/base
+    manifests: []
+
+  branch-A:
+    image_name: fakeuser/branch-A
+    depend_on: base
+    manifests: []
+
+  branch-B:
+    image_name: fakeuser/branch-B
+    depend_on: base
+    manifests: []
+
+  leaf-A1:
+    image_name: fakeuser/leaf-A1
+    depend_on: branch-A
+    manifests: []
+
+  leaf-B1:
+    image_name: fakeuser/leaf-B1
+    depend_on: branch-B
+    manifests: []
+
+  leaf-B2:
+    image_name: fakeuser/leaf-B2
+    depend_on: branch-B
+    manifests: []
+
+plans:
+  PLAN_0:
+    tag_stable_postfix: -stable
+
+manifests:
+  OS:
+    description: OS Name
+    command: uname -o

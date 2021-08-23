@@ -1,0 +1,24 @@
+images:
+  base:
+    image_name: fakeuser/base
+    manifests: []
+
+  branch:
+    image_name: fakeuser/branch
+    depend_on: base
+    manifests: []
+
+  leaf:
+    image_name: fakeuser/leaf
+    depend_on: branch
+    manifests: []
+    skip_plans: ["PLAN_0"]
+
+plans:
+  PLAN_0:
+    tag_prefix: 2021.3
+
+manifests:
+  OS:
+    description: OS Name
+    command: uname -o
