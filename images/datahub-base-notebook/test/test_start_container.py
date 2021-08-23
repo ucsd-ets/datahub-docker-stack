@@ -10,7 +10,7 @@ LOGGER = logging.getLogger(__name__)
 @pytest.mark.parametrize(
     "env,expected_server",
     [
-        (["JUPYTER_ENABLE_LAB=yes"], "lab"),
+        # (["JUPYTER_ENABLE_LAB=yes"], "lab"),
         (None, "notebook"),
     ],
 )
