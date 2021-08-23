@@ -1,8 +1,15 @@
-*.log
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
+
+# Workflow generated files
+.coverage
+*.log
 artifacts/
 logs/
 manifests/
 .doit*
+
+# IDE
+.vscode/

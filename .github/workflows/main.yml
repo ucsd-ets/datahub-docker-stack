@@ -38,6 +38,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r scripts/requirements.txt
 
+      - name: Install pydoit fixed
+        run: |
+          git clone https://github.com/davidzyx/doit
+          pip install ./doit
+          rm -rf ./doit
+
       - name: Set Python-specific environment variables
         run: |
           echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
@@ -62,14 +68,6 @@ jobs:
           doit manifest
           cp manifests/*.md wiki/
 
-      - name: Push Wiki to GitHub
-        if: github.ref == 'refs/heads/master' || 
-            github.ref == 'refs/heads/main'
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: "[ci skip] Automated publish for ${{github.sha}}"
-          repository: wiki/
-
       - name: Push stack
         if: >
           !contains(github.base_ref , 'test') &&
@@ -83,6 +81,20 @@ jobs:
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
           doit push
+
+      - name: Push Wiki to GitHub
+        if: >
+          !contains(github.base_ref , 'test') &&
+          !contains(github.base_ref , 'dev') &&
+          !contains(github.event.head_commit.message , 'skip push') &&
+          (
+            github.ref == 'refs/heads/master' || 
+            github.ref == 'refs/heads/main'
+          )
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "[ci skip] Automated publish for ${{github.sha}}"
+          repository: wiki/
 
       - name: Archive artifacts and logs
         if: ${{ always() }}

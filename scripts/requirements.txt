@@ -2,7 +2,7 @@ docker
 six
 pyyaml
 plumbum
-doit
+# doit
 pandas
 bitmath
 tabulate
