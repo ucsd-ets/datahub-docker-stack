@@ -1,5 +1,5 @@
 ARG BASE_TAG=latest
-FROM davidzz/datahub-base-notebook:$BASE_TAG
+FROM ucsdets/datahub-base-notebook:$BASE_TAG
 
 USER jovyan
 

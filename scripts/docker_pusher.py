@@ -76,24 +76,11 @@ def push_images(
 
 def run_push():
     cli = docker.from_env()
-    if docker_login(cli, 'davidzz', os.environ['DOCKERHUB_TOKEN']):
+    if docker_login(cli, 'ucsdets', os.environ['DOCKERHUB_TOKEN']):
         tags = read_var('IMAGES_BUILT')
         pairs = [
             (cli.images.get(tag), tag)
             for tag in tags
         ]
         push_images(cli, pairs)
-
-
-if __name__ == '__main__':
-    logging.basicConfig(filename='pusher.log', level=logging.INFO)
-
-    cli = docker.from_env()
-    push_images(cli, [(cli.images.get('davidzz/datascience-notebook:2021.2-cd82e1c'), 'davidzz/datascience-notebook:2021.2-cd82e1c')])
-    # if docker_login(cli, os.environ['DOCKERHUB_USER'], os.environ['DOCKERHUB_TOKEN']):
-    #     pairs = [
-    #         (cli.images.get('2eaf89f39e53'), 'davidzz/datahub-base-notebook:2021.2-111111'),
-    #         (cli.images.get('56e811b67ec6'), 'davidzz/datascience-notebook:2021.2-111111'),
-    #     ]
-    #     push_images(cli, pairs)
 
