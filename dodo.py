@@ -1,6 +1,7 @@
 import os
 pjoin = os.path.join
 from shutil import rmtree
+from doit import get_var
 
 from scripts.git_helper import save_changed_images, save_git_info
 from scripts.docker_builder import run_build
@@ -12,6 +13,9 @@ from scripts.manifests import run_manifests
 DOIT_CONFIG = dict(
     verbosity=2
 )
+
+# get_var(<key>, <default_val>)
+USE_STACK = get_var('stack_dir', 'images')
 
 
 def task_prep():
@@ -40,8 +44,6 @@ def task_clear():
             rmtree('artifacts')
         if os.path.exists('logs'):
             rmtree('logs')
-        if os.path.exists('manifests'):
-            rmtree('manifests')
     
     return {
         'actions': [_clear]
@@ -61,6 +63,14 @@ def task_build():
         'actions': [run_build],
         'file_dep': ['artifacts/IMAGES_CHANGED'],
         'targets': ['artifacts/builder-metainfo.json', 'artifacts/IMAGES_BUILT'],
+        'params':[
+            {
+                'name': 'stack_dir',
+                'short': 'd',
+                'long': 'stack_dir',
+                'default': 'images'
+            },
+        ],
     }
 
 
@@ -70,6 +80,14 @@ def task_test():
         'actions': [run_test],
         'file_dep': ['artifacts/IMAGES_BUILT'],
         'targets': ['artifacts/IMAGES_TEST_PASSED', 'artifacts/IMAGES_TEST_ERROR'],
+        'params':[
+            {
+                'name': 'stack_dir',
+                'short': 'd',
+                'long': 'stack_dir',
+                'default': 'images'
+            },
+        ],
     }
 
 
@@ -87,5 +105,13 @@ def task_manifest():
     return {
         'actions': [run_manifests],
         'file_dep': ['artifacts/IMAGES_BUILT'],
-        'targets': ['manifests/*.md']
+        'targets': ['manifests/*.md'],
+        'params':[
+            {
+                'name': 'stack_dir',
+                'short': 'd',
+                'long': 'stack_dir',
+                'default': 'images'
+            },
+        ],
     }

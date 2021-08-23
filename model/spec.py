@@ -1,9 +1,11 @@
-from scripts.utils import get_specs, read_var, store_dict, store_var
-import logging
-from model.imageDef import DockerImageDef
-from scripts.docker_info import get_dependency
 import os
+import logging
+
+from model.imageDef import DockerImageDef
+from scripts.utils import get_specs, read_var, store_dict, store_var
+from scripts.docker_info import get_dependency
 from scripts.utils import get_specs, get_prev_tag
+
 pjoin = os.path.join
 
 
@@ -15,8 +17,10 @@ class BuilderSpec:
         self.plans = {}
         self.img_root = None
         self.build_params_list = []
-        self.parse_build_plans(yml_dict['plans'])
-        self.parse_img(yml_dict['images'])
+        plan_specs = yml_dict['plans']
+        image_specs = yml_dict['images']
+        self.parse_build_plans(plan_specs)
+        self.parse_img(image_specs)
 
     def parse_build_plans(self, plan_specs):
         self.plans = plan_specs
@@ -51,17 +55,21 @@ class BuilderSpec:
         self.imageDefs = images
         self.img_root = root
 
-    def gen_build_args(self, path, git_suffix, img_modified, logger):
+    def gen_build_args(self, path, git_suffix, img_modified):
         build_order = self.get_build_order(img_modified)
         for imgDef in build_order:
             imgDef.to_build = True
             imgPath = pjoin(path, imgDef.name)
             for plan_name, plan in self.plans.items():
                 build_args = {}
-                curr_tag = f"{plan['tag_prefix']}-{git_suffix}"
+                print(plan)
+                if plan is not None and 'tag_prefix' in plan:
+                    curr_tag = f"{plan['tag_prefix']}-{git_suffix}"
+                else:
+                    curr_tag = 'latest'
                 full_image_tag = f"{imgDef.img_name}:{curr_tag}"
                 if plan_name in imgDef.skip_plans:
-                    logger.info(f"Skipped {full_image_tag}")
+                    # logger.info(f"Skipped {full_image_tag}")
                     continue
                 # get base tag
                 if imgDef.depend_on is not None:
@@ -117,7 +125,6 @@ if __name__ == '__main__':
                       'datahub-base-notebook', 'spec.yml']
     git_suffix = 'cb6be13'
     build_spec = BuilderSpec(specs)
-    build_params = build_spec.gen_build_args(
-        path, git_suffix, images_changed, logger)
+    build_params = build_spec.gen_build_args(path, git_suffix, images_changed)
     print(build_spec)
     print(build_params)

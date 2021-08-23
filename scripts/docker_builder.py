@@ -183,7 +183,7 @@ class DockerStackBuilder:
             f"Building image stack from {self.path} using {self.specs_fp}")
 
         build_params = self.build_spec.gen_build_args(
-            self.path, self.git_suffix, self.images_changed, logger)
+            self.path, self.git_suffix, self.images_changed)
         for build_param in build_params:
             image_name, build_path, build_args, plan_name, image_tag = build_param
             if not self.dry_run:
@@ -200,13 +200,12 @@ class DockerStackBuilder:
         store_dict('build_history.json', self.build_history)
 
 
-def run_build():
-    print('in main')
+def run_build(stack_dir):
     images_changed = read_var('IMAGES_CHANGED')
     print('changed images are', images_changed)
     git_suffix = read_var('GIT_HASH_SHORT')
     builder = DockerStackBuilder(
-        path='images', specs='spec.yml',
+        path=stack_dir, specs='spec.yml',
         images_changed=images_changed, git_suffix=git_suffix
     )
     builder.__enter__()

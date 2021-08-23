@@ -2,15 +2,6 @@ import yaml
 from collections import deque
 
 
-def get_specs(f_yaml):
-    """
-    Parse specs from yaml file name to dict
-    """
-    with open(f_yaml, 'r') as f:
-        specs = yaml.safe_load(f)
-    return specs
-
-
 class DockerImageDef:
     def __init__(self, name, img_name, depend_on=None) -> None:
         self.name = name
