@@ -76,7 +76,7 @@ def push_images(
 
 def run_push():
     cli = docker.from_env()
-    if docker_login(cli, 'ucsdets', os.environ['DOCKERHUB_TOKEN']):
+    if docker_login(cli, 'etsjenkins', os.environ['DOCKERHUB_TOKEN']):
         tags = read_var('IMAGES_BUILT')
         pairs = [
             (cli.images.get(tag), tag)
