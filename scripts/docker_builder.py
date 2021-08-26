@@ -200,13 +200,13 @@ class DockerStackBuilder:
         store_dict('build_history.json', self.build_history)
 
 
-def run_build(stack_dir):
+def run_build(stack_dir, dry_run):
     images_changed = read_var('IMAGES_CHANGED')
     print('changed images are', images_changed)
     git_suffix = read_var('GIT_HASH_SHORT')
     builder = DockerStackBuilder(
         path=stack_dir, specs='spec.yml',
-        images_changed=images_changed, git_suffix=git_suffix
+        images_changed=images_changed, git_suffix=git_suffix, dry_run=dry_run
     )
     builder.__enter__()
     builder.__exit__(None, None, None)

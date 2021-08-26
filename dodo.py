@@ -70,6 +70,12 @@ def task_build():
                 'long': 'stack_dir',
                 'default': 'images'
             },
+            {
+                'name': 'dry_run',
+                'short': 's',
+                'long': 'dry_run',
+                'default': False
+            },
         ],
     }
 
