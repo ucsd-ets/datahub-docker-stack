@@ -56,6 +56,8 @@ class BuilderSpec:
         self.img_root = root
 
     def gen_build_args(self, path, git_suffix, img_modified):
+        if not img_modified:
+            img_modified = list(self.imageDefs.keys())
         build_order = self.get_build_order(img_modified)
         for imgDef in build_order:
             imgDef.to_build = True
