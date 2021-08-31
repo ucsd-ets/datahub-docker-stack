@@ -64,7 +64,6 @@ class BuilderSpec:
             imgPath = pjoin(path, imgDef.name)
             for plan_name, plan in self.plans.items():
                 build_args = {}
-                print(plan)
                 if plan is not None and 'tag_prefix' in plan:
                     curr_tag = f"{plan['tag_prefix']}-{git_suffix}"
                 else:
@@ -83,7 +82,7 @@ class BuilderSpec:
                     else:
                         # TODO: throw error if prev tag not present
                         # TODO: Further testing on this
-                        prev_tag = get_prev_tag(imgDef.img_name, plan_name)
+                        prev_tag = get_prev_tag(imgDef.img_name, plan['tag_prefix'])
                         base_full_tag = get_dependency(prev_tag)
                         base_tag = base_full_tag.split(':')[1]
                     build_args.update(BASE_TAG=base_tag)

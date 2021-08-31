@@ -170,9 +170,21 @@ def fulltag2fn(tag):
     return tag.replace('/', '-').replace(':', '-')
 
 
-def get_prev_tag(img_name, plan):
-    build_history = read_dict('build_history.json')
-    if img_name+plan in build_history:
-        return build_history[img_name+plan]
+def get_prev_tag(img_name, tag_prefix=None):
+    assert ':' not in img_name
+
+    csv = strip_csv_from_md('wiki/Image Dependency.md')
+    built_tags = csv_to_pd(csv).index
+
+    if tag_prefix:
+        filtered = built_tags[
+            built_tags.str.contains(img_name) &
+            built_tags.str.contains(tag_prefix)
+        ]
+    else:
+        filtered = built_tags[built_tags.str.contains(img_name)]
+
+    if len(filtered):
+        return filtered[0]  # descending acc. date (latest is first)
     else:
         return None

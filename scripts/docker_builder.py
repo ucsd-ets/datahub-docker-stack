@@ -184,6 +184,8 @@ class DockerStackBuilder:
 
         build_params = self.build_spec.gen_build_args(
             self.path, self.git_suffix, self.images_changed)
+        if self.dry_run:
+            print(build_params)
         for build_param in build_params:
             image_name, build_path, build_args, plan_name, image_tag = build_param
             if not self.dry_run:
