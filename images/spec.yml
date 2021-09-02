@@ -7,9 +7,12 @@ images:
       PYTHON38:
         PYTHON_VERSION: python-3.8.8
         PY_VER_SHORT: '3.8'
+        JUPYTERHUB_VERSION: 0.9.2
       PYTHON39:
         PYTHON_VERSION: python-3.9.5
         PY_VER_SHORT: '3.9'
+        JUPYTERHUB_VERSION: 1.4.1
+
     manifests: [PY_VER, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
 
   datascience-notebook:
@@ -20,16 +23,25 @@ images:
   scipy-ml-notebook:
     image_name: ucsdets/scipy-ml-notebook
     depend_on: datahub-base-notebook
-    skip_plans: ["PYTHON39"]
+    skip_plans: ['PYTHON38']
+    dbuild_env:
+      PYTHON38:
+        TORCH_VER: "1.7.1+cu101"
+        TORCH_VIS_VER: "0.8.2+cu101"
+        TORCH_AUD_VER: "0.7.2"
+      PYTHON39:
+        TORCH_VER: "1.9.0+cu111"
+        TORCH_VIS_VER: "0.10.0+cu111"
+        TORCH_AUD_VER: "0.9.0"
     manifests: [PY_VER, CUDA_VERSION, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
 
 plans:
   PYTHON39:
-    tag_prefix: "2021.3"
+    tag_prefix: '2021.3'
     tag_stable_postfix: -stable
-  PYTHON38:
-    tag_prefix: "2021.2"
-    tag_stable_postfix: -stable
+  # PYTHON38:
+  #   tag_prefix: '2021.2'
+  #   tag_stable_postfix: -stable
 
 manifests:
   PY_VER:

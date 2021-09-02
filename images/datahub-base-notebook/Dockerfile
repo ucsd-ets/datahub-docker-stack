@@ -21,8 +21,8 @@ RUN apt-get update -y && \
     p7zip \
     p7zip-full && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
-	chmod g-s /usr/bin/screen && \
-	chmod 1777 /var/run/screen
+    chmod g-s /usr/bin/screen && \
+    chmod 1777 /var/run/screen
 
 COPY /scripts /usr/share/datahub/scripts/
 COPY /scripts/jupyter_notebook_config.py /tmp/jupyter_notebook_config_extra.py
@@ -33,14 +33,14 @@ RUN cat /tmp/jupyter_notebook_config_extra.py >> /etc/jupyter/jupyter_notebook_c
 USER jovyan
 
 ARG PY_VER_SHORT=3.8
-
+ARG JUPYTERHUB_VERSION=0.9.2
 # nbconvert downgrade needed for nbgrader to work
 RUN /usr/share/datahub/scripts/install-python-all.sh && \
-	pip install pandas --upgrade && \
-	pip install nltk && \
+    pip install pandas --upgrade && \
+    pip install nltk && \
     pip install nbconvert==5.6.1 && \
-    pip install jupyterhub==0.9.2 && \
-	cat /usr/share/datahub/scripts/canvas_exporter.py > /opt/conda/lib/python$PY_VER_SHORT/site-packages/nbgrader/plugins/export.py && \
+    pip install jupyterhub==$JUPYTERHUB_VERSION && \
+    cat /usr/share/datahub/scripts/canvas_exporter.py > /opt/conda/lib/python$PY_VER_SHORT/site-packages/nbgrader/plugins/export.py && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
     chown -R jovyan:users /opt/conda/etc/jupyter/nbconfig && \
