@@ -30,7 +30,12 @@ RUN cat /tmp/jupyter_notebook_config_extra.py >> /etc/jupyter/jupyter_notebook_c
     chmod -R uga+x /usr/share/datahub/scripts/ && \
     chmod -R uga+x /etc/jupyter/jupyter_notebook_config.py
 
+# VSCode code-server
+RUN curl -fsSL https://code-server.dev/install.sh | sh -s -- --prefix=/usr/local
+
 USER jovyan
+
+COPY start-code-server.sh /usr/local/bin/start-notebook.d/
 
 ARG PY_VER_SHORT=3.8
 ARG JUPYTERHUB_VERSION=0.9.2
