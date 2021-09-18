@@ -7,6 +7,7 @@ from scripts.git_helper import save_changed_images, save_git_info
 from scripts.docker_builder import run_build
 from scripts.docker_tester import run_test
 from scripts.docker_pusher import run_push
+from scripts.docker_tagger import run_tagging
 from scripts.manifests import run_manifests
 
 
@@ -118,6 +119,39 @@ def task_manifest():
                 'short': 'd',
                 'long': 'stack_dir',
                 'default': 'images'
+            },
+        ],
+    }
+
+
+def task_tag():
+    """Tag and push images with new tags"""
+    return {
+        'actions': [run_tagging],
+        'uptodate': [False],
+        'file_dep': ['artifacts/.empty', 'logs/.empty'],
+        'targets': ['artifacts/IMAGES_TAGGED'],
+        'params':[
+            {
+                'name': 'commit_tag',
+                'long': 'commit_tag',
+                'default': None
+            },
+            {
+                'name': 'keyword',
+                'long': 'keyword',
+                'default': None
+            },
+            {
+                'name': 'tag_replace',
+                'long': 'tag_replace',
+                'default': None
+            },
+            {
+                'name': 'dry_run',
+                'short': 's',
+                'long': 'dry_run',
+                'default': False
             },
         ],
     }
