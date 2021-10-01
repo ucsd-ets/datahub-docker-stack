@@ -12,6 +12,9 @@ RUN apt-get update && \
 	libtinfo5 && \
 	apt-get clean && rm -rf /var/lib/apt/lists/*
 
+COPY run_jupyter.sh /
+RUN chmod +x /run_jupyter.sh
+
 USER jovyan
 
 # CUDA 11
@@ -48,13 +51,9 @@ RUN pip install torch==${TORCH_VER} torchvision==${TORCH_VIS_VER} torchaudio==${
 	fix-permissions /home/$NB_USER
 
 
-# COPY ./tests/ /usr/share/datahub/tests/scipy-ml-notebook
-# RUN chmod -R +x /usr/share/datahub/tests/scipy-ml-notebook && \
-#     chown -R 1000:1000 /home/jovyan && \
-# 	chmod +x /run_jupyter.sh
-
 RUN ln -s /usr/local/nvidia/bin/nvidia-smi /opt/conda/bin/nvidia-smi
 
 USER $NB_UID:$NB_GID
 ENV PATH=${PATH}:/usr/local/nvidia/bin
 ENV LD_LIBRARY_PATH=/opt/conda/pkgs/cudatoolkit-11.2.2-he111cf0_8/lib/:${LD_LIBRARY_PATH}
+
