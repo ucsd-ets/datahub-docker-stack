@@ -15,7 +15,7 @@ def prepull_image(
         assert ':' in full_name
 
         img, tag = full_name.split(':')
-        # img = img.lstrip()
+        img = img.lstrip()
         tag = tag.rstrip()
         print(f'String =\'{full_name}\'')
         print(f'String =\'{img}\'')
