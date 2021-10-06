@@ -188,3 +188,32 @@ def get_prev_tag(img_name, tag_prefix=None):
         return filtered[0]  # descending acc. date (latest is first)
     else:
         return None
+
+
+def read_history():
+    with open(pjoin('wiki', 'Home.md'), 'r') as f:
+        doc_str = f.read()
+
+    return doc_str
+
+
+def query_images(history, commit_tag, keyword):
+    images_in_row = [
+        line.split('|')[2].replace('`', '').split('<br>')
+        for line in 
+        history.split('\n')
+        if commit_tag in line
+    ][0]
+
+    filtered_images = list(filter(lambda img: keyword in img, images_in_row))
+    assert len(filtered_images) != 0
+    return filtered_images
+
+
+def get_images_for_tag(history, commit_tag, keyword, tag_replace):
+    original_names = query_images(history, commit_tag, keyword)
+    new_names = [
+        img[:img.index(':')+1] + tag_replace
+        for img in original_names
+    ]
+    return dict(zip(original_names, new_names))

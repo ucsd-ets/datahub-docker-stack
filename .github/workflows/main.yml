@@ -30,6 +30,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Install pip dependencies
+        run: |
+          docker image prune -a -f
+          docker container prune -f
+
       - name: Set up Python 3.8
         uses: actions/setup-python@v2
         with:
