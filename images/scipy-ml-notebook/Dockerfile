@@ -19,10 +19,6 @@ USER jovyan
 
 # CUDA 11
 RUN conda install cudatoolkit=11.2 \
-<<<<<<< HEAD
-	cudatoolkit-dev=11.2 \
-=======
->>>>>>> 42158c8d56b7b4edecd28d39a472561ba0a867b2
 	cudnn \
 	nccl \
 	-y && \
@@ -39,20 +35,6 @@ RUN pip install --no-cache-dir  datascience \
 	opencv-python \
 	pycocotools \
 	"pillow<7" \
-<<<<<<< HEAD
-	tensorflow-gpu>=2.2 \
-	torch \
-	torchvision &&\
-	fix-permissions $CONDA_DIR && \
-	fix-permissions /home/$NB_USER
-
-# torch must be installed separately since it requires a non-pypi repo. See stable version above
-RUN pip install torch==1.7.1+cu101 torchvision==0.8.2+cu101 torchaudio==0.7.2 \
-	-f https://download.pytorch.org/whl/torch_stable.html && \
-	fix-permissions $CONDA_DIR && \
-	fix-permissions /home/$NB_USER
-
-=======
 	tensorflow-gpu>=2.2 && \
 	fix-permissions $CONDA_DIR && \
 	fix-permissions /home/$NB_USER
@@ -67,16 +49,11 @@ RUN pip install torch==${TORCH_VER} torchvision==${TORCH_VIS_VER} torchaudio==${
 	-f https://download.pytorch.org/whl/torch_stable.html && \
 	fix-permissions $CONDA_DIR && \
 	fix-permissions /home/$NB_USER
->>>>>>> 42158c8d56b7b4edecd28d39a472561ba0a867b2
 
 
 RUN ln -s /usr/local/nvidia/bin/nvidia-smi /opt/conda/bin/nvidia-smi
 
 USER $NB_UID:$NB_GID
 ENV PATH=${PATH}:/usr/local/nvidia/bin
-<<<<<<< HEAD
-ENV LD_LIBRARY_PATH=/opt/conda/pkgs/cudatoolkit-11.2.2-he111cf0_8/lib/:${LD_LIBRARY_PATH}
-=======
 ENV LD_LIBRARY_PATH=/opt/conda/pkgs/cudatoolkit-11.2.2-he111cf0_8/lib/:${LD_LIBRARY_PATH}
 
->>>>>>> 42158c8d56b7b4edecd28d39a472561ba0a867b2

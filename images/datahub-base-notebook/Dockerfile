@@ -35,11 +35,8 @@ RUN curl -fsSL https://code-server.dev/install.sh | sh -s -- --prefix=/usr/local
 
 USER jovyan
 
-<<<<<<< HEAD
-=======
 COPY start-code-server.sh /usr/local/bin/start-notebook.d/
 
->>>>>>> 42158c8d56b7b4edecd28d39a472561ba0a867b2
 ARG PY_VER_SHORT=3.8
 ARG JUPYTERHUB_VERSION=0.9.2
 # nbconvert downgrade needed for nbgrader to work
@@ -48,10 +45,7 @@ RUN /usr/share/datahub/scripts/install-python-all.sh && \
     pip install nltk && \
     pip install nbconvert==5.6.1 && \
     pip install jupyterhub==$JUPYTERHUB_VERSION && \
-<<<<<<< HEAD
-=======
     conda install -c conda-forge rise && \
->>>>>>> 42158c8d56b7b4edecd28d39a472561ba0a867b2
     cat /usr/share/datahub/scripts/canvas_exporter.py > /opt/conda/lib/python$PY_VER_SHORT/site-packages/nbgrader/plugins/export.py && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
