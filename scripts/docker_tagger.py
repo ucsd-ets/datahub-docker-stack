@@ -28,13 +28,9 @@ def tag_image(
 ):
     assert ':' in img_tag_full_name
     img_name_original = img_name_original.strip()
-    print("image name original is", img_name_original)
     img = cli.images.get(img_name_original)
-    print("finish")
     repo, tag = img_tag_full_name.split(':')
     repo = repo.strip()
-    print(repo)
-    print(tag)
     assert img.tag(repository=repo, tag=tag)
 
 
