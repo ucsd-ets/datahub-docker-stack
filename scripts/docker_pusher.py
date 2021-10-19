@@ -70,6 +70,7 @@ def push_images(
             store_var('IMAGES_PUSHED', images_pushed)
 
         except docker.errors.APIError as e:
+            print("push error")
             logger.error('Push error')
             raise e
 
