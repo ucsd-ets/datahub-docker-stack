@@ -3,7 +3,8 @@ from typing import List
 import logging
 from scripts.utils import read_history, get_images_for_tag
 from scripts.utils import read_var, store_var
-from scripts.docker_pusher import push_images
+from scripts.docker_pusher import push_images, docker_login
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -63,5 +64,6 @@ def run_tagging(commit_tag, keyword, tag_replace, dry_run=False):
     tag_list = [(cli.images.get(img.strip()), img.strip()) for img in tagged]
 
     print("pushing newly tagged images")
+    docker_login(cli, 'etsjenkins', os.environ['DOCKERHUB_TOKEN'])
     push_images(cli, tag_list)
     print("finished pushing, job complete")
