@@ -55,6 +55,8 @@ jobs:
           path: wiki
 
       - name: Tag Images
+        env:
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: >
           doit tag
           --commit_tag ${{ github.event.inputs.commitTag }}
