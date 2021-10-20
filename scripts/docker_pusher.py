@@ -40,6 +40,7 @@ def push_images(
             repository, tag = full_tag.split(':')
 
         try:
+            print("inside push")
             logger.info(f'Attempting to push {image} to {repository}:{tag}')
 
             r = client.images.push(
@@ -56,7 +57,7 @@ def push_images(
                     # "The push refers to repository XXX_repo"
                     if repository in chunk['status']:
                         print(chunk['status'])
-                    
+
                     # "XXX_tag: digest: sha256:XXX size: XXX"
                     elif tag in chunk['status']:
                         print('\n' + chunk['status'])
@@ -64,10 +65,11 @@ def push_images(
                     # regular progress
                     else:
                         print('.', end='')
- 
+
             # push success
             images_pushed.append(full_tag)
             store_var('IMAGES_PUSHED', images_pushed)
+            print(f'pushed {image} to {repository}:{tag}')
 
         except docker.errors.APIError as e:
             logger.error('Push error')
@@ -83,4 +85,3 @@ def run_push():
             for tag in tags
         ]
         push_images(cli, pairs)
-
