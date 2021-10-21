@@ -38,13 +38,14 @@ USER jovyan
 COPY start-code-server.sh /usr/local/bin/start-notebook.d/
 
 ARG PY_VER_SHORT=3.8
-ARG JUPYTERHUB_VERSION=0.9.2
+ARG JUPYTERHUB_VERSION=1.4.2
 # nbconvert downgrade needed for nbgrader to work
 RUN /usr/share/datahub/scripts/install-python-all.sh && \
     pip install pandas --upgrade && \
     pip install nltk && \
     pip install nbconvert==5.6.1 && \
     pip install jupyterhub==$JUPYTERHUB_VERSION && \
+    pip install nbgrader==0.6.2 && \
     conda install -c conda-forge rise && \
     cat /usr/share/datahub/scripts/canvas_exporter.py > /opt/conda/lib/python$PY_VER_SHORT/site-packages/nbgrader/plugins/export.py && \
     fix-permissions $CONDA_DIR && \
