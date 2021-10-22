@@ -8,7 +8,7 @@ from scripts.docker_builder import run_build
 from scripts.docker_tester import run_test
 from scripts.docker_pusher import run_push
 from scripts.docker_tagger import run_tagging
-from scripts.manifests import run_manifests
+from scripts.manifests import run_manifests, run_stable_manifests
 
 
 DOIT_CONFIG = dict(
@@ -123,7 +123,6 @@ def task_manifest():
         ],
     }
 
-
 def task_tag():
     """Tag and push images with new tags"""
     return {
@@ -154,4 +153,11 @@ def task_tag():
                 'default': False
             },
         ],
+    }
+
+
+def task_stable():
+    """Build image manifests for all stable tagged images"""
+    return {
+        'actions': [run_stable_manifests]
     }

@@ -161,8 +161,5 @@ def run_stable_manifests():
         image_key = keys[0]
         print('Running image manifest for', image)
         print('image key is', image_key)
-        #run_report(specs, image_key, image=image)
+        run_report(specs, image_key, image=image)
     update_history()
-
-if __name__ == '__main__':
-    run_stable_manifests()
