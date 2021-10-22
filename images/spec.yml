@@ -26,13 +26,13 @@ images:
     skip_plans: ['PYTHON38']
     dbuild_env:
       PYTHON38:
-        TORCH_VER: "1.7.1+cu101"
-        TORCH_VIS_VER: "0.8.2+cu101"
-        TORCH_AUD_VER: "0.7.2"
+        TORCH_VER: '1.7.1+cu101'
+        TORCH_VIS_VER: '0.8.2+cu101'
+        TORCH_AUD_VER: '0.7.2'
       PYTHON39:
-        TORCH_VER: "1.9.0+cu111"
-        TORCH_VIS_VER: "0.10.0+cu111"
-        TORCH_AUD_VER: "0.9.0"
+        TORCH_VER: '1.9.0+cu111'
+        TORCH_VIS_VER: '0.10.0+cu111'
+        TORCH_AUD_VER: '0.9.0'
     manifests: [PY_VER, CUDA_VERSION, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
 
 plans:
