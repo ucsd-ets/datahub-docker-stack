@@ -84,12 +84,17 @@ f"""
         f.write(stitched)
 
 
-def compile_history():
-    git_short_hash = read_var('GIT_HASH_SHORT')
+def compile_history(compile_tag_history = False):
     repo_url = f"https://github.com/{environ['GITHUB_REPOSITORY']}"
+    if compile_tag_history == True:
+        cell_commit = ""
+        img_source = 'IMAGES_TAGGED'
+    else:
+        git_short_hash = read_var('GIT_HASH_SHORT')
+        cell_commit = url2mdlink(repo_url + '/commit/' + git_short_hash, f"`{git_short_hash}`")
+        img_source = 'IMAGES_BUILT'
 
-    cell_commit = url2mdlink(repo_url + '/commit/' + git_short_hash, f"`{git_short_hash}`")
-    cell_images = list2cell([f"`{image}`" for image in read_var('IMAGES_BUILT')])
+    cell_images = list2cell([f"`{image}`" for image in read_var(img_source)])
 
     manifests_dir = 'manifests'
     manifests_fp = glob(path.join(manifests_dir, '*.md'))
@@ -110,6 +115,16 @@ def insert_history(markdown_fp):
     with open(path.join('wiki', 'Home.md'), 'w') as f:
         f.write(latest_doc)
 
+def update_history():
+    latest_row = compile_history(compile_tag_history=True)
+    header = ['| Image | Manifest |']
+    content = ['|'+'|'.join(line_tup) +
+               '|' for line_tup in [latest_row]]
+    content = header + content 
+    doc = "\n".join(content)
+    print(latest_row)
+    with open(path.join('wiki', 'Stable_tag.md'), 'w') as f:
+        f.write(doc)
 
 def run_manifests(stack_dir):
     images = read_var('IMAGES_BUILT')
@@ -136,3 +151,18 @@ def run_manifests(stack_dir):
 
     insert_history('wiki/Home.md')
 
+def run_stable_manifests():
+    stable_images = read_var('IMAGES_TAGGED')
+    print(stable_images)
+    specs = get_specs(path.join('images', 'spec.yml'))
+    for image in stable_images:
+        keys = list(filter(lambda x: x in image, specs['images']))
+        assert len(keys) == 1
+        image_key = keys[0]
+        print('Running image manifest for', image)
+        print('image key is', image_key)
+        #run_report(specs, image_key, image=image)
+    update_history()
+
+if __name__ == '__main__':
+    run_stable_manifests()

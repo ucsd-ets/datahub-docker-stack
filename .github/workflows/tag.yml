@@ -1,6 +1,6 @@
 name: Tag Images
 
-on: 
+on:
   workflow_dispatch:
     inputs:
       commitTag:
@@ -60,6 +60,11 @@ jobs:
           --commit_tag ${{ github.event.inputs.commitTag }}
           --keyword ${{ github.event.inputs.keyword }}
           --tag_replace ${{ github.event.inputs.tagReplace }}
+
+      - name: Run manifests
+        run: |
+          doit manifest
+          cp manifests/*.md wiki/
 
       - name: Archive artifacts and logs
         if: ${{ always() }}

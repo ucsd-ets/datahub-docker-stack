@@ -158,6 +158,7 @@ def insert_row(md_str, new_content):
     return doc
 
 
+
 def list2cell(ls_str):
     return '<br>'.join(ls_str)
 
