@@ -118,12 +118,13 @@ def insert_history(markdown_fp):
 def update_history():
     latest_row = compile_history(compile_tag_history=True)
     header = ['| Image | Manifest |']
-    content = ['|'+'|'.join(line_tup) +
+    divider = ['| :- | :- |']
+    content = ['|'.join(line_tup) +
                '|' for line_tup in [latest_row]]
-    content = header + content 
+    content = header + divider + content 
     doc = "\n".join(content)
     print(latest_row)
-    with open(path.join('wiki', 'Stable_tag.md'), 'w') as f:
+    with open(path.join('wiki', 'StableTag.md'), 'w') as f:
         f.write(doc)
 
 def run_manifests(stack_dir):
@@ -163,3 +164,4 @@ def run_stable_manifests():
         print('image key is', image_key)
         run_report(specs, image_key, image=image)
     update_history()
+
