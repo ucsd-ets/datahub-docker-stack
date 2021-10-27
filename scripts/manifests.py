@@ -124,7 +124,7 @@ def update_history():
     content = header + divider + content 
     doc = "\n".join(content)
     print(latest_row)
-    with open(path.join('wiki', 'StableTag.md'), 'w') as f:
+    with open(path.join('wiki', 'Stable Tag.md'), 'w') as f:
         f.write(doc)
 
 def run_manifests(stack_dir):
