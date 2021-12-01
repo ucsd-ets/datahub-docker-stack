@@ -21,6 +21,7 @@ USER jovyan
 RUN conda install cudatoolkit=11.2 \
 	cudnn \
 	nccl \
+	cupti \
 	-y && \
 	fix-permissions $CONDA_DIR && \
 	fix-permissions /home/$NB_USER
