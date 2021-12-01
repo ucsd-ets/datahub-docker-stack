@@ -84,11 +84,7 @@ jobs:
         if: >
           !contains(github.base_ref , 'test') &&
           !contains(github.base_ref , 'dev') &&
-          !contains(github.event.head_commit.message , 'skip push') &&
-          (
-            github.ref == 'refs/heads/master' || 
-            github.ref == 'refs/heads/main'
-          )
+          !contains(github.event.head_commit.message , 'skip push')
         env:
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
