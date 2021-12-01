@@ -35,7 +35,7 @@ RUN pip install --no-cache-dir  datascience \
 	jupyter-tensorboard \
 	opencv-python \
 	pycocotools \
-	"pillow<7" \
+	pillow \
 	tensorflow-gpu>=2.2 && \
 	fix-permissions $CONDA_DIR && \
 	fix-permissions /home/$NB_USER
