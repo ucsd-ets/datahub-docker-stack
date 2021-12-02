@@ -18,7 +18,8 @@ RUN chmod +x /run_jupyter.sh
 USER jovyan
 
 # CUDA 11
-RUN conda install cudatoolkit=11.2 \
+RUN conda install \
+	cudatoolkit=11.2 \
 	cudnn \
 	nccl \
 	-y && \
@@ -34,8 +35,8 @@ RUN pip install --no-cache-dir  datascience \
 	jupyter-tensorboard \
 	opencv-python \
 	pycocotools \
-	"pillow<7" \
-	tensorflow-gpu>=2.2 && \
+	pillow \
+	tensorflow-gpu==2.6 && \
 	fix-permissions $CONDA_DIR && \
 	fix-permissions /home/$NB_USER
 

@@ -37,11 +37,8 @@ images:
 
 plans:
   PYTHON39:
-    tag_prefix: '2021.3'
+    tag_prefix: '2022.1'
     tag_stable_postfix: -stable
-  # PYTHON38:
-  #   tag_prefix: '2021.2'
-  #   tag_stable_postfix: -stable
 
 manifests:
   PY_VER:
