@@ -22,9 +22,7 @@ RUN conda install \
 	cudatoolkit=11.2 \
 	cudnn \
 	nccl \
-	-y
-
-RUN conda install -c anaconda cupti -y && \
+	-y && \
 	fix-permissions $CONDA_DIR && \
 	fix-permissions /home/$NB_USER
 
@@ -38,7 +36,7 @@ RUN pip install --no-cache-dir  datascience \
 	opencv-python \
 	pycocotools \
 	pillow \
-	tensorflow-gpu>=2.2 && \
+	tensorflow-gpu==2.6 && \
 	fix-permissions $CONDA_DIR && \
 	fix-permissions /home/$NB_USER
 
