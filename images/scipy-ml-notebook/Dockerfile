@@ -18,7 +18,8 @@ RUN chmod +x /run_jupyter.sh
 USER jovyan
 
 # CUDA 11
-RUN conda install cudatoolkit=11.2 \
+RUN conda install -c anaconda \
+	cudatoolkit=11.2 \
 	cudnn \
 	nccl \
 	cupti \
