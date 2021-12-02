@@ -18,12 +18,13 @@ RUN chmod +x /run_jupyter.sh
 USER jovyan
 
 # CUDA 11
-RUN conda install -c anaconda \
+RUN conda install \
 	cudatoolkit=11.2 \
 	cudnn \
 	nccl \
-	cupti \
-	-y && \
+	-y
+
+RUN conda install -c anaconda cupti -y && \
 	fix-permissions $CONDA_DIR && \
 	fix-permissions /home/$NB_USER
 
