@@ -47,7 +47,7 @@ COPY ./lib /opt/k8s-support/lib
 RUN R -e "install.packages('rjson', repos='http://cran.rstudio.com/')" && \
     R -e "install.packages('session', repos='http://cran.rstudio.com/')"
 
-COPY ./tests /usr/share/datahub/tests/datascience-rstudio-docker
+COPY ./test /usr/share/datahub/tests/datascience-rstudio-docker
 
 USER $NB_USER
 
