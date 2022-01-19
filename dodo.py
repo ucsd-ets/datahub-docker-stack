@@ -10,7 +10,7 @@ from scripts.docker_tester import run_test
 from scripts.docker_pusher import run_push
 from scripts.docker_tagger import run_tagging
 from scripts.manifests import run_manifests, run_stable_manifests
-
+from scripts.docker_unit import build_unit
 
 import pytest
 import requests
@@ -23,6 +23,28 @@ DOIT_CONFIG = dict(
 # get_var(<key>, <default_val>)
 USE_STACK = get_var('stack_dir', 'images')
 
+def task_unit_build():
+    """Build docker image and test it unit wise"""
+    return {
+        'actions':[build_unit],
+        'file_dep': ['artifacts/IMAGES_CHANGED'],
+        'targets': ['artifacts/builder-metainfo_unit.json', 'artifacts/IMAGES_BUILT_unit'],
+        'params':[
+            {
+                'name': 'stack_dir',
+                'short': 'd',
+                'long': 'stack_dir',
+                'default': 'images'
+            },
+            {
+                'name': 'dry_run',
+                'short': 's',
+                'long': 'dry_run',
+                'default': False
+            },
+        ],
+
+    }
 
 def task_prep():
     """Prep directory for logs and artifacts"""
@@ -92,6 +114,7 @@ def task_untested_push():
         'file_dep': ['artifacts/IMAGES_BUILT'],
         'targets': ['artifacts/IMAGES_UNTESTED_PUSHED']
     }
+
 
 
 def task_test():

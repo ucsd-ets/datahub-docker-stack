@@ -10,6 +10,9 @@ pjoin = os.path.join
 
 
 class BuilderSpec:
+    '''
+    Class used to building the build spec for the images
+    '''
     def __init__(self, yml_dict):
 
         # TODO: Assertions
@@ -18,10 +21,9 @@ class BuilderSpec:
         self.img_root = None
         self.build_params_list = []
         plan_specs = yml_dict['plans']
-        image_specs = yml_dict['images']
+        self.image_specs = yml_dict['images']
         self.parse_build_plans(plan_specs)
-        self.parse_img(image_specs)
-
+        self.parse_img(self.image_specs)
     def parse_build_plans(self, plan_specs):
         self.plans = plan_specs
 
@@ -62,7 +64,9 @@ class BuilderSpec:
         for imgDef in build_order:
             imgDef.to_build = True
             imgPath = pjoin(path, imgDef.name)
+            
             for plan_name, plan in self.plans.items():
+                
                 build_args = {}
                 if plan is not None and 'tag_prefix' in plan:
                     curr_tag = f"{plan['tag_prefix']}-{git_suffix}"
@@ -77,11 +81,14 @@ class BuilderSpec:
 
                     # if dependent img is built in this run
                     if imgDef.depend_on.to_build:
+                        # if image is built i can use it
+                        # i need to previous build 
                         base_tag = curr_tag
                     # get previous tag
                     else:
                         # TODO: throw error if prev tag not present
                         # TODO: Further testing on this
+                        print('here',imgDef.img_name,plan['tag_prefix'])
                         prev_tag = get_prev_tag(imgDef.img_name, plan['tag_prefix'])
                         base_full_tag = get_dependency(prev_tag)
                         base_tag = base_full_tag.split(':')[1]
@@ -100,16 +107,19 @@ class BuilderSpec:
     def get_build_order(self, images_changed):
         tree_order = self.img_root.get_level_order()
         image_order = []
+        print(images_changed)
         for image in images_changed:
             if image in self.imageDefs:
                 image_def = self.imageDefs[image]
                 image_order.append((image_def, tree_order[image_def]))
             image_order.sort(key=lambda x: x[1])
-        build_order = []
-        for idx in range(len(image_order)):
-            curr_image_def = image_order[idx][0]
-            if image_order[idx][0] not in build_order:
-                build_order += (curr_image_def.subtree_order())
+        print(image_order)
+        return [image for image,_ in image_order]
+        # for idx in range(len(image_order)):
+        #     curr_image_def = image_order[idx][0]
+        #     print('here',curr_image_def.subtree_order())
+        #     if image_order[idx][0] not in build_order:
+        #         build_order += (curr_image_def.subtree_order())
         print('build order is', build_order)
         return build_order
 

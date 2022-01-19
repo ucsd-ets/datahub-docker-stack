@@ -44,7 +44,7 @@ def dbuild(
             nocache=nocache,
         )
         meta = []
-
+        print('here')
         result_stream, internal_stream = itertools.tee(json_stream(resp))
         last_event = None
         image_id = None
