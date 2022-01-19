@@ -1,6 +1,7 @@
 import pytest
 import docker
-
+import os
+print(os.getcwd())
 from scripts.utils import store_var, read_var
 
 
@@ -29,3 +30,6 @@ class TestStepBuild():
         # test each image exists
         for img in imgs_built:
             docker_client.images.get(img)
+
+
+    
