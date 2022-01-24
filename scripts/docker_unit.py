@@ -9,19 +9,18 @@ from docker.errors import BuildError
 from docker.utils.json_stream import json_stream
 from model.spec import BuilderSpec
 import docker
-from collections import namedtuple
-import time
 import logging
-import itertools
-import re
 import os
-from typing import NamedTuple
 import pytest
+from pathlib import Path
+
+from scripts.dataobjects import build_params_object,imagespec
+
 pjoin = os.path.join
 
 logger = logging.getLogger(__name__)
 
-def build_units(build_params,stack_dir):
+def build_units(build_params,stack_dir:str):
     '''
     This Function build image and it dependecies
         build_params:
@@ -40,7 +39,7 @@ def build_units(build_params,stack_dir):
         # for image_tag, test_dirs in test_params.items():
         #     test_image(image_tag,test_dirs) 
 
-def test_image(image_tag,test_dirs):
+def test_image(image_tag:str,test_dirs:Path):
     '''
     Test function to runs the test on build image
     Input parameters:
@@ -58,7 +57,7 @@ def test_image(image_tag,test_dirs):
     store_var('IMAGES_TEST_PASSED', image_tag)
 
 
-def build_unit(stack_dir):
+def build_unit(stack_dir:str):
     '''
     Fuction checks for the images that are changed and build them indivisually
     Input Parameters:
@@ -69,23 +68,28 @@ def build_unit(stack_dir):
     git_suffix = read_var('GIT_HASH_SHORT')
     specs = get_specs(pjoin(stack_dir, 'spec.yml'))
     build_spec = BuilderSpec(specs)
-    # store the images depends that are already built
+    #store the images depends that are already built
     images_built = []
     # get the images to build
     for unit_image_name in images_changed:
         # Get all the dependents
-        image_dependecy = build_spec.image_specs[unit_image_name]['depend_on']
+        if unit_image_name in images_built:
+            continue
+        print(build_spec.image_specs[unit_image_name])
+        image_dependecy=None
+        if 'depend_on' in build_spec.image_specs[unit_image_name]:
+            image_dependecy = build_spec.image_specs[unit_image_name]['depend_on']
         images_to_build=[]
         # check if the depends are built else build
-        if image_dependecy not in images_built:
+        if image_dependecy not in images_built and image_dependecy is not None:
             images_to_build.append(image_dependecy)
         images_to_build.append(unit_image_name)
         # Get the build params for the unit image and its depends
         build_params = build_spec.gen_build_args(
                 stack_dir, git_suffix, images_to_build)
         # Build and test image
-        print(build_params)
         build_units(build_params,stack_dir)
+        images_built.extend(images_to_build)
          
 if __name__ == '__main__':
     docker_client=docker.from_env()

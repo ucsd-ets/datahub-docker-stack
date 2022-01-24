@@ -1,11 +1,9 @@
 import os
 import logging
-
 from model.imageDef import DockerImageDef
 from scripts.utils import get_specs, read_var, store_dict, store_var
 from scripts.docker_info import get_dependency
-from scripts.utils import get_specs, get_prev_tag
-
+from scripts.utils import get_specs, get_prev_tag,get_level_order
 pjoin = os.path.join
 
 
@@ -34,7 +32,7 @@ class BuilderSpec:
         images = {}
         for key, image in image_specs.items():
             if key not in images:
-                curr_image = DockerImageDef(key, image['image_name'])
+                curr_image = DockerImageDef(name=key, image_name=image['image_name'])
                 images[key] = curr_image
             else:
                 curr_image = images[key]
@@ -45,7 +43,7 @@ class BuilderSpec:
             if 'depend_on' in image.keys():
                 dep_image_name = image['depend_on']
                 if dep_image_name not in images:
-                    dep_image = DockerImageDef(dep_image_name)
+                    dep_image = DockerImageDef(name=dep_image_name)
                     images[dep_image_name] = dep_image
                 else:
                     dep_image = images[dep_image_name]
@@ -56,7 +54,8 @@ class BuilderSpec:
         assert root is not None
         self.imageDefs = images
         self.img_root = root
-
+        
+        
     def gen_build_args(self, path, git_suffix, img_modified):
         if not img_modified:
             img_modified = list(self.imageDefs.keys())
@@ -72,7 +71,7 @@ class BuilderSpec:
                     curr_tag = f"{plan['tag_prefix']}-{git_suffix}"
                 else:
                     curr_tag = 'latest'
-                full_image_tag = f"{imgDef.img_name}:{curr_tag}"
+                full_image_tag = f"{imgDef.image_name}:{curr_tag}"
                 if plan_name in imgDef.skip_plans:
                     # logger.info(f"Skipped {full_image_tag}")
                     continue
@@ -104,16 +103,15 @@ class BuilderSpec:
 
         return self.build_params_list
 
-    def get_build_order(self, images_changed):
-        tree_order = self.img_root.get_level_order()
+    def get_build_order(self, images_changed:list)->list:
+        tree_order = get_level_order(self.img_root)
         image_order = []
-        print(images_changed)
         for image in images_changed:
             if image in self.imageDefs:
                 image_def = self.imageDefs[image]
-                image_order.append((image_def, tree_order[image_def]))
+                image_order.append((image_def, tree_order[image_def.image_name]))
             image_order.sort(key=lambda x: x[1])
-        print(image_order)
+        
         return [image for image,_ in image_order]
         # for idx in range(len(image_order)):
         #     curr_image_def = image_order[idx][0]
