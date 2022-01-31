@@ -1,0 +1,35 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: gpu-test-job
+  namespace: test-server
+spec:
+  template:
+  
+    spec:
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: gputype
+                operator: Exists
+            topologyKey: topology.kubernetes.io/zone
+      containers:
+      - name: tensorflow-pytorch-tester
+        image: 
+        command: ["python",  "/job-script/script.py"]
+        env:
+        - name: TF_CPP_MIN_LOG_LEVEL
+          value: '3'
+        volumeMounts:
+        - mountPath: /job-script
+          name: job-script
+      volumes:
+      - name: job-script
+        nfs:
+          server: its-dsmlpdev-fs01.ucsd.edu
+          path: /export/apps/gpu-tester/job-script
+      restartPolicy: Never
+  backoffLimit: 4
+
