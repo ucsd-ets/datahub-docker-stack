@@ -15,17 +15,9 @@ spec:
       labels:
         {{- include "test-server-chart.deployment.gpu-tester.labels" . | nindent 8 }}
     spec:
-      serviceAccountName: internal-kubectl
+      serviceAccountName: {{ .Values.saccount.name }} 
       containers:
       - name: {{ .Values.deployment.gpu.name }}
         image: {{ .Values.deployment.gpu.image }}
         ports:
         - containerPort: {{ .Values.deployment.gpu.port }}
-        volumeMounts:
-        - mountPath: {{ .Values.deployment.gpu.volume.mountPath}}
-          name: {{ .Values.deployment.gpu.volume.name }}
-      volumes:
-      - name: {{ .Values.deployment.gpu.volume.name }}
-        nfs:
-          server: {{ .Values.deployment.gpu.volume.server }}
-          path: {{ .Values.deployment.gpu.volume.path }}

@@ -37,11 +37,13 @@ class GpuTester(gpu_tester_pb2_grpc.GpuTesterServicer):
                 job_out = proc.stdout
             except Exception as ex:
                 pass
+
             if len(job_out):
                 subprocess.run(["kubectl","delete","job","gpu-test-job"])
                 print(job_out)
                 return gpu_tester_pb2.GpuTesterReply(test_output=job_out)
             time.sleep(1)
+        
         subprocess.run(["kubectl","delete","job","gpu-test-job"])
         timeout_json = {'torch':False, 'tensorflow': False, 'cuda': False, 'msg':'Test Failed: Timeout reached.' }
         print('timeout')

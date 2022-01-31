@@ -7,17 +7,25 @@ spec:
   template:
   
     spec:
-      affinity:
-        podAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchExpressions:
-              - key: gputype
-                operator: Exists
-            topologyKey: topology.kubernetes.io/zone
+      # affinity:
+      #   nodeAffinity:
+      #     requiredDuringSchedulingIgnoredDuringExecution:
+      #       nodeSelectorTerms:
+      #       - matchExpressions:
+      #         - key: gputype
+      #           operator: Exists
       containers:
       - name: tensorflow-pytorch-tester
-        image: ucsdets/scipy-ml-notebook:2022.1-stable
+        image: ucsdets/scipy-ml-notebook:2021.3-stable
+        resources: 
+          limits:
+            cpu: "2"
+            memory: 8Gi
+            nvidia.com/gpu: "1" 
+          requests:
+            cpu: "1"
+            memory: 8Gi
+            nvidia.com/gpu: "1"
         command: ["python",  "/job-script/script.py"]
         env:
         - name: TF_CPP_MIN_LOG_LEVEL
