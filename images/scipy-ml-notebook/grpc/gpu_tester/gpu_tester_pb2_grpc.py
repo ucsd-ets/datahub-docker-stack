@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import gpu_tester_pb2 as gpu__tester__pb2
+from .gpu_tester_pb2 import *
 
 
 class GpuTesterStub(object):
@@ -17,8 +17,8 @@ class GpuTesterStub(object):
         """
         self.LaunchGpuJob = channel.unary_unary(
                 '/gpu_tester.GpuTester/LaunchGpuJob',
-                request_serializer=gpu__tester__pb2.GpuTesterRequest.SerializeToString,
-                response_deserializer=gpu__tester__pb2.GpuTesterReply.FromString,
+                request_serializer=GpuTesterRequest.SerializeToString,
+                response_deserializer=GpuTesterReply.FromString,
                 )
 
 
@@ -38,8 +38,8 @@ def add_GpuTesterServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'LaunchGpuJob': grpc.unary_unary_rpc_method_handler(
                     servicer.LaunchGpuJob,
-                    request_deserializer=gpu__tester__pb2.GpuTesterRequest.FromString,
-                    response_serializer=gpu__tester__pb2.GpuTesterReply.SerializeToString,
+                    request_deserializer=GpuTesterRequest.FromString,
+                    response_serializer=GpuTesterReply.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -64,7 +64,7 @@ class GpuTester(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/gpu_tester.GpuTester/LaunchGpuJob',
-            gpu__tester__pb2.GpuTesterRequest.SerializeToString,
-            gpu__tester__pb2.GpuTesterReply.FromString,
+            GpuTesterRequest.SerializeToString,
+            GpuTesterReply.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
