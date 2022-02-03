@@ -5,7 +5,15 @@ from scripts.utils import get_specs, read_var, store_dict, store_var
 from scripts.docker_info import get_dependency
 from scripts.utils import get_specs, get_prev_tag,get_level_order
 pjoin = os.path.join
+from typing import Dict,List
+from pydantic import BaseModel
 
+class Buildargs(BaseModel):
+    imgDef:str
+    imgPath:str 
+    build_args:Dict
+    plan_name:str 
+    full_image_tag:str
 
 class BuilderSpec:
     '''
@@ -22,6 +30,7 @@ class BuilderSpec:
         self.image_specs = yml_dict['images']
         self.parse_build_plans(plan_specs)
         self.parse_img(self.image_specs)
+
     def parse_build_plans(self, plan_specs):
         self.plans = plan_specs
 
@@ -56,7 +65,7 @@ class BuilderSpec:
         self.img_root = root
         
         
-    def gen_build_args(self, path, git_suffix, img_modified):
+    def gen_build_args(self, path:str, git_suffix:str, img_modified:[str])->[Buildargs]:
         if not img_modified:
             img_modified = list(self.imageDefs.keys())
         build_order = self.get_build_order(img_modified)
@@ -99,11 +108,10 @@ class BuilderSpec:
                     if plan_name in imgDef.dbuildenv:
                         build_args.update(imgDef.dbuildenv[plan_name])
                 self.build_params_list.append(
-                    (imgDef.name, imgPath, build_args, plan_name, full_image_tag))
-
+                    Buildargs(imgDef=imgDef.name, imgPath=imgPath, build_args=build_args, plan_name=plan_name, full_image_tag=full_image_tag))
         return self.build_params_list
 
-    def get_build_order(self, images_changed:list)->list:
+    def get_build_order(self, images_changed:[str])->[DockerImageDef]:
         tree_order = get_level_order(self.img_root)
         image_order = []
         for image in images_changed:
@@ -118,8 +126,8 @@ class BuilderSpec:
         #     print('here',curr_image_def.subtree_order())
         #     if image_order[idx][0] not in build_order:
         #         build_order += (curr_image_def.subtree_order())
-        print('build order is', build_order)
-        return build_order
+        # print('build order is', build_order)
+        # return build_order
 
     def __str__(self):
         return f'spec({self.imageDefs},{self.plans},{self.img_root})'

@@ -1,4 +1,5 @@
 from sys import path
+from termios import VQUIT
 from scripts.utils import get_specs, read_var, store_dict, store_var
 from scripts.docker_info import get_dependency
 from scripts.docker_builder import dbuild
@@ -13,33 +14,35 @@ import logging
 import os
 import pytest
 from pathlib import Path
+from collections import deque
 
 from scripts.dataobjects import build_params_object,imagespec
-
+from model.spec import Buildargs
 pjoin = os.path.join
 
 logger = logging.getLogger(__name__)
 
-def build_units(build_params,stack_dir:str):
+def build_units(build_params:Buildargs,stack_dir:str)->None:
     '''
     This Function build image and it dependecies
         build_params:
         stack_dirs:
     '''
     for build_param in build_params:
-        image_name, build_path, build_args, plan_name, image_tag = build_param
-        print('image building {}'.format(image_name))
+        #image_name, build_path, build_args, plan_name, image_tag = build_param
+        print('image building {}'.format(build_param.full_image_tag))
         image, meta = dbuild(
-                            path=build_path,
-                            build_args=build_args,
-                            image_tag=image_tag,
+                            path=build_param.imgPath,
+                            build_args=build_param.build_args,
+                            image_tag=build_param.full_image_tag,
                             nocache=False
                         )
-        # test_params = _tests_collector(stack_dir, [image_tag])
-        # for image_tag, test_dirs in test_params.items():
-        #     test_image(image_tag,test_dirs) 
+        store_var('IMAGES_BUILT', build_param.full_image_tag)
+        test_params = _tests_collector(stack_dir, [build_param.full_image_tag])
+        for image_tag, test_dirs in test_params.items():
+            test_image(image_tag,test_dirs) 
 
-def test_image(image_tag:str,test_dirs:Path):
+def test_image(image_tag:str,test_dirs:Path)->None:
     '''
     Test function to runs the test on build image
     Input parameters:
@@ -57,7 +60,7 @@ def test_image(image_tag:str,test_dirs:Path):
     store_var('IMAGES_TEST_PASSED', image_tag)
 
 
-def build_unit(stack_dir:str):
+def build_unit(stack_dir:str)->None:
     '''
     Fuction checks for the images that are changed and build them indivisually
     Input Parameters:
@@ -68,6 +71,16 @@ def build_unit(stack_dir:str):
     git_suffix = read_var('GIT_HASH_SHORT')
     specs = get_specs(pjoin(stack_dir, 'spec.yml'))
     build_spec = BuilderSpec(specs)
+    # need to build the down stream task if parent is changed
+    # checking if the depends on image is changing and build 
+    # accordingly
+    queue = deque(list(build_spec.image_specs.keys()))
+    while queue:
+        ele = queue.popleft()
+        if 'depend_on' in build_spec.image_specs[ele]:
+            image_dependecy = build_spec.image_specs[ele]['depend_on']
+            if image_dependecy in images_changed:
+                images_changed.append(image_dependecy)
     #store the images depends that are already built
     images_built = []
     # get the images to build
@@ -75,7 +88,6 @@ def build_unit(stack_dir:str):
         # Get all the dependents
         if unit_image_name in images_built:
             continue
-        print(build_spec.image_specs[unit_image_name])
         image_dependecy=None
         if 'depend_on' in build_spec.image_specs[unit_image_name]:
             image_dependecy = build_spec.image_specs[unit_image_name]['depend_on']
@@ -90,6 +102,7 @@ def build_unit(stack_dir:str):
         # Build and test image
         build_units(build_params,stack_dir)
         images_built.extend(images_to_build)
+    
          
 if __name__ == '__main__':
     docker_client=docker.from_env()

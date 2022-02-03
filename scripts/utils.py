@@ -74,7 +74,7 @@ def bytes_to_hstring(n_bytes:str):
     )
 
 
-def strfdelta(tdelta):
+def strfdelta(tdelta)->str:
     s = ""
     if tdelta is NaT:
         return s
@@ -93,7 +93,7 @@ def strfdelta(tdelta):
     return s + f"{seconds}s"
 
 
-def json2series(jsobj, name=None, axis_name=None):
+def json2series(jsobj, name:str=None, axis_name:str=None)->str:
     if isinstance(jsobj, dict):
         pass
     elif isinstance(jsobj, str) and isfile(jsobj):
@@ -107,7 +107,7 @@ def json2series(jsobj, name=None, axis_name=None):
     return srs
 
 
-def store_series(srs, path, parent='artifacts'):
+def store_series(srs, path:str, parent:str='artifacts')->None:
     if parent:
         path = pjoin(parent, path)
     if not path.endswith('.csv'):
@@ -115,7 +115,7 @@ def store_series(srs, path, parent='artifacts'):
     srs.to_csv(path)
 
 
-def csv_embed_markdown(csv_path, markdown_path, title):
+def csv_embed_markdown(csv_path:str, markdown_path:str, title:str)->None:
     with open(csv_path, 'r') as f:
         csv = f.read()
     with open(markdown_path, 'w') as f:
@@ -125,7 +125,7 @@ def csv_embed_markdown(csv_path, markdown_path, title):
         f.write("```\n")
 
 
-def strip_csv_from_md(md_fp):
+def strip_csv_from_md(md_fp:str)->list:
     with open(md_fp, 'r') as f:
         doc = f.read()
         _, csv = doc.split('```csv\n')
@@ -138,7 +138,7 @@ def csv_to_pd(csv):
     return read_csv(fp_csv, index_col='image')
 
 
-def csv_concat(csv_old, fp_new, out_fp):
+def csv_concat(csv_old:str, fp_new, out_fp)->None:
     fp_old = StringIO(csv_old)
     srs_old = read_csv(fp_old, index_col='image')
     srs_new = read_csv(fp_new, index_col='image')
@@ -146,7 +146,7 @@ def csv_concat(csv_old, fp_new, out_fp):
     updated.to_csv(out_fp)
 
 
-def insert_row(md_str, new_content):
+def insert_row(md_str:list, new_content:list)->str:
     lines = md_str.splitlines()
     table_i = [
         i for i, line in enumerate(lines)
