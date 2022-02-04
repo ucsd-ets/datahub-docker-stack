@@ -24,9 +24,9 @@ spec:
   # use the following template for each new gRPC service added. Replace <URL>
   # with the url the gRPC calls. Replace <UNIQUE ID> with an identifier for http-snippets.
   # location <URL> {
-  #     grpc_connect_timeout 60s;
-  #     grpc_read_timeout 60s;
-  #     grpc_send_timeout 60s;
+  #     grpc_connect_timeout 300s;
+  #     grpc_read_timeout 300s;
+  #     grpc_send_timeout 300s;
   #     grpc_set_header Host $host;
   #     grpc_set_header X-Real-IP $remote_addr;
   #     grpc_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -38,9 +38,9 @@ spec:
   #   }
   server-snippets: |
     location /gpu_tester.GpuTester/LaunchGpuJob {
-      grpc_connect_timeout 60s;
-      grpc_read_timeout 60s;
-      grpc_send_timeout 60s;
+      grpc_connect_timeout 300s;
+      grpc_read_timeout 300s;
+      grpc_send_timeout 300s;
       grpc_set_header Host $host;
       grpc_set_header X-Real-IP $remote_addr;
       grpc_set_header X-Forwarded-For $proxy_add_x_forwarded_for;

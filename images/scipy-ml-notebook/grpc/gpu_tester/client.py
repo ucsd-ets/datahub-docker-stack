@@ -18,22 +18,22 @@ from __future__ import print_function
 import logging
 import os
 import grpc
-import gpu_tester_pb2
-import gpu_tester_pb2_grpc
+from .gpu_tester_pb2 import *
+from .gpu_tester_pb2_grpc import *
 
 
-def run():
+def run(test_image = 'ucsdets/scipy-ml-notebook:2021.3-stable', url = 'superqa.ucsd.edu:443', cer_path='superqa_roots.cer', timeout_seconds=300) -> str:
     # NOTE(gRPC Python Team): .close() is possible on a channel and should be
     # used in circumstances in which the with statement does not fit the needs
     # of the code.
-    with open('superqa_roots.cer', 'rb') as f:
+    with open(cer_path, 'rb') as f:
         credentials = grpc.ssl_channel_credentials(f.read())
-    with grpc.secure_channel('superqa.ucsd.edu:443',credentials) as channel:
-        stub = gpu_tester_pb2_grpc.GpuTesterStub(channel)
-        response = stub.LaunchGpuJob(gpu_tester_pb2.GpuTesterRequest(image='ucsdets/scipy-ml-notebook:2021.3-stable'))
-        print("Test response :\n" + response.test_output)
+    with grpc.secure_channel(url,credentials) as channel:
+        stub = GpuTesterStub(channel)
+        response = stub.LaunchGpuJob(GpuTesterRequest(image=test_image),timeout=None)
+        return f'Test response :\n{response.test_output}'
 
 
 if __name__ == '__main__':
     logging.basicConfig()
-    run()
+    print(run())

@@ -21,3 +21,19 @@ spec:
         image: {{ .Values.deployment.gpu.image }}
         ports:
         - containerPort: {{ .Values.deployment.gpu.port }}
+        volumeMounts:
+        - mountPath: {{ .Values.deployment.gpu.volume.mountPath}}
+          name: {{ .Values.deployment.gpu.volume.name }}
+        - mountPath: {{ .Values.deployment.gpu.volume.jobtemplate.path}}
+          name: {{ .Values.deployment.gpu.volume.jobtemplate.name}}
+      volumes:
+      - name: {{ .Values.deployment.gpu.volume.name }}
+        nfs:
+          server: {{ .Values.deployment.gpu.volume.server }}
+          path: {{ .Values.deployment.gpu.volume.path}}
+      - name: {{ .Values.deployment.gpu.volume.jobtemplate.name}}
+        configMap:
+          name: {{ .Values.configmap.name}}
+          items:
+          - key: {{ .Values.configmap.jobtemplate}}
+            path: {{ .Values.configmap.jobtemplate}}

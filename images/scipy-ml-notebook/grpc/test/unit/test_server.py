@@ -7,7 +7,7 @@ from gpu_tester.server import *
 
 JOB_TEMPLATE_PATH='/tmp/gpu-tester/etc'
 JOB_OUTPUT_PATH='/tmp/gpu-tester/var/lib'
-EXAMPLE_POSITIVE_RESPONSE = "{'torch':True, 'tensorflow': True, 'cuda': False, 'msg':'Test Failed: Timeout reached.' }"
+EXAMPLE_POSITIVE_RESPONSE = "{'torch':True, 'tensorflow': True, 'msg':'' }"
 
 @pytest.fixture
 def setup_test_dirs():
@@ -38,8 +38,6 @@ def test_gpu_tester(mock_kubectl, mock_grpc_service):
     gputester = GpuTester(
         mock_kubectl, 
         timeout=1, 
-        job_template_path=JOB_TEMPLATE_PATH + '/job-template.yaml', 
-        job_output_path=JOB_OUTPUT_PATH + '/job.yaml',
         grpc_service=mock_grpc_service
     )  
 
@@ -63,8 +61,6 @@ def test_gpu_tester(mock_kubectl, mock_grpc_service):
     gputester = GpuTester(
         mock_kubectl, 
         timeout=1, 
-        job_template_path=JOB_TEMPLATE_PATH + '/job-template.yaml', 
-        job_output_path=JOB_OUTPUT_PATH + '/job.yaml',
         grpc_service=mock_grpc_service
     )
 

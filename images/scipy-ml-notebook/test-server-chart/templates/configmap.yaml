@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.configmap.name }}
+  namespace: {{ .Values.namespace }}
+data:
+  job-template.yaml: |
+{{ .Files.Get "job-template.yaml" | indent 4}}
+
+  script.py: |
+{{ .Files.Get "script.py" | indent 4}}
+# could add server.py/grpc_... files here for easy edit instead of using docker/nfs mount

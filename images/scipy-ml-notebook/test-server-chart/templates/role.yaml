@@ -5,5 +5,5 @@ metadata:
   name: {{ .Values.role.name }}
 rules:
 - apiGroups: ["batch",""] # "" indicates the core API group
-  resources: ["jobs","pods","pods/log"]
+  resources: ["jobs","pods","pods/log", "configmaps"]
   verbs: ["create", "get", "list", "delete"]

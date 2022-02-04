@@ -20,51 +20,55 @@ import subprocess
 import time 
 import os
 import grpc
-from .gpu_tester_pb2 import *
-from .gpu_tester_pb2_grpc import *
+import sys
+from gpu_tester_pb2 import *
+from gpu_tester_pb2_grpc import *
 
 class _Kubectl:
-    def __init__(self, subprocess=subprocess):
+    def __init__(self, subprocess=subprocess, job_template_path='/etc/gpu-tester/job-template.yaml', job_output_path='/var/lib/gpu-tester/job.yaml'):
         self.subprocess = subprocess
+        self.job_template_path = job_template_path
+        self.job_output_path = job_output_path
+        os.makedirs(os.path.dirname(self.job_output_path), exist_ok=True)
 
-    def create_job(self) -> None:
-        self.subprocess.run(["kubectl","apply","-f", self.job_output_path])
+    def create_job(self, command=["kubectl","apply","-f"]) -> None:
+        self.subprocess.run(command+[self.job_output_path])
     
-    def get_logs_from_pod(self) -> str:
-        proc = self.subprocess.run(["kubectl","logs","jobs/gpu-test-job"],capture_output=True)
+    def get_logs_from_pod(self, command=["kubectl","logs","jobs/gpu-test-job"]) -> str:
+        proc = self.subprocess.run(command, capture_output=True)
         job_out = proc.stdout
         return job_out
     
-    def delete_job(self) -> None:
-        self.subprocess.run(["kubectl","delete","job","gpu-test-job"])
+    def delete_job(self, command=["kubectl","delete","jobs/gpu-test-job"]) -> None:
+        self.subprocess.run(command)
 
 
-    def update_job_template(self, image):
+    def update_job_template(self, image : str, split_indicator="image: ") -> None:
         with open(self.job_template_path,'r')as file:
-            old_job = file.read()
-        new_job=old_job
-        # insert image in the yaml file without editing anything else
-        new_job = f'{old_job[:old_job.index("image: ")+7:]}{image}{old_job[old_job.index("image: ")+7::]}'
-        with open(self.job_output_path, 'w') as file:
+            job_temp = file.read()
+
+        with open(self.job_output_path,'w') as file:
+            index = job_temp.index(split_indicator) + len(split_indicator)
+            new_job = job_temp[:index:] + image + job_temp[index::]
             file.write(new_job)
 
 
-class GrpcService(GpuTesterServicer):
-    pass
+class GrpcService:
+    def reply(message, context):
+        return GpuTesterReply(test_output=message)
 
-class GpuTester:
+class GpuTester(GpuTesterServicer):
     """
     Facade for integrating kubectl operations & grpc replies
     """
-    def __init__(self, kubectl: _Kubectl, timeout=60, job_template_path='/etc/gpu-tester/job-template.yaml', job_output_path='/var/lib/gpu-tester/job.yaml', grpc_service=GrpcService):
+    def __init__(self, kubectl: _Kubectl, timeout=60, grpc_replier=GpuTesterReply, charset="utf-8"):
         self.kubectl = kubectl
         self.timeout_seconds: int = timeout
-        self.job_template_path = job_template_path
-        self.job_output_path = job_output_path
-        self.grpc_service = grpc_service
-        self.timeout_json = "{'torch':False, 'tensorflow': False, 'cuda': False, 'msg':'Test Failed: Timeout reached.' }"
+        self.grpc_replier = grpc_replier
+        self.timeout_json = {'torch':False, 'tensorflow': False, 'msg':'Test Failed: Timeout reached.' }
+        self.charset = charset
 
-    def LaunchGpuJob(self, request):
+    def LaunchGpuJob(self, request, context):
         self.kubectl.update_job_template(request.image)
         self.kubectl.create_job()
         timeout = time.time() + self.timeout_seconds
@@ -72,31 +76,30 @@ class GpuTester:
         job_out = None
         while time.time() < timeout:
             try:
-                job_out = self.kubectl.get_logs_from_pod()
+                job_out = self.kubectl.get_logs_from_pod().decode(self.charset)
             except Exception as ex:
+                self.timeout_json['msg']=str(ex)
                 pass
-
-            if job_out is not None:
+            if not (job_out is None or job_out == ""):
                 self.kubectl.delete_job()
-                print(job_out)
-                return self.grpc_service.GpuTesterReply(test_output=job_out)
+                return self.grpc_replier(test_output=job_out)
             time.sleep(1)
 
         self.kubectl.delete_job()
-        print('timeout')
-        return self.grpc_service.GpuTesterReply(test_output=self.timeout_json)
+        out = json.dumps(self.timeout_json,indent=2)
+        return self.grpc_replier(test_output=out)
 
 
-class GpuTesterServer:
-    def __init__(self, gpu_tester=GpuTester):
-        self.gpu_tester = GpuTester()
+class GpuTesterServer(GpuTesterServicer):
+    def __init__(self, gpu_tester=GpuTester(_Kubectl())):
+        self.gpu_tester = gpu_tester
     
     def LaunchGpuJob(self, request, context):
-        return self.gpu_tester(request)
+        return self.gpu_tester.LaunchGpuJob(request, context)
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    gpu_tester_pb2_grpc.add_GpuTesterServicer_to_server(GpuTesterServer(), server)
+    add_GpuTesterServicer_to_server(GpuTester(_Kubectl()), server)
     server.add_insecure_port('[::]:50051')
     server.start()
     server.wait_for_termination()

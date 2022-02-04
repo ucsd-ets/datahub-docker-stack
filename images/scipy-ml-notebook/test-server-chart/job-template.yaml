@@ -4,19 +4,12 @@ metadata:
   name: gpu-test-job
   namespace: test-server
 spec:
+  ttlSecondsAfterFinished: 0
   template:
-  
     spec:
-      # affinity:
-      #   nodeAffinity:
-      #     requiredDuringSchedulingIgnoredDuringExecution:
-      #       nodeSelectorTerms:
-      #       - matchExpressions:
-      #         - key: gputype
-      #           operator: Exists
       containers:
       - name: tensorflow-pytorch-tester
-        image: ucsdets/scipy-ml-notebook:2021.3-stable
+        image: 
         resources: 
           limits:
             cpu: "2"
@@ -35,9 +28,10 @@ spec:
           name: job-script
       volumes:
       - name: job-script
-        nfs:
-          server: its-dsmlpdev-fs01.ucsd.edu
-          path: /export/apps/gpu-tester/job-script
+        configMap:
+          name: config
+          items:
+          - key: "script.py"
+            path: "script.py"
       restartPolicy: Never
   backoffLimit: 4
-
