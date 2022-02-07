@@ -72,6 +72,8 @@ jobs:
           doit build
 
       - name: Test stack
+        env:
+          GRPC_CERT: ${{ secrets.GRPC_CERT }}
         run: |
           doit test
 

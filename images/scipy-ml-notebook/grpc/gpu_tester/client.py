@@ -26,8 +26,11 @@ def run(test_image = 'ucsdets/scipy-ml-notebook:2021.3-stable', url = 'superqa.u
     # NOTE(gRPC Python Team): .close() is possible on a channel and should be
     # used in circumstances in which the with statement does not fit the needs
     # of the code.
-    with open(cer_path, 'rb') as f:
-        credentials = grpc.ssl_channel_credentials(f.read())
+    if cer_path:
+        with open(cer_path, 'rb') as f:
+            credentials = grpc.ssl_channel_credentials(f.read())
+    else:
+        credentials = grpc.ssl_channel_credentials(os.environ['GRPC_CERT'])
     with grpc.secure_channel(url,credentials) as channel:
         stub = GpuTesterStub(channel)
         response = stub.LaunchGpuJob(GpuTesterRequest(image=test_image),timeout=None)
