@@ -1,5 +1,5 @@
 import os
-from gpu_tester.client import *
+from client import *
 
 EXAMPLE_GOOD_OUT='Test response :\n{\n  "torch": true,\n  "tensorflow": true,\n  "msg": ""\n}\n'
 
