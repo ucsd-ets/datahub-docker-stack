@@ -5,8 +5,13 @@ metadata:
   namespace: {{ .Values.namespace }}
 data:
   job-template.yaml: |
-{{ .Files.Get "job-template.yaml" | indent 4}}
+{{ .Files.Get "cm_files/job-template.yaml" | indent 4}}
 
   script.py: |
-{{ .Files.Get "script.py" | indent 4}}
-# could add server.py/grpc_... files here for easy edit instead of using docker/nfs mount
+{{ .Files.Get "cm_files/script.py" | indent 4}}
+  server.py: |
+{{ .Files.Get "cm_files/server.py" | indent 4}}
+  gpu_tester_pb2_grpc.py: |
+{{ .Files.Get "cm_files/gpu_tester_pb2_grpc.py" | indent 4}}
+  gpu_tester_pb2.py: |
+{{ .Files.Get "cm_files/gpu_tester_pb2.py" | indent 4}}

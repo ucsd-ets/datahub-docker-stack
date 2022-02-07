@@ -10,10 +10,9 @@ deployment:
       jobtemplate:
         name: job-template
         path: /etc/gpu-tester/
-      name: grpc
-      mountPath: /app
-      server: its-dsmlpdev-fs01.ucsd.edu
-      path: /export/apps/gpu-tester/gpu_tester
+      app:
+        name: grpc
+        path: /app
 
 service:
   gpu:
@@ -42,6 +41,9 @@ rolebinding:
 configmap:
   name: config
   jobtemplate: job-template.yaml
+  server: server.py
+  pb2grpc: gpu_tester_pb2_grpc.py
+  pb2: gpu_tester_pb2.py
 
 role:
   name: job-role

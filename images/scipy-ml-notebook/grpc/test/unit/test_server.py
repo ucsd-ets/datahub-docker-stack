@@ -27,31 +27,32 @@ def mock_kubectl(setup_test_dirs):
     return kubectl
 
 
-@pytest.fixture
-def mock_grpc_service():
-    grpc_server = MagicMock()
-    grpc_server.GpuTesterReply = MagicMock(return_value=EXAMPLE_POSITIVE_RESPONSE)
-    return grpc_server
+# @pytest.fixture
+# def mock_grpc_service():
+#     grpc_server = MagicMock()
+#     grpc_server.GpuTesterReply = MagicMock(return_value=EXAMPLE_POSITIVE_RESPONSE)
+#     return grpc_server
 
-def test_gpu_tester(mock_kubectl, mock_grpc_service):
+def test_gpu_tester(mock_kubectl):
     # positive case scenario
     gputester = GpuTester(
         mock_kubectl, 
         timeout=1, 
-        grpc_service=mock_grpc_service
+        grpc_replier=MagicMock(return_value=EXAMPLE_POSITIVE_RESPONSE)
     )  
 
     fake_img = 'myfakeimage:tag'
+    mock_context = None
     mock_request = MagicMock()
     mock_request.image = fake_img
 
     # actual method under test
-    result = gputester.LaunchGpuJob(mock_request)
+    result = gputester.LaunchGpuJob(mock_request,mock_context)
     assert result == EXAMPLE_POSITIVE_RESPONSE
 
     mock_kubectl.update_job_template.assert_called_with(fake_img)
     mock_kubectl.create_job.assert_called()
-    mock_grpc_service.GpuTesterReply.assert_called()
+    gputester.grpc_replier.assert_called()
 
     # test that timeout occurs with false reply
     def raise_exception():
@@ -61,13 +62,13 @@ def test_gpu_tester(mock_kubectl, mock_grpc_service):
     gputester = GpuTester(
         mock_kubectl, 
         timeout=1, 
-        grpc_service=mock_grpc_service
+        grpc_replier=MagicMock(return_value=EXAMPLE_POSITIVE_RESPONSE)
     )
 
-    gputester.LaunchGpuJob(mock_request)
+    gputester.LaunchGpuJob(mock_request,mock_context)
     mock_kubectl.delete_job.assert_called()
 
-    mock_grpc_service.GpuTesterReply.assert_called_with(gputester.timeout_json)
+    gputester.grpc_replier.assert_called_with(test_output=json.dumps(gputester.timeout_json,indent=2))
     
 
 

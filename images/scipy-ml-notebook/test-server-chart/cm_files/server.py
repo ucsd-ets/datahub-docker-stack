@@ -21,14 +21,15 @@ import time
 import os
 import grpc
 import sys
-from .gpu_tester_pb2 import *
-from .gpu_tester_pb2_grpc import *
+from gpu_tester_pb2 import *
+from gpu_tester_pb2_grpc import *
 
 class _Kubectl:
-    def __init__(self, subprocess=subprocess, os=os,job_template_path='/etc/gpu-tester/job-template.yaml', job_output_path='/var/lib/gpu-tester/job.yaml'):
+    def __init__(self, subprocess=subprocess, job_template_path='/etc/gpu-tester/job-template.yaml', job_output_path='/var/lib/gpu-tester/job.yaml'):
         self.subprocess = subprocess
         self.job_template_path = job_template_path
         self.job_output_path = job_output_path
+        os.makedirs(os.path.dirname(self.job_output_path), exist_ok=True)
 
     def create_job(self, command=["kubectl","apply","-f"]) -> None:
         self.subprocess.run(command+[self.job_output_path])
@@ -46,7 +47,6 @@ class _Kubectl:
         with open(self.job_template_path,'r')as file:
             job_temp = file.read()
 
-        os.makedirs(os.path.dirname(self.job_output_path), exist_ok=True)
         with open(self.job_output_path,'w') as file:
             index = job_temp.index(split_indicator) + len(split_indicator)
             new_job = job_temp[:index:] + image + job_temp[index::]
