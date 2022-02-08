@@ -30,7 +30,7 @@ def run(test_image = 'ucsdets/scipy-ml-notebook:2021.3-stable', url = 'superqa.u
         with open(cer_path, 'rb') as f:
             credentials = grpc.ssl_channel_credentials(f.read())
     else:
-        credentials = grpc.ssl_channel_credentials(os.environ['GRPC_CERT'])
+        credentials = grpc.ssl_channel_credentials(os.environ['GRPC_CERT'].encode())
     with grpc.secure_channel(url,credentials) as channel:
         stub = GpuTesterStub(channel)
         response = stub.LaunchGpuJob(GpuTesterRequest(image=test_image),timeout=None)
