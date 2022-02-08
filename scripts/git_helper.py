@@ -37,7 +37,7 @@ def get_changed_images():
         # need to be under images and must be a folder
         if fp.parts[0] == 'images':
             image_ref = fp.parts[1]
-            if image_ref not in changed_images:
+            if image_ref not in changed_images and image_ref == 'scipy-ml-notebook':
                 changed_images.add(image_ref)
     return list(changed_images)
 
