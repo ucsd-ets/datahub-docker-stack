@@ -9,3 +9,5 @@ tabulate
 pytest
 coverage
 requests
+grpcio
+grpcio-tools
