@@ -37,7 +37,7 @@ def _tests_collector(stack_dir, IMAGES_BUILT):
 
 
 def run_test(stack_dir):
-    IMAGES_BUILT = 'ucsdets/scipy-ml-notebook:2021.3-stable' #read_var('IMAGES_BUILT')
+    IMAGES_BUILT = read_var('IMAGES_BUILT')
     test_params = _tests_collector(stack_dir, IMAGES_BUILT)
 
     IMAGES_TEST_PASSED = []

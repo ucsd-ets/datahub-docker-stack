@@ -67,9 +67,9 @@ jobs:
           repository: ${{github.repository}}.wiki
           path: wiki
 
-      # - name: Build stack
-      #   run: |
-      #     doit build
+      - name: Build stack
+        run: |
+          doit build
 
       - name: Test stack
         env:

@@ -5,4 +5,4 @@ EXAMPLE_GOOD_OUT='Test response :\n{\n  "torch": true,\n  "tensorflow": true,\n 
 
 def test_gpu_tester():
     # positive case
-    assert run(test_image=os.environ['TEST_IMAGE'],cer_path=None) == EXAMPLE_GOOD_OUT
+    assert run(cer_path=None) == EXAMPLE_GOOD_OUT
