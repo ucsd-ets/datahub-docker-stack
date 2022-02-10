@@ -24,3 +24,4 @@ def test_env_cert_valid():
         os.environ['GRPC_CERT']=f.read().decode()
     assert run(cer_path=None) == EXAMPLE_GOOD_OUT
     
+    
