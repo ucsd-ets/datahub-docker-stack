@@ -10,6 +10,8 @@ from scripts.docker_pusher import run_push
 from scripts.docker_tagger import run_tagging
 from scripts.manifests import run_manifests, run_stable_manifests
 
+import pytest
+
 
 DOIT_CONFIG = dict(
     verbosity=2
@@ -84,7 +86,11 @@ def task_build():
 def task_test():
     """Test built images"""
     def quick_test():
-        pass
+        print(f'*** Testing ***')
+        exit_code = pytest.main([
+            '-x',       # exit instantly on first error or failed test
+            '/home/runner/work/datahub-docker-stack/datahub-docker-stack/images/scipy-ml-notebook/test'  # test dirs
+        ])
     return {
         'actions': [quick_test]
     }
