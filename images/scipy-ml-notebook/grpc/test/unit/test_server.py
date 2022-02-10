@@ -70,7 +70,3 @@ def test_gpu_tester(mock_kubectl):
 
     gputester.grpc_replier.assert_called_with(test_output=json.dumps(gputester.timeout_json,indent=2))
     
-
-
-# def test_gpu_tester(mock_kubectl, setup_test_dirs):
-#     gpu_tester = GpuTester(mock_kubectl)

@@ -22,7 +22,7 @@ from .gpu_tester_pb2 import *
 from .gpu_tester_pb2_grpc import *
 
 
-def run(test_image = 'ucsdets/scipy-ml-notebook:2021.3-stable', url = 'superqa.ucsd.edu:443', cer_path='superqa_roots.cer', timeout_seconds=300) -> str:
+def run(test_image = 'ucsdets/scipy-ml-notebook:2021.3-stable', url = 'dsmlp.grpc-services.ucsd.edu:443', cer_path='dsmlp_grpc-services_ucsd_edu_interm.cer', timeout_seconds=300) -> str:
     # NOTE(gRPC Python Team): .close() is possible on a channel and should be
     # used in circumstances in which the with statement does not fit the needs
     # of the code.
@@ -30,7 +30,7 @@ def run(test_image = 'ucsdets/scipy-ml-notebook:2021.3-stable', url = 'superqa.u
         with open(cer_path, 'rb') as f:
             credentials = grpc.ssl_channel_credentials(f.read())
     else:
-        credentials = grpc.ssl_channel_credentials(os.environ['GRPC_CERT'])
+        credentials = grpc.ssl_channel_credentials(os.environ['GRPC_CERT'].encode())
     with grpc.secure_channel(url,credentials) as channel:
         stub = GpuTesterStub(channel)
         response = stub.LaunchGpuJob(GpuTesterRequest(image=test_image),timeout=None)
