@@ -22,7 +22,7 @@ from gpu_tester_pb2 import *
 from gpu_tester_pb2_grpc import *
 
 
-def run(test_image = 'ucsdets/scipy-ml-notebook:2021.3-stable', url = 'superqa.ucsd.edu:443', cer_path='superqa_roots.cer', timeout_seconds=300) -> str:
+def run(test_image = 'ucsdets/scipy-ml-notebook:2021.3-stable', url = 'dsmlp.grpc-services.ucsd.edu:443', cer_path='superqa_roots.cer', timeout_seconds=300) -> str:
     # NOTE(gRPC Python Team): .close() is possible on a channel and should be
     # used in circumstances in which the with statement does not fit the needs
     # of the code.
