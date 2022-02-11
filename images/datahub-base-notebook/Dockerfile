@@ -46,6 +46,7 @@ RUN /usr/share/datahub/scripts/install-python-all.sh && \
     pip install nltk && \
     pip install nbconvert==5.6.1 && \
     pip install jupyterhub==$JUPYTERHUB_VERSION && \
+    pip install jupyterlab && \
     pip install nbgrader==0.6.2 && \
     conda install -c conda-forge rise && \
     cat /usr/share/datahub/scripts/canvas_exporter.py > /opt/conda/lib/python$PY_VER_SHORT/site-packages/nbgrader/plugins/export.py && \
