@@ -2,7 +2,7 @@
 
 ## Development
 
-Open Dockerfile inside a vscode container. That will put you at path `workspaces/datahub-docker-stack/images/scipy-ml-notebook/grpc`
+Open Dockerfile inside a vscode container. That will put you at path `workspaces/datahub-docker-stack/images/scipy-ml-notebook/grpc_files`
 
 Install the app with `pip install -e .`
 
