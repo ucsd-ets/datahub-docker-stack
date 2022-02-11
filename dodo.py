@@ -10,7 +10,8 @@ from scripts.docker_tester import run_test
 from scripts.docker_pusher import run_push
 from scripts.docker_tagger import run_tagging
 from scripts.manifests import run_manifests, run_stable_manifests
-from scripts.docker_unit import build_unit
+from scripts.docker_unit import *
+
 
 import pytest
 import requests
@@ -25,6 +26,27 @@ USE_STACK = get_var('stack_dir', 'images')
 
 def task_unit_build():
     """Build docker image and test it unit wise"""
+    # at runtime, configure real objects
+    build_retrieval = BuildInfoRetrieval(retrieval_func=get_build_info_from_filesystem)
+    build_info_storage = BuildInfoStorage(images_built_func=store_images_on_filesystem)
+    container_builder = ContainerBuilder(container_builder_func=build_units)
+    container_tester = ContainerTester(container_tester_func=container_test)
+
+    def pusher_func(images_built):
+        docker_pusher = DockerPusher('etsjenkins', os.environ['DOCKERHUB_TOKEN'])
+        return docker_pusher.push_container_to_dockerhub(images_built)
+    container_pusher = ContainerPusher(container_pusher_func=pusher_func)
+    container_deleter = ContainerDeleter(container_deleter_func=delete_docker_containers)
+
+    container_facade = ContainerFacade(
+        build_retrieval,
+        container_builder,
+        container_tester,
+        container_pusher,
+        container_deleter,
+        build_info_storage
+    )
+    
     return {
         'actions':[build_unit],
         'file_dep': ['artifacts/IMAGES_CHANGED'],
@@ -37,11 +59,11 @@ def task_unit_build():
                 'default': 'images'
             },
             {
-                'name': 'dry_run',
-                'short': 's',
-                'long': 'dry_run',
-                'default': False
-            },
+                'name': 'container_facade',
+                'short': 'c',
+                'long': 'container_facade',
+                'default': container_facade
+            }
         ],
 
     }

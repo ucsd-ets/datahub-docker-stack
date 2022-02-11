@@ -14,12 +14,5 @@ wiki/
 
 # IDE
 .vscode/
-
-# Certificates
-*.cer
-
-.pytest*
-*.devcontainer
 lib/
 bin/
-*.egg-info
