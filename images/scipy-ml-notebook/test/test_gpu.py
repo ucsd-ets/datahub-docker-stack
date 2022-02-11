@@ -6,7 +6,7 @@ EXAMPLE_MISSING_PACKAGE = "Test response :\nImage missing a necessary package: N
 EXAMPLE_TIME_OUT = 'Test response :\n{\n  "torch": false,\n  "tensorflow": false,\n  "msg": "Test Failed: Timeout reached."\n}'
 
 def test_gpu_valid():
-    assert run(cer_path=None) == EXAMPLE_GOOD_OUT
+    assert run(test_image=os.environ['TEST_IMAGE'],cer_path=None) == EXAMPLE_GOOD_OUT
     
 def test_gpu_nonexistent_image():
     assert run(test_image='invalid_image_for_test',cer_path=None) == EXAMPLE_TIME_OUT
