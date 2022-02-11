@@ -144,7 +144,7 @@ def _import_packages(package_helper, filtered_packages, check_function, max_fail
         except AssertionError as err:
             failures[package] = err
     if len(failures) > max_failures:
-        raise AssertionError(failures)
+        raise AssertionError(f'{failures}\n{filtered_packages}')
     elif len(failures) > 0:
         LOGGER.warning(f"Some import(s) has(have) failed: {failures}")
 
