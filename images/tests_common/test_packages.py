@@ -134,9 +134,11 @@ def _import_packages(package_helper, filtered_packages, check_function, max_fail
     Note: using a list of packages instead of a fixture for the list of packages since pytest prevents use of multiple yields
     """
     failures = {}
+    all_packages = {}
     LOGGER.info("Testing the import of packages ...")
     for package in filtered_packages:
         LOGGER.info(f"Trying to import {package}")
+        all_packages[package]=''
         try:
             assert (
                 check_function(package_helper, package) == 0
@@ -144,7 +146,7 @@ def _import_packages(package_helper, filtered_packages, check_function, max_fail
         except AssertionError as err:
             failures[package] = err
     if len(failures) > max_failures:
-        raise AssertionError(f'{failures}\n{filtered_packages}')
+        raise AssertionError(f'{failures}\n{all_packages}')
     elif len(failures) > 0:
         LOGGER.warning(f"Some import(s) has(have) failed: {failures}")
 
