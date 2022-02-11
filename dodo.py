@@ -86,25 +86,7 @@ def task_build():
 
 def task_test():
     """Test built images"""
-    def quick_test():
-        
-        print(f'*** Testing ***')
-        url = "http://www.kite.com"
-        timeout = 5
-        try:
-            request = requests.get(url, timeout=timeout)
-            print("Connected to the Internet")
-        except Exception as exception:
-            print("No internet connection.")
-        exit_code = pytest.main([
-            '-x',       # exit instantly on first error or failed test
-            '/home/runner/work/datahub-docker-stack/datahub-docker-stack/images/scipy-ml-notebook/test'  # test dirs
-        ])
-        assert exit_code == 0
-
-    return {
-        'actions': [quick_test]
-    }
+    
     return {
         'actions': [run_test],
         'file_dep': ['artifacts/IMAGES_BUILT'],

@@ -67,9 +67,9 @@ jobs:
           repository: ${{github.repository}}.wiki
           path: wiki
 
-      # - name: Build stack
-      #   run: |
-      #     doit build
+      - name: Build stack
+        run: |
+          doit build
 
       - name: Test stack
         env:
@@ -77,41 +77,41 @@ jobs:
         run: |
           doit test
 
-      # - name: Run manifests
-      #   run: |
-      #     doit manifest
-      #     cp manifests/*.md wiki/
+      - name: Run manifests
+        run: |
+          doit manifest
+          cp manifests/*.md wiki/
 
-      # - name: Push stack
-      #   if: >
-      #     !contains(github.base_ref , 'test') &&
-      #     !contains(github.base_ref , 'dev') &&
-      #     !contains(github.event.head_commit.message , 'skip push')
-      #   env:
-      #     DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-      #   run: |
-      #     doit push
+      - name: Push stack
+        if: >
+          !contains(github.base_ref , 'test') &&
+          !contains(github.base_ref , 'dev') &&
+          !contains(github.event.head_commit.message , 'skip push')
+        env:
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: |
+          doit push
 
-      # - name: Push Wiki to GitHub
-      #   if: >
-      #     !contains(github.base_ref , 'test') &&
-      #     !contains(github.base_ref , 'dev') &&
-      #     !contains(github.event.head_commit.message , 'skip push') &&
-      #     (
-      #       github.ref == 'refs/heads/master' || 
-      #       github.ref == 'refs/heads/main'
-      #     )
-      #   uses: stefanzweifel/git-auto-commit-action@v4
-      #   with:
-      #     commit_message: "[ci skip] Automated publish for ${{github.sha}}"
-      #     repository: wiki/
+      - name: Push Wiki to GitHub
+        if: >
+          !contains(github.base_ref , 'test') &&
+          !contains(github.base_ref , 'dev') &&
+          !contains(github.event.head_commit.message , 'skip push') &&
+          (
+            github.ref == 'refs/heads/master' || 
+            github.ref == 'refs/heads/main'
+          )
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "[ci skip] Automated publish for ${{github.sha}}"
+          repository: wiki/
 
-      # - name: Archive artifacts and logs
-      #   if: ${{ always() }}
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: build-artifacts
-      #     path: |
-      #       artifacts
-      #       logs
-      #       manifests
+      - name: Archive artifacts and logs
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-artifacts
+          path: |
+            artifacts
+            logs
+            manifests
