@@ -9,24 +9,36 @@ from scripts.docker_untested_pusher import push_images
 def mock_client():
     client = MagicMock()
     client.images.push = MagicMock(return_value={})
+
     return client
+@pytest.fixture(scope='function')
+def mock_image():
+    image = MagicMock()
+    image.tag = MagicMock(return_value={})
+
+    return image
 
 class TestUntestedPusher():
     @pytest.mark.parametrize(
         "stack_dir,pairs,externally_tested_images",
         [
-            ("tests/data/stack_0",[('some','some:tag'),('invalid','invalid'),('image','images:tag')],[]),
-            ("tests/data/stack_0",[('some','some:tag'),('invalid','invalid'),('image','images:tag')],['fake1','fake']),
-            ("tests/data/stack_0",[('valid','valid:hash'),('valid2','valid2'),('invalid','invalid:hash')],['valid','valid2']),
+            ("tests/data/stack_0",[('image','some:tag'),('image','invalid'),('image','images:tag')],[]),
+            ("tests/data/stack_0",[('image','some:tag'),('image','invalid'),('image','images:tag')],['fake1','fake']),
+            ("tests/data/stack_0",[('image','valid:hash'),('image','valid2'),('image','invalid:hash')],['valid','valid2']),
         ],
     )
-    def test_push_images(self,root_dir, mock_client,pairs,externally_tested_images):
+    def test_push_images(self,root_dir, mock_client,pairs,externally_tested_images,mock_image):
+        
+        for t in pairs:
+            t[0]=mock_image
+
         push_images(mock_client,pairs,externally_tested_images)
         
         calls = 0
         imgs_expected=[]
         for image,full_tag in pairs:
-            if image in externally_tested_images:
+            repo = full_tag.split(':')[0]
+            if repo in externally_tested_images:
                 calls +=1
                 imgs_expected.append(full_tag)
 

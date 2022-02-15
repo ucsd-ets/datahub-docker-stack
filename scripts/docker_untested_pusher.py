@@ -34,7 +34,7 @@ def push_images(
     for image, full_tag in pairs:
         print(f"inside push {image}")
         logger.info(f'Attempting to push {image}')
-        
+
         if ':' not in full_tag:
             repository = full_tag
         else:
@@ -42,12 +42,15 @@ def push_images(
         
         tag = 'untested'
         if repository not in externally_tested_images:
+            print(f"skipping {repository}")
             continue
 
         try:
             print("inside push")
             logger.info(f'Attempting to push {image} to {repository}:{tag}')
 
+            image.tag(repository,tag)
+            
             r = client.images.push(
                 repository, tag,
                 stream=True,
