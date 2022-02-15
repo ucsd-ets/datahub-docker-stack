@@ -27,9 +27,11 @@ class TestUntestedPusher():
         imgs_expected=[]
         for image,full_tag in pairs:
             if image in externally_tested_images:
-                calls +=0
+                calls +=1
                 imgs_expected.append(full_tag)
 
         assert mock_client.images.push.call_count == calls
         imgs_pushed = read_var('IMAGES_UNTESTED_PUSHED')
+        if imgs_pushed == None:
+            imgs_pushed = []
         assert imgs_pushed == imgs_expected
