@@ -34,8 +34,6 @@ def push_images(
     for image, full_tag in pairs:
         print(f"inside push {image}")
         logger.info(f'Attempting to push {image}')
-        if image not in externally_tested_images:
-            continue
         
         if ':' not in full_tag:
             repository = full_tag
@@ -43,6 +41,8 @@ def push_images(
             repository = full_tag.split(':')[0]
         
         tag = 'untested'
+        if repository not in externally_tested_images:
+            continue
 
         try:
             print("inside push")
