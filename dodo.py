@@ -5,10 +5,12 @@ from doit import get_var
 
 from scripts.git_helper import save_changed_images, save_git_info
 from scripts.docker_builder import run_build
+from scripts.docker_untested_pusher import run_untested_push
 from scripts.docker_tester import run_test
 from scripts.docker_pusher import run_push
 from scripts.docker_tagger import run_tagging
 from scripts.manifests import run_manifests, run_stable_manifests
+
 
 import pytest
 import requests
@@ -81,6 +83,14 @@ def task_build():
                 'default': False
             },
         ],
+    }
+
+def task_untested_push():
+    """Push all built images that need testing elsewhere"""
+    return {
+        'actions': [run_untested_push],
+        'file_dep': ['artifacts/IMAGES_BUILT'],
+        'targets': ['artifacts/IMAGES_PUSHED']
     }
 
 

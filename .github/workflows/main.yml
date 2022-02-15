@@ -70,6 +70,12 @@ jobs:
       - name: Build stack
         run: |
           doit build
+      
+      - name: Push untested stack
+        env:
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: |
+          doit untested_push
 
       - name: Test stack
         env:
