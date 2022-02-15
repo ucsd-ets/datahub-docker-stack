@@ -90,7 +90,7 @@ def task_untested_push():
     return {
         'actions': [run_untested_push],
         'file_dep': ['artifacts/IMAGES_BUILT'],
-        'targets': ['artifacts/IMAGES_PUSHED']
+        'targets': ['artifacts/IMAGES_UNTESTED_PUSHED']
     }
 
 
