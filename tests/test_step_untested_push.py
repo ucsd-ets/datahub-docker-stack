@@ -31,5 +31,5 @@ class TestUntestedPusher():
                 imgs_expected.append(full_tag)
 
         assert mock_client.images.push.call_count == calls
-        imgs_pushed = read_var('UNTESTED_IMAGES_PUSHED')
+        imgs_pushed = read_var('IMAGES_UNTESTED_PUSHED')
         assert imgs_pushed == imgs_expected
