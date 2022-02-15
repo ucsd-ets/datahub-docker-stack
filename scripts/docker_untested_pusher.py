@@ -25,13 +25,15 @@ def docker_login(
 
 
 def push_images(
-    client: docker.DockerClient, pairs: List[ImageFulltagPair], externally_tested_images = ['scipy-ml-notebook']
+    client: docker.DockerClient, pairs: List[ImageFulltagPair], externally_tested_images = ['ucsdets/scipy-ml-notebook']
 ):
     """
     Push a list of images with untested tag if they are externally tested
     """
     images_pushed = []
     for image, full_tag in pairs:
+        print(f"inside push {image}")
+        logger.info(f'Attempting to push {image}')
         if image not in externally_tested_images:
             continue
         
