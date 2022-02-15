@@ -20,7 +20,7 @@ class TestUntestedPusher():
             ([('valid','valid:hash'),('valid2','valid2'),('invalid','invalid:hash')],['valid','valid2']),
         ],
     )
-    def test_push_images(self,mock_client,pairs,externally_tested_images):
+    def test_push_images(self,root_dir, mock_client,pairs,externally_tested_images):
         push_images(mock_client,pairs,externally_tested_images)
         
         calls = 0
