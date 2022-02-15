@@ -9,6 +9,7 @@ from scripts.docker_untested_pusher import push_images
 def mock_client():
     client = MagicMock()
     client.images.push = MagicMock(return_value={})
+    return client
 
 class TestUntestedPusher():
     @pytest.mark.parametrize(
