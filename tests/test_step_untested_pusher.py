@@ -13,11 +13,11 @@ def mock_client():
 
 class TestUntestedPusher():
     @pytest.mark.parametrize(
-        "pairs,externally_tested_images",
+        "stack_dir,pairs,externally_tested_images",
         [
-            ([('some','some:tag'),('invalid','invalid'),('image','images:tag')],[]),
-            ([('some','some:tag'),('invalid','invalid'),('image','images:tag')],['fake1','fake']),
-            ([('valid','valid:hash'),('valid2','valid2'),('invalid','invalid:hash')],['valid','valid2']),
+            ("tests/data/stack_0",[('some','some:tag'),('invalid','invalid'),('image','images:tag')],[]),
+            ("tests/data/stack_0",[('some','some:tag'),('invalid','invalid'),('image','images:tag')],['fake1','fake']),
+            ("tests/data/stack_0",[('valid','valid:hash'),('valid2','valid2'),('invalid','invalid:hash')],['valid','valid2']),
         ],
     )
     def test_push_images(self,root_dir, mock_client,pairs,externally_tested_images):
