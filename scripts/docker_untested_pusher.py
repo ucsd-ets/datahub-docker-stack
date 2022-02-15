@@ -71,7 +71,8 @@ def push_images(
 
             # push success
             images_pushed.append(full_tag)
-            store_var('IMAGES_UNTESTED_PUSHED', images_pushed)
+            store_var('IMAGES_PUSHED', images_pushed)
+            raise Exception
             print(f'pushed {image} to {repository}:{tag}')
 
         except docker.errors.APIError as e:
