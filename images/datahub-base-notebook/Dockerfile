@@ -33,7 +33,7 @@ RUN cat /tmp/jupyter_notebook_config_extra.py >> /etc/jupyter/jupyter_notebook_c
 
 # VSCode code-server
 RUN curl -fsSL https://code-server.dev/install.sh | sh -s -- --prefix=/usr/local
-RUN echo 'hello'
+
 USER jovyan
 
 COPY start-code-server.sh /usr/local/bin/start-notebook.d/
@@ -55,3 +55,4 @@ RUN /usr/share/datahub/scripts/install-python-all.sh && \
     chown -R jovyan:users /opt/conda/etc/jupyter/nbconfig && \
     chmod -R +r /opt/conda/etc/jupyter/nbconfig
 WORKDIR /home/jovyan
+
