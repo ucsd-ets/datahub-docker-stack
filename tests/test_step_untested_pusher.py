@@ -28,9 +28,8 @@ class TestUntestedPusher():
         ],
     )
     def test_push_images(self,root_dir, mock_client,pairs,externally_tested_images,mock_image):
-        
-        for t in pairs:
-            t[0]=mock_image
+        # replace temp 'image' values from parameterization with mock image
+        pairs = [(mock_image,full_tag) for image,full_tag in pairs]
 
         push_images(mock_client,pairs,externally_tested_images)
         
