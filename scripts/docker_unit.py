@@ -48,18 +48,21 @@ def test_image(image_tag:str,test_dirs:Path)->None:
 
 
 class BuildInfo(BaseModel):
-    images_changed: str
+    images_changed: List[str]
     git_suffix: str
     build_spec: BuilderSpec
-    image_queue: list
-    images_built: list = []
+    image_queue: List
+    images_built: List[str] = []
+    class Config:
+        arbitrary_types_allowed = True
+
 
 class BuildInfoRetrieval:
     def __init__(self, retrieval_func):
         self.retrieval_func = retrieval_func
 
-    def get_info(self) -> BuildInfo:
-        return self.retrieval_func()
+    def get_info(self,stack_dir) -> BuildInfo:
+        return self.retrieval_func(stack_dir)
 
 class BuildInfoStorage:
     def __init__(self, images_built_func):
@@ -69,14 +72,14 @@ class BuildInfoStorage:
         self.images_built_func(images_built)
 
 def store_images_on_filesystem(images_built):
-    store_var('IMAGES_BUILT', images)
+    store_var('IMAGES_BUILT', images_built)
 
 class ContainerBuilder:
     def __init__(self, container_builder_func):
         self.container_builder_func = container_builder_func
     
     def build_container(self, build_params:Buildargs,stack_dir:str):
-        self.container_builder_func(build_params, stack_dir)
+        return self.container_builder_func(build_params, stack_dir)
 
 def build_units(build_params:Buildargs,stack_dir:str)->None:
     '''
@@ -112,7 +115,7 @@ def container_test(stack_dir, images_built):
         for image_tag, test_dirs in test_params.items():
             test_image(image_tag,test_dirs) 
 
-def get_build_info_from_filesystem():
+def get_build_info_from_filesystem(stack_dir:str)->BuildInfo:
     images_changed = read_var('IMAGES_CHANGED')
     git_suffix = read_var('GIT_HASH_SHORT')
     specs = get_specs(pjoin(stack_dir, 'spec.yml'))
@@ -152,9 +155,11 @@ class ContainerDeleter:
         self.container_deleter_func(images_built)
 
 def delete_docker_containers(images_built):
+    cli = docker.from_env()
     cli.images.prune()
     for tag in images_built:
-        cli.images.remove(image=cli.images.get(tag),force=True)
+        print(tag)
+        cli.images.remove(image=tag,force=True)
 
 class DockerPusher:
     def __init__(self, dockerhub_token: str, dockerhub_username: str):
@@ -210,48 +215,52 @@ class ContainerFacade:
         self.deleter = deleter
         self.build_info_storage = build_info_storage
 
-    def gen_build_params(self, stack_dir) -> [BuildArgs]:
+    def gen_build_params(self, stack_dir,unit_image_name) :#-> [BuildArgs]:
+        build_info = self.build_info.get_info(stack_dir)
+        print(build_info)
         image_dependecy=None
-        if 'depend_on' in self.build_info.build_spec.image_specs[unit_image_name]:
-            image_dependecy = self.build_info.build_spec.image_specs[unit_image_name]['depend_on']
+        if 'depend_on' in build_info.build_spec.image_specs[unit_image_name]:
+            image_dependecy = build_info.build_spec.image_specs[unit_image_name]['depend_on']
         images_to_build=[]
         # check if the depends are built else build
-        if image_dependecy not in images_built and image_dependecy is not None:
+        if  image_dependecy is not None:
             # check if image is already in repo and pull if its present
             images_to_build.append(image_dependecy)
 
         images_to_build.append(unit_image_name)
         # Get the build params for the unit image and its depends
-        build_params = self.build_info.build_spec.gen_build_args(
-                stack_dir, git_suffix, images_to_build)
+        build_params = build_info.build_spec.gen_build_args(
+                stack_dir, build_info.git_suffix, images_to_build)
 
         return build_params
 
     def build_test_push_containers(self, stack_dir):
-        for unit_image_name in self.build_info.images_changed: 
-            if unit_image_name in images_built:
+        build_info = self.build_info.get_info(stack_dir)
+        for unit_image_name in build_info.images_changed: 
+            if unit_image_name in build_info.images_built:
                 continue
 
-            build_params = self.gen_build_params(stack_dir, git_suffix, images_to_build)
+            build_params = self.gen_build_params(stack_dir,unit_image_name)
 
             # build
             images_built = self.build_container(build_params,stack_dir)
     
             # store built images
-            self.build_info.images_built = images_built
+            build_info.images_built = images_built
+            
             self.build_info_storage.store_images_built(images_built)
 
             # test container
-            self.container_test(stack_dir, images_built)
+            #self.container_test(stack_dir, images_built)
 
             # push the container
-            self.push_container(images_built)
+            #self.push_container(images_built)
 
             # delete the container
-            self.delete_container(images_built)
+            self.delete_containers(images_built)
 
     def build_container(self, build_params, stack_dir):
-        self.builder.build_container(build_params, stack_dir)
+        return self.builder.build_container(build_params, stack_dir)
         
     def store_images_built(self):
         self.build_info_storage.store_images_built(self.build_info.images_built)
@@ -270,61 +279,61 @@ def build_unit(stack_dir: str, container_facade: ContainerFacade) -> None:
     container_facade.build_test_push_containers(stack_dir)
 
 
-def build_unit(stack_dir:str)->None:
-    '''
-    Fuction checks for the images that are changed and build them indivisually
-    Input Parameters:
-        stack_dir:
+# def build_unit(stack_dir:str)->None:
+#     '''
+#     Fuction checks for the images that are changed and build them indivisually
+#     Input Parameters:
+#         stack_dir:
         
-    1. checking images that changed
-    2. get the hash
-    3. get the build specs and create a dependency queue based off it
-    4. build, test, push, delete
+#     1. checking images that changed
+#     2. get the hash
+#     3. get the build specs and create a dependency queue based off it
+#     4. build, test, push, delete
     
-    '''
-    images_changed = read_var('IMAGES_CHANGED')
-    git_suffix = read_var('GIT_HASH_SHORT')
-    specs = get_specs(pjoin(stack_dir, 'spec.yml'))
-    build_spec = BuilderSpec(specs)
-    # need to build the down stream task if parent is changed
-    # checking if the depends on image is changing and build 
-    # accordingly
-    queue = deque(list(build_spec.image_specs.keys()))
-    while queue:
-        ele = queue.popleft()
-        if 'depend_on' in build_spec.image_specs[ele]:
-            image_dependecy = build_spec.image_specs[ele]['depend_on']
-            if image_dependecy in images_changed:
-                images_changed.append(ele)
+#     '''
+#     images_changed = read_var('IMAGES_CHANGED')
+#     git_suffix = read_var('GIT_HASH_SHORT')
+#     specs = get_specs(pjoin(stack_dir, 'spec.yml'))
+#     build_spec = BuilderSpec(specs)
+#     # need to build the down stream task if parent is changed
+#     # checking if the depends on image is changing and build 
+#     # accordingly
+#     queue = deque(list(build_spec.image_specs.keys()))
+#     while queue:
+#         ele = queue.popleft()
+#         if 'depend_on' in build_spec.image_specs[ele]:
+#             image_dependecy = build_spec.image_specs[ele]['depend_on']
+#             if image_dependecy in images_changed:
+#                 images_changed.append(ele)
             
     
-    #store the images depends that are already built
-    images_built = []
-    # get the images to build
-    for unit_image_name in images_changed:
-        # Get all the dependents
-        if unit_image_name in images_built:
-            continue
-        image_dependecy=None
-        if 'depend_on' in build_spec.image_specs[unit_image_name]:
-            image_dependecy = build_spec.image_specs[unit_image_name]['depend_on']
-        images_to_build=[]
-        # check if the depends are built else build
-        if image_dependecy not in images_built and image_dependecy is not None:
-            # check if image is already in repo and pull if its present
-            images_to_build.append(image_dependecy)
+#     #store the images depends that are already built
+#     images_built = []
+#     # get the images to build
+#     for unit_image_name in images_changed:
+#         # Get all the dependents
+#         if unit_image_name in images_built:
+#             continue
+#         image_dependecy=None
+#         if 'depend_on' in build_spec.image_specs[unit_image_name]:
+#             image_dependecy = build_spec.image_specs[unit_image_name]['depend_on']
+#         images_to_build=[]
+#         # check if the depends are built else build
+#         if image_dependecy not in images_built and image_dependecy is not None:
+#             # check if image is already in repo and pull if its present
+#             images_to_build.append(image_dependecy)
         
-        images_to_build.append(unit_image_name)
-        # Get the build params for the unit image and its depends
-        build_params = build_spec.gen_build_args(
-                stack_dir, git_suffix, images_to_build)
-        # Build and test image
-        images = build_units(build_params,stack_dir)
+#         images_to_build.append(unit_image_name)
+#         # Get the build params for the unit image and its depends
+#         build_params = build_spec.gen_build_args(
+#                 stack_dir, git_suffix, images_to_build)
+#         # Build and test image
+#         images = build_units(build_params,stack_dir)
 
-        store_var('IMAGES_BUILT', images)
-        docker_push_image()
-        print(images_to_build)
-        #images_built.extend(images_to_build)
+#         store_var('IMAGES_BUILT', images)
+#         docker_push_image()
+#         print(images_to_build)
+#         #images_built.extend(images_to_build)
     
          
 if __name__ == '__main__':
