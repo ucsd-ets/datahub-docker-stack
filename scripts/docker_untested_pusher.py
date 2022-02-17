@@ -37,10 +37,11 @@ def push_images(
 
         if ':' not in full_tag:
             repository = full_tag
+            tag = 'latest'
         else:
-            repository = full_tag.split(':')[0]
+            repository,tag = full_tag.split(':')
         
-        tag = tag+'-untested'
+        tag = tag + '-untested'
         if repository not in externally_tested_images:
             print(f"skipping {repository}")
             continue
