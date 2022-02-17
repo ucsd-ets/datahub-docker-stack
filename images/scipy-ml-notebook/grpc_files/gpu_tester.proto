@@ -30,6 +30,7 @@ service GpuTester {
 // The request message containing info on image to be tested.
 message GpuTesterRequest {
   string image = 1;
+  string command = 2;
 }
 
 // The response message containing the greetings

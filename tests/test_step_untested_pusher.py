@@ -46,3 +46,4 @@ class TestUntestedPusher():
         if imgs_pushed == None:
             imgs_pushed = []
         assert imgs_pushed == imgs_expected
+        # add negative cases if client can't connect etc...

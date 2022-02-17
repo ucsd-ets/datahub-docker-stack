@@ -40,7 +40,7 @@ def push_images(
         else:
             repository = full_tag.split(':')[0]
         
-        tag = 'untested'
+        tag = tag+'-untested'
         if repository not in externally_tested_images:
             print(f"skipping {repository}")
             continue
@@ -50,7 +50,7 @@ def push_images(
             logger.info(f'Attempting to push {image} to {repository}:{tag}')
 
             image.tag(repository,tag)
-            
+
             r = client.images.push(
                 repository, tag,
                 stream=True,

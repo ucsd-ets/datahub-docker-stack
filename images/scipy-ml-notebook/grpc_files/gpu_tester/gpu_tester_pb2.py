@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=b'\n\033io.grpc.examples.gpu_testerB\016GpuTesterProtoP\001\242\002\003HLW',
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x10gpu_tester.proto\x12\ngpu_tester\"!\n\x10GpuTesterRequest\x12\r\n\x05image\x18\x01 \x01(\t\"%\n\x0eGpuTesterReply\x12\x13\n\x0btest_output\x18\x01 \x01(\t2W\n\tGpuTester\x12J\n\x0cLaunchGpuJob\x12\x1c.gpu_tester.GpuTesterRequest\x1a\x1a.gpu_tester.GpuTesterReply\"\x00\x42\x35\n\x1bio.grpc.examples.gpu_testerB\x0eGpuTesterProtoP\x01\xa2\x02\x03HLWb\x06proto3'
+  serialized_pb=b'\n\x10gpu_tester.proto\x12\ngpu_tester\"2\n\x10GpuTesterRequest\x12\r\n\x05image\x18\x01 \x01(\t\x12\x0f\n\x07\x63ommand\x18\x02 \x01(\t\"%\n\x0eGpuTesterReply\x12\x13\n\x0btest_output\x18\x01 \x01(\t2W\n\tGpuTester\x12J\n\x0cLaunchGpuJob\x12\x1c.gpu_tester.GpuTesterRequest\x1a\x1a.gpu_tester.GpuTesterReply\"\x00\x42\x35\n\x1bio.grpc.examples.gpu_testerB\x0eGpuTesterProtoP\x01\xa2\x02\x03HLWb\x06proto3'
 )
 
 
@@ -40,6 +40,13 @@ _GPUTESTERREQUEST = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='command', full_name='gpu_tester.GpuTesterRequest.command', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -53,7 +60,7 @@ _GPUTESTERREQUEST = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=32,
-  serialized_end=65,
+  serialized_end=82,
 )
 
 
@@ -84,8 +91,8 @@ _GPUTESTERREPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=67,
-  serialized_end=104,
+  serialized_start=84,
+  serialized_end=121,
 )
 
 DESCRIPTOR.message_types_by_name['GpuTesterRequest'] = _GPUTESTERREQUEST
@@ -116,8 +123,8 @@ _GPUTESTER = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=106,
-  serialized_end=193,
+  serialized_start=123,
+  serialized_end=210,
   methods=[
   _descriptor.MethodDescriptor(
     name='LaunchGpuJob',
