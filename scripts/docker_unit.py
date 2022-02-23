@@ -40,8 +40,11 @@ def test_image(image_tag:str,test_dirs:Path)->None:
             '-x',       # exit instantly on first error or failed test
             *test_dirs  # test dirs
         ])
-
-    assert exit_code is pytest.ExitCode.OK,f'Image did not pass tests:{image_tag} '
+    if exit_code is pytest.ExitCode.NO_TESTS_COLLECTED:
+        ## used in testing 
+        store_var('IMAGES_TEST_PASSED', image_tag)
+        return
+    assert exit_code is pytest.ExitCode.OK ,f'Image did not pass tests:{image_tag} '
     store_var('IMAGES_TEST_PASSED', image_tag)
 
 
@@ -97,9 +100,7 @@ def build_units(build_params:Buildargs,stack_dir:str)->None:
                             image_tag=build_param.full_image_tag,
                             nocache=False
                         )
-        images.append(build_param.full_image_tag)
-        # for image_tag, test_dirs in test_params.items():
-        #     test_image(image_tag,test_dirs) 
+        images.append(build_param.full_image_tag)     
     return images
 
 class ContainerTester:
@@ -107,30 +108,33 @@ class ContainerTester:
         self.container_tester_func = container_tester_func
     
     def container_test(self, stack_dir, images_built):
-        self.container_tester_func(stack_dir, images_built)
+        return self.container_tester_func(stack_dir, images_built)
     
 def container_test(stack_dir, images_built):
-    for full_image_tag in images_built:
-        test_params = _tests_collector(stack_dir, [full_image_tag])
-        for image_tag, test_dirs in test_params.items():
-            test_image(image_tag,test_dirs) 
+    #for full_image_tag in images_built:
+    test_params = _tests_collector(stack_dir, images_built)
+    for image_tag, test_dirs in test_params.items():
+        test_image(image_tag,test_dirs)
+    return test_params
 
-def get_build_info_from_filesystem(stack_dir:str)->BuildInfo:
+def get_build_info_from_filesystem(stack_dir:str,spec_file='spec.yml')->BuildInfo:
     images_changed = read_var('IMAGES_CHANGED')
     git_suffix = read_var('GIT_HASH_SHORT')
-    specs = get_specs(pjoin(stack_dir, 'spec.yml'))
+    specs = get_specs(pjoin(stack_dir,spec_file ))
     build_spec = BuilderSpec(specs)
     # need to build the down stream task if parent is changed
     # checking if the depends on image is changing and build 
     # accordingly
     queue = deque(list(build_spec.image_specs.keys()))
+    print(build_spec.image_specs.keys())
     while queue:
         ele = queue.popleft()
         if 'depend_on' in build_spec.image_specs[ele]:
             image_dependecy = build_spec.image_specs[ele]['depend_on']
+            print(ele,image_dependecy)
             if image_dependecy in images_changed:
                 images_changed.append(ele)
-
+    
     return BuildInfo(
         images_changed=images_changed,
         git_suffix=git_suffix,
@@ -158,8 +162,8 @@ def delete_docker_containers(images_built):
     cli = docker.from_env()
     cli.images.prune()
     for tag in images_built:
-        print(tag)
         cli.images.remove(image=tag,force=True)
+    store_var('IMAGE_REMOVED',images_built)
 
 class DockerPusher:
     def __init__(self, dockerhub_token: str, dockerhub_username: str):
@@ -217,7 +221,6 @@ class ContainerFacade:
 
     def gen_build_params(self, stack_dir,unit_image_name) :#-> [BuildArgs]:
         build_info = self.build_info.get_info(stack_dir)
-        print(build_info)
         image_dependecy=None
         if 'depend_on' in build_info.build_spec.image_specs[unit_image_name]:
             image_dependecy = build_info.build_spec.image_specs[unit_image_name]['depend_on']
