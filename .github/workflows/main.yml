@@ -28,10 +28,7 @@ jobs:
       !contains(github.event.head_commit.message , 'skip ci') &&
       !contains(github.event.pull_request.title, 'skip ci')
     steps:
-      - uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-      
+      - uses: actions/checkout@v2    
 
       - name: Install pip dependencies
         run: |
