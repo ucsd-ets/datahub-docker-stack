@@ -24,22 +24,15 @@ class GitHelper:
     def commit_message() -> str:
         return git["log", -1, "--pretty=%B"]().strip()
     
-    @staticmethod
-    def commit_changed_files_via_diff() -> list:
-        return git['diff', 'origin/main', '--name-only']().split()
 
     @staticmethod
     def commit_changed_files() -> list:
-        return git['log', -1, '--name-only', '--pretty=format:']().split()
+        return git['diff', 'origin/main', '--name-only']().split()
 
 
 def get_changed_images():
     changed_images = set()
-    print("branches:")
-    print(git['branch']())
-    print(git['branch', '-r']())
-    print(git['diff', 'origin/main', '--name-only']())
-    changed_files = GitHelper.commit_changed_files_via_diff()
+    changed_files = GitHelper.commit_changed_files()
     
     for file in changed_files:
         fp = PurePath(file)
