@@ -26,7 +26,7 @@ class GitHelper:
     
     @staticmethod
     def commit_changed_files_via_diff() -> list:
-        return git['diff', 'origin/main', '--name-only']().split()
+        return git['diff', 'origin/HEAD', '--name-only']().split()
 
     @staticmethod
     def commit_changed_files() -> list:
@@ -35,7 +35,10 @@ class GitHelper:
 
 def get_changed_images():
     changed_images = set()
+    print("branches:")
+    print(git['branch']())
     print(git['branch', '-r']())
+    print(git['diff', 'origin/HEAD', '--name-only']())
     changed_files = GitHelper.commit_changed_files_via_diff()
     
     for file in changed_files:

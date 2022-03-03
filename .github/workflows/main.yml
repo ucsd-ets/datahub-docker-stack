@@ -30,9 +30,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
       
-
       - name: Install pip dependencies
         run: |
           docker image prune -a -f
