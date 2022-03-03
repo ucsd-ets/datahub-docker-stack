@@ -35,8 +35,9 @@ class GitHelper:
 
 def get_changed_images():
     changed_images = set()
+    print(git['branch', '-r']())
     changed_files = GitHelper.commit_changed_files_via_diff()
-    print(git['diff', 'origin/main', '--name-only']())
+    
     for file in changed_files:
         fp = PurePath(file)
         # need to be under images and must be a folder
