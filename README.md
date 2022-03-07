@@ -72,48 +72,48 @@ For people who are trying to modify the image stack, here are some scenarios and
 We Use github workflow to builds new images if their is any change in the images or addtional images are added.<br>
 .github:-<br>
         The main.yml file contains the steps to build the image<br>
-            - Initial download required for the images are installed
-            - Doit module is used to run the tasks
-                1) install all the requirments for the images
-                2) Use doit unit build to build,test and push the image to DataHub repo
-                3) Update the wiki  
-                4) Store the artifacts and logs
-        The Tag.yml file is used to tag the latest build 
-
-Images:-
+            - Initial download required for the images are installed<br>
+            - Doit module is used to run the tasks<br>
+                1) install all the requirments for the images<br>
+                2) Use doit unit build to build,test and push the image to DataHub repo<br>
+                3) Update the wiki  <br>
+                4) Store the artifacts and logs<br>
+        The Tag.yml file is used to tag the latest build <br>
+<br>
+Images:-<br>
         1) Folder containing the images and each images has its own docker file, test folder for test scripts.
         2) Spec.yml file is important file where the dependecy of the image and build information specified for an image
 
 Model:-
-        1) Spec.py used for reading the spec file and prepare build parameters
-        2) imagedef.py pydantic object used by spec.py
-scripts:-
-        1) dataojects.py contains the pydantic class
-        2) docker_unit.py used to build,test and push images
-            - ContainerFacade class controls the flow of the code
-            - build_test_push_containers method is used for building,test and push image
-        3) githelper has code for git related task
-        4) manifests.py has utils methods to maintain the manifests
-        5) Other docker file will be deprecated except for manifest
-Tests:-
-        1) Contains the test file for testing the submodule
-        2) used with pytest can be called with pytest test_*.py
-dodo.py:-
-        1) We use doit python module to call the submodule 
-        2) Each task is called with parameters and expected outputs
-
-Steps to build locally:
-    1) Clone the Repository
-    2) Install the requirments in scripts folder
-    3) Provide permission to build the Docker images
-        - for linux we need to steup group for user to use docker cli more info follow https://docs.docker.com/engine/install/linux-postinstall/
-    4) Use doit list to list all the commands
-    5) To build images locally use doit unit_build
-    6) TO run the pytest use pytest tests/test_*.py
-        - pytest tests test_docker_unit.py -m "not push"
-        - to test push functionality edit cred.json with datahub credentials
-        - to run test with push functionality use flag 
-            pytest tests test_docker_unit.py -m push
-
+        1) Spec.py used for reading the spec file and prepare build parameters<br>
+        2) imagedef.py pydantic object used by spec.py<br>
+scripts:-<br>
+        1) dataojects.py contains the pydantic class<br>
+        2) docker_unit.py used to build,test and push images<br>
+            - ContainerFacade class controls the flow of the code<br>
+            - build_test_push_containers method is used for building,test and push image<br>
+        3) githelper has code for git related task<br>
+        4) manifests.py has utils methods to maintain the manifests<br>
+        5) Other docker file will be deprecated except for manifest<br>
+Tests:-<br>
+        1) Contains the test file for testing the submodule<br>
+        2) used with pytest can be called with pytest test_*.py<br>
+dodo.py:-<br>
+        1) We use doit python module to call the submodule <br>
+        2) Each task is called with parameters and expected outputs<br>
+<br>
+Steps to build locally:<br>
+    1) Clone the Repository<br>
+    2) Install the requirments in scripts folder<br>
+    3) Provide permission to build the Docker images<br>
+        - for linux we need to steup group for user to use docker cli more info follow https://docs.docker.com/engine/install/linux-postinstall/<br>
+    4) Use doit list to list all the commands<br>
+    5) To build images locally use doit unit_build<br>
+    6) TO run the pytest use pytest tests/test_*.py<br>
+        - pytest tests test_docker_unit.py -m "not push"<br>
+        - to test push functionality edit cred.json with datahub credentials<br>
+        - to run test with push functionality use flag <br>
+            pytest tests test_docker_unit.py -m push<br>
+<br><br>
 
 >>>>>>> added to test on local machine
