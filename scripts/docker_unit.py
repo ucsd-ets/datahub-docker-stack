@@ -338,17 +338,10 @@ def build_unit(stack_dir: str, container_facade: ContainerFacade) -> None:
 #         print(images_to_build)
 #         #images_built.extend(images_to_build)
 
-def pusher_func(images_built: List[str]):
-    docker_pusher = DockerPusher(os.environ['DOCKERHUB_USER'], os.environ['DOCKERHUB_TOKEN'])
-    return docker_pusher.push_container_to_dockerhub(images_built)
-
-
-
-def setup_pusher_func(dockerhub_user, dockerhub_token) -> Callable[List[str], None]:
+def setup_pusher_func(dockerhub_user, dockerhub_token):
     def pusher_func(images_built: List[str]):
         docker_pusher = DockerPusher(dockerhub_user, dockerhub_token)
         return docker_pusher.push_container_to_dockerhub(images_built)
-
     return pusher_func
          
 if __name__ == '__main__':

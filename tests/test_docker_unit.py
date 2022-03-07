@@ -119,7 +119,7 @@ def test_container_tester(stack_dir,imgs_built,expected_items):
     #print(collected == expected_items)
     assert collected == expected_items
 
-@pytest.mark.all
+@pytest.mark.push
 @pytest.mark.parametrize(
         "stack_dir,imgs_built,expected_items",
         [
@@ -171,38 +171,30 @@ def test_delete_container(imgs_built,expected_items):
     assert all([i not in collected for i in expected_items])
 
 
-"""
-TODO
-1. either modify or copy stack_2 to:
-    1.1. Reference image_name to an actual pushable docker image_name/tag. e.g. ucsdets/datahub-docker-stacks-test-img-1
-2. point the build_unit function to stack defined in step 1.
-3. run the build_unit function and test for:
-    3.1. containers are pullable from dockerhub
-    3.2. containers have deleted from the local filesystem 
-"""
 
-@pytest.mark.integration
-def test_build_unit():
-    build_retrieval = BuildInfoRetrieval(retrieval_func=get_build_info_from_filesystem)
-    build_info_storage = BuildInfoStorage(images_built_func=store_images_on_filesystem)
-    container_builder = ContainerBuilder(container_builder_func=build_units)
-    container_tester = ContainerTester(container_tester_func=container_test)
 
-    container_pusher = ContainerPusher(container_pusher_func=pusher_func)
-    container_deleter = ContainerDeleter(container_deleter_func=delete_docker_containers)
+# @pytest.mark.integration
+# def test_build_unit():
+#     build_retrieval = BuildInfoRetrieval(retrieval_func=get_build_info_from_filesystem)
+#     build_info_storage = BuildInfoStorage(images_built_func=store_images_on_filesystem)
+#     container_builder = ContainerBuilder(container_builder_func=build_units)
+#     container_tester = ContainerTester(container_tester_func=container_test)
 
-    container_facade = ContainerFacade(
-        build_retrieval,
-        container_builder,
-        container_tester,
-        container_pusher,
-        container_deleter,
-        build_info_storage
-    )
+#     container_pusher = ContainerPusher(container_pusher_func=pusher_func)
+#     container_deleter = ContainerDeleter(container_deleter_func=delete_docker_containers)
 
-    # initialize stack_dir
-    # run the thing
-    assert False
+#     container_facade = ContainerFacade(
+#         build_retrieval,
+#         container_builder,
+#         container_tester,
+#         container_pusher,
+#         container_deleter,
+#         build_info_storage
+#     )
+
+#     # initialize stack_dir
+#     # run the thing
+#     assert False
 
 # def test_container_facade_container_test():
 #     get_build_info_from_filesystem = MagicMock()

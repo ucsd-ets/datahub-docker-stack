@@ -31,10 +31,7 @@ def task_unit_build():
     build_info_storage = BuildInfoStorage(images_built_func=store_images_on_filesystem)
     container_builder = ContainerBuilder(container_builder_func=build_units)
     container_tester = ContainerTester(container_tester_func=container_test)
-
-    def pusher_func(images_built):
-        docker_pusher = DockerPusher('etsjenkins', os.environ['DOCKERHUB_TOKEN'])
-        return docker_pusher.push_container_to_dockerhub(images_built)
+    pusher_func=setup_pusher_func(os.environ['DOCKERHUB_USER'], os.environ['DOCKERHUB_TOKEN'])
     container_pusher = ContainerPusher(container_pusher_func=pusher_func)
     container_deleter = ContainerDeleter(container_deleter_func=delete_docker_containers)
 
