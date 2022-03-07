@@ -55,5 +55,4 @@ RUN /usr/share/datahub/scripts/install-python-all.sh && \
     chown -R jovyan:users /opt/conda/etc/jupyter/nbconfig && \
     chmod -R +r /opt/conda/etc/jupyter/nbconfig
 WORKDIR /home/jovyan
-RUN echo 'hello'
 

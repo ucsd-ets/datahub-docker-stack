@@ -75,35 +75,30 @@ jobs:
           path: wiki
 
       - name: Build stack
-        run: |
-          doit build
-      
-      - name: Push untested stack
         env:
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
-          doit untested_push
+          doit unit_build
+      #   used for building,testing and pushing module
 
-      - name: Test stack
-        env:
-          GRPC_CERT: ${{ secrets.GRPC_CERT }}
-        run: |
-          doit test
+      # - name: Test stack
+      #   run: |
+      #     doit test
 
       - name: Run manifests
         run: |
           doit manifest
           cp manifests/*.md wiki/
 
-      - name: Push stack
-        if: >
-          !contains(github.base_ref , 'test') &&
-          !contains(github.base_ref , 'dev') &&
-          !contains(github.event.head_commit.message , 'skip push')
-        env:
-          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-        run: |
-          doit push
+      # - name: Push stack
+      #   if: >
+      #     !contains(github.base_ref , 'test') &&
+      #     !contains(github.base_ref , 'dev') &&
+      #     !contains(github.event.head_commit.message , 'skip push')
+      #   env:
+      #     DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      #   run: |
+      #     doit push
 
       - name: Push Wiki to GitHub
         if: >

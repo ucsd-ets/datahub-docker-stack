@@ -39,7 +39,7 @@ def _tests_collector(stack_dir, IMAGES_BUILT):
 def run_test(stack_dir):
     IMAGES_BUILT = read_var('IMAGES_BUILT')
     test_params = _tests_collector(stack_dir, IMAGES_BUILT)
-
+    print(test_params)
     IMAGES_TEST_PASSED = []
     IMAGES_TEST_ERROR = []
 

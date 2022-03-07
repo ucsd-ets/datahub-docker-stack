@@ -30,6 +30,7 @@ class BuilderSpec:
         self.image_specs = yml_dict['images']
         self.parse_build_plans(plan_specs)
         self.parse_img(self.image_specs)
+    
 
     def parse_build_plans(self, plan_specs):
         self.plans = plan_specs

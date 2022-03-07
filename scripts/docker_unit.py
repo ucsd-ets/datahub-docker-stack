@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 
 
 
-def test_image(image_tag:str,test_dirs:Path)->None:
+def image_test(image_tag:str,test_dirs:Path)->None:
     '''
     Test function to runs the test on build image
     Input parameters:
@@ -51,11 +51,11 @@ def test_image(image_tag:str,test_dirs:Path)->None:
 
 
 class BuildInfo(BaseModel):
-    images_changed: List[str]
+    images_changed: List[str]=[]
     git_suffix: str
     build_spec: BuilderSpec
-    image_queue: List
-    images_built: List[str] = []
+    image_queue: deque
+    images_built: List[str] =[]
     class Config:
         arbitrary_types_allowed = True
 
@@ -107,14 +107,15 @@ class ContainerTester:
     def __init__(self, container_tester_func):
         self.container_tester_func = container_tester_func
     
-    def container_test(self, stack_dir, images_built):
-        return self.container_tester_func(stack_dir, images_built)
+    def container_test(self, stack_dir, images_built,dry_run=False):
+        return self.container_tester_func(stack_dir, images_built,dry_run)
     
-def container_test(stack_dir, images_built):
+def container_test(stack_dir, images_built,dry_run=False):
     #for full_image_tag in images_built:
     test_params = _tests_collector(stack_dir, images_built)
-    for image_tag, test_dirs in test_params.items():
-        test_image(image_tag,test_dirs)
+    if not dry_run:
+        for image_tag, test_dirs in test_params.items():
+            image_test(image_tag,test_dirs)
     return test_params
 
 def get_build_info_from_filesystem(stack_dir:str,spec_file='spec.yml')->BuildInfo:
@@ -131,10 +132,11 @@ def get_build_info_from_filesystem(stack_dir:str,spec_file='spec.yml')->BuildInf
         ele = queue.popleft()
         if 'depend_on' in build_spec.image_specs[ele]:
             image_dependecy = build_spec.image_specs[ele]['depend_on']
-            print(ele,image_dependecy)
             if image_dependecy in images_changed:
                 images_changed.append(ele)
-    
+    if len(images_changed)==0:
+        images_changed =[]
+
     return BuildInfo(
         images_changed=images_changed,
         git_suffix=git_suffix,
@@ -163,7 +165,6 @@ def delete_docker_containers(images_built):
     cli.images.prune()
     for tag in images_built:
         cli.images.remove(image=tag,force=True)
-    store_var('IMAGE_REMOVED',images_built)
 
 class DockerPusher:
     def __init__(self, dockerhub_token: str, dockerhub_username: str):
@@ -198,7 +199,6 @@ def docker_push_image()->None:
             (cli.images.get(tag), tag)
             for tag in tags
         ]
-        push_images(cli, pairs)
         # delete the local image 
         cli.images.prune()
         for tag in tags:
