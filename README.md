@@ -69,9 +69,9 @@ For people who are trying to modify the image stack, here are some scenarios and
 
 
 ### Overview of the Repository
-We Use github workflow to builds new images if their is any change in the images or addtional images are added.
-.github:-
-        The main.yml file contains the steps to build the image
+We Use github workflow to builds new images if their is any change in the images or addtional images are added.<br>
+.github:-<br>
+        The main.yml file contains the steps to build the image<br>
             - Initial download required for the images are installed
             - Doit module is used to run the tasks
                 1) install all the requirments for the images
