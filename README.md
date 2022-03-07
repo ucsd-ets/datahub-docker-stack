@@ -100,18 +100,20 @@ Tests:-
         2) used with pytest can be called with pytest test_*.py
 dodo.py:-
         1) We use doit python module to call the submodule 
+        2) Each task is called with parameters and expected outputs
 
 Steps to build locally:
     1) Clone the Repository
     2) Install the requirments in scripts folder
     3) Provide permission to build the Docker images
+        - for linux we need to steup group for user to use docker cli more info follow https://docs.docker.com/engine/install/linux-postinstall/
     4) Use doit list to list all the commands
     5) To build images locally use doit unit_build
     6) TO run the pytest use pytest tests/test_*.py
-        - pytest tests test_docker_unit.py -m "not webtest"
+        - pytest tests test_docker_unit.py -m "not all"
         - to test push functionality edit cred.json with datahub credentials
         - to run test with push functionality use flag 
-            pytest tests test_docker_unit.py -m webtest
+            pytest tests test_docker_unit.py -m all
 
 
 >>>>>>> added to test on local machine
