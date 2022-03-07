@@ -110,10 +110,10 @@ Steps to build locally:
     4) Use doit list to list all the commands
     5) To build images locally use doit unit_build
     6) TO run the pytest use pytest tests/test_*.py
-        - pytest tests test_docker_unit.py -m "not all"
+        - pytest tests test_docker_unit.py -m "not push"
         - to test push functionality edit cred.json with datahub credentials
         - to run test with push functionality use flag 
-            pytest tests test_docker_unit.py -m all
+            pytest tests test_docker_unit.py -m push
 
 
 >>>>>>> added to test on local machine
