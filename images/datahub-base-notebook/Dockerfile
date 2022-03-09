@@ -47,6 +47,7 @@ RUN /usr/share/datahub/scripts/install-python-all.sh && \
     pip install nbconvert==5.6.1 && \
     pip install jupyterhub==$JUPYTERHUB_VERSION && \
     pip install nbgrader==0.6.2 && \
+    pip install traitlets==5.1.0 && \
     conda install -c conda-forge rise && \
     cat /usr/share/datahub/scripts/canvas_exporter.py > /opt/conda/lib/python$PY_VER_SHORT/site-packages/nbgrader/plugins/export.py && \
     fix-permissions $CONDA_DIR && \

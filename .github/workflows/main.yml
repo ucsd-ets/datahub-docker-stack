@@ -29,7 +29,9 @@ jobs:
       !contains(github.event.pull_request.title, 'skip ci')
     steps:
       - uses: actions/checkout@v2
-
+        with:
+          fetch-depth: 0
+      
       - name: Install pip dependencies
         run: |
           docker image prune -a -f
@@ -70,8 +72,16 @@ jobs:
       - name: Build stack
         run: |
           doit build
+      
+      # - name: Push untested stack
+      #   env:
+      #     DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      #   run: |
+      #     doit untested_push
 
       - name: Test stack
+        env:
+          GRPC_CERT: ${{ secrets.GRPC_CERT }}
         run: |
           doit test
 
