@@ -64,6 +64,8 @@ jobs:
           echo "PYTHONUNBUFFERED=TRUE" >> $GITHUB_ENV
       
       - name: Settup artifacts
+        env:
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
           doit task_prep
 
