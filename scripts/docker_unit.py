@@ -121,6 +121,8 @@ def container_test(stack_dir, images_built,dry_run=False):
 def get_build_info_from_filesystem(stack_dir:str,spec_file='spec.yml')->BuildInfo:
     images_changed = read_var('IMAGES_CHANGED')
     git_suffix = read_var('GIT_HASH_SHORT')
+    if git_suffix is None:
+        git_suffix = ''
     specs = get_specs(pjoin(stack_dir,spec_file ))
     build_spec = BuilderSpec(specs)
     # need to build the down stream task if parent is changed
