@@ -64,7 +64,8 @@ jobs:
           echo "PYTHONUNBUFFERED=TRUE" >> $GITHUB_ENV
 
       - name: Workflow tests
-        DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        env:
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
           coverage run -m pytest -v tests/test_docker_unit.py
           coverage report
