@@ -63,11 +63,11 @@ jobs:
           echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
           echo "PYTHONUNBUFFERED=TRUE" >> $GITHUB_ENV
       
-      - name: Settup artifacts
+      - name: Setup artifacts
         env:
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
-          doit task_prep
+          doit prep
 
       - name: Workflow tests
         env:
