@@ -62,6 +62,10 @@ jobs:
         run: |
           echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
           echo "PYTHONUNBUFFERED=TRUE" >> $GITHUB_ENV
+      
+      - name: Settup artifacts
+        run: |
+          doit task_prep
 
       - name: Workflow tests
         env:
