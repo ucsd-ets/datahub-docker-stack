@@ -256,10 +256,10 @@ class ContainerFacade:
             self.build_info_storage.store_images_built(images_built)
 
             # test container
-            #self.container_test(stack_dir, images_built)
+            self.container_test(stack_dir, images_built)
 
             # push the container
-            #self.push_container(images_built)
+            self.push_container(images_built)
 
             # delete the container
             self.delete_containers(images_built)
