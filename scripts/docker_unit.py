@@ -342,7 +342,7 @@ def build_unit(stack_dir: str, container_facade: ContainerFacade) -> None:
 
 def setup_pusher_func(dockerhub_user, dockerhub_token):
     def pusher_func(images_built: List[str]):
-        docker_pusher = DockerPusher(dockerhub_user, dockerhub_token)
+        docker_pusher = DockerPusher(dockerhub_token,dockerhub_user)
         return docker_pusher.push_container_to_dockerhub(images_built)
     return pusher_func
          
