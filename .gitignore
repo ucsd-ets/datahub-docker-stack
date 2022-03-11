@@ -14,3 +14,6 @@ wiki/
 
 # IDE
 .vscode/
+
+# certs
+*.cer
