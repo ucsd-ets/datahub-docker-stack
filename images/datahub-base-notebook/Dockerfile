@@ -27,9 +27,11 @@ RUN apt-get update -y && \
 
 COPY /scripts /usr/share/datahub/scripts/
 COPY /scripts/jupyter_notebook_config.py /tmp/jupyter_notebook_config_extra.py
+COPY /scripts/nbgrader_config.py /etc/jupyter/nbgrader_config.py
 RUN cat /tmp/jupyter_notebook_config_extra.py >> /etc/jupyter/jupyter_notebook_config.py && \
     chmod -R uga+x /usr/share/datahub/scripts/ && \
-    chmod -R uga+x /etc/jupyter/jupyter_notebook_config.py
+    chmod -R uga+x /etc/jupyter/jupyter_notebook_config.py && \
+    chmod -R uga+x /etc/jupyter/nbgrader_config.py
 
 # VSCode code-server
 RUN curl -fsSL https://code-server.dev/install.sh | sh -s -- --prefix=/usr/local
