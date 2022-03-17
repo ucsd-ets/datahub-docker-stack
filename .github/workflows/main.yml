@@ -95,6 +95,8 @@ jobs:
       #     doit test
 
       - name: Run manifests
+        env:
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
           doit manifest
           cp manifests/*.md wiki/
