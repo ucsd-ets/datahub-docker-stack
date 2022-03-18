@@ -96,35 +96,35 @@ def task_clear():
         'actions': [_clear]
     }
 
-def task_prebuild():
-    """Prepare a build stack"""
-    return {
-        'actions': [save_changed_images, save_git_info],
-        'file_dep': ['artifacts/.empty', 'logs/.empty'],
-        'targets': ['artifacts/IMAGES_CHANGED', 'artifacts/GIT_*']
-    }
+# def task_prebuild():
+#     """Prepare a build stack"""
+#     return {
+#         'actions': [save_changed_images, save_git_info],
+#         'file_dep': ['artifacts/.empty', 'logs/.empty'],
+#         'targets': ['artifacts/IMAGES_CHANGED', 'artifacts/GIT_*']
+#     }
 
-def task_build():
-    """Build image stack for all plans"""
-    return {
-        'actions': [run_build],
-        'file_dep': ['artifacts/IMAGES_CHANGED'],
-        'targets': ['artifacts/builder-metainfo.json', 'artifacts/IMAGES_BUILT'],
-        'params':[
-            {
-                'name': 'stack_dir',
-                'short': 'd',
-                'long': 'stack_dir',
-                'default': 'images'
-            },
-            {
-                'name': 'dry_run',
-                'short': 's',
-                'long': 'dry_run',
-                'default': False
-            },
-        ],
-    }
+# def task_build():
+#     """Build image stack for all plans"""
+#     return {
+#         'actions': [run_build],
+#         'file_dep': ['artifacts/IMAGES_CHANGED'],
+#         'targets': ['artifacts/builder-metainfo.json', 'artifacts/IMAGES_BUILT'],
+#         'params':[
+#             {
+#                 'name': 'stack_dir',
+#                 'short': 'd',
+#                 'long': 'stack_dir',
+#                 'default': 'images'
+#             },
+#             {
+#                 'name': 'dry_run',
+#                 'short': 's',
+#                 'long': 'dry_run',
+#                 'default': False
+#             },
+#         ],
+#     }
 
 def task_untested_push():
     """Push all built images that need testing elsewhere"""
@@ -136,22 +136,22 @@ def task_untested_push():
 
 
 
-def task_test():
-    """Test built images"""
+# def task_test():
+#     """Test built images"""
     
-    return {
-        'actions': [run_test],
-        'file_dep': ['artifacts/IMAGES_BUILT'],
-        'targets': ['artifacts/IMAGES_TEST_PASSED', 'artifacts/IMAGES_TEST_ERROR'],
-        'params':[
-            {
-                'name': 'stack_dir',
-                'short': 'd',
-                'long': 'stack_dir',
-                'default': 'images'
-            },
-        ],
-    }
+#     return {
+#         'actions': [run_test],
+#         'file_dep': ['artifacts/IMAGES_BUILT'],
+#         'targets': ['artifacts/IMAGES_TEST_PASSED', 'artifacts/IMAGES_TEST_ERROR'],
+#         'params':[
+#             {
+#                 'name': 'stack_dir',
+#                 'short': 'd',
+#                 'long': 'stack_dir',
+#                 'default': 'images'
+#             },
+#         ],
+#     }
 
 
 def task_push():
