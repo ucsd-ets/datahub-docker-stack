@@ -96,13 +96,13 @@ def task_clear():
         'actions': [_clear]
     }
 
-# def task_prebuild():
-#     """Prepare a build stack"""
-#     return {
-#         'actions': [save_changed_images, save_git_info],
-#         'file_dep': ['artifacts/.empty', 'logs/.empty'],
-#         'targets': ['artifacts/IMAGES_CHANGED', 'artifacts/GIT_*']
-#     }
+def task_prebuild():
+    """Prepare a build stack"""
+    return {
+        'actions': [save_changed_images, save_git_info],
+        'file_dep': ['artifacts/.empty', 'logs/.empty'],
+        'targets': ['artifacts/IMAGES_CHANGED', 'artifacts/GIT_*']
+    }
 
 # def task_build():
 #     """Build image stack for all plans"""
