@@ -165,3 +165,4 @@ def run_stable_manifests():
         run_report(specs, image_key, image=image)
     update_history()
 
+

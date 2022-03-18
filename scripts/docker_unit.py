@@ -10,7 +10,7 @@ from scripts.git_helper import get_changed_images
 from docker.errors import BuildError
 from docker.utils.json_stream import json_stream
 from model.spec import BuilderSpec
-from typing import List
+from typing import Dict, List
 import docker
 import logging
 import os
@@ -84,13 +84,13 @@ class ContainerBuilder:
     def build_container(self, build_params:Buildargs,stack_dir:str):
         return self.container_builder_func(build_params, stack_dir)
 
-def build_units(build_params:Buildargs,stack_dir:str)->None:
+def build_units(build_params:Buildargs,stack_dir:str)->Dict:
     '''
     This Function build image and it dependecies
         build_params:
         stack_dirs:
     '''
-    images = []
+    images = {}
     for build_param in build_params:
         #image_name, build_path, build_args, plan_name, image_tag = build_param
         print('image building {}'.format(build_param.full_image_tag))
@@ -100,7 +100,7 @@ def build_units(build_params:Buildargs,stack_dir:str)->None:
                             image_tag=build_param.full_image_tag,
                             nocache=False
                         )
-        images.append(build_param.full_image_tag)     
+        images[build_param.imgDef] = build_param.full_image_tag     
     return images
 
 class ContainerTester:
@@ -237,33 +237,41 @@ class ContainerFacade:
         build_params = build_info.build_spec.gen_build_args(
                 stack_dir, build_info.git_suffix, images_to_build)
 
-        return build_params
+        return build_params,image_dependecy
 
     def build_test_push_containers(self, stack_dir):
         build_info = self.build_info.get_info(stack_dir)
+        all_image_built = {}
+        image_dependency={}
         for unit_image_name in build_info.images_changed: 
             if unit_image_name in build_info.images_built:
                 continue
 
-            build_params = self.gen_build_params(stack_dir,unit_image_name)
-
+            build_params,dependency = self.gen_build_params(stack_dir,unit_image_name)
+            image_dependency[unit_image_name] = dependency
             # build
             images_built = self.build_container(build_params,stack_dir)
     
             # store built images
-            build_info.images_built = images_built
+            build_info.images_built = list(images_built.values())
+            all_image_built.update(images_built)
+            self.build_info_storage.store_images_built(list(images_built.values()))
             
-            self.build_info_storage.store_images_built(images_built)
-
             # test container
-            self.container_test(stack_dir, images_built)
+            self.container_test(stack_dir, build_info.images_built)
 
             # push the container
-            self.push_container(images_built)
+            self.push_container(build_info.images_built)
 
             # delete the container
-            self.delete_containers(images_built)
-
+            self.delete_containers(build_info.images_built)
+        self.build_info_storage.store_images_built(list(all_image_built.values()))
+        images_dep = {}
+        for image,dep in image_dependency.items():
+            if dep is None:
+                continue
+            images_dep[all_image_built[image]]=all_image_built[dep]
+        store_dict('image-dependency.json', images_dep)
     def build_container(self, build_params, stack_dir):
         return self.builder.build_container(build_params, stack_dir)
         

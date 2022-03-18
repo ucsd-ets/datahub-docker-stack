@@ -31,7 +31,7 @@ def task_unit_build():
     build_info_storage = BuildInfoStorage(images_built_func=store_images_on_filesystem)
     container_builder = ContainerBuilder(container_builder_func=build_units)
     container_tester = ContainerTester(container_tester_func=container_test)
-    pusher_func=setup_pusher_func("etsjenkins", os.environ['DOCKERHUB_TOKEN'])# os.environ['DOCKERHUB_USER']
+    pusher_func=setup_pusher_func("etsjenkins", 'test')#os.environ['DOCKERHUB_TOKEN'])# os.environ['DOCKERHUB_USER']
     container_pusher = ContainerPusher(container_pusher_func=pusher_func)
     container_deleter = ContainerDeleter(container_deleter_func=delete_docker_containers)
 
@@ -96,35 +96,35 @@ def task_clear():
         'actions': [_clear]
     }
 
-def task_prebuild():
-    """Prepare a build stack"""
-    return {
-        'actions': [save_changed_images, save_git_info],
-        'file_dep': ['artifacts/.empty', 'logs/.empty'],
-        'targets': ['artifacts/IMAGES_CHANGED', 'artifacts/GIT_*']
-    }
+# def task_prebuild():
+#     """Prepare a build stack"""
+#     return {
+#         'actions': [save_changed_images, save_git_info],
+#         'file_dep': ['artifacts/.empty', 'logs/.empty'],
+#         'targets': ['artifacts/IMAGES_CHANGED', 'artifacts/GIT_*']
+#     }
 
-def task_build():
-    """Build image stack for all plans"""
-    return {
-        'actions': [run_build],
-        'file_dep': ['artifacts/IMAGES_CHANGED'],
-        'targets': ['artifacts/builder-metainfo.json', 'artifacts/IMAGES_BUILT'],
-        'params':[
-            {
-                'name': 'stack_dir',
-                'short': 'd',
-                'long': 'stack_dir',
-                'default': 'images'
-            },
-            {
-                'name': 'dry_run',
-                'short': 's',
-                'long': 'dry_run',
-                'default': False
-            },
-        ],
-    }
+# def task_build():
+#     """Build image stack for all plans"""
+#     return {
+#         'actions': [run_build],
+#         'file_dep': ['artifacts/IMAGES_CHANGED'],
+#         'targets': ['artifacts/builder-metainfo.json', 'artifacts/IMAGES_BUILT'],
+#         'params':[
+#             {
+#                 'name': 'stack_dir',
+#                 'short': 'd',
+#                 'long': 'stack_dir',
+#                 'default': 'images'
+#             },
+#             {
+#                 'name': 'dry_run',
+#                 'short': 's',
+#                 'long': 'dry_run',
+#                 'default': False
+#             },
+#         ],
+#     }
 
 def task_untested_push():
     """Push all built images that need testing elsewhere"""

@@ -81,7 +81,7 @@ def test_container_build(stack_dir,imgs_changed,expected_items):
                 stack_dir, build_info.git_suffix, build_info.images_changed)
     build = ContainerBuilder(build_units)
     collected = build.build_container(build_params,stack_dir)
-    assert collected == expected_items
+    assert list(collected.values()) == expected_items
 
 @pytest.mark.parametrize(
         "stack_dir,imgs_built,expected_items",
@@ -141,7 +141,7 @@ def test_push_container(stack_dir,imgs_built,expected_items):
         data = json.load(ftp)
     pusher = DockerPusher(data['DOCKERHUB_TOKEN'],data['DOCKERHUB_USERNAME'])
     docker_push = ContainerPusher(pusher.push_container_to_dockerhub)
-    docker_push.push_container(collected)
+    docker_push.push_container(list(collected.values()))
     cli = docker.from_env()
     images_pushed = []
     for i in expected_items:
