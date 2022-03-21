@@ -97,7 +97,6 @@ class BuilderSpec:
                     else:
                         # TODO: throw error if prev tag not present
                         # TODO: Further testing on this
-                        print('here',imgDef.img_name,plan['tag_prefix'])
                         prev_tag = get_prev_tag(imgDef.img_name, plan['tag_prefix'])
                         base_full_tag = get_dependency(prev_tag)
                         base_tag = base_full_tag.split(':')[1]

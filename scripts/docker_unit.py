@@ -129,7 +129,6 @@ def get_build_info_from_filesystem(stack_dir:str,spec_file='spec.yml')->BuildInf
     # checking if the depends on image is changing and build 
     # accordingly
     queue = deque(list(build_spec.image_specs.keys()))
-    print(build_spec.image_specs.keys())
     while queue:
         ele = queue.popleft()
         if 'depend_on' in build_spec.image_specs[ele]:
@@ -195,7 +194,7 @@ def docker_push_image()->None:
     4. delete images from filesystem
     '''
     cli = docker.from_env()
-    if docker_login(cli, 'etsjenkins', os.environ['DOCKERHUB_TOKEN']):
+    if docker_login(cli, os.environ['DOCKERHUB_USER'], os.environ['DOCKERHUB_TOKEN']):
         tags = read_var('IMAGES_BUILT')
         pairs = [
             (cli.images.get(tag), tag)
@@ -265,6 +264,8 @@ class ContainerFacade:
 
             # delete the container
             self.delete_containers(build_info.images_built)
+        
+        # Storing the tags of the images built used in down stream task as inputs 
         self.build_info_storage.store_images_built(list(all_image_built.values()))
         images_dep = {}
         for image,dep in image_dependency.items():

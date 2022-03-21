@@ -66,12 +66,15 @@ jobs:
       - name: Setup artifacts
         env:
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+          DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
+          
         run: |
           doit prep
 
       - name: Workflow tests
         env:
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+          DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
         run: |
           coverage run -m pytest -v tests/test_docker_unit.py
           coverage report
@@ -85,6 +88,7 @@ jobs:
       - name: Build stack
         env:
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+          DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
           GRPC_CERT: ${{ secrets.GRPC_CERT }}
         run: |
           doit unit_build
@@ -97,6 +101,7 @@ jobs:
       - name: Run manifests
         env:
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+          DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
         run: |
           doit manifest
           cp manifests/*.md wiki/
