@@ -19,16 +19,15 @@ For people who are trying to modify the image stack, here are some scenarios and
         4. Install the requirments in scripts folder 
             - pip install -r requirements.txt
         5. Provide permission to build the Docker images
-                -for linux we need to steup group for user to use docker cli more info follow https://docs.docker.com/engine/install/linux-postinstall/ 
+            -for linux we need to steup group for user to use docker cli more info follow https://docs.docker.com/engine/install/linux-postinstall/ 
             
         6. Use doit list to list all the commands
         7. To build images locally use doit unit_build
         8. TO run the pytest use pytest tests/test_*.py
-            
-                - pytest tests test_docker_unit.py -m "not push"
-                - to test push functionality edit cred.json with datahub credentials
-                - to run test with push functionality use flag 
-                    - pytest tests test_docker_unit.py -m push 
+            - pytest tests test_docker_unit.py -m "not push"
+            - to test push functionality edit cred.json with datahub credentials
+            - to run test with push functionality use flag 
+                - pytest tests test_docker_unit.py -m push 
     
 
 **Important**: for all changes, it is advised to make a new branch with the name `dev_***` for developing and testing before merging it to the `main` branch for the official update. And also make sure all the changes are in **one** commit when you push to Github. This can be done by changing the first commit continuously: `git add . && git commit --amend`. Failure to do so may break the dependency between images. 
@@ -89,54 +88,37 @@ For people who are trying to modify the image stack, here are some scenarios and
 
 
 ### Overview of the Repository
-We Use github workflow to builds new images if their is any change in the images or addtional images are added.<br>
-.github:-<br>
-        The main.yml file contains the steps to build the image<br>
-            <ul>
-            <li>Initial download required for the images are installed</li>
-            <li>Doit module is used to run the tasks</li>
-                <ol>
-                <li> install all the requirments for the images </li>
-                <li> Use doit unit build to build,test and push the image to DataHub repo</li>
-                <li> Update the wiki  </li>
-                <li> Store the artifacts and logs</li>
-                </ol>
-            </ul>
+We Use github workflow to builds new images if their is any change in the images or addtional images are added.
+.github:-
+        The main.yml file contains the steps to build the image
+            + Initial download required for the images are installed
+            + Doit module is used to run the tasks
+                - install all the requirments for the images 
+                - Use doit unit build to build,test and push the image to DataHub repo
+                - Update the wiki  
+                - Store the artifacts and log    
         The Tag.yml file is used to tag the latest build <br>
-<br>
-Images:-<br>
-        <ol>
-        <li> Folder containing the images and each images has its own docker file, test folder for test scripts.</li>
-        <li> Spec.yml file is important file where the dependecy of the image and build information specified for an image</li>
-        </ol>
-Model:-
-        <ol>
-        <li>Spec.py used for reading the spec file and prepare build parameters</li>
-        <li>imagedef.py pydantic object used by spec.py</li>
-        </ol>
-scripts:-<br>
-        <ol>
-        <li>dataojects.py contains the pydantic class</li>
-        <li>docker_unit.py used to build,test and push images</li>
-            <ul>
-            <li>ContainerFacade class controls the flow of the code</li>
-            <li>build_test_push_containers method is used for building,test and push image</li>
-            </ul>
-        <li>githelper has code for git related task</li>
-        <li>manifests.py has utils methods to maintain the manifests</li>
-        <li>Other docker file will be deprecated except for manifest</li>
-        </ol>
-Tests:-<br>
-        <ol>
-        <li>Contains the test file for testing the submodule</li>
-        <li>used with pytest can be called with pytest test_*.py</li>
-        </ol>
-dodo.py:-<br>
-        <ol>
-        <li>We use doit python module to call the submodule </li>
-        <li>Each task is called with parameters and expected outputs</li>
-        </ol>
-<br>
 
-<br>
+Imag:- 
+    - Folder containing the images and each images has its own docker file, test folder for test scripts.
+    - Spec.yml file is important file where the dependecy of the image and build information specified for an image.
+Model:-
+    - Spec.py used for reading the spec file and prepare build parameters
+    - imagedef.py pydantic object used by spec.py
+
+scripts:-
+    - dataojects.py contains the pydantic class
+    - docker_unit.py used to build,test and push images
+        - ContainerFacade class controls the flow of the code
+        - build_test_push_containers method is used for building,test and push image
+    - githelper has code for git related task
+    - manifests.py has utils methods to maintain the manifests
+    - Other docker file will be deprecated except for manifest
+Tests:-
+    - Contains the test file for testing the submodule
+    - used with pytest can be called with pytest test_*.py
+
+dodo.py:-
+    - We use doit python module to call the submodule 
+    - Each task is called with parameters and expected outputs
 
