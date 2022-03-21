@@ -9,7 +9,7 @@ For students and instructors, check out the offical [FAQ](https://support.ucsd.e
 ## Maintenance
 
 For people who are trying to modify the image stack, here are some scenarios and instructions on each.
-## Steps to build locally:<br>
+## Steps to build locally:
     <ol>
     <li> Clone the Repository</li>
     <li> Install the requirments in scripts folder</li>
