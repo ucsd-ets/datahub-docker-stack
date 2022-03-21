@@ -11,7 +11,7 @@ For students and instructors, check out the offical [FAQ](https://support.ucsd.e
 For people who are trying to modify the image stack, here are some scenarios and instructions on each.
 
 ### Steps to build locally:
-    <html>
+
     below are the steps to build the repo. Make sure you have python 3.8 installed
         1. Create a python virtual environment with python3.8 -m venv . at the project root    
         2. Activate the environment source bin/activate
@@ -29,7 +29,7 @@ For people who are trying to modify the image stack, here are some scenarios and
                 - to test push functionality edit cred.json with datahub credentials
                 - to run test with push functionality use flag 
                     - pytest tests test_docker_unit.py -m push 
-   </html>  
+    
 
 **Important**: for all changes, it is advised to make a new branch with the name `dev_***` for developing and testing before merging it to the `main` branch for the official update. And also make sure all the changes are in **one** commit when you push to Github. This can be done by changing the first commit continuously: `git add . && git commit --amend`. Failure to do so may break the dependency between images. 
 
