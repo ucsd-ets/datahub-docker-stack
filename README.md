@@ -72,12 +72,16 @@ For people who are trying to modify the image stack, here are some scenarios and
 We Use github workflow to builds new images if their is any change in the images or addtional images are added.<br>
 .github:-<br>
         The main.yml file contains the steps to build the image<br>
-            - Initial download required for the images are installed<br>
-            - Doit module is used to run the tasks<br>
-                1) install all the requirments for the images<br>
-                2) Use doit unit build to build,test and push the image to DataHub repo<br>
-                3) Update the wiki  <br>
-                4) Store the artifacts and logs<br>
+            <ul>
+            <li>Initial download required for the images are installed</li>
+            </li>Doit module is used to run the tasks</li>
+                <ol>
+                <li> install all the requirments for the images </li>
+                <li> Use doit unit build to build,test and push the image to DataHub repo</li>
+                <li> Update the wiki  </li>
+                <li> Store the artifacts and logs</li>
+                </ol>
+            </ul>
         The Tag.yml file is used to tag the latest build <br>
 <br>
 Images:-<br>
