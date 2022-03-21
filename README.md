@@ -12,24 +12,21 @@ For people who are trying to modify the image stack, here are some scenarios and
 
 ### Steps to build locally:
     below are the steps to build the repo.
-    
-    <ul>
-        <li> Clone the Repository</li>
-        <li> Install the requirments in scripts folder</li>
-        <li> Provide permission to build the Docker images</li>
-            <ul>
-                <li>for linux we need to steup group for user to use docker cli more info follow https://docs.docker.com/engine/install/linux-postinstall/</li>
-            </ul>
-        <li> Use doit list to list all the commands</li>
-        <li> To build images locally use doit unit_build</li>
-        <li> TO run the pytest use pytest tests/test_*.py</li>
+
+        1. Clone the Repository<br>
+        2. Install the requirments in scripts folder<br>
+        3. Provide permission to build the Docker images<br>
+                -for linux we need to steup group for user to use docker cli more info follow https://docs.docker.com/engine/install/linux-postinstall/ 
+            
+        4. Use doit list to list all the commands</li>
+        5. To build images locally use doit unit_build</li>
+        6. TO run the pytest use pytest tests/test_*.py</li>
             <ul>
                 <li>pytest tests test_docker_unit.py -m "not push"</li>
                 <li>to test push functionality edit cred.json with datahub credentials</li>
                 <li>to run test with push functionality use flag </li>
                     pytest tests test_docker_unit.py -m push
             </ul>
-  </ul>
 
 **Important**: for all changes, it is advised to make a new branch with the name `dev_***` for developing and testing before merging it to the `main` branch for the official update. And also make sure all the changes are in **one** commit when you push to Github. This can be done by changing the first commit continuously: `git add . && git commit --amend`. Failure to do so may break the dependency between images. 
 
