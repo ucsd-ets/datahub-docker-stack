@@ -10,8 +10,9 @@ For students and instructors, check out the offical [FAQ](https://support.ucsd.e
 
 For people who are trying to modify the image stack, here are some scenarios and instructions on each.
 
-## Steps to build locally:
-
+### Steps to build locally:
+    below are the steps to build the repo.
+    
     <ul>
         <li> Clone the Repository</li>
         <li> Install the requirments in scripts folder</li>
