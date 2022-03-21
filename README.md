@@ -90,35 +90,35 @@ For people who are trying to modify the image stack, here are some scenarios and
 ### Overview of the Repository
 We Use github workflow to builds new images if their is any change in the images or addtional images are added.
 .github:-
-        The main.yml file contains the steps to build the image
-            + Initial download required for the images are installed
-            + Doit module is used to run the tasks
-                - install all the requirments for the images 
-                - Use doit unit build to build,test and push the image to DataHub repo
-                - Update the wiki  
-                - Store the artifacts and log    
-        The Tag.yml file is used to tag the latest build <br>
+The main.yml file contains the steps to build the image
++ Initial download required for the images are installed
++ Doit module is used to run the tasks
+    - install all the requirments for the images 
+    - Use doit unit build to build,test and push the image to DataHub repo
+    - Update the wiki  
+    - Store the artifacts and log    
+The Tag.yml file is used to tag the latest build <br>
 
-Imag:- 
-    - Folder containing the images and each images has its own docker file, test folder for test scripts.
-    - Spec.yml file is important file where the dependecy of the image and build information specified for an image.
+Image:- 
+- Folder containing the images and each images has its own docker file, test folder for test scripts.
+- Spec.yml file is important file where the dependecy of the image and build information specified for an image.
 Model:-
-    - Spec.py used for reading the spec file and prepare build parameters
-    - imagedef.py pydantic object used by spec.py
+- Spec.py used for reading the spec file and prepare build parameters
+- imagedef.py pydantic object used by spec.py
 
 scripts:-
-    - dataojects.py contains the pydantic class
-    - docker_unit.py used to build,test and push images
-        - ContainerFacade class controls the flow of the code
-        - build_test_push_containers method is used for building,test and push image
-    - githelper has code for git related task
-    - manifests.py has utils methods to maintain the manifests
-    - Other docker file will be deprecated except for manifest
+- dataojects.py contains the pydantic class
+- docker_unit.py used to build,test and push images
+    - ContainerFacade class controls the flow of the code
+    - build_test_push_containers method is used for building,test and push image
+- githelper has code for git related task
+- manifests.py has utils methods to maintain the manifests
+- Other docker file will be deprecated except for manifest
 Tests:-
-    - Contains the test file for testing the submodule
-    - used with pytest can be called with pytest test_*.py
+- Contains the test file for testing the submodule
+- used with pytest can be called with pytest test_*.py
 
 dodo.py:-
-    - We use doit python module to call the submodule 
-    - Each task is called with parameters and expected outputs
+- We use doit python module to call the submodule 
+- Each task is called with parameters and expected outputs
 
