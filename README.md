@@ -1,4 +1,3 @@
-<<<<<<< 8a5b86913c16178df493efbac22851b723e62ab5
 # datahub-docker-stack
 
 This Github repository builds and maintains the [standard suite of Docker containers](https://support.ucsd.edu/services?id=kb_article_view&sysparm_article=KB0032173&sys_kb_id=e61b198e1b74781048e9cae5604bcbe0) supported by UC San Diego Educational Technology Services.
@@ -10,6 +9,25 @@ For students and instructors, check out the offical [FAQ](https://support.ucsd.e
 ## Maintenance
 
 For people who are trying to modify the image stack, here are some scenarios and instructions on each.
+## Steps to build locally:<br>
+    <ol>
+    <li> Clone the Repository</li>
+    <li> Install the requirments in scripts folder</li>
+    <li> Provide permission to build the Docker images</li>
+        <ul>
+        <li>for linux we need to steup group for user to use docker cli more info follow https://docs.docker.com/engine/install/linux-postinstall/</li>
+        </ul>
+    <li> Use doit list to list all the commands</li>
+    <li> To build images locally use doit unit_build</li>
+    <li> TO run the pytest use pytest tests/test_*.py</li>
+        <ul>
+        <li>pytest tests test_docker_unit.py -m "not push"</li>
+        <li>to test push functionality edit cred.json with datahub credentials</li>
+        <li>to run test with push functionality use flag </li>
+            pytest tests test_docker_unit.py -m push<br>
+        </ul>
+   <ol>
+   <br><br>
 
 **Important**: for all changes, it is advised to make a new branch with the name `dev_***` for developing and testing before merging it to the `main` branch for the official update. And also make sure all the changes are in **one** commit when you push to Github. This can be done by changing the first commit continuously: `git add . && git commit --amend`. Failure to do so may break the dependency between images. 
 
@@ -117,23 +135,6 @@ dodo.py:-<br>
         <li>Each task is called with parameters and expected outputs</li>
         </ol>
 <br>
-Steps to build locally:<br>
-    <ol>
-    <li> Clone the Repository</li>
-    <li> Install the requirments in scripts folder</li>
-    <li> Provide permission to build the Docker images</li>
-        <ul>
-        <li>for linux we need to steup group for user to use docker cli more info follow https://docs.docker.com/engine/install/linux-postinstall/</li>
-        </ul>
-    <li> Use doit list to list all the commands</li>
-    <li> To build images locally use doit unit_build</li>
-    <li> TO run the pytest use pytest tests/test_*.py</li>
-        <ul>
-        <li>pytest tests test_docker_unit.py -m "not push"</li>
-        <li>to test push functionality edit cred.json with datahub credentials</li>
-        <li>to run test with push functionality use flag </li>
-            pytest tests test_docker_unit.py -m push<br>
-        </ul>
-   <ol>
-<br><br>
+
+<br>
 
