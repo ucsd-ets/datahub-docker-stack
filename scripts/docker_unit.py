@@ -200,10 +200,12 @@ def docker_push_image()->None:
             (cli.images.get(tag), tag)
             for tag in tags
         ]
+        print('images to be deleted:{}'.format(cli.images.list()))
         # delete the local image 
         cli.images.prune()
         for tag in tags:
             cli.images.remove(image=cli.images.get(tag),force=True)
+        print('images  present:{}'.format(cli.images.list()))
 
 class ContainerFacade:
     def __init__(self, 
