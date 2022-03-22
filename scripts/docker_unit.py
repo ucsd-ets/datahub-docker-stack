@@ -163,9 +163,11 @@ class ContainerDeleter:
 
 def delete_docker_containers(images_built):
     cli = docker.from_env()
+    print('images to be deleted:{}'.format(cli.images.list()))
     cli.images.prune()
     for tag in images_built:
         cli.images.remove(image=tag,force=True)
+    print('images  present:{}'.format(cli.images.list()))
 
 class DockerPusher:
     def __init__(self, dockerhub_token: str, dockerhub_username: str):
@@ -185,27 +187,26 @@ class DockerPusher:
 
         raise Exception('Could not push image to dockerhub since login didnt work!')
     
-def docker_push_image()->None:
-    '''
-    Used to push to built image to repository
-    1. logging in
-    2. reading which variables to push
-    3. push images that changed
-    4. delete images from filesystem
-    '''
-    cli = docker.from_env()
-    if docker_login(cli, os.environ['DOCKERHUB_USER'], os.environ['DOCKERHUB_TOKEN']):
-        tags = read_var('IMAGES_BUILT')
-        pairs = [
-            (cli.images.get(tag), tag)
-            for tag in tags
-        ]
-        print('images to be deleted:{}'.format(cli.images.list()))
-        # delete the local image 
-        cli.images.prune()
-        for tag in tags:
-            cli.images.remove(image=cli.images.get(tag),force=True)
-        print('images  present:{}'.format(cli.images.list()))
+# def docker_push_image()->None:
+#     '''
+#     Used to push to built image to repository
+#     1. logging in
+#     2. reading which variables to push
+#     3. push images that changed
+#     4. delete images from filesystem
+#     '''
+#     cli = docker.from_env()
+#     if docker_login(cli, os.environ['DOCKERHUB_USER'], os.environ['DOCKERHUB_TOKEN']):
+#         tags = read_var('IMAGES_BUILT')
+#         pairs = [
+#             (cli.images.get(tag), tag)
+#             for tag in tags
+#         ]
+#         # delete the local image 
+#         cli.images.prune()
+#         for tag in tags:
+#             cli.images.remove(image=cli.images.get(tag),force=True)
+        
 
 class ContainerFacade:
     def __init__(self, 
