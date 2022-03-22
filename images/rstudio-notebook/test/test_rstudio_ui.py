@@ -40,7 +40,7 @@ def test_rstudio(container):
     ch.setFormatter(formatter)
     LOGGER.addHandler(ch)
 
-    fh = logging.FileHandler('/opt/datahub/ui-test.log')
+    fh = logging.FileHandler('artifacts/ui-test.log')
     fh.setLevel(logging.INFO)
     fh.setFormatter(formatter)
     LOGGER.addHandler(fh)
