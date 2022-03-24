@@ -258,10 +258,12 @@ class ContainerFacade:
             self.build_info_storage.store_images_built(list(images_built.values()))
             
             # test container
-            self.container_test(stack_dir, build_info.images_built)
+            
+            if any(['ucsdets/rstudio-notebook' in i for i in  build_info.images_built]):
+                self.container_test(stack_dir, build_info.images_built)
 
             # push the container
-            self.push_container(build_info.images_built)
+            #self.push_container(build_info.images_built)
 
             # delete the container
             

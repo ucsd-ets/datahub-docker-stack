@@ -61,6 +61,7 @@ def test_rstudio(container):
     options.add_argument('--ignore-ssl')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
+    options.add_argument("--disable-popup-blocking")
 
     browser = Chrome(options=options)
 
@@ -132,9 +133,9 @@ def test_rstudio(container):
     # knit.click()
     ActionChains(browser).key_down(Keys.CONTROL).key_down(Keys.SHIFT).send_keys("k").perform()
     LOGGER.info('knit clicked worked')
-
+    
     time.sleep(WAIT_TIME + 15)
-
+    browser.save_screenshot('artifacts/screenshot.png')
     notebook = browser.window_handles[0]
     browser.switch_to.window(notebook)
 
