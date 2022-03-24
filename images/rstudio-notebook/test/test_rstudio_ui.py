@@ -124,8 +124,7 @@ def test_rstudio(container):
     time.sleep(WAIT_TIME+15)
     LOGGER.info('Checking knit')
     knit = webdriverwait(browser, WAIT_TIME).until(
-        #ec.element_to_be_clickable((by.XPATH, '//*[@id="rstudio_container"]/div[2]/div/div[3]/div/div[4]/div/div/div[2]/div/div[6]/div/div[2]/div/div[2]/div/div[3]/div/div[2]/div/div[2]/div/table/tbody/tr/td[1]/table/tbody/tr/td[19]/button/table/tbody/tr/td[2]/div'))
-        ec.element_to_be_clickable((by.XPATH,'/html/body/div[4]/div[2]/div/div[4]/div/div[4]/div/div/div[2]/div/div[6]/div/div/div[2]/div/div[3]/div/div[2]/div/div[2]/div/div[2]/table/tbody/tr/td[1]/table/tbody/tr/td[20]/button/table/tbody/tr/td[2]/div'))
+        ec.element_to_be_clickable((by.XPATH,'//*[@id="gwt-uid-1192"]/div[2]/div/div[2]/table/tbody/tr/td[1]/table/tbody/tr/td[20]/button/table/tbody/tr/td[1]/img'))
     )
 
     knit.click()
