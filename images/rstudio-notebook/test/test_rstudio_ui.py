@@ -13,6 +13,8 @@ from selenium.webdriver.common.by import By as by
 import time, logging, copy
 import logging
 
+from setuptools import Command
+
 import pytest
 import os
 
@@ -22,15 +24,14 @@ THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 WAIT_TIME = 15 or os.environ.get('WAIT_TIME')
 MAX_RETRIES = 5 or os.environ.get('MAX_RETRIES')
 JUPYTER_TOKEN = os.environ.get('JUPYTER_TOKEN')
-SERVICE_NAME = 'jupyter' or os.environ.get('SERVICE_NAME')
+SERVICE_NAME = '127.0.0.1' or os.environ.get('SERVICE_NAME')
 
 
 def test_rstudio(container):
 
-
     c = container.run(
         ports={'8888/tcp':8888},
-        command=["jupyter",'--port=8888'],
+        command=["jupyter","notebook",'--port=8888',"--ip=0.0.0.0","-NotebookApp.token=''","--NotebookApp.password=''"],
     )
 
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -64,17 +65,19 @@ def test_rstudio(container):
     # give it some time for nbconvert to run and to spin up notebook server
     baseurl = 'http://{0}:8888'.format(SERVICE_NAME)
 
-    if JUPYTER_TOKEN:
-        baseurl = '{0}/?token={1}'.format(baseurl, JUPYTER_TOKEN)
-    else:
-        raise TypeError('Must specify JUPYTER_TOKEN as environment variable')
-
+    # if JUPYTER_TOKEN:
+    #     baseurl = '{0}/?token={1}'.format(baseurl, JUPYTER_TOKEN)
+    # else:
+    #     raise TypeError('Must specify JUPYTER_TOKEN as environment variable')
+    
+    LOGGER.info(c.status)
+    LOGGER.info(c.logs())
     current_retries = 0
     while True:
 
         if current_retries == MAX_RETRIES:
             raise Exception('Max retry limit hit, could not connect to jupyter server')
-
+        
         browser.get(baseurl)
 
         if browser.page_source != '<html><head></head><body></body></html>':
@@ -106,28 +109,43 @@ def test_rstudio(container):
     LOGGER.info('RStudio ok')
     LOGGER.info('Loading datascience-rstudio.Rmd')
 
-    rstudio = browser.window_handles[-1]
-    browser.switch_to.window(rstudio)        
-
-    rmarkdown = webdriverwait(browser, WAIT_TIME).until(
-        ec.element_to_be_clickable((by.XPATH, '//*[@id="rstudio_container"]/div[2]/div/div[3]/div/div[2]/div/div/div[4]/div/div[6]/div/div[2]/div/div[3]/div/div[2]/div/div[2]/div/div/div[2]/div/div[3]/div/div/div[3]/div/div[4]/div/div[3]/div/div[2]/div/div/table/tbody/tr[1]/td[3]'))
+    original_window = browser.current_window_handle
+    for window_handle in browser.window_handles:
+        if window_handle != original_window:
+            browser.switch_to.window(window_handle)
+            break
+    
+    browser.implicitly_wait(WAIT_TIME)
+    rstudio_file = webdriverwait(browser, WAIT_TIME).until(
+        ec.element_to_be_clickable((by.XPATH,'/html/body/div[4]/div[2]/div/div[4]/div/div[2]/div/div/div[4]/div/div[6]/div/div[2]/div/div[3]/div/div[2]/div/div[2]/div/div/div[2]/div/div[3]/div/div/div[3]/div/div[4]/div/div[3]/div/div[2]/div/div/table/tbody/tr[2]/td[3]/div/div'))
     )
-    rmarkdown.click()
     time.sleep(WAIT_TIME)
+    
+    rstudio_file.click()
     LOGGER.info('datascience-rstudio.Rmd ok')
+    
+    LOGGER.info('Checking knit')
+    knit = webdriverwait(browser, WAIT_TIME).until(
+        #ec.element_to_be_clickable((by.XPATH, '//*[@id="rstudio_container"]/div[2]/div/div[3]/div/div[4]/div/div/div[2]/div/div[6]/div/div[2]/div/div[2]/div/div[3]/div/div[2]/div/div[2]/div/table/tbody/tr/td[1]/table/tbody/tr/td[19]/button/table/tbody/tr/td[2]/div'))
+        ec.element_to_be_clickable((by.XPATH,'/html/body/div[4]/div[2]/div/div[4]/div/div[4]/div/div/div[2]/div/div[6]/div/div/div[2]/div/div[3]/div/div[2]/div/div[2]/div/div[2]/table/tbody/tr/td[1]/table/tbody/tr/td[20]/button/table/tbody/tr/td[2]/div'))
+    )
 
-    # logger.info('Checking knit')
-    # knit = webdriverwait(browser, WAIT_TIME).until(
-    #     ec.element_to_be_clickable((by.XPATH, '//*[@id="rstudio_container"]/div[2]/div/div[3]/div/div[4]/div/div/div[2]/div/div[6]/div/div[2]/div/div[2]/div/div[3]/div/div[2]/div/div[2]/div/table/tbody/tr/td[1]/table/tbody/tr/td[19]/button/table/tbody/tr/td[2]/div'))
-    # )
-
-    # knit.click()
-    # logger.info('knit clicked worked')
+    knit.click()
+    LOGGER.info('knit clicked worked')
 
     time.sleep(WAIT_TIME + 15)
 
     notebook = browser.window_handles[0]
     browser.switch_to.window(notebook)
+
+    # check for the pdf generated
+    exit_code,output = c.exec_run('ls /home/jovyan')
+    LOGGER.info(output.decode("utf-8"))
+    if  'datascience-rstudio.pdf' not  in output.decode("utf-8") :
+        LOGGER.info('datascience-rstudio.pdf not generated')
+        raise FileNotFoundError
+       
+
 
     # select the quit button
     LOGGER.info('Checking the quit button')
