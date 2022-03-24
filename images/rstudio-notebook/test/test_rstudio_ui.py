@@ -12,6 +12,8 @@ import selenium.webdriver.support.expected_conditions as ec
 from selenium.webdriver.common.by import By as by
 import time, logging, copy
 import logging
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.keys import Keys
 
 from setuptools import Command
 
@@ -123,11 +125,12 @@ def test_rstudio(container):
     LOGGER.info('datascience-rstudio.Rmd ok')
     time.sleep(WAIT_TIME+15)
     LOGGER.info('Checking knit')
-    knit = webdriverwait(browser, WAIT_TIME).until(
-        ec.element_to_be_clickable((by.XPATH,'//*[@id="gwt-uid-1192"]/div[2]/div/div[2]/table/tbody/tr/td[1]/table/tbody/tr/td[20]/button/table/tbody/tr/td[1]/img'))
-    )
+    # knit = webdriverwait(browser, WAIT_TIME).until(
+    #     ec.element_to_be_clickable((by.XPATH,''))
+    # )
 
-    knit.click()
+    # knit.click()
+    ActionChains(browser).key_down(Keys.CONTROL).key_down(Keys.SHIFT).send_keys("k").perform()
     LOGGER.info('knit clicked worked')
 
     time.sleep(WAIT_TIME + 15)
