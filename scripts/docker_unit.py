@@ -163,11 +163,9 @@ class ContainerDeleter:
 
 def delete_docker_containers(images_built):
     cli = docker.from_env()
-    print('images to be deleted:{}'.format(cli.images.list()))
-    cli.images.prune()
     for tag in images_built:
         cli.images.remove(image=tag,force=True)
-    print('images  present:{}'.format(cli.images.list()))
+    cli.images.prune({'dangling':True})
 
 class DockerPusher:
     def __init__(self, dockerhub_token: str, dockerhub_username: str):
@@ -266,7 +264,9 @@ class ContainerFacade:
             self.push_container(build_info.images_built)
 
             # delete the container
+            
             self.delete_containers(build_info.images_built)
+            
         
         # Storing the tags of the images built used in down stream task as inputs 
         self.build_info_storage.store_images_built(list(all_image_built.values()))
