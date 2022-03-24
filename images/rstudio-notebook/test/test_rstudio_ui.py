@@ -119,11 +119,9 @@ def test_rstudio(container):
     rstudio_file = webdriverwait(browser, WAIT_TIME).until(
         ec.element_to_be_clickable((by.XPATH,'/html/body/div[4]/div[2]/div/div[4]/div/div[2]/div/div/div[4]/div/div[6]/div/div[2]/div/div[3]/div/div[2]/div/div[2]/div/div/div[2]/div/div[3]/div/div/div[3]/div/div[4]/div/div[3]/div/div[2]/div/div/table/tbody/tr[2]/td[3]/div/div'))
     )
-    time.sleep(WAIT_TIME)
-    
     rstudio_file.click()
     LOGGER.info('datascience-rstudio.Rmd ok')
-    
+    time.sleep(WAIT_TIME+15)
     LOGGER.info('Checking knit')
     knit = webdriverwait(browser, WAIT_TIME).until(
         #ec.element_to_be_clickable((by.XPATH, '//*[@id="rstudio_container"]/div[2]/div/div[3]/div/div[4]/div/div/div[2]/div/div[6]/div/div[2]/div/div[2]/div/div[3]/div/div[2]/div/div[2]/div/table/tbody/tr/td[1]/table/tbody/tr/td[19]/button/table/tbody/tr/td[2]/div'))
