@@ -119,18 +119,29 @@ def test_rstudio(container):
             break
     
     browser.implicitly_wait(WAIT_TIME)
-    rstudio_file = webdriverwait(browser, WAIT_TIME).until(
-        ec.element_to_be_clickable((by.XPATH,'/html/body/div[4]/div[2]/div/div[4]/div/div[2]/div/div/div[4]/div/div[6]/div/div[2]/div/div[3]/div/div[2]/div/div[2]/div/div/div[2]/div/div[3]/div/div/div[3]/div/div[4]/div/div[3]/div/div[2]/div/div/table/tbody/tr[2]/td[3]/div/div'))
-    )
-    rstudio_file.click()
+    rstudio_handler = browser.current_window_handle
+    ActionChains(browser).key_down(Keys.CONTROL).send_keys("o").perform()
+    browser.switch_to.window(browser.window_handles[-1])
+    ids = browser.find_elements(by.XPATH,'//*[@id]')
+    file_id=None
+    for ii in ids:
+        try:
+            e=ii.get_attribute('id')
+            if 'rstudio_dirContents' in e:
+                if ii.text.split()[0]== 'datascience-rstudio.Rmd':
+                    file_id = e
+        except:
+            pass
+         
+    file_promtp=browser.find_element(by.ID,file_id)
+    file_promtp.click()
+    file_close = browser.find_element(by.XPATH,'//*[@id="rstudio_file_accept_open"]')
+    file_close.click()
     LOGGER.info('datascience-rstudio.Rmd ok')
     time.sleep(WAIT_TIME+15)
+    
     LOGGER.info('Checking knit')
-    # knit = webdriverwait(browser, WAIT_TIME).until(
-    #     ec.element_to_be_clickable((by.XPATH,''))
-    # )
-
-    # knit.click()
+    
     ActionChains(browser).key_down(Keys.CONTROL).key_down(Keys.SHIFT).send_keys("k").perform()
     LOGGER.info('knit clicked worked')
     
