@@ -1,0 +1,4 @@
+{
+    "ChangeIgnore":["conftest.py"],
+    "BuildAll":["tests_common","spec.yml","change_ignore.json"]
+}

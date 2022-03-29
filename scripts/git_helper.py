@@ -3,8 +3,9 @@
 from plumbum.cmd import git
 from pathlib import PurePath
 from os import path
+import json
 
-from scripts.utils import store_var
+from scripts.utils import store_var,get_specs
 
 
 class GitHelper:
@@ -33,13 +34,23 @@ class GitHelper:
 def get_changed_images():
     changed_images = set()
     changed_files = GitHelper.commit_changed_files()
+    # read all image name
+    spec = get_specs('images/spec.yml')
+    images = list(spec['images'].keys())
+    # read all build tags
+    with open('images/change_ignore.json','r') as ftp:
+        tags = json.load(ftp)
     
     for file in changed_files:
         fp = PurePath(file)
         # need to be under images and must be a folder
         if fp.parts[0] == 'images':
             image_ref = fp.parts[1]
-            if image_ref not in changed_images:
+            if image_ref in tags['BuildAll']:
+                changed_images.update(images)
+                # included all images so break and proceed as all images needs to be built
+                break
+            if image_ref not in changed_images and image_ref not in tags['ChangeIgnore']:
                 changed_images.add(image_ref)
     return list(changed_images)
 

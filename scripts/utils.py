@@ -6,9 +6,10 @@ from os.path import isfile
 from io import StringIO
 import bitmath
 from pandas import NaT, Series, read_csv, concat
+from collections import deque
+from typing import List,Dict
 
-
-def get_specs(f_yaml):
+def get_specs(f_yaml:str)->Dict:
     """
     Parse specs from yaml file name to dict
     """
@@ -17,7 +18,10 @@ def get_specs(f_yaml):
     return specs
 
 
-def store_var(name, value, parent='artifacts'):
+def store_var(name:str, value:str, parent='artifacts')->None:
+    '''
+    Used to store the key value pair
+    '''
     with open(pjoin(parent, name), 'w') as f:
         if isinstance(value, str):
             f.write(value)
@@ -29,7 +33,10 @@ def store_var(name, value, parent='artifacts'):
             raise NotImplementedError
 
 
-def read_var(name, parent='artifacts'):
+def read_var(name:str, parent='artifacts')->str:
+    '''
+    Read the content from the file
+    '''
     filepath = pjoin(parent, name)
     if isfile(filepath):
         with open(filepath, 'r') as f:
@@ -42,18 +49,24 @@ def read_var(name, parent='artifacts'):
         return None
 
 
-def store_dict(name, value, parent='artifacts'):
+def store_dict(name:str, value:str, parent='artifacts')->None:
+    '''
+    Used to Dump the json file with the key value pair
+    '''
     with open(pjoin(parent, name), 'w') as f:
         json.dump(value, f, indent=2)
 
 
-def read_dict(name, parent='artifacts'):
+def read_dict(name:str, parent='artifacts')->Dict:
+    '''
+    Read dict from the json file
+    '''
     with open(pjoin(parent, name), 'r') as f:
         di = json.load(f)
     return di
 
 
-def bytes_to_hstring(n_bytes):
+def bytes_to_hstring(n_bytes:str):
     return (
         bitmath.Byte(int(n_bytes))
         .best_prefix(bitmath.SI)
@@ -61,7 +74,7 @@ def bytes_to_hstring(n_bytes):
     )
 
 
-def strfdelta(tdelta):
+def strfdelta(tdelta)->str:
     s = ""
     if tdelta is NaT:
         return s
@@ -80,7 +93,7 @@ def strfdelta(tdelta):
     return s + f"{seconds}s"
 
 
-def json2series(jsobj, name=None, axis_name=None):
+def json2series(jsobj, name:str=None, axis_name:str=None)->str:
     if isinstance(jsobj, dict):
         pass
     elif isinstance(jsobj, str) and isfile(jsobj):
@@ -94,7 +107,7 @@ def json2series(jsobj, name=None, axis_name=None):
     return srs
 
 
-def store_series(srs, path, parent='artifacts'):
+def store_series(srs, path:str, parent:str='artifacts')->None:
     if parent:
         path = pjoin(parent, path)
     if not path.endswith('.csv'):
@@ -102,7 +115,7 @@ def store_series(srs, path, parent='artifacts'):
     srs.to_csv(path)
 
 
-def csv_embed_markdown(csv_path, markdown_path, title):
+def csv_embed_markdown(csv_path:str, markdown_path:str, title:str)->None:
     with open(csv_path, 'r') as f:
         csv = f.read()
     with open(markdown_path, 'w') as f:
@@ -112,7 +125,7 @@ def csv_embed_markdown(csv_path, markdown_path, title):
         f.write("```\n")
 
 
-def strip_csv_from_md(md_fp):
+def strip_csv_from_md(md_fp:str)->list:
     with open(md_fp, 'r') as f:
         doc = f.read()
         _, csv = doc.split('```csv\n')
@@ -125,7 +138,7 @@ def csv_to_pd(csv):
     return read_csv(fp_csv, index_col='image')
 
 
-def csv_concat(csv_old, fp_new, out_fp):
+def csv_concat(csv_old:str, fp_new, out_fp)->None:
     fp_old = StringIO(csv_old)
     srs_old = read_csv(fp_old, index_col='image')
     srs_new = read_csv(fp_new, index_col='image')
@@ -133,7 +146,7 @@ def csv_concat(csv_old, fp_new, out_fp):
     updated.to_csv(out_fp)
 
 
-def insert_row(md_str, new_content):
+def insert_row(md_str:list, new_content:list)->str:
     lines = md_str.splitlines()
     table_i = [
         i for i, line in enumerate(lines)
@@ -218,3 +231,29 @@ def get_images_for_tag(history, commit_tag, keyword, tag_replace):
         for img in original_names
     ]
     return dict(zip(original_names, new_names))
+
+def subtree_order(image)->list:
+    """pre-order DFS"""
+    stack = deque()
+    stack.append(image)
+    order = []
+    while stack:
+        curr = stack.pop()
+        order.append(curr)
+        for child in curr.downstream:
+            stack.append(child)
+    return order
+
+def get_level_order(image)->dict:
+    '''BFS'''
+   
+    queue = [image]
+    order = {}
+    cnt = 0
+    while queue:
+        curr = queue.pop(0)
+        for child in curr.downstream:
+            queue.append(child)
+        order[curr.image_name] =cnt
+        cnt += 1
+    return order

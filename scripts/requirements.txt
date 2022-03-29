@@ -11,3 +11,6 @@ coverage
 requests
 grpcio
 grpcio-tools
+selenium
+git+https://github.com/davidzyx/doit
+pydantic
