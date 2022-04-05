@@ -50,6 +50,7 @@ def create_client(test_image = 'ucsdets/scipy-ml-notebook:2021.3-stable', url = 
     return Client(test_image,url,cer_path,timeout)
 
 def run(client: Client) -> str:
+    print(f'Testing {client.test_image}')
     status = client.ping_server("start")
     while status['state'] == 'running':
         time.sleep(5)
