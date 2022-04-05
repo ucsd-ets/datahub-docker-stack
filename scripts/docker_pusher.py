@@ -51,6 +51,9 @@ def push_images(
             print("inside push")
             logger.info(f'Attempting to push {image} to {repository}:{tag}')
 
+            if untested:
+                image.tag(repository, tag)
+                
             r = client.images.push(
                 repository, tag,
                 stream=True,
