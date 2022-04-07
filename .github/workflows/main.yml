@@ -93,7 +93,7 @@ jobs:
           PREPUSH_IMAGES: '["ucsdets/scipy-ml-notebook"]'
         run: |
           doit unit_build
-      #   used for building,testing and pushing module
+      #   used for building, prepushing, testing and pushing module
 
       - name: Run manifests
         env:
