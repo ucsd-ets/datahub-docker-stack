@@ -52,7 +52,10 @@ RUN pip install torch==${TORCH_VER} torchvision==${TORCH_VIS_VER} torchaudio==${
 	fix-permissions /home/$NB_USER
 
 
-RUN ln -s /usr/local/nvidia/bin/nvidia-smi /opt/conda/bin/nvidia-smi
+RUN ln -s /usr/local/nvidia/bin/nvidia-smi /opt/conda/bin/nvidia-smi && \
+    ln -s /usr/lib/libncursesw.so.6.0 /usr/lib/libncurses.so.5 && \
+    ln -s /usr/lib/libncursesw.so.6.0 /usr/lib/libtinfo.so.5
+
 
 USER $NB_UID:$NB_GID
 ENV PATH=${PATH}:/usr/local/nvidia/bin
