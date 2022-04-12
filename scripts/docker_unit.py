@@ -150,8 +150,8 @@ class ContainerPusher:
     def __init__(self, container_pusher_func):
         self.container_pusher_func = container_pusher_func
     
-    def push_container(self, images_built: List[str]):
-        self.container_pusher_func(images_built)
+    def push_container(self, images_built: List[str], untested = False):
+        self.container_pusher_func(images_built, untested)
 
 
 class ContainerDeleter:
@@ -172,7 +172,7 @@ class DockerPusher:
         self.dockerhub_token = dockerhub_token
         self.dockerhub_username = dockerhub_username
 
-    def push_container_to_dockerhub(self, images_built):
+    def push_container_to_dockerhub(self, images_built, untested):
         cli = docker.from_env()
         if docker_login(cli, self.dockerhub_username, self.dockerhub_token):
             tags = images_built
@@ -180,7 +180,7 @@ class DockerPusher:
                 (cli.images.get(tag), tag)
                 for tag in tags
             ]
-            push_images(cli, pairs)
+            push_images(cli, pairs, untested)
             return
 
         raise Exception('Could not push image to dockerhub since login didnt work!')
@@ -257,6 +257,9 @@ class ContainerFacade:
             all_image_built.update(images_built)
             self.build_info_storage.store_images_built(list(images_built.values()))
             
+            # push externally tested images
+            self.push_untested_container(build_info.images_built)
+
             # test container
             
             #if any(['ucsdets/rstudio-notebook' in i for i in  build_info.images_built]):
@@ -283,6 +286,9 @@ class ContainerFacade:
         
     def store_images_built(self):
         self.build_info_storage.store_images_built(self.build_info.images_built)
+
+    def push_untested_container(self, images_built):
+        self.pusher.push_container(images_built, True)
 
     def container_test(self, stack_dir, images_built):
         self.tester.container_test(stack_dir, images_built)
@@ -355,9 +361,9 @@ def build_unit(stack_dir: str, container_facade: ContainerFacade) -> None:
 #         #images_built.extend(images_to_build)
 
 def setup_pusher_func(dockerhub_user, dockerhub_token):
-    def pusher_func(images_built: List[str]):
+    def pusher_func(images_built: List[str], untested = False):
         docker_pusher = DockerPusher(dockerhub_token,dockerhub_user)
-        return docker_pusher.push_container_to_dockerhub(images_built)
+        return docker_pusher.push_container_to_dockerhub(images_built, untested)
     return pusher_func
          
 if __name__ == '__main__':

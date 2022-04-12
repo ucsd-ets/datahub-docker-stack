@@ -16,3 +16,6 @@ wiki/
 .vscode/
 lib/
 bin/
+
+# certs
+*.cer

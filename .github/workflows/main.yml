@@ -90,13 +90,10 @@ jobs:
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
           DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
           GRPC_CERT: ${{ secrets.GRPC_CERT }}
+          PREPUSH_IMAGES: '["ucsdets/scipy-ml-notebook"]'
         run: |
           doit unit_build
-      #   used for building,testing and pushing module
-
-      # - name: Test stack
-      #   run: |
-      #     doit test
+      #   used for building, prepushing, testing and pushing module
 
       - name: Run manifests
         env:
@@ -105,16 +102,6 @@ jobs:
         run: |
           doit manifest
           cp manifests/*.md wiki/
-
-      # - name: Push stack
-      #   if: >
-      #     !contains(github.base_ref , 'test') &&
-      #     !contains(github.base_ref , 'dev') &&
-      #     !contains(github.event.head_commit.message , 'skip push')
-      #   env:
-      #     DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-      #   run: |
-      #     doit push
 
       - name: Push Wiki to GitHub
         if: >

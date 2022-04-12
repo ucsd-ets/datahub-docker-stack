@@ -1,5 +1,6 @@
 import docker
 import logging
+import json
 import os
 
 from scripts.utils import read_var, store_var
@@ -25,7 +26,7 @@ def docker_login(
 
 
 def push_images(
-    client: docker.DockerClient, pairs: List[ImageFulltagPair],
+    client: docker.DockerClient, pairs: List[ImageFulltagPair], untested: bool,
 ):
     """
     Push a list of images with their full tag names
@@ -39,10 +40,20 @@ def push_images(
         else:
             repository, tag = full_tag.split(':')
 
+        if untested:
+            externally_tested_images = json.loads(os.environ.get('PREPUSH_IMAGES'))
+            if repository not in externally_tested_images:
+                print(f"skipping {repository}")
+                continue
+            tag = tag + '-untested'
+
         try:
             print("inside push")
             logger.info(f'Attempting to push {image} to {repository}:{tag}')
 
+            if untested:
+                image.tag(repository, tag)
+                
             r = client.images.push(
                 repository, tag,
                 stream=True,
@@ -68,7 +79,10 @@ def push_images(
 
             # push success
             images_pushed.append(full_tag)
-            store_var('IMAGES_PUSHED', images_pushed)
+            if untested:
+                store_var('IMAGES_UNTESTED_PUSHED', images_pushed)
+            else:
+                store_var('IMAGES_PUSHED', images_pushed)
             print(f'pushed {image} to {repository}:{tag}')
 
         except docker.errors.APIError as e:
