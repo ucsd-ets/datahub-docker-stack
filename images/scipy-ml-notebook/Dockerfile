@@ -12,9 +12,8 @@ RUN apt-get update && \
 	libtinfo5 && \
 	apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Symbolic links for Stata 17 dependency on libncurses5
-RUN ln -s libncurses.so.6 /usr/lib/x86_64-linux-gnu/libncurses.so.5 && \
-	ln -s libtinfo.so.6 /usr/lib/x86_64-linux-gnu/libtinfo.so.5
+# Symbolic link for Stata 17 dependency on libncurses5
+RUN ln -s libncurses.so.6 /usr/lib/x86_64-linux-gnu/libncurses.so.5
 
 COPY run_jupyter.sh /
 RUN chmod +x /run_jupyter.sh
