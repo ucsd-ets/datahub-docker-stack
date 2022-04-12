@@ -40,6 +40,7 @@ def push_images(
             repository, tag = full_tag.split(':')
 
         try:
+            print("inside push")
             logger.info(f'Attempting to push {image} to {repository}:{tag}')
 
             r = client.images.push(
@@ -49,14 +50,14 @@ def push_images(
             )
 
             for chunk in r:
-
+                print("chuck is", chunk)
                 logger.info(chunk)
 
                 if 'status' in chunk:
                     # "The push refers to repository XXX_repo"
                     if repository in chunk['status']:
                         print(chunk['status'])
-                    
+
                     # "XXX_tag: digest: sha256:XXX size: XXX"
                     elif tag in chunk['status']:
                         print('\n' + chunk['status'])
@@ -64,10 +65,11 @@ def push_images(
                     # regular progress
                     else:
                         print('.', end='')
- 
+
             # push success
             images_pushed.append(full_tag)
             store_var('IMAGES_PUSHED', images_pushed)
+            print(f'pushed {image} to {repository}:{tag}')
 
         except docker.errors.APIError as e:
             logger.error('Push error')
@@ -76,11 +78,10 @@ def push_images(
 
 def run_push():
     cli = docker.from_env()
-    if docker_login(cli, 'etsjenkins', os.environ['DOCKERHUB_TOKEN']):
+    if docker_login(cli, os.environ['DOCKERHUB_USER'], os.environ['DOCKERHUB_TOKEN']):
         tags = read_var('IMAGES_BUILT')
         pairs = [
             (cli.images.get(tag), tag)
             for tag in tags
         ]
         push_images(cli, pairs)
-

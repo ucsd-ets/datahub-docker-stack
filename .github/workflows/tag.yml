@@ -1,0 +1,91 @@
+name: Tag Images
+
+on:
+  workflow_dispatch:
+    inputs:
+      commitTag:
+        description: 'Commit hash in cell'
+        default: 'deadb33f'
+        required: true
+      keyword:
+        description: 'Filter by keyword'
+        default: '2021.3'
+        required: true
+      tagReplace:
+        description: 'New tag to replace'
+        default: '2021.3.X'
+        required: true
+
+jobs:
+  tagging:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install pip dependencies
+        run: |
+          docker image prune -a -f
+          docker container prune -f
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Install pip dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r scripts/requirements.txt
+
+      - name: Install pydoit fixed
+        run: |
+          git clone https://github.com/davidzyx/doit
+          pip install ./doit
+          rm -rf ./doit
+
+      - name: Set Python-specific environment variables
+        run: |
+          echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
+          echo "PYTHONUNBUFFERED=TRUE" >> $GITHUB_ENV
+
+      - name: Clone Wiki
+        uses: actions/checkout@v2
+        with:
+          repository: ${{github.repository}}.wiki
+          path: wiki
+
+      - name: Tag Images
+        env:
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: >
+          doit tag
+          --commit_tag ${{ github.event.inputs.commitTag }}
+          --keyword ${{ github.event.inputs.keyword }}
+          --tag_replace ${{ github.event.inputs.tagReplace }}
+
+      - name: Run stable manifests
+        run: |
+          doit stable
+          cp manifests/*.md wiki/
+
+      - name: Push Wiki to GitHub
+        if: >
+          !contains(github.base_ref , 'test') &&
+          !contains(github.base_ref , 'dev') &&
+          !contains(github.event.head_commit.message , 'skip push') &&
+          (
+            github.ref == 'refs/heads/master' || 
+            github.ref == 'refs/heads/main'
+          )
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: '[ci skip] Automated publish for ${{github.sha}}'
+          repository: wiki/
+
+      - name: Archive artifacts and logs
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: tag-artifacts
+          path: |
+            artifacts

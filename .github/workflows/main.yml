@@ -29,7 +29,9 @@ jobs:
       !contains(github.event.pull_request.title, 'skip ci')
     steps:
       - uses: actions/checkout@v2
-
+        with:
+          fetch-depth: 0
+      
       - name: Install pip dependencies
         run: |
           docker image prune -a -f
@@ -44,7 +46,12 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r scripts/requirements.txt
-
+      
+      - name: Install selenium dependecies for r studio
+        run: |
+          chmod +x ./scripts/selenium_setup.sh
+          ./scripts/selenium_setup.sh
+          
       - name: Install pydoit fixed
         run: |
           git clone https://github.com/davidzyx/doit
@@ -55,10 +62,21 @@ jobs:
         run: |
           echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
           echo "PYTHONUNBUFFERED=TRUE" >> $GITHUB_ENV
+      
+      - name: Setup artifacts
+        env:
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+          DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
+          
+        run: |
+          doit prep
 
       - name: Workflow tests
+        env:
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+          DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
         run: |
-          coverage run -m pytest -v tests/
+          coverage run -m pytest -v tests/test_docker_unit.py
           coverage report
 
       - name: Clone Wiki
@@ -68,31 +86,35 @@ jobs:
           path: wiki
 
       - name: Build stack
+        env:
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+          DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
+          GRPC_CERT: ${{ secrets.GRPC_CERT }}
         run: |
-          doit build
+          doit unit_build
+      #   used for building,testing and pushing module
 
-      - name: Test stack
-        run: |
-          doit test
+      # - name: Test stack
+      #   run: |
+      #     doit test
 
       - name: Run manifests
+        env:
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+          DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
         run: |
           doit manifest
           cp manifests/*.md wiki/
 
-      - name: Push stack
-        if: >
-          !contains(github.base_ref , 'test') &&
-          !contains(github.base_ref , 'dev') &&
-          !contains(github.event.head_commit.message , 'skip push') &&
-          (
-            github.ref == 'refs/heads/master' || 
-            github.ref == 'refs/heads/main'
-          )
-        env:
-          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-        run: |
-          doit push
+      # - name: Push stack
+      #   if: >
+      #     !contains(github.base_ref , 'test') &&
+      #     !contains(github.base_ref , 'dev') &&
+      #     !contains(github.event.head_commit.message , 'skip push')
+      #   env:
+      #     DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      #   run: |
+      #     doit push
 
       - name: Push Wiki to GitHub
         if: >

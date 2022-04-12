@@ -42,9 +42,9 @@ def dbuild(
             path=path, dockerfile='Dockerfile', tag=image_tag,
             buildargs=build_args,
             nocache=nocache,
+            rm=True,
         )
         meta = []
-
         result_stream, internal_stream = itertools.tee(json_stream(resp))
         last_event = None
         image_id = None

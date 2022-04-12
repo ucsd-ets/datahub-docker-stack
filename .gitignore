@@ -10,6 +10,9 @@ artifacts/
 logs/
 manifests/
 .doit*
+wiki/
 
 # IDE
 .vscode/
+lib/
+bin/

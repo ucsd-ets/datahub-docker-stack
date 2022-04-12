@@ -1,5 +1,6 @@
 import pytest
-
+import sys
+sys.path.append('.')
 from scripts.utils import store_var, read_var
 from scripts.docker_tester import _tests_collector
 
@@ -32,7 +33,7 @@ class TestStepTest():
         ],
     )
     def test_collection(
-        self, root_dir, stack_dir,
+        self, stack_dir,
         imgs_built, expected_items
     ):
         store_var('IMAGES_BUILT', imgs_built)
