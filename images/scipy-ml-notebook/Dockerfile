@@ -12,6 +12,10 @@ RUN apt-get update && \
 	libtinfo5 && \
 	apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Symbolic links for Stata 17 dependency on libncurses5
+RUN ln -s libncurses.so.6 /usr/lib/x86_64-linux-gnu/libncurses.so.5 && \
+	ln -s libtinfo.so.6 /usr/lib/x86_64-linux-gnu/libtinfo.so.5
+
 COPY run_jupyter.sh /
 RUN chmod +x /run_jupyter.sh
 
@@ -51,11 +55,7 @@ RUN pip install torch==${TORCH_VER} torchvision==${TORCH_VIS_VER} torchaudio==${
 	fix-permissions $CONDA_DIR && \
 	fix-permissions /home/$NB_USER
 
-
-RUN ln -s /usr/local/nvidia/bin/nvidia-smi /opt/conda/bin/nvidia-smi && \
-    ln -s /usr/lib/libncursesw.so.6.0 /usr/lib/libncurses.so.5 && \
-    ln -s /usr/lib/libncursesw.so.6.0 /usr/lib/libtinfo.so.5
-
+RUN ln -s /usr/local/nvidia/bin/nvidia-smi /opt/conda/bin/nvidia-smi
 
 USER $NB_UID:$NB_GID
 ENV PATH=${PATH}:/usr/local/nvidia/bin
