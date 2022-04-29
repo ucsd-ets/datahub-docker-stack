@@ -113,5 +113,6 @@ def test_server_extensions_start(container, http_client, expected_server):
     LOGGER.debug(logs)
     assert resp.status_code == 200, "Server is not listening"
     assert (
-        f"Error loading server extension" not in logs
-    ), f"Server Extension(s) failed to start:\n{logs}"
+        "Error loading server extension" not in logs
+    ), f"Server Extension(s) failed to start"
+    assert False,f"Server Extension(s) failed to start\n{logs}"
