@@ -97,6 +97,8 @@ def test_container_tester(stack_dir,imgs_built,expected_items):
         ],
     )
 def test_push_container(stack_dir,imgs_built,expected_items):
+    return
+    # rework test to not use student account
     store_var('IMAGES_CHANGED', imgs_built)
     build_info = get_build_info_from_filesystem(stack_dir)
     build_params = build_info.build_spec.gen_build_args(
