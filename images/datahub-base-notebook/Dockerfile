@@ -48,6 +48,8 @@ RUN /usr/share/datahub/scripts/install-python-all.sh && \
     pip install pandas --upgrade && \
     pip install nltk && \
     pip install nbconvert==5.6.1 && \
+    pip install jinja2==3.0.1 && \
+    pip install jupyter-core==4.10.0 && \
     pip install jupyterhub==$JUPYTERHUB_VERSION && \
     pip install nbgrader==0.6.2 && \
     pip install traitlets==5.1.0 && \
