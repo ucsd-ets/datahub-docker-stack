@@ -115,4 +115,3 @@ def test_server_extensions_start(container, http_client, expected_server):
     assert (
         "Error loading server extension" not in logs
     ), f"Server Extension(s) failed to start"
-    #assert False,f"Server Extension(s) failed to start\n{logs}"
