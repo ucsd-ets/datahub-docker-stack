@@ -103,7 +103,7 @@ def test_push_container(stack_dir,imgs_built,expected_items):
                 stack_dir, build_info.git_suffix, build_info.images_changed)
     build = ContainerBuilder(build_units)
     collected = build.build_container(build_params,stack_dir)
-    pusher = DockerPusher(os.environ['DOCKERHUB_TOKEN'],os.environ['DOCKERHUB_USERNAME'])
+    pusher = DockerPusher(os.environ['DOCKERHUB_TOKEN'],os.environ['DOCKERHUB_USER'])
     docker_push = ContainerPusher(pusher.push_container_to_dockerhub)
     docker_push.push_container(list(collected.values()))
     cli = docker.from_env()
