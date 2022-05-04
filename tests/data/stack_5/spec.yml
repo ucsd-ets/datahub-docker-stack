@@ -1,15 +1,15 @@
 images:
   base:
-    image_name: sumukhbadam/base
+    image_name: ucsdets/container-testing-base
     manifests: []
 
   branch:
-    image_name: sumukhbadam/branch
+    image_name: ucsdets/container-testing-branch
     depend_on: base
     manifests: []
 
   leaf:
-    image_name: sumukhbadam/leaf
+    image_name: ucsdets/container-testing-leaf
     depend_on: branch
     manifests: []
 

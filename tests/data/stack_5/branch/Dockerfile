@@ -1,3 +1,3 @@
-FROM sumukhbadam/base
+FROM ucsdets/container-testing-base
 
 RUN if=/dev/zero of=100K count=1 bs=100K
