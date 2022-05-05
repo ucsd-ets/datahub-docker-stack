@@ -27,7 +27,7 @@ class GitHelper:
     
     @staticmethod
     def current_branch() -> str:
-        return git["branch", "--show-current"]
+        return git["branch", "--show-current"]()
 
     @staticmethod
     def commit_changed_files() -> list:
