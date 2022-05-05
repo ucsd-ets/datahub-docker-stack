@@ -29,7 +29,8 @@ class GitHelper:
     def commit_changed_files() -> list:
         print(environ['GITHUB_REF_NAME'])
         if (environ['GITHUB_REF_NAME'] == "main"):
-            return git['log', '-m', '-1', '--name-only', '--pretty="format:"']().split()
+            return git['log', '-m', -1, '--name-only', '--pretty=format:']().split()
+            
         return git['diff', 'origin/main', '--name-only']().split()
 
 
