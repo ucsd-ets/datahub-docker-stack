@@ -31,6 +31,7 @@ class GitHelper:
 
     @staticmethod
     def commit_changed_files() -> list:
+        print(GitHelper.current_branch())
         if (GitHelper.current_branch() == "origin/main"):
             return git['log', '-m', '-1', '--name-only', '--pretty="format:"']().split()
         return git['diff', 'origin/main', '--name-only']().split()
