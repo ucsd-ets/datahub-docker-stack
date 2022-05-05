@@ -43,7 +43,6 @@ COPY start-code-server.sh /usr/local/bin/start-notebook.d/
 ARG PY_VER_SHORT=3.9
 ARG JUPYTERHUB_VERSION=1.4.2
 # nbconvert downgrade needed for nbgrader to work
-# jinja downgrade needed to match nbconvert version (imports contextfilter)
 RUN /usr/share/datahub/scripts/install-python-all.sh && \
     pip install pandas --upgrade && \
     pip install nltk && \
