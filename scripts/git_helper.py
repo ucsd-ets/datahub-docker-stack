@@ -25,9 +25,14 @@ class GitHelper:
     def commit_message() -> str:
         return git["log", -1, "--pretty=%B"]().strip()
     
+    @staticmethod
+    def current_branch() -> str:
+        return git["branch", "--show-current"]
 
     @staticmethod
     def commit_changed_files() -> list:
+        if (GitHelper.current_branch() == "origin/main"):
+            return git['log', '-m', '-1', '--name-only', '--pretty="format:"']().split()
         return git['diff', 'origin/main', '--name-only']().split()
 
 
