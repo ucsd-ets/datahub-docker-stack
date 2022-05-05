@@ -2,7 +2,7 @@
 # Distributed under the terms of the Modified BSD License.
 from plumbum.cmd import git
 from pathlib import PurePath
-from os import path
+from os import path,environ
 import json
 
 from scripts.utils import store_var,get_specs
@@ -24,14 +24,11 @@ class GitHelper:
     @staticmethod
     def commit_message() -> str:
         return git["log", -1, "--pretty=%B"]().strip()
-    
-    @staticmethod
-    def current_branch() -> str:
-        return git["branch", "--show-current"]
 
     @staticmethod
     def commit_changed_files() -> list:
-        if (GitHelper.current_branch() == "origin/main"):
+        print(environ['GITHUB_REF_NAME'])
+        if (environ['GITHUB_REF_NAME'] == "origin/main"):
             return git['log', '-m', '-1', '--name-only', '--pretty="format:"']().split()
         return git['diff', 'origin/main', '--name-only']().split()
 
