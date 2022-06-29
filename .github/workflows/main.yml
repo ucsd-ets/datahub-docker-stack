@@ -51,8 +51,8 @@ jobs:
         env:
           CHROMEDRIVER_VERSION: ${{ secrets.CHROMEDRIVER_VERSION }}
         run: |
-          chmod +x ./scripts/selenium_setup.sh $CHROMEDRIVER_VERSION
-          ./scripts/selenium_setup.sh 
+          chmod +x ./scripts/selenium_setup.sh 
+          ./scripts/selenium_setup.sh $CHROMEDRIVER_VERSION
           
       - name: Install pydoit fixed
         run: |
