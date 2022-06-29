@@ -49,8 +49,8 @@ jobs:
       
       - name: Install selenium dependecies for r studio
         run: |
-          chmod +x ./scripts/selenium_setup.sh
-          ./scripts/selenium_setup.sh
+          chmod +x ./scripts/selenium_setup.sh ${{ secrets.CHROMEDRIVER_VERSION }}
+          ./scripts/selenium_setup.sh 
           
       - name: Install pydoit fixed
         run: |
