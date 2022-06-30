@@ -65,5 +65,5 @@ def run_tagging(commit_tag, keyword, tag_replace, dry_run=False):
 
     print("pushing newly tagged images")
     docker_login(cli, os.environ['DOCKERHUB_USER'], os.environ['DOCKERHUB_TOKEN'])
-    push_images(cli, tag_list)
+    push_images(cli, tag_list, untested=False)
     print("finished pushing, job complete")
