@@ -48,9 +48,11 @@ jobs:
           pip install -r scripts/requirements.txt
       
       - name: Install selenium dependecies for r studio
+        env:
+          CHROMEDRIVER_VERSION: ${{ secrets.CHROMEDRIVER_VERSION }}
         run: |
-          chmod +x ./scripts/selenium_setup.sh
-          ./scripts/selenium_setup.sh
+          chmod +x ./scripts/selenium_setup.sh 
+          ./scripts/selenium_setup.sh $CHROMEDRIVER_VERSION
           
       - name: Install pydoit fixed
         run: |

@@ -2,6 +2,11 @@ ARG PYTHON_VERSION=python-3.9.5
 FROM jupyter/datascience-notebook:$PYTHON_VERSION
 
 USER root
+
+# see https://github.com/phusion/baseimage-docker/issues/319#issuecomment-1058835363
+ENV DEBIAN_FRONTEND noninteractive
+ENV DEBCONF_NOWARNINGS="yes"
+
 RUN apt-get update -y && \
     apt-get -qq install -y --no-install-recommends \
     git \
@@ -20,6 +25,7 @@ RUN apt-get update -y && \
     openssh-client \
     openssh-server \
     p7zip \
+    apt-utils \
     p7zip-full && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
     chmod g-s /usr/bin/screen && \
