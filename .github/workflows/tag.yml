@@ -65,6 +65,9 @@ jobs:
           --tag_replace ${{ github.event.inputs.tagReplace }}
 
       - name: Run stable manifests
+        env:
+          DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
           doit stable
           cp manifests/*.md wiki/
