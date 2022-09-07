@@ -9,7 +9,7 @@ USER root
 
 RUN apt-get update && \
 	apt-get install -y \
-	libtinfo5 && \
+	libtinfo5 build-essential && \
 	apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Symbolic link for Stata 17 dependency on libncurses5
