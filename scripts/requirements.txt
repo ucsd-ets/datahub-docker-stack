@@ -10,7 +10,7 @@ pytest
 coverage
 requests
 grpcio
-grpcio-tools
+grpcio-tools==1.43.0 # newer version creates a conflict with protoc and protobuf
 selenium
 git+https://github.com/davidzyx/doit
 pydantic
