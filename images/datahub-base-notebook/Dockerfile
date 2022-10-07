@@ -52,11 +52,8 @@ ARG JUPYTERHUB_VERSION=1.4.2
 # Install jupyterlab extensions
 RUN jupyter labextension install @jupyterlab/fasta-extension  \
 @jupyterlab/katex-extension @jupyterlab/latex @jupyterlab/github \
-@jupyterlab/git @jupyterlab/pullrequests @jupyterlab/server-proxy \
+@jupyterlab/pullrequests @jupyterlab/server-proxy \
 @jupyterlab/geojson-extension @jupyterlab/hdf5
-
-# Install server extension companions for jupyterlab extensions
-RUN pip install --upgrade jupyterlab jupyterlab-git
 
 # Build the extensions
 RUN jupyter lab build
