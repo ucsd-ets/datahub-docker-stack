@@ -48,6 +48,16 @@ COPY start-code-server.sh /usr/local/bin/start-notebook.d/
 
 ARG PY_VER_SHORT=3.9
 ARG JUPYTERHUB_VERSION=1.4.2
+
+# Install jupyterlab extensions
+RUN jupyter labextension install @jupyterlab/fasta-extension  \
+@jupyterlab/katex-extension @jupyterlab/latex @jupyterlab/github \
+@jupyterlab/git @jupyterlab/pullrequests @jupyterlab/server-proxy \
+@jupyterlab/geojson-extension @jupyterlab/hdf5
+
+# Intsall server extension companions for jupyterlab extensions
+RUN pip install --upgrade jupyterlab jupyterlab-git
+
 # nbconvert downgrade needed for nbgrader to work
 RUN /usr/share/datahub/scripts/install-python-all.sh && \
     pip install pandas --upgrade && \
@@ -62,14 +72,5 @@ RUN /usr/share/datahub/scripts/install-python-all.sh && \
     fix-permissions /home/$NB_USER && \
     chown -R jovyan:users /opt/conda/etc/jupyter/nbconfig && \
     chmod -R +r /opt/conda/etc/jupyter/nbconfig
-
-# Install jupyterlab extensions
-RUN jupyter labextension install @jupyterlab/fasta-extension  \
-@jupyterlab/katex-extension @jupyterlab/latex @jupyterlab/github \
-@jupyterlab/git @jupyterlab/pullrequests @jupyterlab/server-proxy \
-@jupyterlab/geojson-extension @jupyterlab/hdf5
-
-# Intsall server extension companions for jupyterlab extensions
-RUN pip install --upgrade jupyterlab jupyterlab-git
 
 WORKDIR /home/jovyan
