@@ -55,7 +55,7 @@ RUN jupyter labextension install @jupyterlab/fasta-extension  \
 @jupyterlab/git @jupyterlab/pullrequests @jupyterlab/server-proxy \
 @jupyterlab/geojson-extension @jupyterlab/hdf5
 
-# Intsall server extension companions for jupyterlab extensions
+# Install server extension companions for jupyterlab extensions
 RUN pip install --upgrade jupyterlab jupyterlab-git
 
 # nbconvert downgrade needed for nbgrader to work
@@ -72,5 +72,5 @@ RUN /usr/share/datahub/scripts/install-python-all.sh && \
     fix-permissions /home/$NB_USER && \
     chown -R jovyan:users /opt/conda/etc/jupyter/nbconfig && \
     chmod -R +r /opt/conda/etc/jupyter/nbconfig
-
+    
 WORKDIR /home/jovyan
