@@ -4,10 +4,7 @@ FROM ucsdets/datahub-base-notebook:$BASE_TAG
 USER root
 
 # Install jupyterlab extensions
-RUN pip install jupyterlab-fasta  \
-jupyterlab-katex jupyterlab-latex jupyterlab-github \
-jupyterlab-git jupyterlab-pullrequests jupyter-server-proxy \
-jupyterlab-geojson jupyterlab_hdf 
+RUN pip install jupyterlab_github 
 
 
 # Build the extensions
