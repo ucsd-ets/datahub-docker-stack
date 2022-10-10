@@ -3,13 +3,6 @@ FROM ucsdets/datahub-base-notebook:$BASE_TAG
 
 USER root
 
-# Install jupyterlab extensions
-RUN pip install jupyterlab_github 
-
-
-# Build the extensions
-RUN jupyter lab build
-
 # tensorflow, pytorch stable versions
 # https://pytorch.org/get-started/previous-versions/
 # https://www.tensorflow.org/install/source#linux

@@ -1,6 +1,15 @@
 ARG BASE_TAG=latest
 FROM ucsdets/datahub-base-notebook:$BASE_TAG
 
+USER root
+
+# Install jupyterlab extensions
+RUN pip install jupyterlab_github 
+
+
+# Build the extensions
+RUN jupyter lab build
+
 USER jovyan
 
 RUN pip install dpkt \
