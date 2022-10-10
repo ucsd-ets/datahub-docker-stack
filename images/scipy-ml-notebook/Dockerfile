@@ -7,7 +7,7 @@ USER root
 RUN pip install jupyterlab-fasta  \
 jupyterlab-katex jupyterlab-latex jupyterlab-github \
 jupyterlab-git jupyterlab-pullrequests jupyter-server-proxy \
-jupyterlab-geojson jupyterlab_hdf jupyterlab_scheduler 
+jupyterlab-geojson jupyterlab_hdf 
 
 
 # Build the extensions
