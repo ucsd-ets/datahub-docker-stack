@@ -1,12 +1,11 @@
 ARG BASE_TAG=latest
 FROM ucsdets/datahub-base-notebook:$BASE_TAG
 
-USER root
+USER jovyan
 
 # Install jupyterlab extensions
 RUN pip install jupyterlab_github 
 
-USER jovyan
 
 RUN pip install dpkt \
                 nose \
