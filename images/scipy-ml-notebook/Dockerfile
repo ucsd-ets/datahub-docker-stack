@@ -4,14 +4,15 @@ FROM ucsdets/datahub-base-notebook:$BASE_TAG
 USER root
 
 # Install jupyterlab extensions
-RUN jupyter labextension install @jupyterlab/fasta-extension  \
-@jupyterlab/katex-extension @jupyterlab/latex @jupyterlab/github \
-@jupyterlab/git @jupyterlab/pullrequests @jupyterlab/server-proxy \
-@jupyterlab/geojson-extension @jupyterlab/hdf5
+RUN pip install jupyterlab-fasta  \
+jupyterlab-katex jupyterlab-latex jupyterlab-github \
+jupyterlab-git jupyterlab-pullrequests jupyterlab-server-proxy \
+jupyterlab-geojson jupyterlab-hdf5 jupyterlab_scheduler \
+juptyerlab-translation 
+
 
 # Build the extensions
-RUN pip install --upgrade jupyterlab-git && \
-jupyter lab build
+RUN jupyter lab build
 
 # tensorflow, pytorch stable versions
 # https://pytorch.org/get-started/previous-versions/
