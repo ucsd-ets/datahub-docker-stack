@@ -33,10 +33,8 @@ def get_layers(image):
 
 def get_layers_md_table(image, cli=docker.from_env()):
     layers = get_layers(cli.images.get(image))[['createdAt', 'CMD', 'hSize', 'hcumSize', 'elapsed', 'Tags']]
-    for layer in layers:
-        print(layer)
-        for x in layer:
-            print(x)
+    layers.dropna(inplace=True)
+    print(layers)
     return (layers.to_markdown())
 
 
