@@ -35,6 +35,7 @@ def get_layers_md_table(image, cli=docker.from_env()):
     print(f'Image: {image}')
     print(f'Cli Image Get: {cli.images.get(image)}')
     print(f'Layers: {get_layers(cli.images.get(image))}')
+    print(f"To turn to markdown: {get_layers(cli.images.get(image))[['createdAt', 'CMD', 'hSize', 'hcumSize', 'elapsed', 'Tags']]}")
     return (
         get_layers(cli.images.get(image))
         [['createdAt', 'CMD', 'hSize', 'hcumSize', 'elapsed', 'Tags']]
