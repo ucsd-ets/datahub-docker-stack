@@ -5,7 +5,7 @@ USER jovyan
 
 # Install jupyterlab extensions
 RUN pip install jupyterlab-github jupyterlab-latex jupyterlab-git \
-jupyterlab-fasta
+jupyterlab-fasta jupyterlab-pullrequests
 
 
 RUN pip install dpkt \
