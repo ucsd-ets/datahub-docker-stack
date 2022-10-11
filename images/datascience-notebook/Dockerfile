@@ -4,7 +4,8 @@ FROM ucsdets/datahub-base-notebook:$BASE_TAG
 USER jovyan
 
 # Install jupyterlab extensions
-RUN pip install jupyterlab-github jupyterlab-latex
+RUN pip install jupyterlab-github jupyterlab-latex jupyterlab-git \
+jupyterlab-katex
 
 
 RUN pip install dpkt \
