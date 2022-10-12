@@ -62,4 +62,9 @@ RUN /usr/share/datahub/scripts/install-python-all.sh && \
     fix-permissions /home/$NB_USER && \
     chown -R jovyan:users /opt/conda/etc/jupyter/nbconfig && \
     chmod -R +r /opt/conda/etc/jupyter/nbconfig
+
+# Install jupyterlab extensions
+RUN pip install jupyterlab-github jupyterlab-latex jupyterlab-git \
+jupyterlab-fasta jupyterlab-pullrequests jupyterlab-geojson
+
 WORKDIR /home/jovyan

@@ -32,11 +32,9 @@ def get_layers(image):
 
 
 def get_layers_md_table(image, cli=docker.from_env()):
-    return (
-        get_layers(cli.images.get(image))
-        [['createdAt', 'CMD', 'hSize', 'hcumSize', 'elapsed', 'Tags']]
-        .to_markdown()
-    )
+    layers = get_layers(cli.images.get(image))[['createdAt', 'CMD', 'hSize', 'hcumSize', 'elapsed', 'Tags']]
+    layers.dropna(inplace=True)
+    return (layers.to_markdown())
 
 
 def get_dependency(image):
