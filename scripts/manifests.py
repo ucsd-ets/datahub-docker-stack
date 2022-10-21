@@ -99,6 +99,7 @@ def compile_history(compile_tag_history = False):
     manifests_dir = 'manifests'
     manifests_fp = glob(path.join(manifests_dir, '*.md'))
     manifests_doc_names = [path.splitext(path.basename(doc))[0] for doc in manifests_fp]
+    print(manifests_doc_names)
     manifests_links = [url2mdlink(repo_url + '/wiki/' + name, 'Link') for name in manifests_doc_names]
     cell_manifests = list2cell(manifests_links)
 
