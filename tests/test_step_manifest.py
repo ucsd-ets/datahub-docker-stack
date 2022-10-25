@@ -74,3 +74,5 @@ class TestStepManifest():
         manifest_dir = set(os.listdir(manifests_path))
         for doc_name in manifests_doc_names:
             assert doc_name + '.md' in manifest_dir
+
+            
