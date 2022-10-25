@@ -66,3 +66,11 @@ class TestStepManifest():
 
         manifests_path = os.path.join(root_dir, 'manifests')
         assert len(os.listdir(manifests_path)) - 1 == len(imgs_built)  # exclude ".empty"
+
+        # manifests_links, https.../wiki/{manifest_doc_name} was generated direct from 
+        # imgs_built instead of reading from manifest directory to preserver order. 
+        # Should test the manifest_doc_name match with the file names in manifest dir
+        manifests_doc_names = [image.replace(':', '-').replace('/', '-') for image in imgs_built]
+        manifest_dir = set(os.listdir(manifests_path))
+        for doc_name in manifests_doc_names:
+            assert doc_name + '.md' in manifest_dir
