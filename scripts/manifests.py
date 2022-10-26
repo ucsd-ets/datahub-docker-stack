@@ -96,9 +96,21 @@ def compile_history(compile_tag_history = False):
 
     cell_images = list2cell([f"`{image}`" for image in read_var(img_source)])
 
+    """
+    # glob(path.join()) will return a list of manifests md in random order, 
+    # causing mismatch with images
     manifests_dir = 'manifests'
     manifests_fp = glob(path.join(manifests_dir, '*.md'))
     manifests_doc_names = [path.splitext(path.basename(doc))[0] for doc in manifests_fp]
+    """
+
+    # to align the order of cell_images and cell_manfests, we can directly read "name" from IMAGES_BUILT also.
+    # read_var('IMAGES_BUILT') gives a list of ucsdets/{image_name}:{tag} 
+    # what we want for "name" after '/wiki/' is sth like ucsdets-{image_name}-{tag}
+    manifests_doc_names = [image.replace(':', '-').replace('/', '-') for image in read_var(img_source)]
+    print("manifests_doc_names:  ", manifests_doc_names)
+
+    
     manifests_links = [url2mdlink(repo_url + '/wiki/' + name, 'Link') for name in manifests_doc_names]
     cell_manifests = list2cell(manifests_links)
 

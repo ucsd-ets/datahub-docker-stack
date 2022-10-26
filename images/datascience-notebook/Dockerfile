@@ -20,3 +20,4 @@ RUN conda clean -tipsy
 # RUN chown 1000:1000 ${DATASCIENCE_TESTDIR}
 
 ENV SHELL=/bin/bash
+ 
