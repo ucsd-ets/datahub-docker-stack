@@ -89,12 +89,16 @@ def compile_history(compile_tag_history = False):
     if compile_tag_history == True:
         cell_commit = ""
         img_source = 'IMAGES_TAGGED'
+        orig_source = 'IMAGES_ORIGINAL'
+        orig_images = list2cell([f"`{image}`" for image in read_var(orig_source)])
     else:
         git_short_hash = read_var('GIT_HASH_SHORT')
         cell_commit = url2mdlink(repo_url + '/commit/' + git_short_hash, f"`{git_short_hash}`")
         img_source = 'IMAGES_BUILT'
 
     cell_images = list2cell([f"`{image}`" for image in read_var(img_source)])
+    if compile_tag_history:
+        cell_images += '|' + orig_images
 
     """
     # glob(path.join()) will return a list of manifests md in random order, 
@@ -128,11 +132,17 @@ def insert_history(markdown_fp):
         f.write(latest_doc)
 
 def update_history():
+    # This function read tagging info from artifacts/IMAGES_TAGGED
+    # and update the stable.md page
     latest_row = compile_history(compile_tag_history=True)
-    header = ['| Image | Manifest |']
-    divider = ['| :- | :- |']
+    header = ['| Image | Based On | Manifest |']
+    divider = ['| :- | :- | :- |']
+    """
+    # lastest row is a single tuple with 3 str, from compile_history()
     content = ['|'.join(line_tup) +
                '|' for line_tup in [latest_row]]
+    """
+    content = ['|'.join(latest_row) + '|']
     content = header + divider + content 
     doc = "\n".join(content)
     print(latest_row)
