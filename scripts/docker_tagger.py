@@ -53,11 +53,11 @@ def run_tagging(commit_tag, keyword, tag_replace, dry_run=False):
     prepull_image(cli, list(replace_dict.keys()))
     print("finished prepull")
 
-    # tagged = []
+    # tagged = [] # actually tagged is replace_dict.values()
     for img_orig, img_new in replace_dict.items():
         print(f'Tagging {img_orig} to {img_new}')
         tag_image(cli, img_orig, img_new)
-        # tagged.append(img_new)      # actually tagged is just replace_dict.values()
+        # tagged.append(img_new)      
         # store_var('IMAGES_TAGGED', tagged)    # store_var can take in a list and store them
     store_var('IMAGES_TAGGED', list(replace_dict.values()) )
     store_var('IMAGES_ORIGINAL', list(replace_dict.keys()) )
@@ -65,7 +65,7 @@ def run_tagging(commit_tag, keyword, tag_replace, dry_run=False):
     
 
     print("finished tagging")
-    tag_list = [(cli.images.get(img.strip()), img.strip()) for img in tagged]
+    tag_list = [(cli.images.get(img.strip()), img.strip()) for img in replace_dict.values()]
 
     print("pushing newly tagged images")
     docker_login(cli, os.environ['DOCKERHUB_USER'], os.environ['DOCKERHUB_TOKEN'])
