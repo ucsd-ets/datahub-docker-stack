@@ -61,6 +61,7 @@ def run_tagging(commit_tag, keyword, tag_replace, dry_run=False):
         # store_var('IMAGES_TAGGED', tagged)    # store_var can take in a list and store them
     store_var('IMAGES_TAGGED', list(replace_dict.values()) )
     store_var('IMAGES_ORIGINAL', list(replace_dict.keys()) )
+    print("original images written to IMAGES_ORIGINAL, stable images to IMAGES_TAGGED.")
     
 
     print("finished tagging")
