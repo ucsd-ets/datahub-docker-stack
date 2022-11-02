@@ -3,18 +3,22 @@ name: Tag Images
 on:
   workflow_dispatch:
     inputs:
-      commitTag:
-        description: 'Commit hash in cell'
-        default: 'deadb33f'
+      originalTag: 
+        description: 'Orginal tag of images to be stable'
+        default: '2099.3.somehash'
         required: true
-      keyword:
-        description: 'Filter by keyword'
-        default: '2021.3'
-        required: true
-      tagReplace:
-        description: 'New tag to replace'
-        default: '2021.3.X'
-        required: true
+      #commitTag:
+      #  description: 'Commit hash in cell'
+      #  default: 'deadb33f'
+      #  required: true
+      #keyword:
+      #  description: 'Filter by keyword'
+      #  default: '2021.3'
+      #  required: true
+      #tagReplace:
+      #  description: 'New tag to replace'
+      #  default: '2021.3.X'
+      #  required: true
 
 jobs:
   tagging:
@@ -60,9 +64,10 @@ jobs:
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: >
           doit tag
-          --commit_tag ${{ github.event.inputs.commitTag }}
-          --keyword ${{ github.event.inputs.keyword }}
-          --tag_replace ${{ github.event.inputs.tagReplace }}
+          --original_tag ${{ github.event.inputs.originalTag }}
+        #  --commit_tag ${{ github.event.inputs.commitTag }}
+        #  --keyword ${{ github.event.inputs.keyword }}
+        #  --tag_replace ${{ github.event.inputs.tagReplace }}
 
       - name: Run stable manifests
         env:

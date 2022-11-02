@@ -145,20 +145,25 @@ def task_tag():
         'uptodate': [False],
         'file_dep': ['artifacts/.empty', 'logs/.empty'],
         'targets': ['artifacts/IMAGES_TAGGED'],
-        'params':[
+        'params':[ 
+            # {
+            #     'name': 'commit_tag',
+            #     'long': 'commit_tag',
+            #     'default': None
+            # },
+            # {
+            #     'name': 'keyword',
+            #     'long': 'keyword',
+            #     'default': None
+            # },
+            # {
+            #     'name': 'tag_replace',
+            #     'long': 'tag_replace',
+            #     'default': None
+            # },
             {
-                'name': 'commit_tag',
-                'long': 'commit_tag',
-                'default': None
-            },
-            {
-                'name': 'keyword',
-                'long': 'keyword',
-                'default': None
-            },
-            {
-                'name': 'tag_replace',
-                'long': 'tag_replace',
+                'name': 'original_tag',
+                'long': 'original_tag',
                 'default': None
             },
             {
