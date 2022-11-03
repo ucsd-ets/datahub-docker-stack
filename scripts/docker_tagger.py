@@ -37,8 +37,25 @@ def tag_image(
     assert img.tag(repository=repo, tag=tag)
 
 
-def run_tagging(commit_tag, keyword, tag_replace, dry_run=False):
-    assert all([commit_tag, keyword, tag_replace]), 'None as input'
+## def run_tagging(commit_tag, keyword, tag_replace, dry_run=False):
+def run_tagging(original_tag, dry_run=False):
+    """
+    Update1: #
+    - store to 'IMAGES_ORIGINAL' for creating Based On column
+    - optimize code (repetitive calling; unecessary variables)
+    
+    Update2: ##
+    - use a single input field original_tag,
+    which is keyword.commit_tag, like 2021.3.deadb33f
+    - tag_replce will be '{keyword}.stable' always
+    """
+    ## assert all([commit_tag, keyword, tag_replace]), 'None as input'
+    assert original_tag and original_tag.count('.') == 2, \
+        "None as input or incorrect input format (. at wrong place)"
+    
+    ## break it into old commit_tag and keyword
+    keyword, commit_tag = original_tag.rsplit('.', 1) ## str.rsplit() works from the right
+    tag_replace = keyword + '.stable'
 
     cli = docker.from_env()
     history = read_history()
