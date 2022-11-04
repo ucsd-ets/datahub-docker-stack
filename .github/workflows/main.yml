@@ -103,7 +103,8 @@ jobs:
           DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
         run: |
           doit manifest
-          cp manifests/*.md wiki/
+          [ -f manifests/*.md ] && cp manifests/*.md wiki/
+      # if there is no *.md (no image updated), skip cp command
 
       - name: Push Wiki to GitHub
         if: >
