@@ -102,6 +102,7 @@ jobs:
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
           DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
         run: |
+          tree .
           [ -d images ] && doit manifest
           [ -f manifests/*.md ] && cp manifests/*.md wiki/
       # if there is no images dir (no image updated), skip doit
