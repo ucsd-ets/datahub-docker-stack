@@ -46,16 +46,17 @@ def run_tagging(original_tag, dry_run=False):
     
     Update2: ##
     - use a single input field original_tag,
-    which is keyword.commit_tag, like 2021.3.deadb33f
-    - tag_replce will be '{keyword}.stable' always
+    which is {keyword}-{commit_tag}, like 2021.3-deadb33f
+    - tag_replce will be '{keyword}-stable' always
     """
     ## assert all([commit_tag, keyword, tag_replace]), 'None as input'
-    assert original_tag and original_tag.count('.') == 2, \
-        "None as input or incorrect input format (. at wrong place)"
+    assert original_tag and original_tag.count('-') == 1, \
+        "None as input or incorrect input format (- at wrong place)"
     
-    ## break it into old commit_tag and keyword
-    keyword, commit_tag = original_tag.rsplit('.', 1) ## str.rsplit() works from the right
-    tag_replace = keyword + '.stable'
+    ## break it into old commit_tag and keyword; 
+    ## count('-') == 1 -> split list must have length 2
+    keyword, commit_tag = original_tag.rsplit('-', 1) ## str.rsplit() works from the right
+    tag_replace = keyword + '-stable'
 
     cli = docker.from_env()
     history = read_history()
