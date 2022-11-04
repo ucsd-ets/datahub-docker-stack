@@ -102,7 +102,7 @@ jobs:
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
           DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
         run: |
-          [ -f artifacts/IMAGES_BUILT] && [ -s artifacts/IMAGES_BUILT ] && doit manifest
+          [ -f artifacts/IMAGES_BUILT ] && [ -s artifacts/IMAGES_BUILT ] && doit manifest
           [ -f manifests/*.md ] && cp manifests/*.md wiki/
       # if there is no image updated, skip doit
       # if there is no *.md (no image updated), skip cp command
