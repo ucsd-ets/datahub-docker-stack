@@ -126,7 +126,9 @@ def insert_history(markdown_fp):
         doc_str = f.read()
 
     latest_row = compile_history()
-    latest_doc = insert_row(doc_str, [latest_row])
+    # compile history() returns 3 var, so lastest row is a tuple
+    # latest_doc = insert_row(doc_str, [latest_row])
+    latest_doc = insert_row(doc_str, latest_row)
 
     with open(path.join('wiki', 'Home.md'), 'w') as f:
         f.write(latest_doc)
@@ -162,7 +164,6 @@ def run_manifests(stack_dir):
         csv_embed_markdown('artifacts/image-dependency-updated.csv', dep_table_fp, 'Image Dependency')
     else:
         csv_embed_markdown('artifacts/image-dependency.csv', dep_table_fp, 'Image Dependency')
-
     
     specs = get_specs(path.join(stack_dir, 'spec.yml'))
     for image in images:
