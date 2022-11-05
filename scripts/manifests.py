@@ -124,16 +124,14 @@ def compile_history(compile_tag_history = False):
 def insert_history(markdown_fp):
     with open(path.join('wiki', 'Home.md'), 'r') as f:
         doc_str = f.read()
-    print("insert_history(): wiki/Home.md read DONE.")
 
     latest_row = compile_history()
-    print("insert_history(): compile_history() DONE")
-    latest_doc = insert_row(doc_str, [latest_row])
-    print("insert_history(): insert_row() DONE")
+    # compile history() returns 3 var, so lastest row is a tuple
+    # latest_doc = insert_row(doc_str, [latest_row])
+    latest_doc = insert_row(doc_str, latest_row)
 
     with open(path.join('wiki', 'Home.md'), 'w') as f:
         f.write(latest_doc)
-    print("insert_history(): wiki/Home.md write DONE.")
 
 def update_history():
     # This function read tagging info from artifacts/IMAGES_TAGGED
@@ -157,7 +155,6 @@ def run_manifests(stack_dir):
     images = read_var('IMAGES_BUILT')
     image_deps = json2series(read_dict('image-dependency.json'), 'dep', 'image')
     store_series(image_deps, 'image-dependency')
-    print("run_manifests(): part 1 DONE.")
 
     # Write image dependency table to wiki
     dep_table_fp = 'wiki/Image Dependency.md'
@@ -167,7 +164,6 @@ def run_manifests(stack_dir):
         csv_embed_markdown('artifacts/image-dependency-updated.csv', dep_table_fp, 'Image Dependency')
     else:
         csv_embed_markdown('artifacts/image-dependency.csv', dep_table_fp, 'Image Dependency')
-    print("run_manifests(): part 2 DONE.")
     
     specs = get_specs(path.join(stack_dir, 'spec.yml'))
     for image in images:
@@ -176,10 +172,8 @@ def run_manifests(stack_dir):
         image_key = keys[0]
         print('Running image manifest for', image)
         run_report(specs, image_key, image=image)
-    print("run_manifests(): part 3 DONE.")
 
     insert_history('wiki/Home.md')
-    print("run_manifests(): insert_history() DONE.")
 
 def run_stable_manifests():
     stable_images = read_var('IMAGES_TAGGED')

@@ -146,7 +146,8 @@ def csv_concat(csv_old:str, fp_new, out_fp)->None:
     updated.to_csv(out_fp)
 
 
-def insert_row(md_str:list, new_content:list)->str:
+def insert_row(md_str:str, new_content:list)->str:
+    """
     lines = md_str.splitlines()
     table_i = [
         i for i, line in enumerate(lines)
@@ -168,6 +169,23 @@ def insert_row(md_str:list, new_content:list)->str:
     doc_lines = [line for i, line in enumerate(lines) if i not in table_i]
     doc_lines = doc_lines[:table_i[0]] + table_lines + doc_lines[table_i[0]:]
     doc = "\n".join(doc_lines)
+    return doc
+    """
+    NUM_COL = 3
+    NUM_HEADER_LINE = 4
+    assert type(md_str) == str, "1st arg md_str should be a str."
+    lines = md_str.splitlines()
+    
+    print(new_content)
+    assert type(new_content) == tuple and \
+        len(new_content) == 3 and \
+        all(isinstance(s, str) for s in new_content), \
+            "2nd arg new_content should be a tuple of 3 str"
+
+    content = ['|' + '|'.join(new_content)+ '|']
+    # header + new content + old content
+    lines = lines[:NUM_HEADER_LINE] + content + lines[NUM_HEADER_LINE:]
+    doc = "\n".join(lines)
     return doc
 
 
