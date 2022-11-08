@@ -30,8 +30,8 @@ SERVICE_NAME = '127.0.0.1' or os.environ.get('SERVICE_NAME')
 
 
 def test_rstudio(container):
-    print("Skipping test_rstudio(container) of rstudio.")
-    return
+    # print("Skipping test_rstudio(container) of rstudio.")
+    # return
 
     c = container.run(
         ports={'8888/tcp':8888},
@@ -129,12 +129,13 @@ def test_rstudio(container):
     for ii in ids:
         try:
             e=ii.get_attribute('id')
+            LOGGER.info(f"Element id: {e}, text: {ii.text}.")
             if 'rstudio_dirContents' in e:
                 if ii.text.split()[0]== 'datascience-rstudio.Rmd':
                     file_id = e
         except:
             pass
-         
+    LOGGER.info(f"\n **!** Finally, file_id is {file_id}. **!**")     
     file_promtp=browser.find_element(by.ID,file_id)
     file_promtp.click()
     file_close = browser.find_element(by.XPATH,'//*[@id="rstudio_file_accept_open"]')
