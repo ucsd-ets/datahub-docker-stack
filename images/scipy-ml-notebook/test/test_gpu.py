@@ -16,17 +16,17 @@ def untested_image():
 
 
 def test_gpu_valid(untested_image):
-    print("Skipping test_gpu_valid(untested_image) of scipy-ml.")
-    return
+    # print("Skipping test_gpu_valid(untested_image) of scipy-ml.")
+    # return
     assert run(create_client(test_image=untested_image,cer_path=None)) == EXAMPLE_GOOD_OUT 
     
 def test_gpu_nonexistent_image():
-    print("Skipping test_gpu_nonexistent_image() of scipy-ml.")
-    return
+    # print("Skipping test_gpu_nonexistent_image() of scipy-ml.")
+    # return
     response = json.loads(run(create_client(test_image='invalid_image_for_test',cer_path=None,timeout=20)))
     assert response['test_output'] == EXAMPLE_TIME_OUT
     
 def test_gpu_lacking_tools():
-    print("Skipping test_gpu_lacking_tools() of scipy-ml.")
-    return
+    # print("Skipping test_gpu_lacking_tools() of scipy-ml.")
+    # return
     assert run(create_client(test_image='python',cer_path=None)) == EXAMPLE_MISSING_PACKAGE
