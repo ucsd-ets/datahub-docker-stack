@@ -125,13 +125,13 @@ def test_rstudio(container):
     ActionChains(browser).key_down(Keys.CONTROL).send_keys("o").perform()
     browser.switch_to.window(browser.window_handles[-1])
     ids = browser.find_elements(by.XPATH,'//*[@id]')
-    if not ids:
+    if not ids: # ids is a list
         raise Exception("ids is empty; browser.find_elements(by.XPATH,'//*[@id]') finds nothing.")
     file_id=None
     for ii in ids:
         try:
             e=ii.get_attribute('id')
-            prin(f"**!** Element id: {e}, text: {ii.text}.")
+            print(f"**!** Element id: {e}, text: {ii.text}.")
             if 'rstudio_dirContents' in e:
                 if ii.text.split()[0]== 'datascience-rstudio.Rmd':
                     file_id = e
