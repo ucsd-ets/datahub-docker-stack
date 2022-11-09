@@ -125,6 +125,8 @@ def test_rstudio(container):
     ActionChains(browser).key_down(Keys.CONTROL).send_keys("o").perform()
     browser.switch_to.window(browser.window_handles[-1])
     ids = browser.find_elements(by.XPATH,'//*[@id]')
+    if not ids:
+        raise Exception("ids is empty; browser.find_elements(by.XPATH,'//*[@id]') finds nothing.")
     file_id=None
     for ii in ids:
         try:
