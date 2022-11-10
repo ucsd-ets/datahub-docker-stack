@@ -137,7 +137,10 @@ def test_rstudio(container):
                     file_id = e
         except:
             pass
-    print(f"\n **!** Finally, file_id is {file_id}. **!**")     
+    print(f"\n **!** Finally, file_id is {file_id}. **!**")   
+    if file_id is None:
+        browser.save_screenshot('artifacts/none_file_id.png')  
+        
     file_promtp=browser.find_element(by.ID,file_id)
     file_promtp.click()
     file_close = browser.find_element(by.XPATH,'//*[@id="rstudio_file_accept_open"]')
