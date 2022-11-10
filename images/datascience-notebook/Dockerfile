@@ -6,6 +6,7 @@ USER jovyan
 RUN pip install dpkt \
                 nose \
                 datascience && \
+                pip install nbconvert==5.6.1 && \
     python -c 'import matplotlib.pyplot' && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER
