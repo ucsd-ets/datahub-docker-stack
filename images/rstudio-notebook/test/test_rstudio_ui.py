@@ -83,7 +83,11 @@ def test_rstudio(container):
         if current_retries == MAX_RETRIES:
             raise Exception('Max retry limit hit, could not connect to jupyter server')
         
-        browser.get(baseurl)
+        try:
+            browser.get(baseurl)
+        except:
+            browser.save_screenshot('artifacts/err_get_url.png')
+            raise Exception("browser.get(baseurl) runs failed, cannot continue.")
 
         if browser.page_source != '<html><head></head><body></body></html>':
             break
@@ -140,7 +144,7 @@ def test_rstudio(container):
     print(f"\n **!** Finally, file_id is {file_id}. **!**")   
     if file_id is None:
         browser.save_screenshot('artifacts/none_file_id.png')  
-        
+
     file_promtp=browser.find_element(by.ID,file_id)
     file_promtp.click()
     file_close = browser.find_element(by.XPATH,'//*[@id="rstudio_file_accept_open"]')
