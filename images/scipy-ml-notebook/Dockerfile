@@ -21,9 +21,10 @@ RUN chmod +x /run_jupyter.sh
 USER jovyan
 
 # CUDA 11
+# tf requirements: https://www.tensorflow.org/install/pip#linux
 RUN conda install \
 	cudatoolkit=11.2 \
-	cudnn \
+	cudnn=8.1.0 \
 	nccl \
 	-y && \
 	fix-permissions $CONDA_DIR && \
@@ -35,11 +36,10 @@ RUN pip install --no-cache-dir  datascience \
 	scapy \
 	nltk \
 	opencv-contrib-python-headless \
-	jupyter-tensorboard \
 	opencv-python \
 	pycocotools \
 	pillow \
-	tensorflow-gpu==2.6 && \
+	tensorflow && \ 
 	fix-permissions $CONDA_DIR && \
 	fix-permissions /home/$NB_USER
 
