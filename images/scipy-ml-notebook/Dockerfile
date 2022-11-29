@@ -19,7 +19,7 @@ COPY run_jupyter.sh /
 RUN chmod +x /run_jupyter.sh
 
 COPY cudatoolkit_env_vars.sh /etc/datahub-profile.d/cudatoolkit_env_vars.sh
-COPY cudnn_env_vars.sh /etc/datahub-profile.d/cudnn_env_vars.sh
+# COPY cudnn_env_vars.sh /etc/datahub-profile.d/cudnn_env_vars.sh
 
 USER jovyan
 
