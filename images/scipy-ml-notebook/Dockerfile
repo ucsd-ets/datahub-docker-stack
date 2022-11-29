@@ -24,9 +24,10 @@ COPY cudatoolkit_env_vars.sh /etc/datahub-profile.d/cudatoolkit_env_vars.sh
 USER jovyan
 
 # CUDA 11
+# tf requirements: https://www.tensorflow.org/install/pip#linux
 RUN conda install \
 	cudatoolkit=11.2 \
-	cudnn \
+	cudnn=8.1.0 \
 	nccl \
 	-y && \
 	fix-permissions $CONDA_DIR && \
@@ -38,7 +39,6 @@ RUN pip install --no-cache-dir  datascience \
 	scapy \
 	nltk \
 	opencv-contrib-python-headless \
-	jupyter-tensorboard \
 	opencv-python \
 	pycocotools \
 	pillow \
