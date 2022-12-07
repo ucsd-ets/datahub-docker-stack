@@ -43,7 +43,6 @@ RUN pip install --no-cache-dir  datascience \
 	pycocotools \
 	pillow \
 	tensorflow-gpu==2.6 && \
-	pip install nbconvert==5.6.1 && \
 	fix-permissions $CONDA_DIR && \
 	fix-permissions /home/$NB_USER
 
