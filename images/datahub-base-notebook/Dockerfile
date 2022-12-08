@@ -47,18 +47,18 @@ USER jovyan
 COPY start-code-server.sh /usr/local/bin/start-notebook.d/
 
 ARG PY_VER_SHORT=3.9
-ARG JUPYTERHUB_VERSION=1.4.2
+ARG JUPYTERHUB_VERSION=1.5.0
 # nbconvert downgrade needed for nbgrader to work
 RUN /usr/share/datahub/scripts/install-python-all.sh && \
     pip install pandas --upgrade && \
-    pip install nltk && \
-    pip install jupyterhub==$JUPYTERHUB_VERSION && \
-    pip install nbgrader==0.8.1 && \
-    pip install traitlets==5.1.0 && \
+    pip install nltk \
+                jupyterhub==$JUPYTERHUB_VERSION \
+                traitlets==5.1.0 && \
     conda install -c conda-forge rise && \
-    cat /usr/share/datahub/scripts/canvas_exporter.py > /opt/conda/lib/python$PY_VER_SHORT/site-packages/nbgrader/plugins/export.py && \
+    mamba install -c conda-forge nbgrader \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
+    conda clean --all \
     chown -R jovyan:users /opt/conda/etc/jupyter/nbconfig && \
     chmod -R +r /opt/conda/etc/jupyter/nbconfig
 
