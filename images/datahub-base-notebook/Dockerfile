@@ -52,7 +52,7 @@ ARG JUPYTERHUB_VERSION=1.5.0
 RUN /usr/share/datahub/scripts/install-python-all.sh && \
     pip install pandas --upgrade && \
     pip install nltk \
-                jupyterhub==$JUPYTERHUB_VERSION \
+                jupyterhub==$JUPYTERHUB_VERSION && \
     conda install -c conda-forge rise && \
     mamba install -c conda-forge nbgrader \
     fix-permissions $CONDA_DIR && \
