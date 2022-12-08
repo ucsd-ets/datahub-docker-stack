@@ -53,10 +53,8 @@ RUN /usr/share/datahub/scripts/install-python-all.sh && \
     pip install pandas --upgrade && \
     pip install nltk \
                 jupyterhub==$JUPYTERHUB_VERSION && \
-    conda install -c conda-forge rise && \
-    mamba install -c conda-forge nbgrader \
-    fix-permissions $CONDA_DIR && \
-    fix-permissions /home/$NB_USER && \
+    conda install -c conda-forge rise -y && \
+    mamba install -c conda-forge nbgrader -y \
     conda clean --all \
     chown -R jovyan:users /opt/conda/etc/jupyter/nbconfig && \
     chmod -R +r /opt/conda/etc/jupyter/nbconfig
