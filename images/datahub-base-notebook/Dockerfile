@@ -49,11 +49,12 @@ COPY start-code-server.sh /usr/local/bin/start-notebook.d/
 ARG PY_VER_SHORT=3.9
 ARG JUPYTERHUB_VERSION=1.5.0
 
+# mistune added for nbgrader issues
+
 RUN /usr/share/datahub/scripts/install-python-all.sh && \
     pip install pandas 'mistune>=2' --upgrade && \
     pip install nltk \
                 nbconvert==7.2.1 \
-                nbgrader==0.8.1 \
                 jupyterhub==$JUPYTERHUB_VERSION && \
     conda install -c conda-forge rise -y && \
     fix-permissions $CONDA_DIR && \
@@ -61,6 +62,10 @@ RUN /usr/share/datahub/scripts/install-python-all.sh && \
     conda clean --all && \
     chown -R jovyan:users /opt/conda/etc/jupyter/nbconfig && \
     chmod -R +r /opt/conda/etc/jupyter/nbconfig
+
+# nbgrader requires some variables set to just run the notebook server
+ENV NBGRADER_COURSEID="NA"
+ENV JUPYTERHUB_USER=${NB_USER}
 
 # Install jupyterlab extensions
 RUN pip install jupyterlab-github jupyterlab-latex jupyterlab-git \
