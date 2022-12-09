@@ -50,11 +50,12 @@ ARG PY_VER_SHORT=3.9
 ARG JUPYTERHUB_VERSION=1.5.0
 
 RUN /usr/share/datahub/scripts/install-python-all.sh && \
-    pip install pandas --upgrade && \
+    pip install pandas 'mistune>=2' --upgrade && \
     pip install nltk \
+                nbconvert==7.2.1 \
+                nbgrader==0.8.1 \
                 jupyterhub==$JUPYTERHUB_VERSION && \
     conda install -c conda-forge rise -y && \
-    mamba install -c conda-forge nbgrader -y && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
     conda clean --all && \

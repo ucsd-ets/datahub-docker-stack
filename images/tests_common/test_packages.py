@@ -138,11 +138,12 @@ def _import_packages(package_helper, filtered_packages, check_function, max_fail
     LOGGER.info("Testing the import of packages ...")
     for package in filtered_packages:
         LOGGER.info(f"Trying to import {package}")
-        all_packages[package]=''
         try:
+            status_code = check_function(package_helper, package)
+            all_packages[package] = status_code
             assert (
-                check_function(package_helper, package) == 0
-            ), f"Package [{package}] import failed"
+                status_code == 0
+            ), f"Package [{package}] import failed. status_code = {status_code}"
         except AssertionError as err:
             failures[package] = err
     if len(failures) > max_failures:
