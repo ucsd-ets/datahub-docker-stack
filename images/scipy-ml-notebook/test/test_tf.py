@@ -30,9 +30,9 @@ def test_tf(container, test_file):
         + f"--execute {cont_data_dir}/{test_file}.ipynb"
     )
 
-    container.ports.update({
+    """ container.ports.update({
         "5132/tcp": 5132
-    })
+    }) """
 
 
     c = container.run(
