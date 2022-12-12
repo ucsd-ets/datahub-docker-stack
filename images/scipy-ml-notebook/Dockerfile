@@ -56,10 +56,10 @@ RUN pip install torch==${TORCH_VER} torchvision==${TORCH_VIS_VER} torchaudio==${
 
 RUN ln -s /usr/local/nvidia/bin/nvidia-smi /opt/conda/bin/nvidia-smi
 
-# Add notebook for test (test_tf.ipynb) to image
-ARG NB_DIR=/home/jovyan/data
-COPY ./test/data/test_tf.ipynb ${NB_DIR}/
-RUN chmod +x ${NB_DIR}/test_tf.ipynb
+# NO NEED TO: Add notebook for test (test_tf.ipynb) to image
+# ARG NB_DIR=/home/jovyan/data
+# COPY ./test/data/test_tf.ipynb ${NB_DIR}/
+# RUN chmod +x ${NB_DIR}/test_tf.ipynb
 
 USER $NB_UID:$NB_GID
 ENV PATH=${PATH}:/usr/local/nvidia/bin
