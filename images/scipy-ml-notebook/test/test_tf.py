@@ -19,6 +19,7 @@ def test_tf(container, test_file):
     1. tensorboard extention can be loaded.
     2. tf version and tf.keras version match
     """
+    host_data_dir = os.path.join(THIS_DIR, "data")
     cont_data_dir = "/home/jovyan/data"
     output_dir = "/tmp"
     timeout_sec = 60
