@@ -47,21 +47,25 @@ USER jovyan
 COPY start-code-server.sh /usr/local/bin/start-notebook.d/
 
 ARG PY_VER_SHORT=3.9
-ARG JUPYTERHUB_VERSION=1.4.2
-# nbconvert downgrade needed for nbgrader to work
+ARG JUPYTERHUB_VERSION=1.5.0
+
+# mistune added for nbgrader issues
+
 RUN /usr/share/datahub/scripts/install-python-all.sh && \
-    pip install pandas --upgrade && \
-    pip install nltk && \
-    pip install nbconvert==5.6.1 && \
-    pip install jupyterhub==$JUPYTERHUB_VERSION && \
-    pip install nbgrader==0.6.2 && \
-    pip install traitlets==5.1.0 && \
-    conda install -c conda-forge rise && \
-    cat /usr/share/datahub/scripts/canvas_exporter.py > /opt/conda/lib/python$PY_VER_SHORT/site-packages/nbgrader/plugins/export.py && \
+    pip install pandas 'mistune>=2' --upgrade && \
+    pip install nltk \
+                nbconvert==7.2.1 \
+                jupyterhub==$JUPYTERHUB_VERSION && \
+    conda install -c conda-forge rise -y && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
+    conda clean --all && \
     chown -R jovyan:users /opt/conda/etc/jupyter/nbconfig && \
     chmod -R +r /opt/conda/etc/jupyter/nbconfig
+
+# nbgrader requires some variables set to just run the notebook server
+ENV NBGRADER_COURSEID="NA"
+ENV JUPYTERHUB_USER=${NB_USER}
 
 # Install jupyterlab extensions
 RUN pip install jupyterlab-github jupyterlab-latex jupyterlab-git \

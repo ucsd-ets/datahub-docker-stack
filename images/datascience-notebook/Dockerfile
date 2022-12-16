@@ -12,11 +12,4 @@ RUN pip install dpkt \
 
 RUN conda clean -tipsy
 
-# import integration tests
-# ENV TESTDIR=/usr/share/datahub/tests
-# ARG DATASCIENCE_TESTDIR=${TESTDIR}/datascience-notebook
-# COPY tests ${DATASCIENCE_TESTDIR}
-# RUN chmod -R +rwx ${DATASCIENCE_TESTDIR}
-# RUN chown 1000:1000 ${DATASCIENCE_TESTDIR}
-
 ENV SHELL=/bin/bash

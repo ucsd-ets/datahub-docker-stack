@@ -32,6 +32,13 @@ For people who are trying to modify the image stack, here are some scenarios and
 5. If the workflow completed successfully (a green check to the left of the commit), you can now safely merge the pull request to the `main` branch.
 6. The workflow will now run again and push the images to Dockerhub.
 
+### Running individual tests for images
+
+1. Activate the virtual environment `source bin/activate`
+2. `cd images`
+3. `export TEST_IMAGE=MYIMAGE` replace `MYIMAGE` with your locally built image name
+4. `pytest tests_common` as an example
+
 
 ### Overview of the Repository
 We Use github workflow to builds new images if their is any change in the images or addtional images are added.
