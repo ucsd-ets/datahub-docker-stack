@@ -42,8 +42,7 @@ RUN pip install --no-cache-dir  datascience \
 	opencv-python \
 	pycocotools \
 	pillow \
-	tensorflow-gpu==2.6 \
-  keras==2.6.0 && \ 
+	tensorflow==2.11.0 \
 	fix-permissions $CONDA_DIR && \
 	fix-permissions /home/$NB_USER
 
