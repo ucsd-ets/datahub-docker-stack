@@ -18,7 +18,8 @@ def untested_image():
 def test_gpu_valid(untested_image):
     """ print("Skipping test_gpu_valid(untested_image) of scipy-ml.")
     return """
-    assert run(create_client(test_image=untested_image,cer_path=None)) == EXAMPLE_GOOD_OUT 
+    assert run(create_client(test_image=untested_image,cer_path=None)) == EXAMPLE_GOOD_OUT, \
+        f"Image name: {untested_image}, gpu is not available for torch or tensorflow" 
     
 def test_gpu_nonexistent_image():
     """ print("Skipping test_gpu_nonexistent_image() of scipy-ml.")
