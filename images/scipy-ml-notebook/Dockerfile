@@ -30,7 +30,7 @@ USER jovyan
 # tf requirements: https://www.tensorflow.org/install/pip#linux
 RUN conda install \
 	cudatoolkit=11.7 \
-	cudnn=8.7.0 \
+	cudnn=8.2.1 \
 	nccl \
 	-y && \
 	fix-permissions $CONDA_DIR && \
