@@ -20,6 +20,9 @@ RUN chmod +x /run_jupyter.sh
 
 COPY cudatoolkit_env_vars.sh /etc/datahub-profile.d/cudatoolkit_env_vars.sh
 COPY cudnn_env_vars.sh /etc/datahub-profile.d/cudnn_env_vars.sh
+COPY activate.sh /tmp/activate.sh
+
+RUN chmod 777 /etc/datahub-profile.d/*.sh /tmp/activate.sh
 
 USER jovyan
 
@@ -62,6 +65,4 @@ RUN ln -s /usr/local/nvidia/bin/nvidia-smi /opt/conda/bin/nvidia-smi
 USER $NB_UID:$NB_GID
 ENV PATH=${PATH}:/usr/local/nvidia/bin
 
-ENV LD_LIBRARY_PATH=/opt/conda/pkgs/cudatoolkit-11.2.2-he111cf0_8/lib/:${LD_LIBRARY_PATH}
-
-RUN source /etc/datahub-profile.d/*.sh
+RUN . /tmp/activate.sh
