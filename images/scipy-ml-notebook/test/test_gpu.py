@@ -14,10 +14,9 @@ def untested_image():
     tag = tag+'-untested'
     return f'{repo}:{tag}'
 
-
+@pytest.mark.skip(reason="Skipping test_gpu_valid() to debug")
 def test_gpu_valid(untested_image):
-    """ print("Skipping test_gpu_valid(untested_image) of scipy-ml.")
-    return """
+    return
     assert run(create_client(test_image=untested_image,cer_path=None)) == EXAMPLE_GOOD_OUT, \
         f"Image name: {untested_image}, gpu is not available for torch or tensorflow" 
     
