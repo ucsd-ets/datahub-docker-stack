@@ -63,6 +63,6 @@ RUN pip install torch==${TORCH_VER} torchvision==${TORCH_VIS_VER} torchaudio==${
 RUN ln -s /usr/local/nvidia/bin/nvidia-smi /opt/conda/bin/nvidia-smi
 
 USER $NB_UID:$NB_GID
-ENV PATH=${PATH}:/usr/local/nvidia/bin
+ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
 
 RUN . /tmp/activate.sh
