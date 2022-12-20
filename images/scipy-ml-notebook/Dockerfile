@@ -29,8 +29,8 @@ USER jovyan
 # CUDA 11
 # tf requirements: https://www.tensorflow.org/install/pip#linux
 RUN conda install \
-	cudatoolkit=11.2 \
-	cudnn=8.1.0 \
+	cudatoolkit=11.7 \
+	cudnn=8.7.0 \
 	nccl \
 	-y && \
 	fix-permissions $CONDA_DIR && \
@@ -65,4 +65,4 @@ RUN ln -s /usr/local/nvidia/bin/nvidia-smi /opt/conda/bin/nvidia-smi
 USER $NB_UID:$NB_GID
 ENV PATH=${PATH}:/usr/local/nvidia/bin
 
-RUN . /tmp/activate.sh
+RUN for script in /etc/datahub-profile.d/*.sh; do . "$script"; done
