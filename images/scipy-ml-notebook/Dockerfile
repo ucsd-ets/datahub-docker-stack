@@ -66,3 +66,4 @@ USER $NB_UID:$NB_GID
 ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
 
 RUN . /tmp/activate.sh
+  
