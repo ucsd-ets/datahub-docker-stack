@@ -16,7 +16,7 @@ def untested_image():
 
 # @pytest.mark.skip(reason="Skipping test_gpu_valid() to debug")
 def test_gpu_valid(untested_image):
-    assert run(create_client(test_image=untested_image,cer_path=None)) == EXAMPLE_GOOD_OUT, \
+    assert run(create_client(test_image=untested_image,cer_path=None, timeout=1800)) == EXAMPLE_GOOD_OUT, \
         f"Image name: {untested_image}, gpu is not available for torch or tensorflow" 
     
 def test_gpu_nonexistent_image():
