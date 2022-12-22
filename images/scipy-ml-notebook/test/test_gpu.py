@@ -14,12 +14,12 @@ def untested_image():
     tag = tag+'-untested'
     return f'{repo}:{tag}'
 
-@pytest.mark.skip(reason="Skipping test_gpu_valid() to debug")
+# @pytest.mark.skip(reason="Skipping test_gpu_valid() to debug")
 def test_gpu_valid(untested_image):
-    assert run(create_client(test_image=untested_image,cer_path=None, timeout=1800)) == EXAMPLE_GOOD_OUT, \
+    assert run(create_client(test_image=untested_image,cer_path=None, timeout=3000)) == EXAMPLE_GOOD_OUT, \
         f"Image name: {untested_image}, gpu is not available for torch or tensorflow" 
 
-@pytest.mark.skip(reason="Skipping test_gpu_nonexistent_image() to debug")
+# @pytest.mark.skip(reason="Skipping test_gpu_nonexistent_image() to debug")
 def test_gpu_nonexistent_image():
     response = json.loads(run(create_client(test_image='invalid_image_for_test',cer_path=None,timeout=20)))
     assert response['test_output'] == EXAMPLE_TIME_OUT
