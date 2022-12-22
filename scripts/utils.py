@@ -147,7 +147,7 @@ def csv_concat(csv_old:str, fp_new, out_fp)->None:
 
 
 def insert_row(md_str:str, new_content:list)->str:
-    """
+    
     lines = md_str.splitlines()
     table_i = [
         i for i, line in enumerate(lines)
@@ -170,8 +170,8 @@ def insert_row(md_str:str, new_content:list)->str:
     doc_lines = doc_lines[:table_i[0]] + table_lines + doc_lines[table_i[0]:]
     doc = "\n".join(doc_lines)
     return doc
-    """
-    NUM_COL = 3
+   
+    """ NUM_COL = 3
     NUM_HEADER_LINE = 4
     assert type(md_str) == str, "1st arg md_str should be a str."
     lines = md_str.splitlines()
@@ -186,7 +186,7 @@ def insert_row(md_str:str, new_content:list)->str:
     # header + new content + old content
     lines = lines[:NUM_HEADER_LINE] + content + lines[NUM_HEADER_LINE:]
     doc = "\n".join(lines)
-    return doc
+    return doc """
 
 
 

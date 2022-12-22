@@ -127,8 +127,8 @@ def insert_history(markdown_fp):
 
     latest_row = compile_history()
     # compile history() returns 3 var, so lastest row is a tuple
-    # latest_doc = insert_row(doc_str, [latest_row])
-    latest_doc = insert_row(doc_str, latest_row)
+    latest_doc = insert_row(doc_str, [latest_row])
+    # latest_doc = insert_row(doc_str, latest_row)
 
     with open(path.join('wiki', 'Home.md'), 'w') as f:
         f.write(latest_doc)
