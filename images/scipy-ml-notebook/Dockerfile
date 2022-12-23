@@ -18,6 +18,12 @@ RUN ln -s libncurses.so.6 /usr/lib/x86_64-linux-gnu/libncurses.so.5
 COPY run_jupyter.sh /
 RUN chmod +x /run_jupyter.sh
 
+COPY cudatoolkit_env_vars.sh /etc/datahub-profile.d/cudatoolkit_env_vars.sh
+COPY cudnn_env_vars.sh /etc/datahub-profile.d/cudnn_env_vars.sh
+COPY activate.sh /tmp/activate.sh
+
+RUN chmod 777 /etc/datahub-profile.d/*.sh /tmp/activate.sh
+
 USER jovyan
 
 # CUDA 11
@@ -39,7 +45,7 @@ RUN pip install --no-cache-dir  datascience \
 	opencv-python \
 	pycocotools \
 	pillow \
-	tensorflow && \ 
+	tensorflow==2.11.0 && \
 	fix-permissions $CONDA_DIR && \
 	fix-permissions /home/$NB_USER
 
@@ -57,6 +63,7 @@ RUN pip install torch==${TORCH_VER} torchvision==${TORCH_VIS_VER} torchaudio==${
 RUN ln -s /usr/local/nvidia/bin/nvidia-smi /opt/conda/bin/nvidia-smi
 
 USER $NB_UID:$NB_GID
-ENV PATH=${PATH}:/usr/local/nvidia/bin
-ENV LD_LIBRARY_PATH=/opt/conda/pkgs/cudatoolkit-11.2.2-he111cf0_8/lib/:${LD_LIBRARY_PATH}
-RUN echo 'here'
+ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
+
+RUN . /tmp/activate.sh
+

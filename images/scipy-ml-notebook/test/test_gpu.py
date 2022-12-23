@@ -14,19 +14,16 @@ def untested_image():
     tag = tag+'-untested'
     return f'{repo}:{tag}'
 
-
+# @pytest.mark.skip(reason="Skipping test_gpu_valid() to debug")
 def test_gpu_valid(untested_image):
-    print("Skipping test_gpu_valid(untested_image) of scipy-ml.")
-    return
-    assert run(create_client(test_image=untested_image,cer_path=None)) == EXAMPLE_GOOD_OUT 
-    
+    assert run(create_client(test_image=untested_image,cer_path=None, timeout=3000)) == EXAMPLE_GOOD_OUT, \
+        f"Image name: {untested_image}, gpu is not available for torch or tensorflow" 
+
+# @pytest.mark.skip(reason="Skipping test_gpu_nonexistent_image() to debug")
 def test_gpu_nonexistent_image():
-    print("Skipping test_gpu_nonexistent_image() of scipy-ml.")
-    return
     response = json.loads(run(create_client(test_image='invalid_image_for_test',cer_path=None,timeout=20)))
     assert response['test_output'] == EXAMPLE_TIME_OUT
-    
+
+@pytest.mark.skip(reason="Skipping test_gpu_lacking_tools() to debug; not necessary")
 def test_gpu_lacking_tools():
-    print("Skipping test_gpu_lacking_tools() of scipy-ml.")
-    return
     assert run(create_client(test_image='python',cer_path=None)) == EXAMPLE_MISSING_PACKAGE
