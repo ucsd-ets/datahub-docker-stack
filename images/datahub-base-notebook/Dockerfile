@@ -72,3 +72,4 @@ RUN pip install jupyterlab-github jupyterlab-latex jupyterlab-git \
 jupyterlab-fasta jupyterlab-pullrequests jupyterlab-geojson
 
 WORKDIR /home/jovyan
+

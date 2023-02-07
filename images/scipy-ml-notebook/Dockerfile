@@ -60,6 +60,7 @@ RUN pip install torch==${TORCH_VER} torchvision==${TORCH_VIS_VER} torchaudio==${
 	fix-permissions $CONDA_DIR && \
 	fix-permissions /home/$NB_USER
 
+# to use nvidia-smi command to check GPU & driver
 RUN ln -s /usr/local/nvidia/bin/nvidia-smi /opt/conda/bin/nvidia-smi
 
 USER $NB_UID:$NB_GID
