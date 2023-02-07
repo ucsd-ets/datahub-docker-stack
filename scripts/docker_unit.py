@@ -208,27 +208,30 @@ class DockerPusher:
 
 class ContainerFacade:
     def __init__(self, 
-                 build_info: BuildInfo, 
+                 build_info_retrieval: BuildInfoRetrieval, 
                  builder: ContainerBuilder, 
                  tester: ContainerTester, 
                  pusher: ContainerPusher,
                  deleter: ContainerDeleter,
                  build_info_storage: BuildInfoStorage):
-        self.build_info = build_info
+        self.build_info_retrieval = build_info_retrieval
         self.builder = builder
         self.tester = tester
         self.pusher = pusher
         self.deleter = deleter
         self.build_info_storage = build_info_storage
 
-    def gen_build_params(self, stack_dir,unit_image_name) :#-> [BuildArgs]:
-        build_info = self.build_info.get_info(stack_dir)
+    def gen_build_params(self, stack_dir, unit_image_name:str) :#-> [BuildArgs]:
+        build_info = self.build_info_retrieval.get_info(stack_dir)
         image_dependecy=None
         if 'depend_on' in build_info.build_spec.image_specs[unit_image_name]:
+            # also a str
             image_dependecy = build_info.build_spec.image_specs[unit_image_name]['depend_on']
+        
         images_to_build=[]
         # check if the depends are built else build
         if  image_dependecy is not None:
+            pass    # should the dep (parent image) also be built?
             # check if image is already in repo and pull if its present
             images_to_build.append(image_dependecy)
 
@@ -240,13 +243,16 @@ class ContainerFacade:
         return build_params,image_dependecy
 
     def build_test_push_containers(self, stack_dir):
-        build_info = self.build_info.get_info(stack_dir)
+        build_info = self.build_info_retrieval.get_info(stack_dir)
         all_image_built = {}
         image_dependency={}
+        # unit_image_name: str
+        print(f"***CheckThis***, {build_info.images_changed}")
         for unit_image_name in build_info.images_changed: 
             if unit_image_name in build_info.images_built:
                 continue
-
+            
+            # get build parameters of this single image
             build_params,dependency = self.gen_build_params(stack_dir,unit_image_name)
             image_dependency[unit_image_name] = dependency
             # build
@@ -281,11 +287,13 @@ class ContainerFacade:
                 continue
             images_dep[all_image_built[image]]=all_image_built[dep]
         store_dict('image-dependency.json', images_dep)
+    
+    
     def build_container(self, build_params, stack_dir):
         return self.builder.build_container(build_params, stack_dir)
         
     def store_images_built(self):
-        self.build_info_storage.store_images_built(self.build_info.images_built)
+        self.build_info_storage.store_images_built(self.build_info_retrieval.images_built)
 
     def push_untested_container(self, images_built):
         self.pusher.push_container(images_built, True)
