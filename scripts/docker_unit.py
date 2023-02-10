@@ -247,8 +247,8 @@ class ContainerFacade:
         all_image_built = {}
         image_dependency={}
         # unit_image_name: str
-        print(f"***CheckThis***, {build_info.images_changed}")
-        for unit_image_name in build_info.images_changed: 
+        print(f"***CheckThis***, {set(build_info.images_changed)}")
+        for unit_image_name in set(build_info.images_changed): 
             if unit_image_name in build_info.images_built:
                 continue
             
