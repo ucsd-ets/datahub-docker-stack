@@ -22,9 +22,10 @@ def log_errors(f):
 @log_errors
 def is_tensorflow_available(log):
     # check GPUs
-    log['tensorflow'] = len(tf.config.list_physical_devices('GPU')) > 0
+    physical_gpus = log['tensorflow'] = len(tf.config.list_physical_devices('GPU')) > 0
     
-    # random job
+    # random job based off gist
+    # https://gist.github.com/wesuuu/e03c6f757ab07a9def386d91ee7dc30e
     try:
         X = np.random.random((100, 16))
         y = np.random.randint(0, 2, size=(100,))
@@ -36,6 +37,7 @@ def is_tensorflow_available(log):
         model.compile(optimizer="sgd", loss="binary_crossentropy")
 
         model.fit(X, y, verbose=1, epochs=1, batch_size=1)
+        return physical_gpus
     
     except Exception as e:
         print(f'Tensorflow exception {e}')
