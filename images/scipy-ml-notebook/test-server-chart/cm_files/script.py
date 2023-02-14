@@ -29,6 +29,7 @@ def is_tensorflow_available(log):
     try:
         X = np.random.random((100, 16))
         y = np.random.randint(0, 2, size=(100,))
+        gpus = tf.config.list_physical_devices('GPU')
         tf.config.set_visible_devices(gpus[0], 'GPU')
         inputs = Input(shape=X.shape[1:])
         x = Dense(4, activation="tanh")(inputs)
