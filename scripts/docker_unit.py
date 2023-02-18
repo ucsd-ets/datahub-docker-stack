@@ -233,8 +233,8 @@ class ContainerFacade:
         # check if the depends are built else build
         if  image_dependecy is not None:
             pass    # should the dep (parent image) also be built?
-            # check if image is already in repo and pull if its present
-            images_to_build.append(image_dependecy)
+            # # check if image is already in repo and pull if its present
+            # images_to_build.append(image_dependecy)
 
         images_to_build.append(unit_image_name)
         # Get the build params for the unit image and its depends
@@ -256,6 +256,9 @@ class ContainerFacade:
             # get build parameters of this single image
             build_params,dependency = self.gen_build_params(stack_dir,unit_image_name)
             image_dependency[unit_image_name] = dependency
+
+
+            
             # build
             images_built = self.build_container(build_params,stack_dir)
     
