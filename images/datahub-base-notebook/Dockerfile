@@ -56,7 +56,7 @@ RUN /usr/share/datahub/scripts/install-python-all.sh && \
     pip install nltk \
                 nbconvert==7.2.1 \
                 jupyterhub==$JUPYTERHUB_VERSION && \
-    conda install -c conda-forge rise -y && \
+    mamba install -c conda-forge rise -y && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
     conda clean --all && \

@@ -113,6 +113,7 @@ class ContainerTester:
 def container_test(stack_dir, images_built,dry_run=False):
     #for full_image_tag in images_built:
     test_params = _tests_collector(stack_dir, images_built)
+    print(f"*** In container_test, the Dict test_params is {test_params}")
     if not dry_run:
         for image_tag, test_dirs in test_params.items():
             image_test(image_tag,test_dirs)
@@ -269,6 +270,8 @@ class ContainerFacade:
             # test container
             
             #if any(['ucsdets/rstudio-notebook' in i for i in  build_info.images_built]):
+            print(f"*** Looking at unit image (on line 273 for loop) {unit_image_name}, \
+                build_info.images_built is {build_info.images_built}")
             self.container_test(stack_dir, build_info.images_built)
 
             # push the container

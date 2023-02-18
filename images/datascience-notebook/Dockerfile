@@ -14,4 +14,3 @@ RUN conda clean -tipsy
 
 ENV SHELL=/bin/bash
 
-
