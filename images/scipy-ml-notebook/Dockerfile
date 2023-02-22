@@ -28,7 +28,7 @@ USER jovyan
 
 # CUDA 11
 # tf requirements: https://www.tensorflow.org/install/pip#linux
-RUN conda install \
+RUN mamba install \
 	cudatoolkit=11.2 \
 	cudnn=8.1.0 \
 	nccl \
