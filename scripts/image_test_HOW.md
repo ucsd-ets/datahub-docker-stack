@@ -122,3 +122,30 @@ AND
 
 ## EXPECT BEHAVIOR: 
 This `container_test()` runs `image_test()` on EACH IMAGE ONCE.
+
+
+# Tree Structure refractor
+What to do with `images/spec.yml`?
+
+Shall we add `children` (OPPOSITE of `depend_on`) field to each image?
+
+Each time we should build the complete tree containing all images?
+
+```python
+class Node:  
+    image_name: str  
+    filepath: str  
+    rebuild: bool  
+    children: list[Node]
+```
+
+Components
+1. tree builder
+2. tree pruner
+3. tree test runner
+
+In tree builder: we process `spec.yml` and create nodes on-the-fly by checking `IMAGES_CHANGED` to set boolean *rebuild*. 
+
+How to LINK parent node and children nodes together? Shall we store actual child Node object in children[], or just the image_name? 
+
+These nodes should be stored in a `Dict` with key: value being name_str: image_node.
