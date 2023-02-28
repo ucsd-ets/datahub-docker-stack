@@ -1,7 +1,6 @@
 from sys import path
 from termios import VQUIT
 from scripts.utils import get_specs, read_var, store_dict, store_var
-from scripts.docker_info import get_dependency
 from scripts.docker_builder import dbuild
 from scripts.docker_tester import _tests_collector
 from scripts.docker_pusher import docker_login, push_images
