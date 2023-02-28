@@ -113,6 +113,7 @@ class ContainerTester:
 def container_test(stack_dir, images_built,dry_run=False):
     #for full_image_tag in images_built:
     test_params = _tests_collector(stack_dir, images_built)
+    print(f"*** In container_test, the Dict test_params is {test_params}")
     if not dry_run:
         for image_tag, test_dirs in test_params.items():
             image_test(image_tag,test_dirs)
@@ -208,29 +209,32 @@ class DockerPusher:
 
 class ContainerFacade:
     def __init__(self, 
-                 build_info: BuildInfo, 
+                 build_info_retrieval: BuildInfoRetrieval, 
                  builder: ContainerBuilder, 
                  tester: ContainerTester, 
                  pusher: ContainerPusher,
                  deleter: ContainerDeleter,
                  build_info_storage: BuildInfoStorage):
-        self.build_info = build_info
+        self.build_info_retrieval = build_info_retrieval
         self.builder = builder
         self.tester = tester
         self.pusher = pusher
         self.deleter = deleter
         self.build_info_storage = build_info_storage
 
-    def gen_build_params(self, stack_dir,unit_image_name) :#-> [BuildArgs]:
-        build_info = self.build_info.get_info(stack_dir)
+    def gen_build_params(self, stack_dir, unit_image_name:str) :#-> [BuildArgs]:
+        build_info = self.build_info_retrieval.get_info(stack_dir)
         image_dependecy=None
         if 'depend_on' in build_info.build_spec.image_specs[unit_image_name]:
+            # also a str
             image_dependecy = build_info.build_spec.image_specs[unit_image_name]['depend_on']
+        
         images_to_build=[]
         # check if the depends are built else build
         if  image_dependecy is not None:
-            # check if image is already in repo and pull if its present
-            images_to_build.append(image_dependecy)
+            pass    # should the dep (parent image) also be built?
+            # # check if image is already in repo and pull if its present
+            # images_to_build.append(image_dependecy)
 
         images_to_build.append(unit_image_name)
         # Get the build params for the unit image and its depends
@@ -240,15 +244,21 @@ class ContainerFacade:
         return build_params,image_dependecy
 
     def build_test_push_containers(self, stack_dir):
-        build_info = self.build_info.get_info(stack_dir)
+        build_info = self.build_info_retrieval.get_info(stack_dir)
         all_image_built = {}
         image_dependency={}
-        for unit_image_name in build_info.images_changed: 
+        # unit_image_name: str
+        print(f"***CheckThis***, {set(build_info.images_changed)}")
+        for unit_image_name in set(build_info.images_changed): 
             if unit_image_name in build_info.images_built:
                 continue
-
+            
+            # get build parameters of this single image
             build_params,dependency = self.gen_build_params(stack_dir,unit_image_name)
             image_dependency[unit_image_name] = dependency
+
+
+            
             # build
             images_built = self.build_container(build_params,stack_dir)
     
@@ -263,6 +273,8 @@ class ContainerFacade:
             # test container
             
             #if any(['ucsdets/rstudio-notebook' in i for i in  build_info.images_built]):
+            print(f"*** Looking at unit image (on line 273 for loop) {unit_image_name}, \
+                build_info.images_built is {build_info.images_built}")
             self.container_test(stack_dir, build_info.images_built)
 
             # push the container
@@ -281,11 +293,13 @@ class ContainerFacade:
                 continue
             images_dep[all_image_built[image]]=all_image_built[dep]
         store_dict('image-dependency.json', images_dep)
+    
+    
     def build_container(self, build_params, stack_dir):
         return self.builder.build_container(build_params, stack_dir)
         
     def store_images_built(self):
-        self.build_info_storage.store_images_built(self.build_info.images_built)
+        self.build_info_storage.store_images_built(self.build_info_retrieval.images_built)
 
     def push_untested_container(self, images_built):
         self.pusher.push_container(images_built, True)
