@@ -24,6 +24,7 @@ class Node:
                 docker_tag: {self.docker_tag},
                 filepath: {self.filepath},
                 rebuild: {self.rebuild},
+                integration_tests: {self.integration_tests},
                 children: {[child.image_name for child in self.children]}\n"""
         )
         for child in self.children:
@@ -104,6 +105,8 @@ def build_tree(spec_yaml: dict, images_changed: List[str], git_suffix: str='gitn
         """
         children_nodes = [] # leaf node has empty by default
         should_rebuild = parent_rebuild or (img_name in images_changed)
+        should_integration = ("integration_tests" in images[img_name]) and \
+            (images[img_name]["integration_tests"] == True)
         if img_name in dep:
             # non-leaf: build all children before passing to Constructor
             children_nodes = [build_node(child_name, should_rebuild) 
@@ -115,7 +118,8 @@ def build_tree(spec_yaml: dict, images_changed: List[str], git_suffix: str='gitn
             children_nodes,
             images[img_name],
             rebuild=should_rebuild,
-            filepath='images/' + img_name
+            filepath='images/' + img_name,
+            integration_tests=should_integration
         )
     ### ********************************* ###
     
