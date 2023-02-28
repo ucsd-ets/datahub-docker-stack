@@ -24,6 +24,7 @@ images:
     image_name: ucsdets/scipy-ml-notebook
     depend_on: datahub-base-notebook
     skip_plans: ['PYTHON38']
+    integration_tests: True
     dbuild_env:
       PYTHON38:
         TORCH_VER: '1.7.1+cu101'

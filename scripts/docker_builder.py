@@ -1,5 +1,4 @@
 from scripts.utils import get_specs, read_var, store_dict, store_var
-from scripts.docker_info import get_dependency
 from scripts.utils import get_specs, read_var, store_dict, store_var, read_dict
 from scripts.git_helper import get_changed_images
 from docker.errors import BuildError
