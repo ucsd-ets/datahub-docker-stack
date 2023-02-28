@@ -12,6 +12,22 @@ For people who are trying to modify the image stack, here are some scenarios and
 
 **Important**: for all changes, it is advised to make a new branch with the name `dev_***` for developing and testing before merging it to the `main` branch for the official update. And also make sure all the changes are in **one** commit when you push to Github. This can be done by changing the first commit continuously: `git add . && git commit --amend`. Failure to do so may break the dependency between images. 
 
+### Setup virtual environment
+
+```bash
+python3 -m venv . # at root level
+source bin/activate
+which python # it'll point to current dir
+which pip # it'll point to current dir
+pip install -r scripts/requirements.txt
+```
+### Run scripts unit tests
+
+```bash
+python3 -m unittest tests/v2/test_tester.py
+```
+
+
 ### Adding a New Image
 
 1. Clone the repository and make a new branch: `git checkout -b dev_***_notebook`.
