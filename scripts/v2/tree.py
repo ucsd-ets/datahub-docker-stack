@@ -128,3 +128,6 @@ def build_tree(spec_yaml: dict, images_changed: List[str], git_suffix: str='gitn
 
 if __name__ == "__main__":
     print("Import Success")
+    d = load_spec("images/spec.yml")
+    root_node = build_tree(d, [], "c11a915")
+    root_node.print_info()
