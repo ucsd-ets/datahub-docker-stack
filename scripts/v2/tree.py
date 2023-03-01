@@ -8,15 +8,16 @@ from collections import defaultdict
 class Node:
     # required args
     image_name: str
-    git_suffix: str
-    children: List
-    build_args: Dict
+    git_suffix: str = ""
+    children: List = field(default_factory=list)
+    build_args: Dict = field(default_factory=dict)
     # optioanl args
     docker_tag: str = ""
     filepath: str = ""
     rebuild: bool = False
     image_built: bool = False
     integration_tests: bool = False
+    parent_full_image_name: str = ""
 
     def print_info(self):
         print( f"""image_name: {self.image_name},
