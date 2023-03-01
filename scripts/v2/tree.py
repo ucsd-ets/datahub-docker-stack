@@ -17,7 +17,6 @@ class Node:
     rebuild: bool = False
     image_built: bool = False
     integration_tests: bool = False
-    parent_full_image_name: str = ""
 
     def print_info(self):
         print( f"""image_name: {self.image_name},
