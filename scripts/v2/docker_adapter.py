@@ -1,14 +1,14 @@
-import docker
+import docker as docker_client
 import logging
 from scripts.v2.tree import Node
-from typing import Tuple, List, Optional
+from typing import Tuple, Optional
 import pandas as pd
 from scripts.utils import strfdelta, bytes_to_hstring
 from scripts.utils import strip_csv_from_md, csv_to_pd
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('datahub_docker_stacks')
 
-__docker_client__ = docker.from_env()
+__docker_client__ = docker_client.from_env()
 __logged_in__ = False
 
 
@@ -16,17 +16,18 @@ class DockerError(Exception):
     pass
 
 
-def set_docker_client(d: docker.DockerClient):
+def set_docker_client(d: docker_client.DockerClient):
     __docker_client__ = d
 
 
-def build(node: Node) -> bool:
+def build(node: Node) -> Tuple[bool, str]:
     """Build a docker image from a node
 
     Args:
         node (Node): node to build
     """
     try:
+        report = ''
         for line in __docker_client__.api.build(
             path=node.filepath,
             dockerfile=node.dockerfile,
@@ -35,12 +36,13 @@ def build(node: Node) -> bool:
             nocache=True,
             rm=False
         ):
-
-            print(line)
-        return True
+            as_str = line.decode('utf-8')
+            report += as_str
+            logger.info(as_str)
+        return True, report
     except Exception as e:
         logger.error("couldnt build docker image; " + str(e))
-        return False
+        return False, report
     finally:
         __docker_client__.close()
 
@@ -59,7 +61,7 @@ def login(
             __logged_in__ = True
             return __logged_in__
         raise ValueError(f'Username/password incorrect for registry {registry}')
-    except docker.errors.APIError as e:
+    except docker_client.errors.APIError as e:
         raise DockerError(e)
 
 

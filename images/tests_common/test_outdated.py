@@ -7,7 +7,7 @@ import pytest
 
 from helpers import CondaPackageHelper
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger('datahub_docker_stacks')
 
 
 @pytest.mark.skip(reason="not needed for our usecase")

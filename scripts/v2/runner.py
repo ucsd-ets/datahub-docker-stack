@@ -1,13 +1,12 @@
-from scripts.v2.tree import Node
-from scripts.v2 import docker
-from scripts.v2 import runner
+from scripts.v2.tree import Node, build_tree
+from scripts.v2 import docker_adapter
 from dataclasses import dataclass
 from typing import List
 import os
 import logging
 import pytest
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('datahub_docker_stacks')
 
 
 @dataclass
@@ -15,6 +14,7 @@ class Result:
     success: bool = False
     message: str = ''
     full_image_name: str = ''
+    build_report: str = ''
 
     def append_message(self, msg: str):
         if not msg:
@@ -67,9 +67,9 @@ def build_and_test_tree(
         username: str,
         password: str,
         tag_prefix: str,
-        build=docker.build,
-        push=docker.push,
-        login=docker.login,
+        build=docker_adapter.build,
+        push=docker_adapter.push,
+        login=docker_adapter.login,
         test_runner=run_tests):
     # Run BFS or whatever search method
     # goal: make sure that the code can continue if a leaf node fails
@@ -81,14 +81,14 @@ def build_and_test_tree(
         for _ in range(len(q)):
             node = q.pop(0)
             node.image_tag = tag_prefix + '-' + node.git_suffix
-            logging.info(f'Processing node = {node.image_name}')
+            logger.info(f'Processing node = {node.image_name}')
             result = Result(full_image_name=node.image_name +
                             ':' + node.image_tag)
             # if marked for rebuild
 
             if not node.rebuild:
                 msg = 'not flagged for build'
-                logging.info(msg)
+                logger.info(msg)
                 result.success = True
                 result.append_message(msg)
                 results.append(result)
@@ -96,8 +96,9 @@ def build_and_test_tree(
 
             #   build
             logging.info('Building node')
-            image_built = build(node)
-
+            image_built, report = build(node)
+            
+            result.build_report = report
             if not image_built:
                 result.success = False
                 result.append_message("image building failed, see error log")
@@ -109,8 +110,7 @@ def build_and_test_tree(
             os.environ['TEST_IMAGE'] = node.image_name + ':' + node.image_tag
             testdirs = get_basic_test_locations(node)
             exit_code = test_runner(node, testdirs)
-
-            if exit_code != pytest.exit.OK:
+            if exit_code != pytest.ExitCode.OK:
                 result.success = False
                 result.append_message('failed basic tests')
                 continue
@@ -132,7 +132,7 @@ def build_and_test_tree(
 
                 exit_code = test_runner(node, [integration_testpath])
 
-                if exit_code != pytest.exit.OK:
+                if exit_code != pytest.ExitCode.OK:
                     result.success = False
                     result.append_message('failed integration tests')
 
@@ -147,4 +147,26 @@ def build_and_test_tree(
 
 
 if __name__ == '__main__':
-    pass
+    logger.setLevel(logging.INFO)
+    test_spec = {
+        'images': {
+                'datahub-base-notebook': {
+                    'build_args': {
+                        'PYTHON_VERSION': 'python-3.9.5'
+                    }
+                },
+                'datascience-notebook': {
+                    'depend_on': 'datahub-base-notebook'
+                }
+        }
+    }
+
+    tree = build_tree(test_spec, ['datahub-base-notebook'], 'test')
+    
+    dockerhub_username = os.environ.get('DOCKERHUB_USERNAME', None)
+    dockerhub_token = os.environ.get('DOCKERHUB_TOKEN', None)
+    if not dockerhub_username or not dockerhub_token:
+        logging.error('dockerhub username or password not set')
+        exit(1)
+    
+    build_and_test_tree(tree, dockerhub_username, dockerhub_token, 'test')

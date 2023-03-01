@@ -4,7 +4,7 @@ import docker
 import logging
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('datahub_docker_stacks')
 
 
 class DockerRunner:

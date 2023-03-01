@@ -5,7 +5,7 @@ import logging
 
 import pytest
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger('datahub_docker_stacks')
 
 
 def test_cli_args(container, http_client):

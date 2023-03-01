@@ -6,7 +6,7 @@ from scripts.utils import read_var, store_var
 from scripts.docker_pusher import push_images, docker_login
 import os
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('datahub_docker_stacks')
 
 
 def prepull_image(

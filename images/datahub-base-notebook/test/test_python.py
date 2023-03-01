@@ -4,7 +4,7 @@ import logging
 
 from packaging import version
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger('datahub_docker_stacks')
 
 
 def test_python_version(container, python_next_version="3.10"):

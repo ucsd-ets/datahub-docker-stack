@@ -4,7 +4,7 @@
 import logging
 import pytest
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger('datahub_docker_stacks')
 
 
 @pytest.mark.parametrize(

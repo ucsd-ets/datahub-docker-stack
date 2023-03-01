@@ -7,7 +7,7 @@ from scripts.utils import read_var, store_var
 from typing import Tuple, List, Optional
 ImageFulltagPair = Tuple[docker.models.images.Image, str]
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('datahub_docker_stacks')
 
 
 def docker_login(

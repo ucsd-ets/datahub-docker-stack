@@ -15,7 +15,7 @@ from typing import NamedTuple
 pjoin = os.path.join
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('datahub_docker_stacks')
 
 LayerMeta = namedtuple(
     typename='LayerMeta',

@@ -20,7 +20,7 @@ from setuptools import Command
 import pytest
 import os
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger('datahub_docker_stacks')
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 
 WAIT_TIME = 15 or os.environ.get('WAIT_TIME')

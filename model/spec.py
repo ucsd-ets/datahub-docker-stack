@@ -134,7 +134,7 @@ class BuilderSpec:
 
 
 if __name__ == '__main__':
-    logger = logging.getLogger(__name__)
+    logger = logging.getLogger('datahub_docker_stacks')
     path = 'images'
     specs = 'spec.yml'
     specs = get_specs(pjoin(path, specs))

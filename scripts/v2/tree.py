@@ -13,6 +13,7 @@ class Node:
     build_args: Dict = field(default_factory=dict)
     # optioanl args
     filepath: str = ""
+    dockerfile: str = 'Dockerfile'
     rebuild: bool = False
     image_built: bool = False
     integration_tests: bool = False

@@ -22,7 +22,7 @@ from scripts.dataobjects import build_params_object,imagespec
 from model.spec import Buildargs
 pjoin = os.path.join
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('datahub_docker_stacks')
 
 
 

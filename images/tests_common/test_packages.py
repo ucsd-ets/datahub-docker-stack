@@ -41,7 +41,7 @@ import pytest
 
 from helpers import CondaPackageHelper
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger('datahub_docker_stacks')
 
 # Mapping between package and module name
 PACKAGE_MAPPING = {
