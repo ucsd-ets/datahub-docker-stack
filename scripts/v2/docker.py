@@ -63,7 +63,7 @@ def login(
         raise DockerError(e)
 
 
-def push(node: Node):
+def push(node: Node) -> bool:
     try:
         # login to dockerhub
         # push
@@ -87,8 +87,11 @@ def push(node: Node):
                 # regular progress
                 else:
                     logger.info('.')
+        
+        return True
     except Exception as e:
         logger.error(e)
+        return False
 
     finally:
         __docker_client__.close()

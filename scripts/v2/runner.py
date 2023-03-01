@@ -42,6 +42,7 @@ def run_tests(node: Node, testdirs: List[str], pytest_exec=pytest.main) -> pytes
 
     return exit_code
 
+
 def run_basic_tests(node: Node, testdirs: List[str], pytest_exec=pytest.main) -> pytest.ExitCode:
     # find test dirs
     os.environ['TEST_IMAGE'] = node.image_name + ':' + node.image_tag
@@ -52,6 +53,7 @@ def run_basic_tests(node: Node, testdirs: List[str], pytest_exec=pytest.main) ->
 
     return exit_code
 
+
 def run_integration_tests(node: Node, result: Result, pytest_exec=pytest.main) -> bool:
     integration_testpath = os.path.join(node.filepath, 'test', 'integration')
     if not os.path.exists(integration_testpath):
@@ -59,7 +61,16 @@ def run_integration_tests(node: Node, result: Result, pytest_exec=pytest.main) -
         result.append_message('no integration test path')
         return False
 
-def build_and_test_tree(root: Node, username: str, password: str, build=docker.build, push=docker.push, login=docker.login):
+
+def build_and_test_tree(
+        root: Node,
+        username: str,
+        password: str,
+        tag_prefix: str,
+        build=docker.build,
+        push=docker.push,
+        login=docker.login,
+        test_runner=run_tests):
     # Run BFS or whatever search method
     # goal: make sure that the code can continue if a leaf node fails
     login(username, password)
@@ -69,6 +80,7 @@ def build_and_test_tree(root: Node, username: str, password: str, build=docker.b
     while q:
         for _ in range(len(q)):
             node = q.pop(0)
+            node.image_tag = tag_prefix + '-' + node.git_suffix
             logging.info(f'Processing node = {node.image_name}')
             result = Result(full_image_name=node.image_name +
                             ':' + node.image_tag)
@@ -96,7 +108,7 @@ def build_and_test_tree(root: Node, username: str, password: str, build=docker.b
             # functionality, package imports, basic notebook execution
             os.environ['TEST_IMAGE'] = node.image_name + ':' + node.image_tag
             testdirs = get_basic_test_locations(node)
-            exit_code = run_tests(node, testdirs)
+            exit_code = test_runner(node, testdirs)
 
             if exit_code != pytest.exit.OK:
                 result.success = False
@@ -110,14 +122,15 @@ def build_and_test_tree(root: Node, username: str, password: str, build=docker.b
             if not node.integration_tests:
                 result.append_message('no integration tests')
             else:
-                integration_testpath = os.path.join(node.filepath, 'integration_tests')
+                integration_testpath = os.path.join(
+                    node.filepath, 'integration_tests')
 
                 if not os.path.exists(integration_testpath):
                     result.success = False
                     result.append_message('no integration test path')
                     return False
 
-                exit_code = run_tests(node, [integration_testpath])
+                exit_code = test_runner(node, [integration_testpath])
 
                 if exit_code != pytest.exit.OK:
                     result.success = False
@@ -126,5 +139,12 @@ def build_and_test_tree(root: Node, username: str, password: str, build=docker.b
             # update wiki
 
             for child in node.children:
+                # set the tag for the child
+                child.build_args.update({
+                    "BASE_TAG": node.image_tag
+                })
                 q.append(child)
+
+
+if __name__ == '__main__':
     pass
