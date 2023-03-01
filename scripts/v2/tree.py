@@ -22,6 +22,7 @@ class Node:
         print( f"""image_name: {self.image_name},
                 git_suffix: {self.git_suffix}, 
                 docker_tag: {self.docker_tag},
+                build_args: {self.build_args},
                 filepath: {self.filepath},
                 rebuild: {self.rebuild},
                 integration_tests: {self.integration_tests},
@@ -112,11 +113,15 @@ def build_tree(spec_yaml: dict, images_changed: List[str], git_suffix: str='gitn
             children_nodes = [build_node(child_name, should_rebuild) 
                                 for child_name in dep[img_name]]
         
+        
+        # default to an empty dict if build_args doesn't exist
+        build_args = images[img_name]['build_args'] if 'build_args' in images[img_name] else {}
+
         return Node(
-            repo + img_name,
-            git_suffix,
-            children_nodes,
-            images[img_name],
+            image_name=repo + img_name,
+            git_suffix=git_suffix,
+            children=children_nodes,
+            build_args=build_args,
             rebuild=should_rebuild,
             filepath='images/' + img_name,
             integration_tests=should_integration
