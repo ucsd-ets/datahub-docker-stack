@@ -18,11 +18,11 @@ images:
       TORCH_VER: '1.9.0+cu111'
       TORCH_VIS_VER: '0.10.0+cu111'
       TORCH_AUD_VER: '0.9.0'
-  
+
   rstudio-notebook:
     image_name: ucsdets/rstudio-notebook
     depend_on: datahub-base-notebook
     integration_tests: true
 
 tag:
-  prefix: '2023.1's
+  prefix: '2023.1'
