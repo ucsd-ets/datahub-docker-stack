@@ -36,7 +36,7 @@ def build(node: Node) -> Tuple[bool, str]:
             nocache=True,
             rm=False
         ):
-            as_str = line.decode('utf-8')
+            as_str = line.decode('utf-8').rstrip()
             report += as_str
             logger.info(as_str)
         return True, report

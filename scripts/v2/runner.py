@@ -6,6 +6,7 @@ import os
 import logging
 import pytest
 
+
 logger = logging.getLogger('datahub_docker_stacks')
 
 
@@ -132,7 +133,7 @@ def build_and_test_containers(
 
 
 if __name__ == '__main__':
-    logger.setLevel(logging.INFO)
+    logger.setLevel(logging.DEBUG)
     test_spec = {
         'images': {
                 'datahub-base-notebook': {
@@ -147,7 +148,7 @@ if __name__ == '__main__':
     }
 
     tree = build_tree(test_spec, ['datahub-base-notebook'], 'test')
-    
+    print(tree)
     dockerhub_username = os.environ.get('DOCKERHUB_USERNAME', None)
     dockerhub_token = os.environ.get('DOCKERHUB_TOKEN', None)
     if not dockerhub_username or not dockerhub_token:

@@ -127,3 +127,38 @@ class TestRunner(unittest.TestCase):
 
         # single basic test
         assert tester.call_count == 1, tester.call_count
+    
+    def test_build_none(self):
+        c1 = Node(
+            image_name='datascience-notebook',
+            git_suffix='test',
+            filepath='images',
+            rebuild=False
+        )
+        c2 = Node(
+            image_name='scipy-ml-notebook',
+            git_suffix='test',
+            filepath='images',
+            integration_tests=True,
+            rebuild=False
+        )
+        c3 = Node(
+            image_name='rstudio-notebook',
+            git_suffix='test',
+            filepath='images',
+            rebuild=False
+        )
+        root = Node(
+            image_name='datahub-base-notebook',
+            git_suffix='test',
+            filepath='images',
+            children=[
+                c1, c2, c3
+            ],
+            rebuild=False
+        )
+        login, build, push, tester = self.run_build_and_test_containers(root)
+        login.assert_called_with('fake', 'fakepw')
+        assert build.call_count == 0
+        assert push.call_count == 0
+        assert tester.call_count == 0
