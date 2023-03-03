@@ -1,9 +1,7 @@
 from scripts.v2.runner import *
 from scripts.v2.tree import *
-from scripts.v2 import docker_adapter
 from unittest.mock import MagicMock
 import unittest
-import os
 import pytest
 
 
@@ -27,15 +25,6 @@ class TestRunner(unittest.TestCase):
         return (
             mock_login, mock_build, mock_push, mock_tester
         )
-
-    def setUp(self):
-        self.test_case = Node(image_name='root', image_tag='test', rebuild=True, children=[
-            Node(image_name='child1', image_tag='test',
-                 rebuild=True, filepath='images/image1'),
-            Node(image_name='child2', image_tag='test', rebuild=True),
-            Node(image_name='child3', image_tag='test', rebuild=True),
-            Node(image_name='child4', image_tag='test', rebuild=False),
-        ])
 
     def test_get_basic_tests(self):
         res = get_basic_test_locations(self.test_case.children[0])
