@@ -14,7 +14,7 @@ class Result:
     success: bool = False
     message: str = ''
     full_image_name: str = ''
-    build_report: str = ''
+    container_buildlog: str = ''
 
     def append_message(self, msg: str):
         if not msg:
@@ -62,7 +62,7 @@ def run_integration_tests(node: Node, result: Result, pytest_exec=pytest.main) -
         return False
 
 
-def build_and_test_tree(
+def build_and_test_containers(
         root: Node,
         username: str,
         password: str,
@@ -84,61 +84,46 @@ def build_and_test_tree(
             logger.info(f'Processing node = {node.image_name}')
             result = Result(full_image_name=node.image_name +
                             ':' + node.image_tag)
-            # if marked for rebuild
 
+            skip_build = False
             if not node.rebuild:
-                msg = 'not flagged for build'
-                logger.info(msg)
-                result.success = True
-                result.append_message(msg)
-                results.append(result)
-                continue
+                skip_build = True
 
-            #   build
-            logging.info('Building node')
-            image_built, report = build(node)
-            
-            result.build_report = report
-            if not image_built:
-                result.success = False
-                result.append_message("image building failed, see error log")
-                results.append(result)
-                continue
+            image_built = False
+            if not skip_build:
+                image_built, report = build(node)
+                result.container_buildlog = report
 
-            # these set of tests are basic unit tests for the container confirming jupyter
-            # functionality, package imports, basic notebook execution
-            os.environ['TEST_IMAGE'] = node.image_name + ':' + node.image_tag
-            testdirs = get_basic_test_locations(node)
-            exit_code = test_runner(node, testdirs)
-            if exit_code != pytest.ExitCode.OK:
-                result.success = False
-                result.append_message('failed basic tests')
-                continue
-
-            # push
-            push(node)
-
-            # integration tests, selenium, gRPC
-            if not node.integration_tests:
-                result.append_message('no integration tests')
-            else:
-                integration_testpath = os.path.join(
-                    node.filepath, 'integration_tests')
-
-                if not os.path.exists(integration_testpath):
+                if not image_built:
                     result.success = False
-                    result.append_message('no integration test path')
-                    return False
+                    result.append_message("image building failed, see build log")
+                    results.append(result)
+                
+                else:
+                    os.environ['TEST_IMAGE'] = node.image_name + ':' + node.image_tag
+                    testdirs = get_basic_test_locations(node)
+                    exit_code = test_runner(node, testdirs)
 
-                exit_code = test_runner(node, [integration_testpath])
-
+                    if exit_code != pytest.ExitCode.OK:
+                        result.success = False
+                        result.append_message("failed basic tests")
+            
+            if not skip_build and image_built:
+                # push
+                push(node)
+            
+            if not skip_build and image_built and node.integration_tests:
+                # run the integration tests
+                exit_code = test_runner(node, os.path.join(node.filepath, 'integration'))
                 if exit_code != pytest.ExitCode.OK:
                     result.success = False
-                    result.append_message('failed integration tests')
+                    result.append_message('Failed integration tests')
 
             # update wiki
 
             for child in node.children:
+                if node.rebuild:
+                    child.rebuild = True
                 # set the tag for the child
                 child.build_args.update({
                     "BASE_TAG": node.image_tag
@@ -169,4 +154,4 @@ if __name__ == '__main__':
         logging.error('dockerhub username or password not set')
         exit(1)
     
-    build_and_test_tree(tree, dockerhub_username, dockerhub_token, 'test')
+    build_and_test_containers(tree, dockerhub_username, dockerhub_token, 'test')

@@ -1,19 +1,37 @@
 from scripts.v2.runner import *
 from scripts.v2.tree import *
-from scripts.v2 import docker
+from scripts.v2 import docker_adapter
 from unittest.mock import MagicMock
 import unittest
 import os
+import pytest
 
-
-test_dockerfile = """
-FROM busybox
-"""
 
 class TestRunner(unittest.TestCase):
+    def run_build_and_test_containers(self, root: Node):
+        mock_build = MagicMock(return_value=(True, 'myreport'))
+        mock_login = MagicMock()
+        mock_push = MagicMock()
+        mock_tester = MagicMock(return_value=pytest.ExitCode.OK)
+
+        build_and_test_containers(
+            root=root,
+            username='fake',
+            password='fakepw',
+            tag_prefix='2039',
+            build=mock_build,
+            push=mock_push,
+            login=mock_login,
+            test_runner=mock_tester)
+
+        return (
+            mock_login, mock_build, mock_push, mock_tester
+        )
+
     def setUp(self):
         self.test_case = Node(image_name='root', image_tag='test', rebuild=True, children=[
-            Node(image_name='child1', image_tag='test', rebuild=True, filepath='images/image1'),
+            Node(image_name='child1', image_tag='test',
+                 rebuild=True, filepath='images/image1'),
             Node(image_name='child2', image_tag='test', rebuild=True),
             Node(image_name='child3', image_tag='test', rebuild=True),
             Node(image_name='child4', image_tag='test', rebuild=False),
@@ -28,40 +46,84 @@ class TestRunner(unittest.TestCase):
         with self.assertRaises(RunnerError):
             get_basic_test_locations(self.test_case)
 
-    # def test_run_basic_tests(self):
-    #     # TODO MARK integration test, this one is long
-    #     node = self.test_case.children[0]
-    #     node.filepath='images/datahub-base-notebook'
-    #     node.image_tag = 'test'
+    def test_build_all(self):
+        c1 = Node(
+            image_name='datascience-notebook',
+            git_suffix='test',
+            filepath='images'
+        )
+        c2 = Node(
+            image_name='scipy-ml-notebook',
+            git_suffix='test',
+            filepath='images',
+            integration_tests=True
+        )
+        c3 = Node(
+            image_name='rstudio-notebook',
+            git_suffix='test',
+            filepath='images'
+        )
+        root = Node(
+            image_name='datahub-base-notebook',
+            git_suffix='test',
+            filepath='images',
+            children=[
+                c1, c2, c3
+            ],
+            rebuild=True
+        )
 
-    #     # docker.build(node)
+        login, build, push, tester = self.run_build_and_test_containers(root)
 
-    #     # TODO TEST_IMAGE shouldn't be necessary in future version and instead should
-    #     # be passed in somehow
+        login.assert_called_with('fake', 'fakepw')
+        imgs_looped_through = ['datahub-base-notebook', 'datascience-notebook',
+                                'scipy-ml-notebook', 'rstudio-notebook']
+        images_built = [arg.args[0].image_name for arg in build.call_args_list]
+        assert images_built == imgs_looped_through, images_built
 
-    #     # This is used by tests_common, individual container tests to know which container
-    #     # to test
-    #     os.environ['TEST_IMAGE'] = node.image_name + ':' + node.image_tag
-    #     exit_code = run_basic_tests(node)
-    #     assert exit_code.OK == pytest.ExitCode.OK
+        images_pushed = [arg.args[0].image_name for arg in push.call_args_list]
+        assert images_pushed == imgs_looped_through, images_pushed
 
+        # single integration test + 4 images basic tested
+        assert tester.call_count == 5, tester.call_count
 
+    def test_build_some(self):
+        c1 = Node(
+            image_name='datascience-notebook',
+            git_suffix='test',
+            filepath='images'
+        )
+        c2 = Node(
+            image_name='scipy-ml-notebook',
+            git_suffix='test',
+            filepath='images',
+            integration_tests=True
+        )
+        c3 = Node(
+            image_name='rstudio-notebook',
+            git_suffix='test',
+            filepath='images',
+            rebuild=True
+        )
+        root = Node(
+            image_name='datahub-base-notebook',
+            git_suffix='test',
+            filepath='images',
+            children=[
+                c1, c2, c3
+            ],
+            rebuild=False
+        )
 
-# def test_build_and_test_tree():
-#     test_case = Node('root', '', [
-#         Node('child1', '', [], {}, rebuild=True),
-#         Node('child2', '', [], {},  rebuild=True),
-#         Node('child3', '', [], {}, rebuild=True),
-#         Node('child4', '', [], {}, rebuild=True)
-#     ], {}, rebuild=True)
+        login, build, push, tester = self.run_build_and_test_containers(root)
 
-#     mock_docker_driver = MagicMock()
-#     mock_docker_driver.build_image = MagicMock()
-#     mock_docker_driver.push_image = MagicMock()
+        login.assert_called_with('fake', 'fakepw')
+        imgs_looped_through = ['rstudio-notebook']
+        images_built = [arg.args[0].image_name for arg in build.call_args_list]
+        assert images_built == imgs_looped_through, images_built
 
+        images_pushed = [arg.args[0].image_name for arg in push.call_args_list]
+        assert images_pushed == imgs_looped_through, images_pushed
 
-#     build_and_test_tree(test_case, mock_docker_driver)
-
-#     mock_docker_driver.build_image.call_count == 5
-#     mock_docker_driver.push_image == 5
-
+        # single basic test
+        assert tester.call_count == 1, tester.call_count

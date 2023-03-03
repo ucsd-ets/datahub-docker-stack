@@ -2,7 +2,7 @@
 requests you can make
 """
 
-from scripts.v2 import docker as internal_docker
+from scripts.v2 import docker_adapter as internal_docker
 from scripts.v2.tree import Node
 import unittest
 import docker
