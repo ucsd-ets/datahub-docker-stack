@@ -1,21 +1,35 @@
 from scripts.v2.tree import Node, build_tree
 from scripts.v2 import docker_adapter
-from dataclasses import dataclass
-from typing import List
+from scripts.v2 import fs
+from dataclasses import dataclass, field
+from typing import List, Dict
 import os
 import logging
+import json
 import pytest
 
 
 logger = logging.getLogger('datahub_docker_stacks')
 
+class RunnerError(Exception):
+    pass
 
 @dataclass
 class Result:
     success: bool = False
     message: str = ''
     full_image_name: str = ''
-    container_buildlog: str = ''
+    container_details: Dict = field(default_factory=dict)
+    test_results: Dict = field(default_factory=dict)
+
+    def __bool__(self):
+        return any([
+            self.success,
+            self.message,
+            self.full_image_name,
+            self.container_details,
+            self.test_results,
+        ])
 
     def append_message(self, msg: str):
         if not msg:
@@ -24,8 +38,16 @@ class Result:
             self.message += f'; {msg}'
 
 
-class RunnerError(Exception):
-    pass
+def format_result(result: Result):
+    details = {
+        'image_name': result.full_image_name,
+        'success': result.success,
+        'message': result.message,
+        'container_details': result.container_details
+    }
+    return json.dumps(details, indent=4)
+
+
 
 
 def get_basic_test_locations(node: Node, stackdir='images', test_common_dirname='tests_common') -> List[str]:
@@ -35,25 +57,13 @@ def get_basic_test_locations(node: Node, stackdir='images', test_common_dirname=
     return [common_tests, node.filepath]
 
 
-def run_tests(node: Node, testdirs: List[str], pytest_exec=pytest.main) -> pytest.ExitCode:
+def run_tests(testdirs: List[str], pytest_exec=pytest.main) -> pytest.ExitCode:
     exit_code = pytest_exec([
         '-x',
         *testdirs
     ])
 
     return exit_code
-
-
-def run_basic_tests(node: Node, testdirs: List[str], pytest_exec=pytest.main) -> pytest.ExitCode:
-    # find test dirs
-    os.environ['TEST_IMAGE'] = node.image_name + ':' + node.image_tag
-    exit_code = pytest_exec([
-        '-x',
-        *testdirs
-    ])
-
-    return exit_code
-
 
 def run_integration_tests(node: Node, result: Result, pytest_exec=pytest.main) -> bool:
     integration_testpath = os.path.join(node.filepath, 'test', 'integration')
@@ -71,56 +81,21 @@ def build_and_test_containers(
         build=docker_adapter.build,
         push=docker_adapter.push,
         login=docker_adapter.login,
+        format_result=format_result,
+        store_result=fs.store,
         test_runner=run_tests):
     # Run BFS or whatever search method
     # goal: make sure that the code can continue if a leaf node fails
     login(username, password)
 
-    results = []
+    # search the nodes according to BFS and place into node_order for processing
     q = [root]
+    node_order = []
     while q:
         for _ in range(len(q)):
             node = q.pop(0)
             node.image_tag = tag_prefix + '-' + node.git_suffix
-            logger.info(f'Processing node = {node.image_name}')
-            result = Result(full_image_name=node.image_name +
-                            ':' + node.image_tag)
-
-            skip_build = False
-            if not node.rebuild:
-                skip_build = True
-
-            image_built = False
-            if not skip_build:
-                image_built, report = build(node)
-                result.container_buildlog = report
-
-                if not image_built:
-                    result.success = False
-                    result.append_message("image building failed, see build log")
-                    results.append(result)
-                
-                else:
-                    os.environ['TEST_IMAGE'] = node.image_name + ':' + node.image_tag
-                    testdirs = get_basic_test_locations(node)
-                    exit_code = test_runner(node, testdirs)
-
-                    if exit_code != pytest.ExitCode.OK:
-                        result.success = False
-                        result.append_message("failed basic tests")
-            
-            if not skip_build and image_built:
-                # push
-                push(node)
-            
-            if not skip_build and image_built and node.integration_tests:
-                # run the integration tests
-                exit_code = test_runner(node, os.path.join(node.filepath, 'integration'))
-                if exit_code != pytest.ExitCode.OK:
-                    result.success = False
-                    result.append_message('Failed integration tests')
-
-            # update wiki
+            node_order.append(node)
 
             for child in node.children:
                 if node.rebuild:
@@ -130,6 +105,74 @@ def build_and_test_containers(
                     "BASE_TAG": node.image_tag
                 })
                 q.append(child)
+
+    results = []
+    for node in node_order:
+        logger.info(f'Processing node = {node.image_name}')
+
+        result = Result(full_image_name=node.image_name +
+                            ':' + node.image_tag)
+        if not node.rebuild:
+            logger.info(f"skipping node {node.image_name}")
+            result.container_details['image_built'] = False
+            result.success = True
+            results.append(result)
+            continue
+    
+
+        
+        # build image
+        image_built, report = build(node)
+        result.container_details['build_log'] = report
+        if not image_built:
+            result.success = False
+            results.append(result)
+            continue
+        
+        # basic and common tests
+        os.environ['TEST_IMAGE'] = node.image_name + ':' + node.image_tag
+        testdirs = get_basic_test_locations(node)
+        exit_code = test_runner(testdirs)
+        result.test_results['basic_tests'] = 'Passed basic tests'
+        if exit_code != pytest.ExitCode.OK:
+            result.success = False
+            result.test_results['basic_tests'] = 'Failed basic tests'
+            results.append(result)
+            continue
+        
+        # push step
+        resp, report = push(node)
+        result.container_details['push_success'] = resp
+        result.container_details['push_log'] = report
+        
+        if not resp:
+            results.success = False
+            results.append(result)
+            continue
+    
+        # integration tests
+        if node.integration_tests:
+            exit_code = test_runner(os.path.join(node.filepath, 'integration'))
+
+            result.test_results['integration_tests'] ='Passed integration tests'
+            if exit_code != pytest.ExitCode.OK:
+                result.success = False
+                result.test_results['integration_tests'] ='Failed integration tests'
+                results.append(result)
+                continue
+
+        # TODO update wiki
+
+        results.append(result)
+
+
+    # store results
+    for result in results:
+        formatted_result = format_result(result)
+        resp = store_result(os.path.join(fs.ARTIFACTS_PATH, result.full_image_name), formatted_result)
+        if not resp:
+            raise OSError("couldn't store results into artifacts directory")
+    
 
 
 if __name__ == '__main__':
@@ -148,7 +191,6 @@ if __name__ == '__main__':
     }
 
     tree = build_tree(test_spec, ['datahub-base-notebook'], 'test')
-    print(tree)
     dockerhub_username = os.environ.get('DOCKERHUB_USERNAME', None)
     dockerhub_token = os.environ.get('DOCKERHUB_TOKEN', None)
     if not dockerhub_username or not dockerhub_token:

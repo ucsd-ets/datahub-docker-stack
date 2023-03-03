@@ -19,7 +19,6 @@ class TestDocker(unittest.TestCase):
         self.test_node = Node(
             image_name='ucsdets/datahub-docker-stacks',
             image_tag='pushtest',
-            repo_name='fakerepo',
             filepath='tests/v2',
             children=[],
             rebuild=False,
@@ -30,20 +29,23 @@ class TestDocker(unittest.TestCase):
         )
     
     def test_build(self):
-        resp = internal_docker.build(self.test_node)
-        assert resp
+        resp, report = internal_docker.build(self.test_node)
+        assert resp, resp
+        assert len(report) > 1, report
 
         # calling it twice doesn't result in failure
-        resp = internal_docker.build(self.test_node)
-        assert resp
+        resp, report = internal_docker.build(self.test_node)
+        assert resp, resp
+        assert len(report) > 1, report
     
     def test_login(self):
 
         # don't test not login as this will cause issues
         assert internal_docker.login(username, password)
 
-
     def test_push(self):
         internal_docker.login(username, password)
-        internal_docker.push(self.test_node)
-    
+        resp, report = internal_docker.push(self.test_node)
+        assert 'docker.io' in report, report
+        assert resp, resp
+

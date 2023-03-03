@@ -33,12 +33,6 @@ class Node:
             child.print_info()
 
 
-@dataclass
-class Result:
-    success: bool
-    message: str
-
-
 def load_spec(spec_filepath="images/spec.yml") -> dict:
     """Parse specs from yaml file name to dict
 

@@ -65,35 +65,39 @@ def login(
         raise DockerError(e)
 
 
-def push(node: Node) -> bool:
+def push(node: Node) -> Tuple[bool, str]:
+
     try:
         # login to dockerhub
         # push
 
         stream = __docker_client__.images.push(
             node.image_name, node.image_tag, stream=True, decode=True)
-
         
+        res = ""
         for chunk in stream:
             logger.info(chunk)
 
             if 'status' in chunk:
                 # "The push refers to repository XXX_repo"
                 if node.image_name in chunk['status']:
+                    res += chunk['status']
                     logger.info(chunk['status'])
 
                 # "XXX_tag: digest: sha256:XXX size: XXX"
                 elif node.image_tag in chunk['status']:
-                    logger.info('\n' + chunk['status'])
+                    formatted_log = '\n' + chunk['status']
+                    res += formatted_log
+                    logger.info(formatted_log)
 
                 # regular progress
                 else:
                     logger.info('.')
         
-        return True
+        return True, res
     except Exception as e:
         logger.error(e)
-        return False
+        return False, res
 
     finally:
         __docker_client__.close()
