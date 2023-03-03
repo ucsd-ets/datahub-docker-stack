@@ -136,7 +136,8 @@ def run_simple_command(node: Node, cmd: str) -> Tuple[str, bool]:
         logger.error(e)
         print(f"*** docker container on image {node.image_name} failed to exec cmd {cmd} ***")
         return "Failed to execute cmd", False
-
+    finally:
+        __docker_client__.close()
 
     result_str = out.output.decode("utf-8").rstrip()
     logger.info(f"Command result: {result_str}")
