@@ -5,10 +5,12 @@ images:
       PYTHON_VERSION: python-3.9.5
       PY_VER_SHORT: '3.9'
       JUPYTERHUB_VERSION: 1.4.1
+    info_cmds: [PY_VER, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
 
   datascience-notebook:
     image_name: ucsdets/datascience-notebook
     depend_on: datahub-base-notebook
+    info_cmds: [PY_VER, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
 
   scipy-ml-notebook:
     image_name: ucsdets/scipy-ml-notebook
@@ -18,12 +20,31 @@ images:
       TORCH_VER: '1.9.0+cu111'
       TORCH_VIS_VER: '0.10.0+cu111'
       TORCH_AUD_VER: '0.9.0'
+    info_cmds: [PY_VER, CUDA_VERSION, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
 
   rstudio-notebook:
     image_name: ucsdets/rstudio-notebook
     depend_on: datahub-base-notebook
     integration_tests: true
     basic_tests: true
+    info_cmds: [PY_VER, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
 
 tag:
   prefix: '2023.1'
+
+all_info_cmds:
+  PY_VER:
+    description: Python Version
+    command: python --version
+  CONDA_INFO:
+    description: Conda Info
+    command: conda info
+  CONDA_LIST:
+    description: Conda Packages
+    command: conda list
+  APT_PKG_LIST:
+    description: System Packages
+    command: apt list --installed
+  CUDA_VERSION:
+    description: CUDA Version
+    command: bash -c 'conda list | grep "cuda\|cudnn\|nccl"'

@@ -18,6 +18,7 @@ class Node:
     image_built: bool = False
     integration_tests: bool = False
     image_tag: str = ""
+    info_cmds: List = field(default_factory=list)
 
     def print_info(self):
         print( f"""image_name: {self.image_name},
@@ -27,6 +28,7 @@ class Node:
                 filepath: {self.filepath},
                 rebuild: {self.rebuild},
                 integration_tests: {self.integration_tests},
+                info_cmds: {self.info_cmds},
                 children: {[child.image_name for child in self.children]}\n"""
         )
         for child in self.children:
@@ -104,10 +106,11 @@ def build_tree(spec_yaml: dict, images_changed: List[str], git_suffix: str='gitn
         Returns:
             Node: The Node and its children Nodes with sufficient build info
         """
-        children_nodes = [] # leaf node has empty by default
+        
         should_rebuild = parent_rebuild or (img_name in images_changed)
         should_integration = ("integration_tests" in images[img_name]) and \
             (images[img_name]["integration_tests"] == True)
+        children_nodes = [] # leaf node has empty by default
         if img_name in dep:
             # non-leaf: build all children before passing to Constructor
             children_nodes = [build_node(child_name, should_rebuild) 
@@ -116,6 +119,8 @@ def build_tree(spec_yaml: dict, images_changed: List[str], git_suffix: str='gitn
         
         # default to an empty dict if build_args doesn't exist
         build_args = images[img_name]['build_args'] if 'build_args' in images[img_name] else {}
+        # default to an empty list if info_commands doesn't exist
+        cmd_list = images[img_name]['info_cmds'] if "info_cmds" in images[img_name] else []
 
         return Node(
             image_name=repo + img_name,
@@ -124,7 +129,8 @@ def build_tree(spec_yaml: dict, images_changed: List[str], git_suffix: str='gitn
             build_args=build_args,
             rebuild=should_rebuild,
             filepath='images/' + img_name,
-            integration_tests=should_integration
+            integration_tests=should_integration,
+            info_cmds=cmd_list
         )
     ### ********************************* ###
     
