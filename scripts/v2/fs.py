@@ -3,6 +3,7 @@ import logging
 logger = logging.getLogger('datahub_docker_stacks')
 
 ARTIFACTS_PATH = 'artifacts'
+MANIFEST_PATH = 'manifests'
 
 def store(filepath: str, formatted_data: str) -> bool:
     try:

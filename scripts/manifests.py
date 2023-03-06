@@ -104,6 +104,7 @@ def compile_history(compile_tag_history = False):
         cell_commit = url2mdlink(repo_url + '/commit/' + git_short_hash, f"`{git_short_hash}`")
         img_source = 'IMAGES_BUILT'
 
+    # image is like: ucsdets/datahub-base-notebook:2023.1-c11a915
     cell_images = list2cell([f"`{image}`" for image in read_var(img_source)])
     if compile_tag_history:
         cell_images += '|' + orig_images

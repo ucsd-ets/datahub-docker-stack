@@ -155,7 +155,7 @@ def build_and_test_containers(
         result.container_details['push_log'] = report
         
         if not resp:
-            results.success = False
+            result.success = False
             results.append(result)
             continue
     
@@ -170,19 +170,28 @@ def build_and_test_containers(
                 results.append(result)
                 continue
 
-        # update wiki page of individual image
+        # update wiki page of individual image that
+        # has been successfully [built, pushed, tested]
         wiki.write_report(node, all_info_cmds)
 
-
+        result.success = True
         results.append(result)
 
 
-    # store results
+    # store results & a list of all-success image full names
+    full_names = []
     for result in results:
+        # if success, store full image names, ucsdets/datahub-base-notebook:<image_tag>
+        if result.success:
+            full_names.append(result.full_image_name)
+        
         formatted_result = format_result(result)
         resp = store_result(os.path.join(fs.ARTIFACTS_PATH, result.full_image_name), formatted_result)
         if not resp:
             raise OSError("couldn't store results into artifacts directory")
+
+    # update Home.md
+    wiki.update_Home(images_full_names=full_names)
     
 
 

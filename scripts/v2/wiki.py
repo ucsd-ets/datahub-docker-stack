@@ -11,6 +11,7 @@ from scripts.v2.utils import *
 from scripts.v2.tree import Node
 from scripts.v2.docker_adapter import run_simple_command, __docker_client__
 from scripts.v2.git_helper import GitHelper     # has it been used?
+from scripts.v2.fs import MANIFEST_PATH
 
 
 
@@ -95,7 +96,7 @@ def get_layers_md_table(node: Node, cli: docker.DockerClient = __docker_client__
     return layers.to_markdown()
 
 
-def write_report(node: Node, all_info_cmds:Dict, output_dir='manifests'):
+def write_report(node: Node, all_info_cmds:Dict, output_dir=MANIFEST_PATH):
     """Call run_outputs(), then format and store the outputs to <image_fullname>.md
     Wrapper around run_outputs() and get_layers_md_table()
 
@@ -150,7 +151,71 @@ f"""
     print(f"*** Individual wiki page {manifest_fn}.md successfully written.")
 
 
+def update_Home(images_full_names: List[str]) -> bool:
+    """update Home.md (the page on https://github.com/ucsd-ets/datahub-docker-stack/wiki)
 
+    Args:
+        images_full_names (List[str]): a list of full image names (successfully built & tested). 
+
+    Returns:
+        bool: success/failure
+    """
+    
+    repo_url = f"https://github.com/ucsd-ets/datahub-docker-stack"
+    # repo_url = f"https://github.com/{environ['GITHUB_REPOSITORY']}"
+    
+    # 1st column: commit link [git_short_hash](LINK)
+    try:
+        git_short_hash = read_var('GIT_HASH_SHORT')
+    except Exception as e:
+        logger.error(e)
+        print("Error when reading GIT_HASH_SHORT")
+        return False
+    
+    cell_commit = url2mdlink(repo_url + '/commit/' + git_short_hash, f"`{git_short_hash}`")
+
+    # 2nd column: images full name
+    cell_images = list2cell([f"`{image}`" for image in images_full_names])
+
+    # 3rd column: image wiki page link ["LINK"](LINK)
+    def wiki_doc2link(fullname: str) -> str:
+        """ Helper function
+        Given: ucsdets/rstudio-notebook:2023.1-7d75f9f
+        Returns: [Link](https://github.com/ucsd-ets/datahub-docker-stack/wiki/ucsdets-rstudio-notebook-2023.1-7d75f9f)
+        """
+        assert fullname.count(':') == 1 and fullname.count('/') == 1, \
+            f"Wrong image full name format: {fullname}"
+        fullname = fullname.replace(':', '-').replace('/', '-')
+        link = url2mdlink(repo_url + '/wiki/' + fullname, 'Link')
+        return link
+
+    try:
+        manifests_links = [wiki_doc2link(fullname=image) for image in images_full_names]
+    except AssertionError as e:
+        logger.error(e)
+        return False
+    
+    cell_manifests = list2cell(manifests_links)
+
+    # group 3 columns together
+    latest_row = (cell_commit, cell_images, cell_manifests)
+
+    # Read old content, Update, Write back
+    try:
+        with open(path.join('wiki', 'Home.md'), 'r') as f:
+            doc_str = f.read()
+        
+        # 2nd arg of insert_row() takes in List[Tuple], each of which is a new 'latest_row'
+        latest_doc = insert_row(doc_str, [latest_row])
+
+        with open(path.join('wiki', 'Home.md'), 'w') as f:
+            f.write(latest_doc)
+    except Exception as e:
+        logger.error(e)
+        print("Error when updating Home.md")
+        return False
+
+    return True
 
 
 
