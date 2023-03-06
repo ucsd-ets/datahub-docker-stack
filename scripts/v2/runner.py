@@ -1,12 +1,14 @@
-from scripts.v2.tree import Node, build_tree
-from scripts.v2 import docker_adapter
-from scripts.v2 import fs
 from dataclasses import dataclass, field
 from typing import List, Dict
 import os
 import logging
 import json
 import pytest
+
+from scripts.v2.tree import Node, build_tree, load_spec
+from scripts.v2 import docker_adapter
+from scripts.v2 import fs
+from scripts.v2 import wiki
 
 
 logger = logging.getLogger('datahub_docker_stacks')
@@ -84,14 +86,21 @@ def build_and_test_containers(
         format_result=format_result,
         store_result=fs.store,
         test_runner=run_tests):
-    # Run BFS or whatever search method
-    # goal: make sure that the code can continue if a leaf node fails
+    
     login(username, password)
 
     # search the nodes according to BFS and place into node_order for processing
+    
+
+    # load all_info_cmds from spec.yml and pass to wiki operations
+    all_info_cmds = load_spec()['all_info_cmds']
+
+    # Run BFS or whatever search method
+    # goal: make sure that the code can continue if a leaf node fails
     q = [root]
     node_order = []
     while q:
+        # search the nodes according to BFS and place into node_order for processing
         for _ in range(len(q)):
             node = q.pop(0)
             node.image_tag = tag_prefix + '-' + node.git_suffix
@@ -161,7 +170,9 @@ def build_and_test_containers(
                 results.append(result)
                 continue
 
-        # TODO update wiki
+        # update wiki page of individual image
+        wiki.write_report(node, all_info_cmds)
+
 
         results.append(result)
 

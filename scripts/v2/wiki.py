@@ -32,17 +32,27 @@ def run_outputs(node: Node, all_info_cmds:Dict) -> List[Dict]:
         if key not in all_info_cmds.keys():
             logger.error(f"command definition of {key} in {node.image_name} not found in spec.yml; skip")
             continue
+
         cmd_output, cmd_success = run_simple_command(
             container,
             all_info_cmds[key]['command']
         )
+
         description = all_info_cmds[key]['description']
         outputs.append(dict(description=description, output=cmd_output))
     
     return outputs
 
 
-def get_layers(image: docker.Image):
+def get_layers(image: docker.models.images.Image):
+    """Helper function of get_layers_md_table
+
+    Args:
+        image (docker.models.images.Image): the actual image object, not image name
+
+    Returns:
+        pandas.Dataframe: to be further processed.
+    """
     df = pd.DataFrame(image.history()).convert_dtypes()
     df['CMD'] = df['CreatedBy']
     df['CMD'] = df['CMD'].str.replace('|', '', regex=False)
@@ -102,7 +112,6 @@ def write_report(node: Node, all_info_cmds:Dict, output_dir='manifests'):
     expandable_foot = """</details>\n"""
 
     sections = []
-    ##### TODO: edit this function call
     sections.append(get_layers_md_table(node))
 
     for output in outputs:
@@ -138,6 +147,7 @@ f"""
     with open(output_path, 'w') as f:
         f.write(stitched)
 
+    print(f"*** Individual wiki page {manifest_fn}.md successfully written.")
 
 
 
