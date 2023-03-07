@@ -6,13 +6,13 @@ import yaml
 import pytest
 import logging
 
-logger = get_logger()
 
 from scripts.v2.tree import Node, build_tree, load_spec
 from scripts.v2 import docker_adapter
 from scripts.v2 import fs
 from scripts.v2 import wiki
 
+logger = get_logger()
 
 class RunnerError(Exception):
     pass
@@ -83,7 +83,7 @@ def run_basic_tests(node: Node, result: Result) -> bool:
 def run_integration_tests(node: Node, result: Result) -> bool:
     if not node.integration_tests:
         result.test_results['integration_tests'] = 'skipped'
-        return
+        return True     # if skipped, still need to proceed to later tasks
 
     exit_code = run_tests(os.path.join(node.filepath, 'integration'))
     result.test_results['integration_tests'] = 'Passed integration tests'
@@ -145,6 +145,7 @@ def build_and_test_containers(
             continue
 
         # build image
+        print(f"****** Building {node.image_name}, (not skipped)")
         image_built, report = docker_adapter.build(node)
         result.container_details['build_log'] = report
         if not image_built:
@@ -175,7 +176,7 @@ def build_and_test_containers(
             continue
 
         # update wiki page of individual image that
-        # has been successfully [built, pushed, tested]
+        #       has been successfully [built, pushed, tested]
         # wiki.write_report(node, all_info_cmds)
 
         result.success = True
