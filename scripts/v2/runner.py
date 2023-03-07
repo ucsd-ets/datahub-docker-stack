@@ -1,6 +1,3 @@
-from scripts.v2.tree import Node, build_tree
-from scripts.v2 import docker_adapter
-from scripts.v2 import fs
 from scripts.v2.utils import get_logger
 from dataclasses import dataclass, field
 from typing import List, Dict
@@ -10,6 +7,11 @@ import pytest
 import logging
 
 logger = get_logger()
+
+from scripts.v2.tree import Node, build_tree, load_spec
+from scripts.v2 import docker_adapter
+from scripts.v2 import fs
+from scripts.v2 import wiki
 
 
 class RunnerError(Exception):
@@ -97,14 +99,23 @@ def build_and_test_containers(
         root: Node,
         username: str,
         password: str,
-        tag_prefix: str):
+        tag_prefix: str,
+        all_info_cmds: dict):
 
     docker_adapter.login(username, password)
 
     # search the nodes according to BFS and place into node_order for processing
+    
+
+    # load all_info_cmds from spec.yml and pass to wiki operations
+    # print(all_info_cmds)
+
+    # Run BFS or whatever search method
+    # goal: make sure that the code can continue if a leaf node fails
     q = [root]
     node_order = []
     while q:
+        # search the nodes according to BFS and place into node_order for processing
         for _ in range(len(q)):
             node = q.pop(0)
             node.image_tag = tag_prefix + '-' + node.git_suffix
@@ -163,11 +174,16 @@ def build_and_test_containers(
             results.append(result)
             continue
 
-        # TODO update wiki
+        # update wiki page of individual image that
+        # has been successfully [built, pushed, tested]
+        # wiki.write_report(node, all_info_cmds)
+
         result.success = True
         results.append(result)
 
-    # store results
+
+    # store results & a list of all-success image full names
+    full_names = []
     for result in results:
         filename = result.full_image_name.replace('/', '-')
         if 'build_log' in result.container_details:
@@ -178,6 +194,9 @@ def build_and_test_containers(
         if not resp:
             raise OSError("couldn't store results into artifacts directory")
 
+    # # update Home.md
+    # wiki.update_Home(images_full_names=full_names)
+    
 
 if __name__ == '__main__':
     """Do a test run"""
