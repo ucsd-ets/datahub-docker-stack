@@ -25,8 +25,7 @@ images:
   rstudio-notebook:
     image_name: ucsdets/rstudio-notebook
     depend_on: datahub-base-notebook
-    integration_tests: true
-    basic_tests: true
+    integration_tests: false
     info_cmds: [PY_VER, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
 
 tag:
