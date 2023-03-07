@@ -5,9 +5,10 @@ from os.path import join as pjoin
 from os.path import isfile
 from io import StringIO
 import bitmath
+import logging
 from pandas import NaT, Series, read_csv, concat
 from collections import deque
-from typing import List,Dict
+from typing import List, Dict
 
 def get_specs(f_yaml:str)->Dict:
     """
@@ -275,3 +276,16 @@ def get_level_order(image)->dict:
         order[curr.image_name] =cnt
         cnt += 1
     return order
+
+def get_logger(level: int = logging.INFO):
+    logging.basicConfig()
+    logger = logging.getLogger('datahub_docker_stacks')
+    logger.setLevel(level)
+    return logger
+
+def str_presenter(dumper, data):
+    """configures yaml for dumping multiline strings
+    Ref: https://stackoverflow.com/questions/8640959/how-can-i-control-what-scalar-form-pyyaml-uses-for-my-data"""
+    if len(data.splitlines()) > 1:  # check for multiline string
+        return dumper.represent_scalar('tag:yaml.org,2002:str', data, style='|')
+    return dumper.represent_scalar('tag:yaml.org,2002:str', data)

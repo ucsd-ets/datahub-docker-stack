@@ -1,5 +1,6 @@
 import docker as docker_client
 import logging
+import json
 from scripts.v2.tree import Node
 from typing import Tuple, Optional
 import pandas as pd
@@ -8,16 +9,15 @@ from scripts.utils import strip_csv_from_md, csv_to_pd
 
 logger = logging.getLogger('datahub_docker_stacks')
 
-__docker_client__ = docker_client.from_env()
-__logged_in__ = False
-
+__docker_client = docker_client.from_env()
 
 class DockerError(Exception):
     pass
 
 
 def set_docker_client(d: docker_client.DockerClient):
-    __docker_client__ = d
+    global __docker_client
+    __docker_client = d
 
 
 def build(node: Node) -> Tuple[bool, str]:
@@ -28,7 +28,7 @@ def build(node: Node) -> Tuple[bool, str]:
     """
     try:
         report = ''
-        for line in __docker_client__.api.build(
+        for line in __docker_client.api.build(
             path=node.filepath,
             dockerfile=node.dockerfile,
             tag=node.image_name + ':' + node.image_tag,
@@ -36,15 +36,26 @@ def build(node: Node) -> Tuple[bool, str]:
             nocache=True,
             rm=False
         ):
-            as_str = line.decode('utf-8').rstrip()
-            report += as_str
-            logger.info(as_str)
+            raw_lines = line.decode('utf-8').split('\n')
+            raw_lines = [line.rstrip() for line in raw_lines]
+            
+            for raw_line in raw_lines:
+                try:
+                    line_data = json.loads(raw_line, strict=False)
+                    actual_line = line_data['stream']
+                    if actual_line == '\n':
+                        continue
+                    # print(line_data['stream'])
+                    report += line_data['stream']
+                    logger.debug(line_data['stream'])
+                except:
+                    pass
         return True, report
     except Exception as e:
         logger.error("couldnt build docker image; " + str(e))
         return False, report
     finally:
-        __docker_client__.close()
+        __docker_client.close()
 
 
 def login(
@@ -56,10 +67,9 @@ def login(
     """
     try:
         logger.info(f'Logging into registry {registry} as {username}')
-        r = __docker_client__.login(username, password, registry=registry)
+        r = __docker_client.login(username, password, registry=registry)
         if 'Status' in r.keys() and 'succeeded' in r['Status'].lower():
-            __logged_in__ = True
-            return __logged_in__
+            return True
         raise ValueError(f'Username/password incorrect for registry {registry}')
     except docker_client.errors.APIError as e:
         raise DockerError(e)
@@ -71,7 +81,7 @@ def push(node: Node) -> Tuple[bool, str]:
         # login to dockerhub
         # push
 
-        stream = __docker_client__.images.push(
+        stream = __docker_client.images.push(
             node.image_name, node.image_tag, stream=True, decode=True)
         
         res = ""
@@ -100,7 +110,7 @@ def push(node: Node) -> Tuple[bool, str]:
         return False, res
 
     finally:
-        __docker_client__.close()
+        __docker_client.close()
 
 
 def run_simple_command(node: Node, cmd: str) -> Tuple[str, bool]:
@@ -117,7 +127,7 @@ def run_simple_command(node: Node, cmd: str) -> Tuple[str, bool]:
     # Create docker container
     logger.info(f"Creating container for image {node.image_name} ...")
     try:
-        container = __docker_client__.containers.run(
+        container = __docker_client.containers.run(
             image=node.image_name, command=cmd, detach=True,
         )   # If detach is True, a Container object is returned instead. 
     except Exception as e:
@@ -137,7 +147,7 @@ def run_simple_command(node: Node, cmd: str) -> Tuple[str, bool]:
         print(f"*** docker container on image {node.image_name} failed to exec cmd {cmd} ***")
         return "Failed to execute cmd", False
     finally:
-        __docker_client__.close()
+        __docker_client.close()
 
     result_str = out.output.decode("utf-8").rstrip()
     logger.info(f"Command result: {result_str}")
@@ -151,3 +161,5 @@ def run_simple_command(node: Node, cmd: str) -> Tuple[str, bool]:
     return result_str, True
 
 
+def remove(node: Node) -> bool:
+    pass

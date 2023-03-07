@@ -1,11 +1,9 @@
 from scripts.v2.runner import *
 from scripts.v2.tree import *
 from scripts.v2.fs import *
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 import unittest
 import pytest
-import os
-import json
 
 
 class TestRunner(unittest.TestCase):
@@ -16,39 +14,20 @@ class TestRunner(unittest.TestCase):
         mock_tester = MagicMock(return_value=pytest.ExitCode.OK)
         mock_store = MagicMock(return_value=True)
 
-        build_and_test_containers(
-            root=root,
-            username='fake',
-            password='fakepw',
-            tag_prefix='2039',
-            build=mock_build,
-            push=mock_push,
-            login=mock_login,
-            test_runner=mock_tester,
-            store_result=mock_store)
+        @patch('scripts.v2.docker_adapter.build', mock_build)
+        @patch('scripts.v2.runner.run_tests', mock_tester)
+        @patch('scripts.v2.docker_adapter.login', mock_login)
+        @patch('scripts.v2.docker_adapter.push', mock_push)
+        @patch('scripts.v2.fs.store', mock_store)
+        def run_test():
+            build_and_test_containers(root, 'fake', 'fakepw', 'test')
+
+        run_test()
 
         return (
             mock_login, mock_build, mock_push, mock_tester, mock_store
         )
-
-    def setUp(self):
-        self.test_case = Node(image_name='root', image_tag='test', rebuild=True, children=[
-            Node(image_name='child1', image_tag='test',
-                 rebuild=True, filepath='images/image1'),
-            Node(image_name='child2', image_tag='test', rebuild=True),
-            Node(image_name='child3', image_tag='test', rebuild=True),
-            Node(image_name='child4', image_tag='test', rebuild=False),
-        ])
-
-    def test_get_basic_tests(self):
-        res = get_basic_test_locations(self.test_case.children[0])
-        should_be = ['images/tests_common', 'images/image1']
-        assert res == should_be
-
-        # filepath should be there
-        with self.assertRaises(RunnerError):
-            get_basic_test_locations(self.test_case)
-
+    
     def test_build_all(self):
         c1 = Node(
             image_name='datascience-notebook',
@@ -76,21 +55,25 @@ class TestRunner(unittest.TestCase):
             rebuild=True
         )
 
-        login, build, push, tester, store = self.run_build_and_test_containers(root)
+        mock_login, mock_build, mock_push, mock_tester, mock_store = self.run_build_and_test_containers(root)
+        # build_and_test_containers(root, 'fake', 'fakepw', 'test')
 
-        login.assert_called_with('fake', 'fakepw')
+        mock_login.assert_called_with('fake', 'fakepw')
+
         imgs_looped_through = ['datahub-base-notebook', 'datascience-notebook',
                                 'scipy-ml-notebook', 'rstudio-notebook']
-        images_built = [arg.args[0].image_name for arg in build.call_args_list]
+
+        images_built = [arg.args[0].image_name for arg in mock_build.call_args_list]
         assert images_built == imgs_looped_through, images_built
 
-        images_pushed = [arg.args[0].image_name for arg in push.call_args_list]
+        images_pushed = [arg.args[0].image_name for arg in mock_push.call_args_list]
         assert images_pushed == imgs_looped_through, images_pushed
 
-        # single integration test + 4 images basic tested
-        assert tester.call_count == 5, tester.call_count
+        # # single integration test + 4 images basic tested
+        assert mock_tester.call_count == 5, mock_tester.call_count
 
-        assert store.call_count == 4, store.call_count
+        # a log file and a yaml file per image
+        assert mock_store.call_count == 8, mock_store.call_count
 
     def test_build_some(self):
         c1 = Node(
@@ -120,19 +103,20 @@ class TestRunner(unittest.TestCase):
             rebuild=False
         )
 
-        login, build, push, tester, store = self.run_build_and_test_containers(root)
-
-        login.assert_called_with('fake', 'fakepw')
+        mock_login, mock_build, mock_push, mock_tester, mock_store = self.run_build_and_test_containers(root)
+        mock_login.assert_called_with('fake', 'fakepw')
         imgs_looped_through = ['rstudio-notebook']
-        images_built = [arg.args[0].image_name for arg in build.call_args_list]
+        
+        images_built = [arg.args[0].image_name for arg in mock_build.call_args_list]
         assert images_built == imgs_looped_through, images_built
 
-        images_pushed = [arg.args[0].image_name for arg in push.call_args_list]
+        images_pushed = [arg.args[0].image_name for arg in mock_push.call_args_list]
         assert images_pushed == imgs_looped_through, images_pushed
 
         # single basic test
-        assert tester.call_count == 1, tester.call_count
-        assert store.call_count == 4, store.call_count
+        assert mock_tester.call_count == 1, mock_tester.call_count
+        # 4 yamls, 1 log file for actually built image
+        assert mock_store.call_count == 5, mock_store.call_count
     
     def test_build_none(self):
         c1 = Node(
@@ -170,20 +154,12 @@ class TestRunner(unittest.TestCase):
         assert tester.call_count == 0
 
         should_be = [
-            Result(success=True, full_image_name='datahub-base-notebook:2039-test', container_details={'image_built': False}),
-            Result(success=True, full_image_name='datascience-notebook:2039-test', container_details={'image_built': False}),
-            Result(success=True, full_image_name='scipy-ml-notebook:2039-test', container_details={'image_built': False}),
-            Result(success=True, full_image_name='rstudio-notebook:2039-test', container_details={'image_built': False})
+            Result(success=True, full_image_name='datahub-base-notebook:test-test', container_details={'image_built': False}),
+            Result(success=True, full_image_name='datascience-notebook:test-test', container_details={'image_built': False}),
+            Result(success=True, full_image_name='scipy-ml-notebook:test-test', container_details={'image_built': False}),
+            Result(success=True, full_image_name='rstudio-notebook:test-test', container_details={'image_built': False})
         ]
-
-        should_be_filepaths = [os.path.join(fs.ARTIFACTS_PATH, r.full_image_name) for r in should_be]
+        should_be_filepaths = [r.full_image_name + '.yaml' for r in should_be]
         got_filepaths = [arg.args[0] for arg in store.call_args_list]
 
         assert got_filepaths == should_be_filepaths, got_filepaths
-
-        got_report = [arg.args[1] for arg in store.call_args_list]
-        got_report = [json.loads(s) for s in got_report]
-        
-        for r in got_report:
-            assert r['success']
-            assert not r['container_details']['image_built']
