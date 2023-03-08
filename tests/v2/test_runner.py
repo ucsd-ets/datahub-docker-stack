@@ -11,9 +11,10 @@ class TestRunner(unittest.TestCase):
         mock_build = MagicMock(return_value=(True, 'myreport'))
         mock_login = MagicMock()
         mock_push = MagicMock(return_value=(True, 'my push'))
-        mock_tester = MagicMock(return_value=pytest.ExitCode.OK)
+        mock_tester = MagicMock(return_value=[pytest.ExitCode.OK, ""])
         mock_store = MagicMock(return_value=True)
         mock_wiki = MagicMock()
+        mock_prune = MagicMock(resp=100)
 
 
         self.all_info_cmds = {
@@ -37,6 +38,7 @@ class TestRunner(unittest.TestCase):
         @patch('scripts.v2.docker_adapter.push', mock_push)
         @patch('scripts.v2.fs.store', mock_store)
         @patch('scripts.v2.wiki', mock_wiki)
+        @patch('scripts.v2.docker_adapter.prune', mock_prune)
         def run_test():
             build_and_test_containers(root, 'fake', 'fakepw', 'test', self.all_info_cmds)
 

@@ -1,18 +1,22 @@
 from scripts.v2.utils import get_logger
 from dataclasses import dataclass, field
-from typing import List, Dict
+from typing import List, Dict, Tuple
+from io import StringIO
 import os
 import yaml
 import pytest
 import logging
+import sys
 
 
 from scripts.v2.tree import Node, build_tree, load_spec
 from scripts.v2 import docker_adapter
 from scripts.v2 import fs
 from scripts.v2 import wiki
+from scripts.v2.utils import convert_size
 
 logger = get_logger()
+
 
 class RunnerError(Exception):
     pass
@@ -52,16 +56,33 @@ class Result:
 def format_result(result: Result):
     return yaml.dump(result, indent=2)
 
+
 class RunTestError(Exception):
     pass
 
-def run_tests(testdirs: List[str], pytest_exec=pytest.main) -> pytest.ExitCode:
-    exit_code = pytest_exec([
-        '-x',
-        *testdirs
-    ])
 
-    return exit_code
+def run_tests(testdirs: List[str], pytest_exec=pytest.main) -> Tuple[pytest.ExitCode, str]:
+    # https://stackoverflow.com/questions/47784802/output-stdio-and-stderr-from-pytest-main
+    try:
+        original_output = sys.stdout
+        sys.stdout = StringIO()
+
+        exit_code = pytest_exec([
+            '-x',
+            *testdirs
+        ])
+
+        output = sys.stdout.getvalue()
+
+    except Exception as e:
+        logging.error('Failed to execut pytests; {e}')
+        return pytest.ExitCode.TESTS_FAILED, ''
+    finally:
+        sys.stdout.close()
+        sys.stdout = original_output
+
+    return exit_code, output
+
 
 def get_basic_test_locations(node: Node, stackdir='images', test_common_dirname='tests_common') -> List[str]:
     if not node.filepath:
@@ -69,31 +90,36 @@ def get_basic_test_locations(node: Node, stackdir='images', test_common_dirname=
     common_tests = os.path.join(stackdir, test_common_dirname)
     return [common_tests, node.filepath]
 
+
 def setup_testing_environment(node: Node):
     os.environ['TEST_IMAGE'] = node.image_name + ':' + node.image_tag
 
+
 def run_basic_tests(node: Node, result: Result) -> bool:
     if not os.environ.get('TEST_IMAGE', None):
-        raise RunTestError('You must specify TEST_IMAGE envar before running tests')
+        raise RunTestError(
+            'You must specify TEST_IMAGE envar before running tests')
     test_locations = get_basic_test_locations(node)
-    exit_code = run_tests(test_locations)
+    exit_code, report = run_tests(test_locations)
 
     result.test_results['basic_tests'] = 'Passed basic tests'
+    result.test_results['test_log'] = report
     if exit_code != pytest.ExitCode.OK:
         result.success = False
         result.test_results['basic_tests'] = 'Failed basic tests'
         return False
-    
+
     return True
-    
+
 
 def run_integration_tests(node: Node, result: Result) -> bool:
     if not node.integration_tests:
         result.test_results['integration_tests'] = 'skipped'
         return True     # if skipped, still need to proceed to later tasks
 
-    exit_code = run_tests(os.path.join(node.filepath, 'integration'))
+    exit_code, report = run_tests(os.path.join(node.filepath, 'integration'))
     result.test_results['integration_tests'] = 'Passed integration tests'
+    result.test_results['test_log'] = report
     if exit_code != pytest.ExitCode.OK:
         result.success = False
         result.test_results['integration_tests'] = 'Failed integration tests'
@@ -112,7 +138,6 @@ def build_and_test_containers(
     docker_adapter.login(username, password)
 
     # search the nodes according to BFS and place into node_order for processing
-    
 
     # load all_info_cmds from spec.yml and pass to wiki operations
     # print(all_info_cmds)
@@ -197,6 +222,8 @@ def build_and_test_containers(
         print(f"{node.image_name} reached here")
         full_names.append(result.full_image_name)
 
+        space_reclaimed = convert_size(docker_adapter.prune())
+        logger.info(f"Reclaimed {space_reclaimed} from pruning docker")
 
     # store results 
     for result in results:

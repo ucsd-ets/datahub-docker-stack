@@ -49,3 +49,6 @@ class TestDocker(unittest.TestCase):
         assert 'docker.io' in report, report
         assert resp, resp
 
+    def test_prune(self):
+        resp = internal_docker.prune()
+        assert resp > 0, resp

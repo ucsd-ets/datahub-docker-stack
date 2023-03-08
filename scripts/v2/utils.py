@@ -1,6 +1,7 @@
 import io
 import yaml
 import json
+import math
 from os.path import join as pjoin
 from os.path import isfile
 from io import StringIO
@@ -289,3 +290,13 @@ def str_presenter(dumper, data):
     if len(data.splitlines()) > 1:  # check for multiline string
         return dumper.represent_scalar('tag:yaml.org,2002:str', data, style='|')
     return dumper.represent_scalar('tag:yaml.org,2002:str', data)
+
+def convert_size(size_bytes: int) -> str:
+    """https://stackoverflow.com/questions/5194057/better-way-to-convert-file-sizes-in-python"""
+    if size_bytes == 0:
+        return 0
+    size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+    i = int(math.floor(math.log(size_bytes, 1024)))
+    p = math.pow(1024, i)
+    s = round(size_bytes / p, 2)        
+    return "%s %s" % (s, size_name[i])
