@@ -6,6 +6,7 @@ import pandas as pd
 
 from scripts.v2.tree import Node
 from scripts.v2.utils import get_logger
+import os
 
 logger = get_logger()
 
@@ -182,7 +183,12 @@ def prune() -> int:
         ]
         total_space_reclaimed = 0
 
+        # prune funcs may timeout, see https://github.com/docker/compose/issues/3927
+        os.environ['DOCKER_CLIENT_TIMEOUT'] = 300
+        os.environ['COMPOSE_HTTP_TIMEOUT'] = 300
+
         for func_name, prune in prune_funcs:
+            
             resp = prune()
             if not 'SpaceReclaimed' in resp:
                 logger.warning(f'SpaceReclaimed not in API response for prune function {func_name}. keys = {resp.keys()}')
