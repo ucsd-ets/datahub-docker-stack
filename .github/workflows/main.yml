@@ -1,5 +1,8 @@
 name: Docker
 
+env:
+  DOCKER_CLIENT_TIMEOUT: "300"
+
 on:
   push:
     branches: [ main, refractor_buildtest ]

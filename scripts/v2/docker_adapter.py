@@ -11,10 +11,6 @@ import os
 
 logger = get_logger()
 
-def setup_logger(full_image_name: str):
-    logger = get_logger
-    logger.basicConfig(format=f'%(levelname)s:{full_image_name}:%(message)s')
-
 __docker_client = docker_client.from_env()
 
 class DockerError(Exception):
@@ -55,7 +51,7 @@ def build(node: Node) -> Tuple[bool, str]:
                         continue
                     # print(line_data['stream'])
                     report += line_data['stream']
-                    logger.debug(line_data['stream'])
+                    logger.debug(f"{node.image_name}: {line_data['stream']}")
                 except:
                     pass
         return True, report
