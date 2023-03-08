@@ -8,7 +8,12 @@ from scripts.v2.tree import Node
 from scripts.v2.utils import get_logger
 import os
 
+
 logger = get_logger()
+
+def setup_logger(full_image_name: str):
+    logger = get_logger
+    logger.basicConfig(format=f'%(levelname)s:{full_image_name}:%(message)s')
 
 __docker_client = docker_client.from_env()
 
@@ -184,8 +189,8 @@ def prune() -> int:
         total_space_reclaimed = 0
 
         # prune funcs may timeout, see https://github.com/docker/compose/issues/3927
-        os.environ['DOCKER_CLIENT_TIMEOUT'] = 300
-        os.environ['COMPOSE_HTTP_TIMEOUT'] = 300
+        os.environ['DOCKER_CLIENT_TIMEOUT'] = '300'
+        os.environ['COMPOSE_HTTP_TIMEOUT'] = '300'
 
         for func_name, prune in prune_funcs:
             
