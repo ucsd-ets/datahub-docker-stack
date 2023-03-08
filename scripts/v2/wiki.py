@@ -15,7 +15,7 @@ from scripts.v2.fs import MANIFEST_PATH
 
 
 
-logger = logging.getLogger('datahub_docker_stacks')
+logger = get_logger()
 
 def run_outputs(node: Node, all_info_cmds:Dict) -> List[Dict]: 
     """Run info commands of each image and return outputs. Wrapper around run_simple_command()
@@ -169,6 +169,10 @@ def update_Home(images_full_names: List[str], git_short_hash: str) -> bool:
     Returns:
         bool: success/failure
     """
+
+    if not images_full_names:
+        logger.info(f"commit {git_short_hash} has no successful image to update Home.md")
+        return True
     
     repo_url = f"https://github.com/ucsd-ets/datahub-docker-stack"
     # repo_url = f"https://github.com/{environ['GITHUB_REPOSITORY']}"
@@ -186,7 +190,7 @@ def update_Home(images_full_names: List[str], git_short_hash: str) -> bool:
         Given: ucsdets/rstudio-notebook:2023.1-7d75f9f
         Returns: [Link](https://github.com/ucsd-ets/datahub-docker-stack/wiki/ucsdets-rstudio-notebook-2023.1-7d75f9f)
         """
-        assert fullname.count(':') == 1 and fullname.count('/') == 1, \
+        assert fullname.count(':') == 1 and fullname.count('/') <= 1, \
             f"Wrong image full name format: {fullname}"
         fullname = fullname.replace(':', '-').replace('/', '-')
         link = url2mdlink(repo_url + '/wiki/' + fullname, 'Link')

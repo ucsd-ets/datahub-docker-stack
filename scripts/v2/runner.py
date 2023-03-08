@@ -137,7 +137,8 @@ def build_and_test_containers(
                 })
                 q.append(child)
 
-    results = []
+    results = []        # no matter success or failure
+    full_names = []     # a list of all-success image full names
     for node in node_order:
         logger.info(f'Processing node = {node.image_name}')
 
@@ -193,10 +194,11 @@ def build_and_test_containers(
 
         result.success = True
         results.append(result)
+        print(f"{node.image_name} reached here")
+        full_names.append(result.full_image_name)
 
 
-    # store results & a list of all-success image full names
-    full_names = []
+    # store results 
     for result in results:
         filename = result.safe_full_image_name
         if 'build_log' in result.container_details:
@@ -208,7 +210,7 @@ def build_and_test_containers(
             raise OSError("couldn't store results into artifacts directory")
 
     # # update Home.md
-    # wiki.update_Home(images_full_names=full_names)
+    wiki.update_Home(images_full_names=full_names, git_short_hash=root.git_suffix)
     
 
 if __name__ == '__main__':
