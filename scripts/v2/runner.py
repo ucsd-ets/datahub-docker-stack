@@ -197,14 +197,14 @@ def build_and_test_containers(
             continue
 
         # push step
-        # resp, report = docker_adapter.push(node)
-        # print(f"*** Push image {node.image_name} successfully? {resp}")
-        # result.container_details['push_success'] = resp
-        # result.container_details['push_log'] = report
-        # if not resp:
-        #     result.success = False
-        #     results.append(result)
-        #     continue
+        resp, report = docker_adapter.push(node)
+        print(f"*** Push image {node.image_name} successfully? {resp}")
+        result.container_details['push_success'] = resp
+        result.container_details['push_log'] = report
+        if not resp:
+            result.success = False
+            results.append(result)
+            continue
 
         # integration tests
         resp = run_integration_tests(node, result)
