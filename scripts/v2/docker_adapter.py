@@ -1,13 +1,13 @@
 import docker as docker_client
 import logging
 import json
-from scripts.v2.tree import Node
 from typing import Tuple, Optional
 import pandas as pd
-# from scripts.utils import strfdelta, bytes_to_hstring
-# from scripts.utils import strip_csv_from_md, csv_to_pd
 
-logger = logging.getLogger('datahub_docker_stacks')
+from scripts.v2.tree import Node
+from scripts.v2.utils import get_logger
+
+logger = get_logger()
 
 __docker_client = docker_client.from_env()
 
@@ -26,6 +26,8 @@ def build(node: Node) -> Tuple[bool, str]:
     Args:
         node (Node): node to build
     """
+    logger.info(f"Build {node.image_name} now")
+    print("Now we have these images: ", __docker_client.images.list())
     try:
         report = ''
         for line in __docker_client.api.build(
@@ -111,6 +113,14 @@ def push(node: Node) -> Tuple[bool, str]:
 
     finally:
         __docker_client.close()
+
+def get_image_obj(node: Node) -> docker_client.models.images.Image:
+    # check (if str in List) before get image object
+    if node.full_image_name not in __docker_client.images.list():
+        logger.error(f"{node.full_image_name} not inside the \
+            docker env {__docker_client.images.list()}.")
+        return None
+    return __docker_client.images.get(node.full_image_name)
 
 
 def run_simple_command(node: Node, cmd: str) -> Tuple[str, bool]:
