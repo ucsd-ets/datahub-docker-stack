@@ -190,5 +190,6 @@ def prune() -> int:
         return total_space_reclaimed
     except Exception as e:
         logger.error(f"couldn't prune docker; {e}")
+        return 0
     finally:
         __docker_client.close()
