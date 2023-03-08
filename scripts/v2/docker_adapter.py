@@ -116,11 +116,14 @@ def push(node: Node) -> Tuple[bool, str]:
 
 def get_image_obj(node: Node) -> docker_client.models.images.Image:
     # check (if str in List) before get image object
-    if node.full_image_name not in __docker_client.images.list():
+    try: 
+        img_obj = __docker_client.images.get(node.full_image_name)
+    except docker.errors.ImageNotFound as e:
         logger.error(f"{node.full_image_name} not inside the \
             docker env {__docker_client.images.list()}.")
         return None
-    return __docker_client.images.get(node.full_image_name)
+    else:
+        return img_obj
 
 
 def run_simple_command(node: Node, cmd: str) -> Tuple[str, bool]:
