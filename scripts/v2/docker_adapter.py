@@ -179,7 +179,6 @@ def prune(full_image_name: str) -> int:
     try:
         __docker_client.images.remove(image=full_image_name, force=True)
         prune_funcs = [
-            ('containers.prune', __docker_client.containers.prune),
             ('images.prune', __docker_client.images.prune),
             ('networks.prune', __docker_client.networks.prune),
             ('volumes.prune', __docker_client.volumes.prune)
@@ -192,7 +191,7 @@ def prune(full_image_name: str) -> int:
 
         for func_name, prune in prune_funcs:
             
-            resp = prune()
+            resp = prune(filters={'dangling': False})
             if not 'SpaceReclaimed' in resp:
                 logger.warning(f'SpaceReclaimed not in API response for prune function {func_name}. keys = {resp.keys()}')
                 continue
