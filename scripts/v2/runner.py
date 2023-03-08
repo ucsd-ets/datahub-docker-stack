@@ -225,7 +225,7 @@ def build_and_test_containers(
         print(f"{node.image_name} reached here")
         full_names.append(result.full_image_name)
 
-        space_reclaimed = convert_size(docker_adapter.prune())
+        space_reclaimed = convert_size(docker_adapter.prune(node.full_image_name))
         logger.info(f"Reclaimed {space_reclaimed} from pruning docker")
 
     # store results 
