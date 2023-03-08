@@ -169,6 +169,7 @@ def build_and_test_containers(
 
         # push step
         resp, report = docker_adapter.push(node)
+        print(f"*** Push image {node.image_name} successfully? {resp}")
         result.container_details['push_success'] = resp
         result.container_details['push_log'] = report
         if not resp:
@@ -184,7 +185,11 @@ def build_and_test_containers(
 
         # update wiki page of individual image that
         #       has been successfully [built, pushed, tested]
-        # wiki.write_report(node, all_info_cmds)
+        image_obj = docker_adapter.get_image_obj(node)
+        if image_obj is not None:
+            wiki.write_report(node, all_info_cmds)
+        else:
+            print(f"*** Unable to get {node.full_image_name}")
 
         result.success = True
         results.append(result)
