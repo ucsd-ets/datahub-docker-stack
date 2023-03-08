@@ -116,14 +116,12 @@ def push(node: Node) -> Tuple[bool, str]:
 
 def get_image_obj(node: Node) -> docker_client.models.images.Image:
     # check (if str in List) before get image object
-    try: 
-        img_obj = __docker_client.images.get(node.full_image_name)
-    except docker.errors.ImageNotFound as e:
+    try:
+        return __docker_client.images.get(node.full_image_name)
+    except docker_client.errors.ImageNotFound:
         logger.error(f"{node.full_image_name} not inside the \
-            docker env {__docker_client.images.list()}.")
+                docker env {__docker_client.images.list()}.")
         return None
-    else:
-        return img_obj
 
 
 def run_simple_command(node: Node, cmd: str) -> Tuple[str, bool]:
@@ -176,17 +174,17 @@ def run_simple_command(node: Node, cmd: str) -> Tuple[str, bool]:
 def prune() -> int:
     try:
         prune_funcs = [
-            __docker_client.containers.prune,
-            __docker_client.images.prune,
-            __docker_client.networks.prune,
-            __docker_client.volumes.prune
+            ('containers.prune', __docker_client.containers.prune),
+            ('images.prune', __docker_client.images.prune),
+            ('networks.prune', __docker_client.networks.prune),
+            ('volumes.prune', __docker_client.volumes.prune)
         ]
         total_space_reclaimed = 0
 
-        for prune in prune_funcs:
+        for func_name, prune in prune_funcs:
             resp = prune()
             if not 'SpaceReclaimed' in resp:
-                logger.warning(f'SpaceReclaimed not in API response for prune function {prune.__name__}')
+                logger.warning(f'SpaceReclaimed not in API response for prune function {func_name}. keys = {resp.keys()}')
                 continue
             total_space_reclaimed += resp.pop('SpaceReclaimed')
 

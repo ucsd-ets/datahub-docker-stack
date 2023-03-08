@@ -3,6 +3,7 @@ from os import path, environ
 from glob import glob
 from posixpath import basename
 from yaml import dump
+from typing import Dict
 import logging
 import docker
 import pandas as pd
@@ -35,7 +36,7 @@ def run_outputs(node: Node, all_info_cmds:Dict) -> List[Dict]:
             continue
 
         cmd_output, cmd_success = run_simple_command(
-            container,
+            node,
             all_info_cmds[key]['command']
         )
 
@@ -91,7 +92,6 @@ def get_layers_md_table(node: Node, image: docker.models.images.Image) -> str:
     """
     print("Trying to docker get: ", node.image_name + ':' + node.image_tag)
     node.print_info()
-    print(cli.images.list())
     layers = get_layers(image)[
         ['createdAt', 'CMD', 'hSize', 'hcumSize', 'elapsed', 'Tags']
     ]   # panda Dataframe: select columns to keep
@@ -152,7 +152,7 @@ f"""
             )
 
     stitched = '\n'.join(sections).strip()
-    manifest_fn = fulltag2fn(image)
+    manifest_fn = fulltag2fn(node.full_image_name)
     output_path = path.join(output_dir, f"{manifest_fn}.md")
     with open(output_path, 'w') as f:
         f.write(stitched)

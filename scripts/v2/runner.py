@@ -187,21 +187,24 @@ def build_and_test_containers(
             continue
 
         # basic and common tests
+        logger.info(f"Testing {node.full_image_name}")
         setup_testing_environment(node)
         resp = run_basic_tests(node, result)
+        if 'test_log' in result.test_results:
+            logger.debug(result.test_results['test_log'])
         if not resp:
             results.append(result)
             continue
 
         # push step
-        resp, report = docker_adapter.push(node)
-        print(f"*** Push image {node.image_name} successfully? {resp}")
-        result.container_details['push_success'] = resp
-        result.container_details['push_log'] = report
-        if not resp:
-            result.success = False
-            results.append(result)
-            continue
+        # resp, report = docker_adapter.push(node)
+        # print(f"*** Push image {node.image_name} successfully? {resp}")
+        # result.container_details['push_success'] = resp
+        # result.container_details['push_log'] = report
+        # if not resp:
+        #     result.success = False
+        #     results.append(result)
+        #     continue
 
         # integration tests
         resp = run_integration_tests(node, result)
@@ -213,7 +216,7 @@ def build_and_test_containers(
         #       has been successfully [built, pushed, tested]
         image_obj = docker_adapter.get_image_obj(node)
         if image_obj is not None:
-            wiki.write_report(node, all_info_cmds)
+            wiki.write_report(node, image_obj, all_info_cmds)
         else:
             print(f"*** Unable to get {node.full_image_name}")
 
@@ -237,7 +240,9 @@ def build_and_test_containers(
             raise OSError("couldn't store results into artifacts directory")
 
     # # update Home.md
+    logger.info("Updating home.md")
     wiki.update_Home(images_full_names=full_names, git_short_hash=root.git_suffix)
+    logger.info("home.md updated")
     
 
 if __name__ == '__main__':
@@ -248,7 +253,12 @@ if __name__ == '__main__':
             'datahub-base-notebook': {
                 'build_args': {
                     'PYTHON_VERSION': 'python-3.9.5'
-                }
+                },
+                'info_cmds': [
+                    'PY_VER',
+                    'CONDA_INFO',
+                    'CONDA_LIST'
+                ]
             },
             # 'datascience-notebook': {
             #     'depend_on': 'datahub-base-notebook',
@@ -256,6 +266,21 @@ if __name__ == '__main__':
             # }
         }
     }
+
+    all_info_cmds = {
+            'PY_VER': {
+                'description': 'Python Version',
+                'command': 'python --version'
+            },
+            'CONDA_INFO': {
+                'description': 'Conda Info',
+                'command': 'conda info'
+            },
+            'CONDA_LIST': {
+                'description': 'Conda Packages',
+                'command': 'conda list'
+            },
+        }
 
     tree = build_tree(spec_yaml=test_spec, images_changed=[
                       'datahub-base-notebook'], git_suffix='test')
@@ -265,6 +290,10 @@ if __name__ == '__main__':
     if not dockerhub_username or not dockerhub_token:
         logger.error('dockerhub username or password not set')
         exit(1)
+    
+    if not os.path.exists('manifests'):
+        logger.error('You must have a manifests/ directory at this root')
+        exit(1)
 
     build_and_test_containers(
-        root=tree, username=dockerhub_username, password=dockerhub_token, tag_prefix='test')
+        root=tree, username=dockerhub_username, password=dockerhub_token, tag_prefix='test', all_info_cmds=all_info_cmds)
