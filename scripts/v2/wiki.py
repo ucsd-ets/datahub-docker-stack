@@ -35,7 +35,7 @@ def run_outputs(node: Node, all_info_cmds:Dict) -> List[Dict]:
             continue
 
         cmd_output, cmd_success = run_simple_command(
-            container,
+            node,
             all_info_cmds[key]['command']
         )
 
@@ -89,9 +89,6 @@ def get_layers_md_table(node: Node, image: docker.models.images.Image) -> str:
     Returns:
         str: DataFrame in Markdown-friendly string format.
     """
-    print("Trying to docker get: ", node.image_name + ':' + node.image_tag)
-    node.print_info()
-    print(cli.images.list())
     layers = get_layers(image)[
         ['createdAt', 'CMD', 'hSize', 'hcumSize', 'elapsed', 'Tags']
     ]   # panda Dataframe: select columns to keep
@@ -152,7 +149,7 @@ f"""
             )
 
     stitched = '\n'.join(sections).strip()
-    manifest_fn = fulltag2fn(image)
+    manifest_fn = fulltag2fn(node.full_image_name)
     output_path = path.join(output_dir, f"{manifest_fn}.md")
     with open(output_path, 'w') as f:
         f.write(stitched)
@@ -228,3 +225,34 @@ def update_Home(images_full_names: List[str], git_short_hash: str) -> bool:
 
 if __name__ == "__main__":
     print("wiki.py: Import Success")
+    client = docker.from_env()
+    img_obj = client.images.get('ucsdets/datahub-docker-stacks:pushtest')
+    
+    test_node = Node(
+        image_name='ucsdets/datahub-docker-stacks',
+        image_tag='pushtest',
+        filepath='tests/v2',
+        children=[],
+        rebuild=False,
+        image_built=False,
+        build_args={},
+        integration_tests=False,
+        dockerfile='test.Dockerfile',
+        info_cmds=['PY_VER', 'CONDA_INFO', 'CONDA_LIST']
+    )
+    all_info_cmds = {
+        'PY_VER': {
+            'description': 'Python Version',
+            'command': 'python --version'
+        },
+        'CONDA_INFO': {
+            'description': 'Conda Info',
+            'command': 'conda info'
+        },
+        'CONDA_LIST': {
+            'description': 'Conda Packages',
+            'command': 'conda list'
+        },
+    }
+    
+    write_report(node=test_node, image=img_obj, all_info_cmds=all_info_cmds)
