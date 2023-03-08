@@ -13,6 +13,7 @@ from scripts.v2.tree import Node, build_tree, load_spec
 from scripts.v2 import docker_adapter
 from scripts.v2 import fs
 from scripts.v2 import wiki
+from scripts.v2.utils import convert_size
 
 logger = get_logger()
 
@@ -217,6 +218,9 @@ def build_and_test_containers(
 
         result.success = True
         results.append(result)
+
+        space_reclaimed = convert_size(docker_adapter.prune())
+        logger.info(f"Reclaimed {space_reclaimed} from pruning docker")
 
     # store results & a list of all-success image full names
     full_names = []

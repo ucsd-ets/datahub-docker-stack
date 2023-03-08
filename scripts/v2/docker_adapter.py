@@ -170,6 +170,25 @@ def run_simple_command(node: Node, cmd: str) -> Tuple[str, bool]:
 
     return result_str, True
 
+def prune() -> int:
+    try:
+        prune_funcs = [
+            __docker_client.containers.prune,
+            __docker_client.images.prune,
+            __docker_client.networks.prune,
+            __docker_client.volumes.prune
+        ]
+        total_space_reclaimed = 0
 
-def remove(node: Node) -> bool:
-    pass
+        for prune in prune_funcs:
+            resp = prune()
+            if not 'SpaceReclaimed' in resp:
+                logger.warning(f'SpaceReclaimed not in API response for prune function {prune.__name__}')
+                continue
+            total_space_reclaimed += resp.pop('SpaceReclaimed')
+
+        return total_space_reclaimed
+    except Exception as e:
+        logger.error(f"couldn't prune docker; {e}")
+    finally:
+        __docker_client.close()
