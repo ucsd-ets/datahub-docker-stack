@@ -48,7 +48,7 @@ if __name__ == '__main__':
 
     # this variable will automatically be set by github
     os.environ['GITHUB_REF_NAME'] = 'refractor_buildtest'
-    dockerhub_username = os.environ.get('DOCKERHUB_USERNAME', None)
+    dockerhub_username = os.environ.get('DOKCERHUB_USER', None)
     dockerhub_token = os.environ.get('DOCKERHUB_TOKEN', None)
     if not dockerhub_username or not dockerhub_token:
         logger.error('dockerhub username or password not set')
