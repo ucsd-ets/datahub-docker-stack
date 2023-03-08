@@ -15,4 +15,5 @@ def test_secured_server(container, http_client):
         d = docker.from_env()
         print(f"**** Docker images {d.images.list()} ***")
         print(f"**** Docker containers {d.containers.list()} ***")
+
         raise e
