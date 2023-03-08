@@ -52,6 +52,7 @@ if __name__ == '__main__':
     dockerhub_token = os.environ.get('DOCKERHUB_TOKEN', None)
     if not dockerhub_username or not dockerhub_token:
         logger.error('dockerhub username or password not set')
+        exit(1)
 
     main(dockerhub_username=dockerhub_username,
          dockerhub_password=dockerhub_token)
