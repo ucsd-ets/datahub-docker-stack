@@ -228,3 +228,34 @@ def update_Home(images_full_names: List[str], git_short_hash: str) -> bool:
 
 if __name__ == "__main__":
     print("wiki.py: Import Success")
+    client = docker.from_env()
+    img_obj = client.images.get('ucsdets/datahub-docker-stacks:pushtest')
+    
+    test_node = Node(
+        image_name='ucsdets/datahub-docker-stacks',
+        image_tag='pushtest',
+        filepath='tests/v2',
+        children=[],
+        rebuild=False,
+        image_built=False,
+        build_args={},
+        integration_tests=False,
+        dockerfile='test.Dockerfile',
+        info_cmds=['PY_VER', 'CONDA_INFO', 'CONDA_LIST']
+    )
+    all_info_cmds = {
+        'PY_VER': {
+            'description': 'Python Version',
+            'command': 'python --version'
+        },
+        'CONDA_INFO': {
+            'description': 'Conda Info',
+            'command': 'conda info'
+        },
+        'CONDA_LIST': {
+            'description': 'Conda Packages',
+            'command': 'conda list'
+        },
+    }
+    
+    write_report(node=test_node, image=img_obj, all_info_cmds=all_info_cmds)

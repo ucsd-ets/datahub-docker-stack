@@ -136,7 +136,8 @@ def run_simple_command(node: Node, cmd: str) -> Tuple[str, bool]:
         bool: success/faliure
     """
     # Create docker container
-    logger.info(f"Creating container for image {node.image_name} ...")
+    logger.info(f"Creating container for image {node.full_image_name} ...")
+    logger.info(f"Following images exist: {__docker_client.images.list()}")
     try:
         container = __docker_client.containers.run(
             image=node.image_name, command=cmd, detach=True,
