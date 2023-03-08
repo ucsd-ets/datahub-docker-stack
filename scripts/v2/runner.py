@@ -26,6 +26,13 @@ class Result:
     container_details: Dict = field(default_factory=dict)
     test_results: Dict = field(default_factory=dict)
 
+    @property
+    def safe_full_image_name(self):
+        full_image_name = self.full_image_name
+        safe_full_image_name = full_image_name.replace('/', '-')
+        safe_full_image_name = safe_full_image_name.replace(':', '-')
+        return safe_full_image_name
+
     def __bool__(self):
         return any([
             self.success,
@@ -186,7 +193,7 @@ def build_and_test_containers(
     # store results & a list of all-success image full names
     full_names = []
     for result in results:
-        filename = result.full_image_name.replace('/', '-')
+        filename = result.safe_full_image_name
         if 'build_log' in result.container_details:
             build_log = result.container_details.pop('build_log')
             fs.store(filename + '.log', build_log)

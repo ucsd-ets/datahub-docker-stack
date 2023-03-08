@@ -20,6 +20,10 @@ class Node:
     image_tag: str = ""
     info_cmds: List = field(default_factory=list)
 
+    @property
+    def full_image_name(self):
+        return self.image_name + ':' + self.image_tag
+
     def print_info(self):
         print( f"""image_name: {self.image_name},
                 git_suffix: {self.git_suffix}, 
@@ -33,7 +37,6 @@ class Node:
         )
         for child in self.children:
             child.print_info()
-
 
 def load_spec(spec_filepath="images/spec.yml") -> dict:
     """Parse specs from yaml file name to dict

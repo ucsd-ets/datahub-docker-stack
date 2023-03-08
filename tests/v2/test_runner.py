@@ -172,10 +172,10 @@ class TestRunner(unittest.TestCase):
         assert tester.call_count == 0
 
         should_be = [
-            Result(success=True, full_image_name='datahub-base-notebook:test-test', container_details={'image_built': False}),
-            Result(success=True, full_image_name='datascience-notebook:test-test', container_details={'image_built': False}),
-            Result(success=True, full_image_name='scipy-ml-notebook:test-test', container_details={'image_built': False}),
-            Result(success=True, full_image_name='rstudio-notebook:test-test', container_details={'image_built': False})
+            Result(success=True, full_image_name='datahub-base-notebook-test-test', container_details={'image_built': False}),
+            Result(success=True, full_image_name='datascience-notebook-test-test', container_details={'image_built': False}),
+            Result(success=True, full_image_name='scipy-ml-notebook-test-test', container_details={'image_built': False}),
+            Result(success=True, full_image_name='rstudio-notebook-test-test', container_details={'image_built': False})
         ]
         should_be_filepaths = [r.full_image_name + '.yaml' for r in should_be]
         got_filepaths = [arg.args[0] for arg in store.call_args_list]
