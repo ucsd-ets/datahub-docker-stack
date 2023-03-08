@@ -3,6 +3,7 @@ FROM jupyter/datascience-notebook:$PYTHON_VERSION
 
 USER root
 
+
 # see https://github.com/phusion/baseimage-docker/issues/319#issuecomment-1058835363
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBCONF_NOWARNINGS="yes"
