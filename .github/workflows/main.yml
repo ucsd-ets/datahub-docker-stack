@@ -130,3 +130,4 @@ jobs:
             artifacts
             logs
             manifests
+            wiki
