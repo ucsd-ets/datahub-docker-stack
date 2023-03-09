@@ -30,7 +30,7 @@ def build(node: Node) -> Tuple[bool, str]:
         node (Node): node to build
     """
     logger.info(f"Build {node.image_name} now with buildargs = {node.build_args}")
-    print("Now we have these images: ", __docker_client.images.list())
+    
     try:
         report = ''
         logger.debug(f'Build')
@@ -56,6 +56,7 @@ def build(node: Node) -> Tuple[bool, str]:
                     logger.debug(f"{node.image_name}:{line_data['stream']}")
                 except:
                     pass
+        print("Now we have these images: ", __docker_client.images.list())
         return True, report
     except Exception as e:
         logger.error("couldnt build docker image; " + str(e))
@@ -177,6 +178,13 @@ def run_simple_command(node: Node, cmd: str) -> Tuple[str, bool]:
             logger.info(f"Container {container.name} removed")
         __docker_client.close()
 
+def list_images():
+    try:
+        return __docker_client.images.list()
+    except Exception as e:
+        logger.error(f'couldnt list images; {e}')
+    finally:
+        __docker_client.close()
 
 def prune(full_image_name: str) -> int:
     try:

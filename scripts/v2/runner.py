@@ -183,9 +183,11 @@ def build_and_test_containers(
         result.container_details['build_log'] = report
         if not image_built:
             result.success = False
+            logger.error(f"couldn't build {node.full_image_name}")
             results.append(result)
             continue
-
+        logger.info(f"successfully built {node.full_image_name}")
+    
         # basic and common tests
         logger.info(f"Testing {node.full_image_name}")
         setup_testing_environment(node)
