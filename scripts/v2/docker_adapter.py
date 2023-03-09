@@ -30,7 +30,6 @@ def build(node: Node) -> Tuple[bool, str]:
     """
     logger.info(f"Build {node.image_name} now")
     print("Now we have these images: ", __docker_client.images.list())
-    print(logger)
     try:
         report = ''
         for line in __docker_client.api.build(
