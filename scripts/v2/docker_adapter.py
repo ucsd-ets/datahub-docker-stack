@@ -51,7 +51,7 @@ def build(node: Node) -> Tuple[bool, str]:
                         continue
                     # print(line_data['stream'])
                     report += line_data['stream']
-                    logger.debug(f"{node.image_name}: {line_data['stream']}")
+                    logger.debug(f"{node.image_name}:{line_data['stream']}")
                 except:
                     pass
         return True, report
