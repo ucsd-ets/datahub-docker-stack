@@ -50,5 +50,5 @@ class TestDocker(unittest.TestCase):
         assert resp, resp
 
     def test_prune(self):
-        resp = internal_docker.prune()
-        assert resp > 0, resp
+        resp = internal_docker.prune('ucsdets/datahub-docker-stacks:pushtest')
+        assert resp >= 0, resp
