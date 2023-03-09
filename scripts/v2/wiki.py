@@ -3,7 +3,7 @@ from os import path, environ
 from glob import glob
 from posixpath import basename
 from yaml import dump
-from typing import Dict
+from typing import Dict, List
 import logging
 import docker
 import pandas as pd
@@ -224,7 +224,42 @@ def update_Home(images_full_names: List[str], git_short_hash: str) -> bool:
 
     return True
 
+def insert_history():
+    with open(path.join('wiki', 'Home.md'), 'r') as f:
+        doc_str = f.read()
 
+    latest_row = compile_history()
+    # compile history() returns 3 var, so lastest row is a tuple
+    latest_doc = insert_row(doc_str, [latest_row])
+    # latest_doc = insert_row(doc_str, latest_row)
+
+    with open(path.join('wiki', 'Home.md'), 'w') as f:
+        f.write(latest_doc)
+
+def run_manifests(images_built: List[str]):
+    # FIXME abstract stack_dir
+    stack_dir = 'images'
+    image_deps = json2series(read_dict('image-dependency.json'), 'dep', 'image')
+    store_series(image_deps, 'image-dependency')
+
+    # Write image dependency table to wiki
+    dep_table_fp = 'wiki/Image Dependency.md'
+    if isfile(dep_table_fp):
+        old_csv = strip_csv_from_md(dep_table_fp)
+        csv_concat(old_csv, 'artifacts/image-dependency.csv', 'artifacts/image-dependency-updated.csv')
+        csv_embed_markdown('artifacts/image-dependency-updated.csv', dep_table_fp, 'Image Dependency')
+    else:
+        csv_embed_markdown('artifacts/image-dependency.csv', dep_table_fp, 'Image Dependency')
+    
+    specs = get_specs(path.join(stack_dir, 'spec.yml'))
+    for image in images_built:
+        keys = list(filter(lambda x: x in image, specs['images']))
+        assert len(keys) == 1
+        image_key = keys[0]
+        print('Running image manifest for', image)
+        run_report(specs, image_key, image=image)
+
+    insert_history()
 
 if __name__ == "__main__":
     print("wiki.py: Import Success")

@@ -88,7 +88,7 @@ def get_basic_test_locations(node: Node, stackdir='images', test_common_dirname=
     if not node.filepath:
         raise RunTestError(f'Must specify node.filepath for {node}')
     common_tests = os.path.join(stackdir, test_common_dirname)
-    return [common_tests, node.filepath]
+    return [common_tests, os.path.join(node.filepath, 'test')]
 
 
 def setup_testing_environment(node: Node):
@@ -248,6 +248,7 @@ def build_and_test_containers(
     logger.info("Updating home.md")
     wiki.update_Home(images_full_names=full_names, git_short_hash=root.git_suffix)
     logger.info("home.md updated")
+
     
 
 if __name__ == '__main__':
