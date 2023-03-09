@@ -233,7 +233,12 @@ def build_and_test_containers(
         filename = result.safe_full_image_name
         if 'build_log' in result.container_details:
             build_log = result.container_details.pop('build_log')
-            fs.store(filename + '.log', build_log)
+            fs.store(filename + '.build.log', build_log, fs.LOGS_PATH)
+        
+        if 'test_log' in result.test_results:
+            test_log = result.test_results.pop('test_results')
+            fs.store(filename + '.basic-tests.log', test_log, fs.LOGS_PATH)
+    
         formatted_result = format_result(result)
         resp = fs.store(filename + '.yaml', formatted_result)
         if not resp:
