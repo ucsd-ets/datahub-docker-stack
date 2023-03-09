@@ -51,24 +51,21 @@ class TestRunner(unittest.TestCase):
     def test_build_all(self):
         c1 = Node(
             image_name='datascience-notebook',
-            git_suffix='test',
             filepath='images'
         )
         c2 = Node(
             image_name='scipy-ml-notebook',
-            git_suffix='test',
             filepath='images',
             integration_tests=True
         )
         c3 = Node(
             image_name='rstudio-notebook',
-            git_suffix='test',
             filepath='images'
         )
         root = Node(
             image_name='datahub-base-notebook',
-            git_suffix='test',
             filepath='images',
+            git_suffix='test',
             children=[
                 c1, c2, c3
             ],

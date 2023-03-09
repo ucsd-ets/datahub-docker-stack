@@ -29,10 +29,11 @@ def build(node: Node) -> Tuple[bool, str]:
     Args:
         node (Node): node to build
     """
-    logger.info(f"Build {node.image_name} now")
+    logger.info(f"Build {node.image_name} now with buildargs = {node.build_args}")
     print("Now we have these images: ", __docker_client.images.list())
     try:
         report = ''
+        logger.debug(f'Build')
         for line in __docker_client.api.build(
             path=node.filepath,
             dockerfile=node.dockerfile,
@@ -181,8 +182,8 @@ def prune(full_image_name: str) -> int:
     try:
         __docker_client.images.remove(image=full_image_name, force=True)
         prune_funcs = [
+            ('containers.prune', __docker_client.containers.prune)
             ('images.prune', __docker_client.images.prune),
-            ('networks.prune', __docker_client.networks.prune),
             ('volumes.prune', __docker_client.volumes.prune)
         ]
         total_space_reclaimed = 0
