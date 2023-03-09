@@ -201,6 +201,8 @@ def prune(full_image_name: str) -> int:
                 continue
             total_space_reclaimed += resp.pop('SpaceReclaimed')
 
+        logger.info("Forcing system prune docker prune -af")
+        os.system('docker prune -af')
         return total_space_reclaimed
     except Exception as e:
         logger.error(f"couldn't prune docker; {e}")
