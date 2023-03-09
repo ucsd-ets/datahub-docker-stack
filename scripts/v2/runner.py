@@ -236,7 +236,7 @@ def build_and_test_containers(
             fs.store(filename + '.build.log', build_log, fs.LOGS_PATH)
         
         if 'test_log' in result.test_results:
-            test_log = result.test_results.pop('test_results')
+            test_log = result.test_results.pop('test_log')
             fs.store(filename + '.basic-tests.log', test_log, fs.LOGS_PATH)
     
         formatted_result = format_result(result)
