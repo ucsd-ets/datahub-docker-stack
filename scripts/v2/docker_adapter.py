@@ -192,7 +192,7 @@ def prune(full_image_name: str) -> int:
 
         for func_name, prune in prune_funcs:
             
-            resp = prune(filters={'dangling': False})
+            resp = prune()
             if not 'SpaceReclaimed' in resp:
                 logger.warning(f'SpaceReclaimed not in API response for prune function {func_name}. keys = {resp.keys()}')
                 continue
