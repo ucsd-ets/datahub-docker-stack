@@ -52,24 +52,21 @@ class TestRunner(unittest.TestCase):
     def test_build_all(self):
         c1 = Node(
             image_name='datascience-notebook',
-            git_suffix='test',
             filepath='images'
         )
         c2 = Node(
             image_name='scipy-ml-notebook',
-            git_suffix='test',
             filepath='images',
             integration_tests=True
         )
         c3 = Node(
             image_name='rstudio-notebook',
-            git_suffix='test',
             filepath='images'
         )
         root = Node(
             image_name='datahub-base-notebook',
-            git_suffix='test',
             filepath='images',
+            git_suffix='test',
             children=[
                 c1, c2, c3
             ],
@@ -94,8 +91,8 @@ class TestRunner(unittest.TestCase):
         # # single integration test + 4 images basic tested
         assert mock_tester.call_count == 5, mock_tester.call_count
 
-        # a log file and a yaml file per image
-        assert mock_store.call_count == 8, mock_store.call_count
+        # a build log file, test log file, and a yaml file per image
+        assert mock_store.call_count == 12, mock_store.call_count
 
     def test_build_some(self):
         c1 = Node(
@@ -138,8 +135,8 @@ class TestRunner(unittest.TestCase):
 
         # single basic test
         assert mock_tester.call_count == 1, mock_tester.call_count
-        # 4 yamls, 1 log file for actually built image
-        assert mock_store.call_count == 5, mock_store.call_count
+        # 4 yamls, 1 build log file & 1 test log file for actually built image
+        assert mock_store.call_count == 6, mock_store.call_count
     
     def test_build_none(self):
         c1 = Node(

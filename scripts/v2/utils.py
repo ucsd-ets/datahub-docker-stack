@@ -11,6 +11,8 @@ from pandas import NaT, Series, read_csv, concat
 from collections import deque
 from typing import List, Dict
 
+__logger_setup = False
+
 def get_specs(f_yaml:str)->Dict:
     """
     Parse specs from yaml file name to dict
@@ -279,9 +281,26 @@ def get_level_order(image)->dict:
     return order
 
 def get_logger(level: int = logging.INFO):
-    logging.basicConfig()
+    global __logger_setup
+    
     logger = logging.getLogger('datahub_docker_stacks')
     logger.setLevel(level)
+    if __logger_setup:
+        return logger
+    
+    logging.basicConfig()
+    logger = logging.getLogger('datahub_docker_stacks')
+
+    formatter = logging.Formatter("%(levelname)s:%(message)s")
+
+    file_handler = logging.FileHandler("logs/run.log")
+    file_handler.setFormatter(formatter)
+    logger.addHandler(file_handler)
+
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(formatter)
+    logger.addHandler(console_handler)
+    __logger_setup = True
     return logger
 
 def str_presenter(dumper, data):

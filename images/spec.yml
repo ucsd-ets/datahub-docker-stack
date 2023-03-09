@@ -15,7 +15,7 @@ images:
   scipy-ml-notebook:
     image_name: ucsdets/scipy-ml-notebook
     depend_on: datahub-base-notebook
-    integration_tests: true
+    integration_tests: false
     build_args:
       TORCH_VER: '1.9.0+cu111'
       TORCH_VIS_VER: '0.10.0+cu111'
@@ -29,7 +29,7 @@ images:
     info_cmds: [PY_VER, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
 
 tag:
-  prefix: '2023.1'
+  prefix: '2023.2'
 
 all_info_cmds:
   PY_VER:

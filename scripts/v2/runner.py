@@ -88,7 +88,7 @@ def get_basic_test_locations(node: Node, stackdir='images', test_common_dirname=
     if not node.filepath:
         raise RunTestError(f'Must specify node.filepath for {node}')
     common_tests = os.path.join(stackdir, test_common_dirname)
-    return [common_tests, node.filepath]
+    return [common_tests, os.path.join(node.filepath, 'test')]
 
 
 def setup_testing_environment(node: Node):
@@ -183,12 +183,17 @@ def build_and_test_containers(
         result.container_details['build_log'] = report
         if not image_built:
             result.success = False
+            logger.error(f"couldn't build {node.full_image_name}")
             results.append(result)
             continue
-
+        logger.info(f"successfully built {node.full_image_name}")
+    
         # basic and common tests
+        logger.info(f"Testing {node.full_image_name}")
         setup_testing_environment(node)
         resp = run_basic_tests(node, result)
+        if 'test_log' in result.test_results:
+            logger.debug(result.test_results['test_log'])
         if not resp:
             results.append(result)
             continue
@@ -213,7 +218,7 @@ def build_and_test_containers(
         #       has been successfully [built, pushed, tested]
         image_obj = docker_adapter.get_image_obj(node)
         if image_obj is not None:
-            wiki.write_report(node, all_info_cmds)
+            wiki.write_report(node, image_obj, all_info_cmds)
         else:
             print(f"*** Unable to get {node.full_image_name}")
 
@@ -222,7 +227,7 @@ def build_and_test_containers(
         print(f"{node.image_name} reached here")
         full_names.append(result.full_image_name)
 
-        space_reclaimed = convert_size(docker_adapter.prune())
+        space_reclaimed = convert_size(docker_adapter.prune(node.full_image_name))
         logger.info(f"Reclaimed {space_reclaimed} from pruning docker")
 
     # store results 
@@ -230,14 +235,22 @@ def build_and_test_containers(
         filename = result.safe_full_image_name
         if 'build_log' in result.container_details:
             build_log = result.container_details.pop('build_log')
-            fs.store(filename + '.log', build_log)
+            fs.store(filename + '.build.log', build_log, fs.LOGS_PATH)
+        
+        if 'test_log' in result.test_results:
+            test_log = result.test_results.pop('test_log')
+            fs.store(filename + '.basic-tests.log', test_log, fs.LOGS_PATH)
+    
         formatted_result = format_result(result)
         resp = fs.store(filename + '.yaml', formatted_result)
         if not resp:
             raise OSError("couldn't store results into artifacts directory")
 
     # # update Home.md
+    logger.info("Updating home.md")
     wiki.update_Home(images_full_names=full_names, git_short_hash=root.git_suffix)
+    logger.info("home.md updated")
+
     
 
 if __name__ == '__main__':
@@ -248,7 +261,12 @@ if __name__ == '__main__':
             'datahub-base-notebook': {
                 'build_args': {
                     'PYTHON_VERSION': 'python-3.9.5'
-                }
+                },
+                'info_cmds': [
+                    'PY_VER',
+                    'CONDA_INFO',
+                    'CONDA_LIST'
+                ]
             },
             # 'datascience-notebook': {
             #     'depend_on': 'datahub-base-notebook',
@@ -256,6 +274,21 @@ if __name__ == '__main__':
             # }
         }
     }
+
+    all_info_cmds = {
+            'PY_VER': {
+                'description': 'Python Version',
+                'command': 'python --version'
+            },
+            'CONDA_INFO': {
+                'description': 'Conda Info',
+                'command': 'conda info'
+            },
+            'CONDA_LIST': {
+                'description': 'Conda Packages',
+                'command': 'conda list'
+            },
+        }
 
     tree = build_tree(spec_yaml=test_spec, images_changed=[
                       'datahub-base-notebook'], git_suffix='test')
@@ -265,6 +298,10 @@ if __name__ == '__main__':
     if not dockerhub_username or not dockerhub_token:
         logger.error('dockerhub username or password not set')
         exit(1)
+    
+    if not os.path.exists('manifests'):
+        logger.error('You must have a manifests/ directory at this root')
+        exit(1)
 
     build_and_test_containers(
-        root=tree, username=dockerhub_username, password=dockerhub_token, tag_prefix='test')
+        root=tree, username=dockerhub_username, password=dockerhub_token, tag_prefix='test', all_info_cmds=all_info_cmds)

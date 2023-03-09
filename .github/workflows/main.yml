@@ -1,5 +1,8 @@
 name: Docker
 
+env:
+  DOCKER_CLIENT_TIMEOUT: "300"
+
 on:
   push:
     branches: [ main, refractor_buildtest ]
@@ -102,10 +105,9 @@ jobs:
       #     DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
       #     DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
       #   run: |
-      #     [ -f artifacts/IMAGES_BUILT ] && [ -s artifacts/IMAGES_BUILT ] && doit manifest || echo "no image updated"
       #     ls manifests/*.md &> /dev/null && cp manifests/*.md wiki/ && echo "*.md copied to wiki" || echo "no *.md"
-      # if there is no image updated, skip doit
-      # if there is no *.md (no image updated), skip cp command
+      # # if there is no image updated, skip doit
+      # # if there is no *.md (no image updated), skip cp command
 
       # - name: Push Wiki to GitHub
       #   if: >
@@ -130,3 +132,4 @@ jobs:
             artifacts
             logs
             manifests
+            wiki

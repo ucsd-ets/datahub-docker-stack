@@ -6,10 +6,13 @@ import pandas as pd
 
 from scripts.v2.tree import Node
 from scripts.v2.utils import get_logger
+import os
+
 
 logger = get_logger()
 
 __docker_client = docker_client.from_env()
+
 
 class DockerError(Exception):
     pass
@@ -26,10 +29,11 @@ def build(node: Node) -> Tuple[bool, str]:
     Args:
         node (Node): node to build
     """
-    logger.info(f"Build {node.image_name} now")
-    print("Now we have these images: ", __docker_client.images.list())
+    logger.info(f"Build {node.image_name} now with buildargs = {node.build_args}")
+    
     try:
         report = ''
+        logger.debug(f'Build')
         for line in __docker_client.api.build(
             path=node.filepath,
             dockerfile=node.dockerfile,
@@ -40,7 +44,7 @@ def build(node: Node) -> Tuple[bool, str]:
         ):
             raw_lines = line.decode('utf-8').split('\n')
             raw_lines = [line.rstrip() for line in raw_lines]
-            
+
             for raw_line in raw_lines:
                 try:
                     line_data = json.loads(raw_line, strict=False)
@@ -49,9 +53,10 @@ def build(node: Node) -> Tuple[bool, str]:
                         continue
                     # print(line_data['stream'])
                     report += line_data['stream']
-                    logger.debug(line_data['stream'])
+                    logger.debug(f"{node.image_name}:{line_data['stream']}")
                 except:
                     pass
+        print("Now we have these images: ", __docker_client.images.list())
         return True, report
     except Exception as e:
         logger.error("couldnt build docker image; " + str(e))
@@ -72,7 +77,8 @@ def login(
         r = __docker_client.login(username, password, registry=registry)
         if 'Status' in r.keys() and 'succeeded' in r['Status'].lower():
             return True
-        raise ValueError(f'Username/password incorrect for registry {registry}')
+        raise ValueError(
+            f'Username/password incorrect for registry {registry}')
     except docker_client.errors.APIError as e:
         raise DockerError(e)
 
@@ -85,7 +91,7 @@ def push(node: Node) -> Tuple[bool, str]:
 
         stream = __docker_client.images.push(
             node.image_name, node.image_tag, stream=True, decode=True)
-        
+
         res = ""
         for chunk in stream:
             logger.info(chunk)
@@ -105,7 +111,7 @@ def push(node: Node) -> Tuple[bool, str]:
                 # regular progress
                 else:
                     logger.info('.')
-        
+
         return True, res
     except Exception as e:
         logger.error(e)
@@ -114,16 +120,15 @@ def push(node: Node) -> Tuple[bool, str]:
     finally:
         __docker_client.close()
 
+
 def get_image_obj(node: Node) -> docker_client.models.images.Image:
     # check (if str in List) before get image object
-    try: 
-        img_obj = __docker_client.images.get(node.full_image_name)
-    except docker.errors.ImageNotFound as e:
+    try:
+        return __docker_client.images.get(node.full_image_name)
+    except docker_client.errors.ImageNotFound:
         logger.error(f"{node.full_image_name} not inside the \
-            docker env {__docker_client.images.list()}.")
+                docker env {__docker_client.images.list()}.")
         return None
-    else:
-        return img_obj
 
 
 def run_simple_command(node: Node, cmd: str) -> Tuple[str, bool]:
@@ -143,12 +148,13 @@ def run_simple_command(node: Node, cmd: str) -> Tuple[str, bool]:
     try:
         container = __docker_client.containers.run(
             image=node.image_name, command=cmd, detach=True,
-        )   # If detach is True, a Container object is returned instead. 
+        )   # If detach is True, a Container object is returned instead.
     except Exception as e:
         logger.error(e)
-        print(f"*** docker container failed to run on image {node.image_name} ***")
+        print(
+            f"*** docker container failed to run on image {node.image_name} ***")
         return "Failed to create container", False
-    
+
     logger.info(f"Container {container.name} created")
 
     # Run command
@@ -156,41 +162,54 @@ def run_simple_command(node: Node, cmd: str) -> Tuple[str, bool]:
     try:
         out = container.exec_run(cmd)
         assert out.exit_code == 0, f"Command: {cmd} failed"
+        result_str = out.output.decode("utf-8").rstrip()
+        logger.info(f"Command result: {result_str}")
+
+        return result_str, True
     except Exception as e:
         logger.error(e)
-        print(f"*** docker container on image {node.image_name} failed to exec cmd {cmd} ***")
+        print(
+            f"*** docker container on image {node.image_name} failed to exec cmd {cmd} ***")
         return "Failed to execute cmd", False
+    finally:
+        if container:
+            logger.info(f"Removing container {container.name} ...")
+            container.remove(force=True)
+            logger.info(f"Container {container.name} removed")
+        __docker_client.close()
+
+def list_images():
+    try:
+        return __docker_client.images.list()
+    except Exception as e:
+        logger.error(f'couldnt list images; {e}')
     finally:
         __docker_client.close()
 
-    result_str = out.output.decode("utf-8").rstrip()
-    logger.info(f"Command result: {result_str}")
-
-    # Remove container
-    if container:
-        logger.info(f"Removing container {container.name} ...")
-        container.remove(force=True)
-        logger.info(f"Container {container.name} removed")
-
-    return result_str, True
-
-def prune() -> int:
+def prune(full_image_name: str) -> int:
     try:
-        prune_funcs = [
-            __docker_client.containers.prune,
-            __docker_client.images.prune,
-            __docker_client.networks.prune,
-            __docker_client.volumes.prune
-        ]
+        # __docker_client.images.remove(image=full_image_name, force=True)
+        # prune_funcs = [
+        #     ('containers.prune', __docker_client.containers.prune),
+        #     ('images.prune', __docker_client.images.prune),
+        #     ('volumes.prune', __docker_client.volumes.prune)
+        # ]
         total_space_reclaimed = 0
 
-        for prune in prune_funcs:
-            resp = prune()
-            if not 'SpaceReclaimed' in resp:
-                logger.warning(f'SpaceReclaimed not in API response for prune function {prune.__name__}')
-                continue
-            total_space_reclaimed += resp.pop('SpaceReclaimed')
+        # # prune funcs may timeout, see https://github.com/docker/compose/issues/3927
+        # os.environ['DOCKER_CLIENT_TIMEOUT'] = '300'
+        # os.environ['COMPOSE_HTTP_TIMEOUT'] = '300'
 
+        # for func_name, prune in prune_funcs:
+        #     resp = prune()
+        #     if not 'SpaceReclaimed' in resp:
+        #         logger.warning(
+        #             f'SpaceReclaimed not in API response for prune function {func_name}. keys = {resp.keys()}')
+        #         continue
+        #     total_space_reclaimed += resp.pop('SpaceReclaimed')
+
+        logger.info("Forcing system prune docker prune -af")
+        os.system('docker system prune -af')
         return total_space_reclaimed
     except Exception as e:
         logger.error(f"couldn't prune docker; {e}")
