@@ -1,6 +1,7 @@
 from scripts.v2.runner import *
 from scripts.v2.tree import *
 from scripts.v2.fs import *
+from scripts.v2.wiki import *
 from unittest.mock import MagicMock, patch
 import unittest
 import pytest
@@ -45,7 +46,7 @@ class TestRunner(unittest.TestCase):
         run_test()
 
         return (
-            mock_login, mock_build, mock_push, mock_tester, mock_store
+            mock_login, mock_build, mock_push, mock_tester, mock_store, mock_wiki, mock_prune
         )
     
     def test_build_all(self):
@@ -75,7 +76,8 @@ class TestRunner(unittest.TestCase):
             rebuild=True
         )
 
-        mock_login, mock_build, mock_push, mock_tester, mock_store = self.run_build_and_test_containers(root)
+        mock_login, mock_build, mock_push, mock_tester, mock_store, mock_wiki, mock_prune \
+            = self.run_build_and_test_containers(root)
         # build_and_test_containers(root, 'fake', 'fakepw', 'test')
 
         mock_login.assert_called_with('fake', 'fakepw')
@@ -123,7 +125,8 @@ class TestRunner(unittest.TestCase):
             rebuild=False
         )
 
-        mock_login, mock_build, mock_push, mock_tester, mock_store = self.run_build_and_test_containers(root)
+        mock_login, mock_build, mock_push, mock_tester, mock_store, mock_wiki, mock_prune \
+            = self.run_build_and_test_containers(root)
         mock_login.assert_called_with('fake', 'fakepw')
         imgs_looped_through = ['rstudio-notebook']
         
@@ -167,11 +170,13 @@ class TestRunner(unittest.TestCase):
             ],
             rebuild=False
         )
-        login, build, push, tester, store = self.run_build_and_test_containers(root)
+        login, build, push, tester, store, wiki, prune = self.run_build_and_test_containers(root)
         login.assert_called_with('fake', 'fakepw')
         assert build.call_count == 0
         assert push.call_count == 0
         assert tester.call_count == 0
+        assert wiki.call_count == 0
+        assert prune.call_count == 0
 
         should_be = [
             Result(success=True, full_image_name='datahub-base-notebook:test-test', container_details={'image_built': False}),
