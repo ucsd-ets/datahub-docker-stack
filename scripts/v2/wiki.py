@@ -296,6 +296,8 @@ if __name__ == "__main__":
     """ hist = img_obj.history()
     print("raw history string: \n", hist)
     print("converted to DF: \n", pd.DataFrame(hist).convert_dtypes()) """
-    pd.set_option('display.max_columns', None)
-    print(get_layers_md_table(test_node, img_obj))
+    # pd.set_option('display.max_columns', None)
+    # print(get_layers_md_table(test_node, img_obj))
     # write_report(node=test_node, image=img_obj, all_info_cmds=all_info_cmds)
+    res = run_outputs(test_node, all_info_cmds)
+    print(res)
