@@ -162,6 +162,7 @@ def run_simple_command(node: Node, cmd: str) -> Tuple[str, bool]:
         print(f"*** docker container on image {node.image_name} failed to exec cmd {cmd} ***")
         return "Failed to execute cmd", False
     finally:
+        container.remove(force=True)
         __docker_client.close()
 
     result_str = out.output.decode("utf-8").rstrip()
