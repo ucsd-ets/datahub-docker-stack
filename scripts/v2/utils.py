@@ -161,9 +161,9 @@ def insert_row(md_str:str, new_content:list)->str:
                             2], lines[table_i[0]+2:table_i[-1]+1]
 
     n_columns = header[0].count('|') - 1
-    print(n_columns)
+    # print(n_columns)
     for line_tup in new_content:
-        print(line_tup)
+        # print(line_tup)
         assert len(line_tup) == n_columns
         assert all(isinstance(s, str) for s in line_tup)
 

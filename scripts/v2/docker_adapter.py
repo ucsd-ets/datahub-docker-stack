@@ -147,12 +147,12 @@ def run_simple_command(node: Node, cmd: str) -> Tuple[str, bool]:
     logger.info(f"Following images exist: {__docker_client.images.list()}")
     try:
         container = __docker_client.containers.run(
-            image=node.image_name, command=cmd, detach=True,
+            image=node.full_image_name, command=cmd, detach=True,
         )   # If detach is True, a Container object is returned instead.
     except Exception as e:
         logger.error(e)
         print(
-            f"*** docker container failed to run on image {node.image_name} ***")
+            f"*** docker container failed to run on image {node.full_image_name} ***")
         return "Failed to create container", False
 
     logger.info(f"Container {container.name} created")
