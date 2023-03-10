@@ -9,7 +9,7 @@ import docker
 import pandas as pd
 
 from scripts.v2.utils import *
-from scripts.v2.tree import Node
+from scripts.v2.tree import Node, load_spec
 from scripts.v2.docker_adapter import run_simple_command, __docker_client
 from scripts.v2.git_helper import GitHelper     # has it been used?
 from scripts.v2.fs import MANIFEST_PATH
@@ -108,6 +108,11 @@ def write_report(
     """Call run_outputs(), then format and store the outputs to <image_fullname>.md
     Wrapper around run_outputs() and get_layers_md_table()
 
+    Note:
+        There will be 2 copies.
+        One in wiki/, where it waits to be commited (if action in main) and made public.
+        One in manifests/, so developers can look at it after downloading the build-artifacts.
+
     Args:
         node (Node): _description_
         image (docker.models.images.Image): the actual image object, not image name
@@ -153,15 +158,38 @@ f"""
 
     stitched = '\n'.join(sections).strip()
     manifest_fn = fulltag2fn(node.full_image_name)
+
+    # store in wiki/
+    wiki_path = path.join('wiki', f"{manifest_fn}.md")
+    with open(wiki_path, 'w') as f:
+        f.write(stitched)
+    
+    # store a copy in manifests/
     output_path = path.join(output_dir, f"{manifest_fn}.md")
     with open(output_path, 'w') as f:
         f.write(stitched)
 
-    print(f"*** Individual wiki page {manifest_fn}.md successfully written.")
+    logger.info(f"*** Individual wiki page {manifest_fn}.md successfully written.")
+
+
+def wiki_doc2link(fullname: str) -> str:
+    """ Helper function
+    Given: ucsdets/rstudio-notebook:2023.1-7d75f9f
+    Returns: [Link](https://github.com/ucsd-ets/datahub-docker-stack/wiki/ucsdets-rstudio-notebook-2023.1-7d75f9f)
+    """
+    repo_url = f"https://github.com/ucsd-ets/datahub-docker-stack"
+    assert fullname.count(':') == 1 and fullname.count('/') <= 1, \
+        f"Wrong image full name format: {fullname}"
+    fullname = fullname.replace(':', '-').replace('/', '-')
+    link = url2mdlink(repo_url + '/wiki/' + fullname, 'Link')
+    return link
 
 
 def update_Home(images_full_names: List[str], git_short_hash: str) -> bool:
     """update Home.md (the page on https://github.com/ucsd-ets/datahub-docker-stack/wiki)
+    It will only update the (local) Home.md in wiki/ in the workflow cache.
+    A separate action (see .github/workflows/main.yml, Push Wiki to Github) will make it 
+    public.
 
     Args:
         images_full_names (List[str]): a list of full image names (successfully built & tested). 
@@ -174,28 +202,15 @@ def update_Home(images_full_names: List[str], git_short_hash: str) -> bool:
         logger.info(f"commit {git_short_hash} has no successful image to update Home.md")
         return True
     
-    repo_url = f"https://github.com/ucsd-ets/datahub-docker-stack"
-    # repo_url = f"https://github.com/{environ['GITHUB_REPOSITORY']}"
-    
+
     # 1st column: commit link [git_short_hash](LINK)
-    
+    repo_url = f"https://github.com/ucsd-ets/datahub-docker-stack"
     cell_commit = url2mdlink(repo_url + '/commit/' + git_short_hash, f"`{git_short_hash}`")
 
     # 2nd column: images full name
     cell_images = list2cell([f"`{image}`" for image in images_full_names])
 
     # 3rd column: image wiki page link ["LINK"](LINK)
-    def wiki_doc2link(fullname: str) -> str:
-        """ Helper function
-        Given: ucsdets/rstudio-notebook:2023.1-7d75f9f
-        Returns: [Link](https://github.com/ucsd-ets/datahub-docker-stack/wiki/ucsdets-rstudio-notebook-2023.1-7d75f9f)
-        """
-        assert fullname.count(':') == 1 and fullname.count('/') <= 1, \
-            f"Wrong image full name format: {fullname}"
-        fullname = fullname.replace(':', '-').replace('/', '-')
-        link = url2mdlink(repo_url + '/wiki/' + fullname, 'Link')
-        return link
-
     try:
         manifests_links = [wiki_doc2link(fullname=image) for image in images_full_names]
     except AssertionError as e:
@@ -224,42 +239,60 @@ def update_Home(images_full_names: List[str], git_short_hash: str) -> bool:
 
     return True
 
-def insert_history():
-    with open(path.join('wiki', 'Home.md'), 'r') as f:
-        doc_str = f.read()
 
-    latest_row = compile_history()
-    # compile history() returns 3 var, so lastest row is a tuple
-    latest_doc = insert_row(doc_str, [latest_row])
-    # latest_doc = insert_row(doc_str, latest_row)
+def update_Stable():
+    # Load data
+    try:
+        # 1st col: Image
+        # each cell_img is like ucsdets/datahub-base-notebook:2023.1-c11a915
+        images_full_names = read_var('IMAGES_TAGGED')
+        cell_images = list2cell([f"`{image}`" for image in images_full_names])
 
-    with open(path.join('wiki', 'Home.md'), 'w') as f:
-        f.write(latest_doc)
+        # 2nd col: Based On
+        # each orig_img is like ucsdets/datahub-base-notebook:2023.1-stable
+        orig_images = list2cell([f"`{image}`" for image in read_var('IMAGES_ORIGINAL')])
 
-def run_manifests(images_built: List[str]):
-    # FIXME abstract stack_dir
-    stack_dir = 'images'
-    image_deps = json2series(read_dict('image-dependency.json'), 'dep', 'image')
-    store_series(image_deps, 'image-dependency')
+        # 3rd col: Manifest
+        manifests_links = [wiki_doc2link(fullname=image) for image in images_full_names]
+        cell_manifests = list2cell(manifests_links)
 
-    # Write image dependency table to wiki
-    dep_table_fp = 'wiki/Image Dependency.md'
-    if isfile(dep_table_fp):
-        old_csv = strip_csv_from_md(dep_table_fp)
-        csv_concat(old_csv, 'artifacts/image-dependency.csv', 'artifacts/image-dependency-updated.csv')
-        csv_embed_markdown('artifacts/image-dependency-updated.csv', dep_table_fp, 'Image Dependency')
-    else:
-        csv_embed_markdown('artifacts/image-dependency.csv', dep_table_fp, 'Image Dependency')
+    except AssertionError as e:
+        logger.error(f"Error when loading data for Stable Tag.md: {e}")
+        return False
+
+    # Reconstruct Stable Tag.md
+    header = ['| Image | Based On | Manifest |']
+    divider = ['| :- | :- | :- |']
+    content = ['|'.join([
+        "",     # such that we have start and ending '|'
+        images_full_names,
+        orig_images,
+        manifests_links,
+        ""
+    ])]
+    doc = '\n'.join(header + divider + content)
+    with open(path.join('wiki', 'Stable Tag.md'), 'w') as f:
+        f.write(doc)
+
+    return True
+
+
     
-    specs = get_specs(path.join(stack_dir, 'spec.yml'))
-    for image in images_built:
-        keys = list(filter(lambda x: x in image, specs['images']))
-        assert len(keys) == 1
-        image_key = keys[0]
-        print('Running image manifest for', image)
-        run_report(specs, image_key, image=image)
 
-    insert_history()
+
+    # # concatenate together (form 2 colums in markdown)
+    # cell_images += '|' + orig_images
+
+
+
+
+
+
+
+
+
+
+
 
 if __name__ == "__main__":
     print("wiki.py: Import Success")

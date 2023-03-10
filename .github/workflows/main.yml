@@ -109,19 +109,19 @@ jobs:
       # # if there is no image updated, skip doit
       # # if there is no *.md (no image updated), skip cp command
 
-      # - name: Push Wiki to GitHub
-      #   if: >
-      #     !contains(github.base_ref , 'test') &&
-      #     !contains(github.base_ref , 'dev') &&
-      #     !contains(github.event.head_commit.message , 'skip push') &&
-      #     (
-      #       github.ref == 'refs/heads/master' || 
-      #       github.ref == 'refs/heads/main'
-      #     )
-      #   uses: stefanzweifel/git-auto-commit-action@v4
-      #   with:
-      #     commit_message: "[ci skip] Automated publish for ${{github.sha}}"
-      #     repository: wiki/
+      - name: Push Wiki to GitHub
+        if: >
+          !contains(github.base_ref , 'test') &&
+          !contains(github.base_ref , 'dev') &&
+          !contains(github.event.head_commit.message , 'skip push') &&
+          (
+            github.ref == 'refs/heads/master' || 
+            github.ref == 'refs/heads/main'
+          )
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "[ci skip] Automated publish for ${{github.sha}}"
+          repository: wiki/
 
       - name: Archive artifacts and logs
         if: ${{ always() }}
