@@ -88,4 +88,11 @@ Tests:-
 - Contains the test file for testing the submodule
 - used with pytest can be called with pytest test_*.py
 
+## Artifacts
 
+Build logs & files can be downloaded after the Github Action completes in an build-artifacts.zip file. Files include:
+
+- logs/<image>.build.log: build logs from docker
+- logs/<image>.tests.log: test logs from pytest
+- manifests/<image>.md: generated markdown for the wiki
+- wiki/*.md: all wiki files that have been updated
