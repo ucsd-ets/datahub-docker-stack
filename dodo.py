@@ -12,6 +12,8 @@ from scripts.docker_tagger import run_tagging
 from scripts.manifests import run_manifests, run_stable_manifests
 from scripts.docker_unit import *
 
+from scripts.v2.wiki import update_Stable
+
 
 import pytest
 import requests
@@ -24,6 +26,8 @@ DOIT_CONFIG = dict(
 # get_var(<key>, <default_val>)
 USE_STACK = get_var('stack_dir', 'images')
 
+
+# REMOVE
 def task_unit_build():
     """Build docker image and test it unit wise"""
     # at runtime, configure real objects
@@ -65,6 +69,7 @@ def task_unit_build():
 
     }
 
+# KEEP
 def task_prep():
     """Prep directory for logs and artifacts"""
 
@@ -84,6 +89,8 @@ def task_prep():
         'targets': ['artifacts/.empty', 'logs/.empty', 'manifests/.empty']
     }
 
+
+# REMOVE
 def task_clear():
 
     def _clear():
@@ -96,6 +103,8 @@ def task_clear():
         'actions': [_clear]
     }
 
+
+# REMOVE
 def task_prebuild():
     """Prepare a build stack"""
     return {
@@ -104,6 +113,7 @@ def task_prebuild():
         'targets': ['artifacts/IMAGES_CHANGED', 'artifacts/GIT_*']
     }
 
+# REMOVE
 def task_untested_push():
     """Push all built images that need testing elsewhere"""
     return {
@@ -113,6 +123,7 @@ def task_untested_push():
     }
 
 
+# REMOVE
 def task_push():
     """Push all built images"""
     return {
@@ -121,7 +132,7 @@ def task_push():
         'targets': ['artifacts/IMAGES_PUSHED']
     }
 
-
+# REMOVE
 def task_manifest():
     """Build image manifests for all built images"""
     return {
@@ -138,6 +149,7 @@ def task_manifest():
         ],
     }
 
+# KEEP
 def task_tag():
     """Tag and push images with new tags"""
     return {
@@ -146,21 +158,6 @@ def task_tag():
         'file_dep': ['artifacts/.empty', 'logs/.empty'],
         'targets': ['artifacts/IMAGES_TAGGED'],
         'params':[ 
-            # {
-            #     'name': 'commit_tag',
-            #     'long': 'commit_tag',
-            #     'default': None
-            # },
-            # {
-            #     'name': 'keyword',
-            #     'long': 'keyword',
-            #     'default': None
-            # },
-            # {
-            #     'name': 'tag_replace',
-            #     'long': 'tag_replace',
-            #     'default': None
-            # },
             {
                 'name': 'original_tag',
                 'long': 'original_tag',
@@ -175,9 +172,10 @@ def task_tag():
         ],
     }
 
-
+# KEEP
+# TODO: rewrite function
 def task_stable():
     """Build image manifests for all stable tagged images"""
     return {
-        'actions': [run_stable_manifests]
+        'actions': [update_Stable]
     }

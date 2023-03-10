@@ -53,9 +53,6 @@ jobs:
         run: >
           doit tag
           --original_tag ${{ github.event.inputs.originalTag }}
-        #  --commit_tag ${{ github.event.inputs.commitTag }}
-        #  --keyword ${{ github.event.inputs.keyword }}
-        #  --tag_replace ${{ github.event.inputs.tagReplace }}
 
       - name: Run stable manifests
         env:
@@ -63,7 +60,7 @@ jobs:
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
           doit stable
-          cp manifests/*.md wiki/
+        #  cp manifests/*.md wiki/
 
       - name: Push Wiki to GitHub
         if: >
@@ -86,3 +83,5 @@ jobs:
           name: tag-artifacts
           path: |
             artifacts
+            manifests
+            wiki

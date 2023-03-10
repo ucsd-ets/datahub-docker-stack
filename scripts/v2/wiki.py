@@ -245,27 +245,43 @@ def update_Stable():
     try:
         # 1st col: Image
         # each cell_img is like ucsdets/datahub-base-notebook:2023.1-c11a915
-        images_full_names = read_var('IMAGES_TAGGED')
-        cell_images = list2cell([f"`{image}`" for image in images_full_names])
+        stable_full_names = read_var('IMAGES_TAGGED')
+        cell_images = list2cell([f"`{image}`" for image in stable_full_names])
 
         # 2nd col: Based On
         # each orig_img is like ucsdets/datahub-base-notebook:2023.1-stable
-        orig_images = list2cell([f"`{image}`" for image in read_var('IMAGES_ORIGINAL')])
+        orig_full_names = read_var('IMAGES_ORIGINAL')
+        orig_images = list2cell([f"`{image}`" for image in orig_full_names])
 
         # 3rd col: Manifest
-        manifests_links = [wiki_doc2link(fullname=image) for image in images_full_names]
+        manifests_links = [wiki_doc2link(fullname=image) for image in stable_full_names]
         cell_manifests = list2cell(manifests_links)
 
     except AssertionError as e:
         logger.error(f"Error when loading data for Stable Tag.md: {e}")
         return False
 
+    # Create new wiki pages for stable images, but same content
+    try:
+        for stable_name, orig_name in zip(stable_full_names, orig_full_names):
+            stable_fn = fulltag2fn(stable_name)
+            orig_fn = fulltag2fn(orig_name)
+            with open(path.join('wiki', f'{orig_fn}.md'), 'r') as f:
+                doc_str = f.read()
+            with open(path.join('wiki', f'{stable_fn}.md'), 'w') as f:
+                f.write(doc_str)
+            with open(path.join('wiki', f'{stable_fn}.md'), 'w') as f:
+                f.write(doc_str)   
+    except AssertionError as e:
+        logger.error(f"Error when copying wiki page of each image: {e}")
+        return False         
+
     # Reconstruct Stable Tag.md
     header = ['| Image | Based On | Manifest |']
     divider = ['| :- | :- | :- |']
     content = ['|'.join([
         "",     # such that we have start and ending '|'
-        images_full_names,
+        stable_full_names,
         orig_images,
         manifests_links,
         ""
@@ -276,12 +292,6 @@ def update_Stable():
 
     return True
 
-
-    
-
-
-    # # concatenate together (form 2 colums in markdown)
-    # cell_images += '|' + orig_images
 
 
 
