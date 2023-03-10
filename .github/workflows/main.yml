@@ -76,6 +76,7 @@ jobs:
         run: |
           doit prep
           mkdir -p logs manifests
+          touch logs/run.log
 
       # - name: Workflow tests
       #   env:
