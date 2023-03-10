@@ -34,7 +34,8 @@ def run_outputs(node: Node, all_info_cmds:Dict) -> List[Dict]:
         if key not in all_info_cmds.keys():
             logger.error(f"command definition of {key} in {node.image_name} not found in spec.yml; skip")
             continue
-
+        
+        logging.debug(f"Running command {all_info_cmds[key]['command']}")
         cmd_output, cmd_success = run_simple_command(
             node,
             all_info_cmds[key]['command']
