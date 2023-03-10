@@ -173,7 +173,8 @@ class TestRunner(unittest.TestCase):
         assert push.call_count == 0
         assert tester.call_count == 0
         assert wiki.call_count == 0
-        assert prune.call_count == 0
+        # should be called after every loop
+        assert prune.call_count == 4
 
         should_be = [
             Result(success=True, full_image_name='datahub-base-notebook:test-test', container_details={'image_built': False}),

@@ -116,7 +116,8 @@ jobs:
           !contains(github.event.head_commit.message , 'skip push') &&
           (
             github.ref == 'refs/heads/master' || 
-            github.ref == 'refs/heads/main'
+            github.ref == 'refs/heads/main' ||
+            github.ref == 'refs/heads/refractor_buildtest'
           )
         uses: stefanzweifel/git-auto-commit-action@v4
         with:

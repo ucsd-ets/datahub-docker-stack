@@ -165,99 +165,103 @@ def build_and_test_containers(
     results = []        # no matter success or failure
     full_names = []     # a list of all-success image full names
     for node in node_order:
-        logger.info(f'Processing node = {node.image_name}')
+        try:
+            logger.info(f'Processing node = {node.image_name}')
 
-        result = Result(full_image_name=node.image_name +
-                        ':' + node.image_tag)
+            result = Result(full_image_name=node.image_name +
+                            ':' + node.image_tag)
 
-        # safe short-circuiting when no rebuild needed
-        if not node.rebuild:
-            logger.info(f"skipping node {node.image_name}")
-            result.container_details['image_built'] = False
-            result.success = True
-            results.append(result)
-            continue
+            # safe short-circuiting when no rebuild needed
+            if not node.rebuild:
+                logger.info(f"skipping node {node.image_name}")
+                result.container_details['image_built'] = False
+                result.success = True
+                results.append(result)
+                continue
 
-        # flow-control boolean; cannot `continue` since we need prune (reclaim space)
-        fail_and_stop = False 
+            # flow-control boolean; cannot `continue` since we need prune (reclaim space)
+            fail_and_stop = False 
 
-        # build image
-        print(f"****** Building {node.image_name}, (not skipped)")
-        image_built, report = docker_adapter.build(node)
-        result.container_details['build_log'] = report
-        if not image_built:
-            logger.error(f"couldn't build {node.full_image_name}")
-            # results.append(result)
-            # continue
-            fail_and_stop = True
-        else:
-            logger.info(f"successfully built {node.full_image_name}")
-    
-        # basic and common tests
-        if not fail_and_stop:
-            logger.info(f"Testing {node.full_image_name}")
-            setup_testing_environment(node)
-            resp = run_basic_tests(node, result)
-            if 'test_log' in result.test_results:
-                logger.debug(result.test_results['test_log'])
-
-            if not resp:
+            # build image
+            print(f"****** Building {node.image_name}, (not skipped)")
+            image_built, report = docker_adapter.build(node)
+            result.container_details['build_log'] = report
+            if not image_built:
+                logger.error(f"couldn't build {node.full_image_name}")
                 # results.append(result)
                 # continue
                 fail_and_stop = True
-                logger.error(f"{node.full_image_name} failed common tests")
             else:
-                logger.info(f"{node.full_image_name} passed common tests")
-
-        # push step
-        if not fail_and_stop:
-            resp, report = docker_adapter.push(node)
-            result.container_details['push_success'] = resp
-            result.container_details['push_log'] = report
-            if not resp:
-                # results.append(result)
-                # continue
-                fail_and_stop = True
-                logger.error(f"couldn't push {node.full_image_name}")
-            else:
-                logger.info(f"{node.full_image_name} pushed successfully")
-
-        # integration tests
-        if not fail_and_stop:
-            resp = run_integration_tests(node, result)
-            if not resp:
-                # results.append(result)
-                # continue
-                logger.error(f"{node.full_image_name} failed integration test")
-                fail_and_stop = True
-            else:
-                logger.info(f"{node.full_image_name} passed integration tests (or don't have any)")
-
-        # update wiki page of individual image that
-        #       has been successfully [built, pushed, tested]
-        if not fail_and_stop:
-            image_obj = docker_adapter.get_image_obj(node)
-            if image_obj is not None:
-                wiki.write_report(node, image_obj, all_info_cmds)
-                logger.info(f"{node.full_image_name} wiki page is created")
-            else:
-                logger.error(f"*** Unable to get {node.full_image_name}")
-                fail_and_stop = True
-
-        # if all-passed, the image should appear on Home.md
-        if not fail_and_stop:
-            logger.info(f"{node.full_image_name} will appear on Home.md")
-            full_names.append(result.full_image_name)
-
-        # Conclude the build-test-push-wiki result for this image
-        result.success = not fail_and_stop
-        results.append(result)
-        logger.info(f"*** Build-and-Test main loop: {node.image_name} success ? {result.success}")
+                logger.info(f"successfully built {node.full_image_name}")
         
-        # delete cache and reclaim space
-        space_reclaimed = convert_size(docker_adapter.prune(node.full_image_name))
-        logger.info(f"Reclaimed {space_reclaimed} from pruning docker")
+            # basic and common tests
+            if not fail_and_stop:
+                logger.info(f"Testing {node.full_image_name}")
+                setup_testing_environment(node)
+                resp = run_basic_tests(node, result)
+                if 'test_log' in result.test_results:
+                    logger.debug(result.test_results['test_log'])
 
+                if not resp:
+                    # results.append(result)
+                    # continue
+                    fail_and_stop = True
+                    logger.error(f"{node.full_image_name} failed common tests")
+                else:
+                    logger.info(f"{node.full_image_name} passed common tests")
+
+            # push step
+            if not fail_and_stop:
+                resp, report = docker_adapter.push(node)
+                result.container_details['push_success'] = resp
+                result.container_details['push_log'] = report
+                if not resp:
+                    # results.append(result)
+                    # continue
+                    fail_and_stop = True
+                    logger.error(f"couldn't push {node.full_image_name}")
+                else:
+                    logger.info(f"{node.full_image_name} pushed successfully")
+
+            # integration tests
+            if not fail_and_stop:
+                resp = run_integration_tests(node, result)
+                if not resp:
+                    # results.append(result)
+                    # continue
+                    logger.error(f"{node.full_image_name} failed integration test")
+                    fail_and_stop = True
+                else:
+                    logger.info(f"{node.full_image_name} passed integration tests (or don't have any)")
+
+            # update wiki page of individual image that
+            #       has been successfully [built, pushed, tested]
+            if not fail_and_stop:
+                image_obj = docker_adapter.get_image_obj(node)
+                if image_obj is not None:
+                    wiki.write_report(node, image_obj, all_info_cmds)
+                    logger.info(f"{node.full_image_name} wiki page is created")
+                else:
+                    logger.error(f"*** Unable to get {node.full_image_name}")
+                    fail_and_stop = True
+
+            # if all-passed, the image should appear on Home.md
+            if not fail_and_stop:
+                logger.info(f"{node.full_image_name} will appear on Home.md")
+                full_names.append(result.full_image_name)
+
+            # Conclude the build-test-push-wiki result for this image
+            result.success = not fail_and_stop
+            results.append(result)
+            logger.info(f"*** Build-and-Test main loop: {node.image_name} success ? {result.success}")
+            
+
+        except Exception as e:
+            logger.error(f"Uncaught exception during container_build_and_test loop; {e}")
+        finally:
+            # delete cache and reclaim space
+            space_reclaimed = convert_size(docker_adapter.prune(node.full_image_name))
+            logger.info(f"Reclaimed {space_reclaimed} from pruning docker")
         ### EXIT main loop ###
 
     # store results 

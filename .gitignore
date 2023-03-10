@@ -12,6 +12,12 @@ manifests/
 .doit*
 wiki/
 
+# venv
+share/
+lib64
+pyvenv.cfg
+
+
 # IDE
 .vscode/
 lib/
