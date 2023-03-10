@@ -7,18 +7,6 @@ on:
         description: 'Orginal tag of images to be stable'
         default: '2099.3-somehash'
         required: true
-      #commitTag:
-      #  description: 'Commit hash in cell'
-      #  default: 'deadb33f'
-      #  required: true
-      #keyword:
-      #  description: 'Filter by keyword'
-      #  default: '2021.3'
-      #  required: true
-      #tagReplace:
-      #  description: 'New tag to replace'
-      #  default: '2021.3.X'
-      #  required: true
 
 jobs:
   tagging:
@@ -65,9 +53,6 @@ jobs:
         run: >
           doit tag
           --original_tag ${{ github.event.inputs.originalTag }}
-        #  --commit_tag ${{ github.event.inputs.commitTag }}
-        #  --keyword ${{ github.event.inputs.keyword }}
-        #  --tag_replace ${{ github.event.inputs.tagReplace }}
 
       - name: Run stable manifests
         env:
@@ -75,7 +60,7 @@ jobs:
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
           doit stable
-          cp manifests/*.md wiki/
+        #  cp manifests/*.md wiki/
 
       - name: Push Wiki to GitHub
         if: >
@@ -98,3 +83,5 @@ jobs:
           name: tag-artifacts
           path: |
             artifacts
+            manifests
+            wiki
