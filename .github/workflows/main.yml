@@ -100,28 +100,28 @@ jobs:
           python3 scripts/v2/main.py
       #   used for building, prepushing, testing and pushing module
 
-      # - name: Run manifests
-      #   env:
-      #     DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-      #     DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
-      #   run: |
-      #     ls manifests/*.md &> /dev/null && cp manifests/*.md wiki/ && echo "*.md copied to wiki" || echo "no *.md"
-      # # if there is no image updated, skip doit
-      # # if there is no *.md (no image updated), skip cp command
+      - name: Run manifests
+        env:
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+          DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
+        run: |
+          ls manifests/*.md &> /dev/null && cp manifests/*.md wiki/ && echo "*.md copied to wiki" || echo "no *.md"
+      # if there is no image updated, skip doit
+      # if there is no *.md (no image updated), skip cp command
 
-      # - name: Push Wiki to GitHub
-      #   if: >
-      #     !contains(github.base_ref , 'test') &&
-      #     !contains(github.base_ref , 'dev') &&
-      #     !contains(github.event.head_commit.message , 'skip push') &&
-      #     (
-      #       github.ref == 'refs/heads/master' || 
-      #       github.ref == 'refs/heads/main'
-      #     )
-      #   uses: stefanzweifel/git-auto-commit-action@v4
-      #   with:
-      #     commit_message: "[ci skip] Automated publish for ${{github.sha}}"
-      #     repository: wiki/
+      - name: Push Wiki to GitHub
+        if: >
+          !contains(github.base_ref , 'test') &&
+          !contains(github.base_ref , 'dev') &&
+          !contains(github.event.head_commit.message , 'skip push') &&
+          (
+            github.ref == 'refs/heads/master' || 
+            github.ref == 'refs/heads/main'
+          )
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "[ci skip] Automated publish for ${{github.sha}}"
+          repository: wiki/
 
       - name: Archive artifacts and logs
         if: ${{ always() }}
