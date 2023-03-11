@@ -58,8 +58,8 @@ RUN pip install torch==${TORCH_VER} torchvision==${TORCH_VIS_VER} torchaudio==${
 
 # to use nvidia-smi command to check GPU & driver
 # RUN ln -s /usr/local/nvidia/bin/nvidia-smi /opt/conda/bin/nvidia-smi
-RUN . /tmp/activate.sh && echo "Activate ran successfully"
-
+#RUN . /tmp/activate.sh && echo "Activate ran successfully"
+#
 USER $NB_UID:$NB_GID
 ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
 
