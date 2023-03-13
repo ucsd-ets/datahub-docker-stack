@@ -37,7 +37,7 @@ LOGLEVEL_MAP = {
 
 parser = argparse.ArgumentParser(
     prog='datahub_docker_stacks',
-    description='Build, push, and test UCSD standard Data Science & Machine Learning Docker iamges'
+    description='Build, push, and test UCSD standard Data Science & Machine Learning Docker images'
 )
 
 parser.add_argument('-l', '--log-level', choices=list(LOGLEVEL_MAP.keys()), type=str, default='DEBUG')
