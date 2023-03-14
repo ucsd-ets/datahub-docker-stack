@@ -46,7 +46,7 @@ class Client():
         else:
             return self.grpc.ssl_channel_credentials(os.environ['GRPC_CERT'].encode())
 
-def create_client(test_image = 'ucsdets/scipy-ml-notebook:2021.3-stable', url = 'dsmlp.grpc-services.ucsd.edu:443', cer_path='dsmlp_grpc-services_ucsd_edu_interm.cer', timeout=1200) -> Client:
+def create_client(test_image = 'ucsdets/scipy-ml-notebook:2023.1-stable', url = 'dsmlp.grpc-services.ucsd.edu:443', cer_path='dsmlp_grpc-services_ucsd_edu_interm.cer', timeout=1200) -> Client:
     return Client(test_image,url,cer_path,timeout)
 
 def run(client: Client) -> str:
@@ -68,4 +68,4 @@ def run(client: Client) -> str:
 
 if __name__ == '__main__':
     logging.basicConfig()
-    print(run())
+    print(run(create_client()))
