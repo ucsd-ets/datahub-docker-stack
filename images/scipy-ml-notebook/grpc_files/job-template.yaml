@@ -4,7 +4,7 @@ metadata:
   name: gpu-test-job
   namespace: test-server
 spec:
-  ttlSecondsAfterFinished: 0
+  ttlSecondsAfterFinished: 15
   template:
     spec:
       containers:
