@@ -29,9 +29,8 @@ JUPYTER_TOKEN = os.environ.get('JUPYTER_TOKEN')
 SERVICE_NAME = '127.0.0.1' or os.environ.get('SERVICE_NAME')
 
 
+# @pytest.mark.skip(reason="Skipping test_rstudio() due to Selenium issue")
 def test_rstudio(container):
-    print("Skipping test_rstudio(container) of rstudio.")
-    return
 
     c = container.run(
         ports={'8888/tcp':8888},

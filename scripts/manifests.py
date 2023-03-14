@@ -158,6 +158,8 @@ def run_manifests(stack_dir):
 
     # Write Image-Dependency table to wiki
     dep_table_fp = 'wiki/Image-Dependency.md'
+    # Write image dependency table to wiki
+    dep_table_fp = 'wiki/Image-Dependency.md'
     if isfile(dep_table_fp):
         old_csv = strip_csv_from_md(dep_table_fp)
         csv_concat(old_csv, 'artifacts/image-dependency.csv', 'artifacts/image-dependency-updated.csv')
