@@ -1,0 +1,10 @@
+name: Build parent
+
+on:
+  push:
+
+jobs:
+  build-parent-notebook:
+    uses: ucsd-ets/datahub-docker-stack/.github/workflows/build.yml@${GITHUB_REF##*/}
+    with:
+      dockerfile: images/datahub-base-notebook/Dockerfile

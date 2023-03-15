@@ -1,0 +1,12 @@
+name: Build notebook
+
+on:
+  workflow_call:
+
+jobs:
+  build-parent-notebook:
+    uses: ucsd-ets/datahub-docker-stack/.github/workflows/build.yml@${GITHUB_REF##*/}
+    with:
+      config-path: .github/labeler.yml
+    secrets:
+      envPAT: ${{ secrets.envPAT }}

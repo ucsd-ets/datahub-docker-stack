@@ -3,26 +3,26 @@ name: Docker
 env:
   DOCKER_CLIENT_TIMEOUT: "300"
 
-on:
-  push:
-    branches: [ main, refractor_buildtest ]
-    paths:
-      - "images/**"
-      - "model/**"
-      - "scripts/**"
-      - "dodo.py"
-      - ".github/workflows/main.yml"
+on: [workflow_dispatch]
+  # push:
+  #   branches: [ main, refractor_buildtest ]
+  #   paths:
+  #     - "images/**"
+  #     - "model/**"
+  #     - "scripts/**"
+  #     - "dodo.py"
+  #     - ".github/workflows/main.yml"
 
-  pull_request:
-    branches: [ main ]
-    paths:
-      - "images/**"
-      - "model/**"
-      - "scripts/**"
-      - "dodo.py"
-      - ".github/workflows/main.yml"
+  # pull_request:
+  #   branches: [ main ]
+  #   paths:
+  #     - "images/**"
+  #     - "model/**"
+  #     - "scripts/**"
+  #     - "dodo.py"
+  #     - ".github/workflows/main.yml"
 
-  workflow_dispatch:
+  # workflow_dispatch:
 
 jobs:
   docker-pipeline:
@@ -34,7 +34,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      
+
       - name: Install pip dependencies
         run: |
           docker image prune -a -f
@@ -49,14 +49,14 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r scripts/requirements.txt
-      
+
       - name: Install selenium dependecies for r studio
         env:
           CHROMEDRIVER_VERSION: ${{ secrets.CHROMEDRIVER_VERSION }}
         run: |
-          chmod +x ./scripts/selenium_setup.sh 
+          chmod +x ./scripts/selenium_setup.sh
           ./scripts/selenium_setup.sh $CHROMEDRIVER_VERSION
-          
+
       - name: Install pydoit fixed
         run: |
           git clone https://github.com/davidzyx/doit
@@ -69,12 +69,12 @@ jobs:
         run: |
           echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
           echo "PYTHONUNBUFFERED=TRUE" >> $GITHUB_ENV
-      
+
       - name: Setup artifacts
         env:
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
           DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
-          
+
         run: |
           doit prep
           mkdir -p logs
@@ -118,7 +118,7 @@ jobs:
           !contains(github.base_ref , 'dev') &&
           !contains(github.event.head_commit.message , 'skip push') &&
           (
-            github.ref == 'refs/heads/master' || 
+            github.ref == 'refs/heads/master' ||
             github.ref == 'refs/heads/main' ||
             github.ref == 'refs/heads/refractor_buildtest'
           )
