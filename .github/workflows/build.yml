@@ -2,6 +2,10 @@ name: Build notebook
 
 on:
   workflow_call:
+    inputs:
+      dockerfile:
+        required: true
+        type: string
 
 jobs:
   build-and-push-image:
