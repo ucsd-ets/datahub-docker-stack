@@ -42,7 +42,7 @@ images:
     
 plans:
   PYTHON39:
-    tag_prefix: '2023.1'
+    tag_prefix: '2023.2'
     tag_stable_postfix: -stable
 
 manifests:

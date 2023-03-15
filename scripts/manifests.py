@@ -156,6 +156,8 @@ def run_manifests(stack_dir):
     image_deps = json2series(read_dict('image-dependency.json'), 'dep', 'image')
     store_series(image_deps, 'image-dependency')
 
+    # Write Image-Dependency table to wiki
+    dep_table_fp = 'wiki/Image-Dependency.md'
     # Write image dependency table to wiki
     dep_table_fp = 'wiki/Image-Dependency.md'
     if isfile(dep_table_fp):
