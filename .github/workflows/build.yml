@@ -4,9 +4,33 @@ on:
   workflow_call:
 
 jobs:
-  build-parent-notebook:
-    uses: ucsd-ets/datahub-docker-stack/.github/workflows/build.yml@${GITHUB_REF##*/}
-    with:
-      config-path: .github/labeler.yml
-    secrets:
-      envPAT: ${{ secrets.envPAT }}
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout notebook
+        uses: actions/checkout@v3
+
+      # - name: Log in to registry
+      #   uses: docker/login-action@v2
+      #   with:
+      #     registry: ${{ env.REGISTRY }}
+      #     username: ${{ github.actor }}
+      #     password: ${{ secrets.GITHUB_TOKEN }}
+
+      # - name: Generate tags and labels
+      #   id: meta
+      #   uses: docker/metadata-action@v4
+      #   with:
+      #     images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      # - name: Build and push notebook
+      #   uses: docker/build-push-action@v4
+      #   with:
+      #     context: .
+      #     push: true
+      #     tags: ${{ steps.meta.outputs.tags }}
+      #     labels: ${{ steps.meta.outputs.labels }}
