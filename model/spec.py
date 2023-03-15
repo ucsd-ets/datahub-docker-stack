@@ -98,6 +98,14 @@ class BuilderSpec:
                         # TODO: throw error if prev tag not present
                         # TODO: Further testing on this
                         prev_tag = get_prev_tag(imgDef.image_name, plan['tag_prefix'])
+
+                        # TODO: REMOVE this hard-code fix
+                        if prev_tag is None:
+                            plan['tag_prefix'] = "2023.1"
+                            prev_tag = get_prev_tag(imgDef.image_name, plan['tag_prefix'])
+                            logger = logging.getLogger(__name__)
+                            logger.error(f"imgDef.image_name: {imgDef.image_name}; plan['tag_prefix']: {plan['tag_prefix']} ")
+                        
                         base_full_tag = get_dependency(prev_tag)
                         base_tag = base_full_tag.split(':')[1]
                     build_args.update(BASE_TAG=base_tag)
