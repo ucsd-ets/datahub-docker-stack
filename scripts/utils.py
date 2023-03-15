@@ -206,7 +206,7 @@ def fulltag2fn(tag):
 def get_prev_tag(img_name, tag_prefix=None):
     assert ':' not in img_name
 
-    csv = strip_csv_from_md('wiki/Image Dependency.md')
+    csv = strip_csv_from_md('wiki/Image-Dependency.md')
     built_tags = csv_to_pd(csv).index
 
     if tag_prefix:

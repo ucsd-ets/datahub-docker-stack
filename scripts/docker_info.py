@@ -38,6 +38,6 @@ def get_layers_md_table(image, cli=docker.from_env()):
 
 
 def get_dependency(image):
-    csv = strip_csv_from_md('wiki/Image Dependency.md')
+    csv = strip_csv_from_md('wiki/Image-Dependency.md')
     srs = csv_to_pd(csv)['dep']
     return srs[image]

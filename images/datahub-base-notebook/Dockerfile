@@ -1,6 +1,6 @@
 ARG PYTHON_VERSION=python-3.9.5
 FROM jupyter/datascience-notebook:$PYTHON_VERSION
-
+#
 USER root
 
 # see https://github.com/phusion/baseimage-docker/issues/319#issuecomment-1058835363
@@ -72,4 +72,3 @@ RUN pip install jupyterlab-github jupyterlab-latex jupyterlab-git \
 jupyterlab-fasta jupyterlab-pullrequests jupyterlab-geojson
 
 WORKDIR /home/jovyan
-

@@ -45,7 +45,9 @@ RUN pip install --no-cache-dir  datascience \
 	opencv-python \
 	pycocotools \
 	pillow \
-	tensorflow==2.11.0
+	tensorflow==2.10.0 && \
+	fix-permissions $CONDA_DIR && \
+	fix-permissions /home/$NB_USER
 
 # Update these in spec.yml according to https://pytorch.org/get-started/locally/
 ARG TORCH_VER="1.7.1+cu101"
@@ -62,4 +64,6 @@ RUN pip install torch==${TORCH_VER} torchvision==${TORCH_VIS_VER} torchaudio==${
 #
 USER $NB_UID:$NB_GID
 ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
+
+RUN . /tmp/activate.sh
 

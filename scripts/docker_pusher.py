@@ -61,7 +61,7 @@ def push_images(
             )
 
             for chunk in r:
-                print("chuck is", chunk)
+                # print("chuck is", chunk)
                 logger.info(chunk)
 
                 if 'status' in chunk:
