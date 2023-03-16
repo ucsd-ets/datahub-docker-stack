@@ -7,7 +7,7 @@ on:
       - completed
 
 jobs:
-  build-parent-notebook:
+  build-child-notebooks:
     runs-on: ubuntu-latest
     permissions:
       contents: read
