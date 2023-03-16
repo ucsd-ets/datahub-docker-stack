@@ -2,7 +2,8 @@ name: Build children
 
 on:
   workflow_run:
-    workflows: [Build parent]
+    workflows:
+      - Build parent
     types:
       - completed
 
