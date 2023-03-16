@@ -8,3 +8,21 @@ jobs:
     uses: ucsd-ets/datahub-docker-stack/.github/workflows/build.yml@david-experimental
     with:
       dockerfile: images/datahub-base-notebook/Dockerfile
+
+  build-datascience:
+    needs: build-parent-notebook
+    uses: ucsd-ets/datahub-docker-stack/.github/workflows/build.yml@david-experimental
+    with:
+      dockerfile: images/datascience/Dockerfile
+
+  build-scipy-ml:
+    needs: build-parent-notebook
+    uses: ucsd-ets/datahub-docker-stack/.github/workflows/build.yml@david-experimental
+    with:
+      dockerfile: images/scipy-ml-notebook/Dockerfile
+
+  build-rstudio:
+    needs: build-parent-notebook
+    uses: ucsd-ets/datahub-docker-stack/.github/workflows/build.yml@david-experimental
+    with:
+      dockerfile: images/rstudio-notebook/Dockerfile
