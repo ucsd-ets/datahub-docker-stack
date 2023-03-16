@@ -1,0 +1,31 @@
+name: Build parent
+
+on:
+  workflow_run:
+    workflows: [Build parent]
+    types:
+      - completed
+
+jobs:
+  build-parent-notebook:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    -
+      name: Build datascience-notebook
+      run: |
+        gh workflow run build.yml -f dockerfile=images/datascience-notebook/Dockerfile
+
+    -
+      name: Build datascience-notebook
+      run: |
+        gh workflow run build.yml -f dockerfile=images/scipy-ml-notebook/Dockerfile
+
+
+    -
+      name: Build datascience-notebook
+      run: |
+        gh workflow run build.yml -f dockerfile=images/rstudio-notebook/Dockerfile
