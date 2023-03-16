@@ -241,20 +241,24 @@ def update_Home(images_full_names: List[str], git_short_hash: str) -> bool:
     return True
 
 
-def update_Stable():
+def update_Stable() -> bool:
     # Load data
     try:
         # 1st col: Image
         # each cell_img is like ucsdets/datahub-base-notebook:2023.1-c11a915
         stable_full_names = read_var('IMAGES_TAGGED')
-        cell_images = list2cell([f"`{image}`" for image in stable_full_names])
+        cell_stable = list2cell([f"`{image}`" for image in stable_full_names])
 
         # 2nd col: Based On
         # each orig_img is like ucsdets/datahub-base-notebook:2023.1-stable
         orig_full_names = read_var('IMAGES_ORIGINAL')
-        orig_images = list2cell([f"`{image}`" for image in orig_full_names])
+        cell_orig = list2cell([f"`{image}`" for image in orig_full_names])
+
+        assert len(stable_full_names) == len(orig_full_names), \
+            "IMAGES_TAGGED and IMAGES_ORIGINAL mismatched."
 
         # 3rd col: Manifest
+        # NOTE: the actual page will be created later, see the next try-except.
         manifests_links = [wiki_doc2link(fullname=image) for image in stable_full_names]
         cell_manifests = list2cell(manifests_links)
 
@@ -270,9 +274,7 @@ def update_Stable():
             with open(path.join('wiki', f'{orig_fn}.md'), 'r') as f:
                 doc_str = f.read()
             with open(path.join('wiki', f'{stable_fn}.md'), 'w') as f:
-                f.write(doc_str)
-            with open(path.join('wiki', f'{stable_fn}.md'), 'w') as f:
-                f.write(doc_str)   
+                f.write(doc_str) 
     except AssertionError as e:
         logger.error(f"Error when copying wiki page of each image: {e}")
         return False         
@@ -282,9 +284,9 @@ def update_Stable():
     divider = ['| :- | :- | :- |']
     content = ['|'.join([
         "",     # such that we have start and ending '|'
-        stable_full_names,
-        orig_images,
-        manifests_links,
+        cell_stable,
+        cell_orig,
+        cell_manifests,
         ""
     ])]
     doc = '\n'.join(header + divider + content)
