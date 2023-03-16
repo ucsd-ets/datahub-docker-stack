@@ -5,33 +5,6 @@ on:
 
 jobs:
   build-parent-notebook:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
-    steps:
-    -
-      name: build base
-      uses: ucsd-ets/datahub-docker-stack/.github/workflows/build.yml@david-experimental
-      with:
-        dockerfile: images/datahub-base-notebook/Dockerfile
-#
-    -
-      name: Build datascience-notebook
-#      uses: ucsd-ets/datahub-docker-stack/.github/workflows/build.yml@david-experimental
-      run: |
-        gh workflow run build.yml -f dockerfile=images/datascience-notebook/Dockerfile
-
-    -
-      name: Build datascience-notebook
-#      uses: ucsd-ets/datahub-docker-stack/.github/workflows/build.yml@david-experimental
-      run: |
-        gh workflow run build.yml -f dockerfile=images/scipy-ml-notebook/Dockerfile
-
-
-    -
-      name: Build datascience-notebook
-#      uses: ucsd-ets/datahub-docker-stack/.github/workflows/build.yml@david-experimental
-      run: |
-        gh workflow run build.yml -f dockerfile=images/rstudio-notebook/Dockerfile
+    uses: ucsd-ets/datahub-docker-stack/.github/workflows/build.yml@david-experimental
+    with:
+      dockerfile: images/datahub-base-notebook/Dockerfile
