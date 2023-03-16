@@ -1,4 +1,4 @@
-name: Build parent
+name: Build children
 
 on:
   workflow_run:
