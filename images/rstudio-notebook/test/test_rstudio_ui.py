@@ -51,7 +51,8 @@ def test_rstudio(container):
 
     # initialize the driver options and connect to the notebook
     options = Options()
-    options.headless = True
+    # options.headless = True   # deprecated
+    options.add_argument('--headless=new')  # more powerful functionality
     options.add_argument('--window-size=1920x1480')
     options.add_argument('--disable-gpu')
     options.add_argument('--disable-extensions')
@@ -171,9 +172,3 @@ def test_rstudio(container):
 
     LOGGER.info('Exited the notebook server')
     LOGGER.info('UI testing all pass!')
-
-    # except Exception as e:
-
-    #     LOGGER.error('failed selenium acceptance testing')
-    #     LOGGER.error(e)
-    #     raise e
