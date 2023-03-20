@@ -188,31 +188,31 @@ def list_images():
 
 def prune(full_image_name: str) -> int:
     try:
-        # __docker_client.images.remove(image=full_image_name, force=True)
-        # prune_funcs = [
-        #     ('containers.prune', __docker_client.containers.prune),
-        #     ('images.prune', __docker_client.images.prune),
-        #     ('volumes.prune', __docker_client.volumes.prune)
-        # ]
+        __docker_client.images.remove(image=full_image_name, force=True)
+        prune_funcs = [
+            ('containers.prune', __docker_client.containers.prune),
+            ('images.prune', __docker_client.images.prune),
+            ('volumes.prune', __docker_client.volumes.prune)
+        ]
         total_space_reclaimed = 0
 
-        # # prune funcs may timeout, see https://github.com/docker/compose/issues/3927
-        # os.environ['DOCKER_CLIENT_TIMEOUT'] = '300'
-        # os.environ['COMPOSE_HTTP_TIMEOUT'] = '300'
+        # prune funcs may timeout, see https://github.com/docker/compose/issues/3927
+        os.environ['DOCKER_CLIENT_TIMEOUT'] = '300'
+        os.environ['COMPOSE_HTTP_TIMEOUT'] = '300'
 
-        # for func_name, prune in prune_funcs:
-        #     resp = prune()
-        #     if not 'SpaceReclaimed' in resp:
-        #         logger.warning(
-        #             f'SpaceReclaimed not in API response for prune function {func_name}. keys = {resp.keys()}')
-        #         continue
-        #     total_space_reclaimed += resp.pop('SpaceReclaimed')
+        for func_name, prune in prune_funcs:
+            resp = prune()
+            if not 'SpaceReclaimed' in resp:
+                logger.error(
+                    f'SpaceReclaimed not in API response for prune function {func_name}. keys = {resp.keys()}')
+                continue
+            total_space_reclaimed += resp.pop('SpaceReclaimed')
 
-        logger.info("Forcing system prune docker prune -af")
-        os.system('docker system prune -af')
         return total_space_reclaimed
     except Exception as e:
         logger.error(f"couldn't prune docker; {e}")
+        logger.error("Forcing system prune docker prune -af")
+        os.system('docker system prune -af')
         return 0
     finally:
         __docker_client.close()
