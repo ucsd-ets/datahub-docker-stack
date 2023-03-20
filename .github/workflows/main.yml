@@ -5,7 +5,7 @@ env:
 
 on:
   push:
-    branches: [ main, refractor_buildtest ]
+    branches: [ main ]
     paths:
       - "images/**"
       - "model/**"
@@ -136,4 +136,3 @@ jobs:
             artifacts
             logs
             manifests
-            wiki
