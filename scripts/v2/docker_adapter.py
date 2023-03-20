@@ -11,6 +11,9 @@ import os
 
 logger = get_logger()
 
+# prune funcs may timeout, see https://github.com/docker/compose/issues/3927
+os.environ['DOCKER_CLIENT_TIMEOUT'] = '300'
+os.environ['COMPOSE_HTTP_TIMEOUT'] = '300'
 __docker_client = docker_client.from_env()
 
 
@@ -187,9 +190,6 @@ def list_images():
         __docker_client.close()
 
 def prune(full_image_name: str) -> int:
-    # prune funcs may timeout, see https://github.com/docker/compose/issues/3927
-    os.environ['DOCKER_CLIENT_TIMEOUT'] = '300'
-    os.environ['COMPOSE_HTTP_TIMEOUT'] = '300'
     try:
         __docker_client.images.remove(image=full_image_name, force=True)
     except Exception as e:
@@ -208,7 +208,7 @@ def prune(full_image_name: str) -> int:
     try:
         for func_name, prune in prune_funcs:
             resp = prune()
-            logger.info(f"from prune function {func_name}, resp is {resp}")
+            # logger.info(f"from prune function {func_name}, resp is {resp}")
             if not 'SpaceReclaimed' in resp:
                 logger.error(
                     f'SpaceReclaimed not in API response for prune function {func_name}. keys = {resp.keys()}')
