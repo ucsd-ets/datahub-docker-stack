@@ -208,7 +208,7 @@ def prune(full_image_name: str) -> int:
     try:
         for func_name, prune in prune_funcs:
             resp = prune()
-            logger.info(f"from prune function {func_name}, resp is {resp}")
+            # logger.info(f"from prune function {func_name}, resp is {resp}")
             if not 'SpaceReclaimed' in resp:
                 logger.error(
                     f'SpaceReclaimed not in API response for prune function {func_name}. keys = {resp.keys()}')
