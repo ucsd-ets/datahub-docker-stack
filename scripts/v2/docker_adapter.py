@@ -12,8 +12,7 @@ import os
 logger = get_logger()
 
 # prune funcs may timeout, see https://github.com/docker/compose/issues/3927
-os.environ['DOCKER_CLIENT_TIMEOUT'] = '300'
-os.environ['COMPOSE_HTTP_TIMEOUT'] = '300'
+# solution: increase timeout in constructor directly.
 __docker_client = docker_client.from_env(timeout=300)
 
 
@@ -208,14 +207,16 @@ def prune(full_image_name: str) -> int:
     try:
         for func_name, prune in prune_funcs:
             resp = prune()
-            logger.info(f"from prune function {func_name}, resp is {resp}")
+            # logger.info(f"from prune function {func_name}, resp is {resp}")
             if not 'SpaceReclaimed' in resp:
                 logger.error(
-                    f'SpaceReclaimed not in API response for prune function {func_name}. keys = {resp.keys()}')
+                    f'SpaceReclaimed not in API response for prune function {func_name}. \
+                    keys = {resp.keys()}'
+                )
                 continue
             total_space_reclaimed += resp.pop('SpaceReclaimed')
-
         return total_space_reclaimed
+    
     except Exception as e:
         logger.error(f"couldn't prune docker; {e}")
         logger.error("Forcing system prune docker prune -af")
