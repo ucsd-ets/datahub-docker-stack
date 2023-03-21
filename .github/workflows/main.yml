@@ -3,7 +3,7 @@ name: Docker
 env:
   DOCKER_CLIENT_TIMEOUT: "300"
   COMPOSE_HTTP_TIMEOUT: "300"
-  
+
 on:
   push:
     branches: [ main ]
@@ -36,7 +36,7 @@ jobs:
         with:
           fetch-depth: 0
       
-      - name: Install pip dependencies
+      - name: Docker Cleanup
         run: |
           docker image prune -a -f
           docker container prune -f
@@ -75,18 +75,9 @@ jobs:
         env:
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
           DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
-          
         run: |
           doit prep
           mkdir -p logs
-
-      # - name: Workflow tests
-      #   env:
-      #     DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-      #     DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
-      #   run: |
-      #     coverage run -m pytest -v tests/test_docker_unit.py
-      #     coverage report
 
       - name: Clone Wiki
         uses: actions/checkout@v2
@@ -102,16 +93,6 @@ jobs:
           PREPUSH_IMAGES: '["ucsdets/scipy-ml-notebook"]'
         run: |
           python3 scripts/v2/main.py
-      #   used for building, prepushing, testing and pushing module
-
-      # - name: Run manifests
-      #   env:
-      #     DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-      #     DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
-      #   run: |
-      #     ls manifests/*.md &> /dev/null && cp manifests/*.md wiki/ && echo "*.md copied to wiki" || echo "no *.md"
-      # # if there is no image updated, skip doit
-      # # if there is no *.md (no image updated), skip cp command
 
       - name: Push Wiki to GitHub
         if: >
