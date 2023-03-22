@@ -1,7 +1,7 @@
 import docker as docker_client
 import logging
 import json
-from typing import Tuple, Optional
+from typing import Tuple, Optional, List
 import pandas as pd
 
 from scripts.v2.tree import Node
