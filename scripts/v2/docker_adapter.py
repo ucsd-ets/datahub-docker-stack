@@ -13,7 +13,8 @@ logger = get_logger()
 
 # prune funcs may timeout, see https://github.com/docker/compose/issues/3927
 # solution: increase timeout in constructor directly.
-__docker_client = docker_client.from_env(timeout=300)
+# __docker_client = docker_client.from_env(timeout=300)
+__docker_client = docker_client.from_env()
 
 
 class DockerError(Exception):
@@ -180,6 +181,7 @@ def run_simple_command(node: Node, cmd: str) -> Tuple[str, bool]:
             logger.info(f"Container {container.name} removed")
         __docker_client.close()
 
+
 def list_images():
     try:
         return __docker_client.images.list()
@@ -188,7 +190,16 @@ def list_images():
     finally:
         __docker_client.close()
 
+
 def prune(full_image_name: str) -> int:
+    """clear build & test cache, reclaim space
+
+    Args:
+        full_image_name (str): sth like ucsdets/datahub-base-notebook:2023.2-deadbeef
+
+    Returns:
+        int: space reclaimed in number of bytes.
+    """
     try:
         __docker_client.images.remove(image=full_image_name, force=True)
     except Exception as e:
@@ -216,7 +227,7 @@ def prune(full_image_name: str) -> int:
                 continue
             total_space_reclaimed += resp.pop('SpaceReclaimed')
         return total_space_reclaimed
-    
+
     except Exception as e:
         logger.error(f"couldn't prune docker; {e}")
         logger.error("Forcing system prune docker prune -af")
@@ -224,3 +235,25 @@ def prune(full_image_name: str) -> int:
         return 0
     finally:
         __docker_client.close()
+
+
+def prepull_image(orig_images: List[str]) -> bool:
+    for full_name in orig_images:
+        logger.info(f'Tagging action: Pulling original image {full_name}')
+        try:
+            assert full_name.count(':') == 1
+        except AssertionError as e:
+            logger.error(f"More than 1 ':' in the full image name")
+            return False
+
+        img, tag = full_name.split(':')
+        img = img.lstrip()
+        tag = tag.rstrip()
+
+        try:
+            __docker_client.images.pull(img, tag)
+        except Exception as e:
+            logger.error(f"Tagging action: Fail to pull {full_name}")
+            return False
+    
+    return True
