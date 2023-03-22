@@ -26,6 +26,7 @@ RUN apt-get update -y && \
     openssh-server \
     p7zip \
     apt-utils \
+    jq \
     p7zip-full && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
     chmod g-s /usr/bin/screen && \
