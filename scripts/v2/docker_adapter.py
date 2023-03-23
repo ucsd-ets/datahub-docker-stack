@@ -11,6 +11,9 @@ import os
 
 logger = get_logger()
 
+os.environ['DOCKER_CLIENT_TIMEOUT'] = '300'
+os.environ['COMPOSE_HTTP_TIMEOUT'] = '300'
+
 # prune funcs may timeout, see https://github.com/docker/compose/issues/3927
 # solution: increase timeout in constructor directly.
 # __docker_client = docker_client.from_env(timeout=300)
@@ -209,9 +212,9 @@ def prune(full_image_name: str) -> int:
         return 0
 
     prune_funcs = [
+        ('containers.prune', __docker_client.containers.prune),
         ('images.prune', __docker_client.images.prune),
-        ('volumes.prune', __docker_client.volumes.prune),
-        ('containers.prune', __docker_client.containers.prune)
+        ('volumes.prune', __docker_client.volumes.prune)
     ]
     total_space_reclaimed = 0
 
