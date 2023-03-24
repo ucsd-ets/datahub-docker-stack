@@ -63,6 +63,12 @@ def build(node: Node) -> Tuple[bool, str]:
                 except:
                     pass
         print("Now we have these images: ", __docker_client.images.list())
+
+        for i in __docker_client.images.list():
+            if(i.id == ""):
+                logger.error("This image didn't build correctly.")
+                return False, report
+
         return True, report
     except Exception as e:
         logger.error("couldnt build docker image; " + str(e))
