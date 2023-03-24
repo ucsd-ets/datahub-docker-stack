@@ -7,9 +7,14 @@ USER root
 # https://pytorch.org/get-started/previous-versions/
 # https://www.tensorflow.org/install/source#linux
 
+ARG LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7 CUDA_VERSION=11.2
+
 RUN apt-get update && \
 	apt-get install -y \
 	libtinfo5 build-essential && \
+	apt-get install -y \
+	  libnvinfer${LIBNVINFER_MAJOR_VERSION}=${LIBNVINFER}-1+${CUDA_VERSION} 
+	  libnvinfer-plugin${LIBNVINFER_MAJOR_VERSION}=${LIBNVINFER}-1+${CUDA_VERSION}
 	apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Symbolic link for Stata 17 dependency on libncurses5
