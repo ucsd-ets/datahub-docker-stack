@@ -14,7 +14,7 @@ RUN apt-get update && \
 	libtinfo5 build-essential && \
 	apt-get install -y \
 	  libnvinfer${LIBNVINFER_MAJOR_VERSION}=${LIBNVINFER}-1+${CUDA_VERSION} \
-	  libnvinfer-plugin${LIBNVINFER_MAJOR_VERSION}=${LIBNVINFER}-1+${CUDA_VERSION} \
+	  libnvinfer-plugin${LIBNVINFER_MAJOR_VERSION}=${LIBNVINFER}-1+${CUDA_VERSION} && \
 	apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Symbolic link for Stata 17 dependency on libncurses5
