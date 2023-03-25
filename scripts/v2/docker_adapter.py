@@ -65,7 +65,7 @@ def build(node: Node) -> Tuple[bool, str]:
         print("Now we have these images: ", __docker_client.images.list())
 
         for i in __docker_client.images.list():
-            if(i.tags[0] == ""):
+            if(len(i.tags) == 0):
                 logger.error("This image didn't build correctly.")
                 return False, report
 

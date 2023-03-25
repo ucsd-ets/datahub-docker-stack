@@ -209,6 +209,8 @@ def build_and_test_containers(
                     logger.error(f"{node.full_image_name} failed common tests")
                 else:
                     logger.info(f"{node.full_image_name} passed common tests")
+            else:
+                return False
 
             # push step
             if not fail_and_stop:
@@ -222,6 +224,8 @@ def build_and_test_containers(
                     logger.error(f"couldn't push {node.full_image_name}")
                 else:
                     logger.info(f"{node.full_image_name} pushed successfully")
+            else:
+                return False
 
             # integration tests
             if not fail_and_stop:
@@ -233,6 +237,8 @@ def build_and_test_containers(
                     fail_and_stop = True
                 else:
                     logger.info(f"{node.full_image_name} passed integration tests (or don't have any)")
+            else:
+                return False
 
             # update wiki page of individual image that
             #       has been successfully [built, pushed, tested]
@@ -244,6 +250,8 @@ def build_and_test_containers(
                 else:
                     logger.error(f"*** Unable to get {node.full_image_name}")
                     fail_and_stop = True
+            else:
+                return False
 
             # if all-passed, the image should appear on Home.md
             if not fail_and_stop:
@@ -254,6 +262,9 @@ def build_and_test_containers(
             result.success = not fail_and_stop
             results.append(result)
             logger.info(f"*** Build-and-Test main loop: {node.image_name} success ? {result.success}")
+            
+            else:
+                return False
             
 
         except Exception as e:
@@ -283,6 +294,8 @@ def build_and_test_containers(
     # # update Home.md
     wiki.update_Home(images_full_names=full_names, git_short_hash=root.git_suffix)
     logger.info("home.md updated")
+
+    return True
 
     
 
