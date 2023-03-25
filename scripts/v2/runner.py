@@ -258,13 +258,13 @@ def build_and_test_containers(
                 logger.info(f"{node.full_image_name} will appear on Home.md")
                 full_names.append(result.full_image_name)
 
+            else:
+                return False
+
             # Conclude the build-test-push-wiki result for this image
             result.success = not fail_and_stop
             results.append(result)
             logger.info(f"*** Build-and-Test main loop: {node.image_name} success ? {result.success}")
-            
-            else:
-                return False
             
 
         except Exception as e:
