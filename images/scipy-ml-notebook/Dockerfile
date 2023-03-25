@@ -38,11 +38,11 @@ RUN mamba install \
 	fix-permissions $CONDA_DIR && \
 	fix-permissions /home/$NB_USER
 
-USER root
+#USER root
 
-RUN apt-get install -y \
-  libnvinfer${LIBNVINFER_MAJOR_VERSION}=${LIBNVINFER}-1+${CUDA_VERSION} \
-  libnvinfer-plugin${LIBNVINFER_MAJOR_VERSION}=${LIBNVINFER}-1+${CUDA_VERSION}
+#RUN apt-get install -y \
+  #libnvinfer${LIBNVINFER_MAJOR_VERSION}=${LIBNVINFER}-1+${CUDA_VERSION} \
+  #libnvinfer-plugin${LIBNVINFER_MAJOR_VERSION}=${LIBNVINFER}-1+${CUDA_VERSION}
 
 USER jovyan
 
