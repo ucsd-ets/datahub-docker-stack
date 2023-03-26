@@ -133,17 +133,44 @@ def build_and_test_containers(
         username: str,
         password: str,
         tag_prefix: str,
-        all_info_cmds: dict):
+        all_info_cmds: dict) -> bool:
+    """Goal:
+    given the root of build-and-test tree, traverse the tree and do the following
+    to each node (represents an image) on-the-fly:
+        * determine if the node needs to be rebuilt. If YES:
+        - build the image
+        - run common tests (located in /images/tests_common)
+        - push to dockerhub
+        - run integration tests (more complex Selenium/gRPC tests)
+        - update wiki page (a .md of this particular image)
+        * no matter success or failure, reclaim space (docker cache)
+
+    General Structure:
+    1. (while q:) traverse tree (with BFS) and place nodes into node_order for processing
+    2. (for node in node_order:) major loop that does 'everything' for each node
+    3. (for result in results:) store logs in .yml format to build_artifacts
+    4. update **the local copy** of Home.md; see its function doc
+    5. return (bool) all_pass
+
+    Note:
+        For each node, if any of the "- step" fails, those after it would not be executed.
+        But this will not affect other images. 
+
+    Args:
+        root (Node): (for now) always datahub-base-notebook
+        username (str): docker username, passed in as env variable
+        password (str): docker token, passed in as env variable
+        tag_prefix (str): e.g. '2023.2', defined in and loaded from spec.yml
+        all_info_cmds (dict): also see spec.yml
+
+    Returns:
+        bool: whether ALL images in the tree pass, where "pass" means either of
+            - no need to rebuild
+            - rebuilt, tested, cmds executed, logs and wiki written.
+    """
 
     docker_adapter.login(username, password)
 
-    # search the nodes according to BFS and place into node_order for processing
-
-    # load all_info_cmds from spec.yml and pass to wiki operations
-    # print(all_info_cmds)
-
-    # Run BFS or whatever search method
-    # goal: make sure that the code can continue if a leaf node fails
     q = [root]
     node_order = []
     while q:
@@ -258,9 +285,6 @@ def build_and_test_containers(
                 logger.info(f"{node.full_image_name} will appear on Home.md")
                 full_names.append(result.full_image_name)
 
-            else:
-                return False
-
             # Conclude the build-test-push-wiki result for this image
             result.success = not fail_and_stop
             results.append(result)
@@ -277,25 +301,27 @@ def build_and_test_containers(
 
     # store results 
     for result in results:
-        filename = result.safe_full_image_name
-        if 'build_log' in result.container_details:
-            build_log = result.container_details.pop('build_log')
-            fs.store(filename + '.build.log', build_log, fs.LOGS_PATH)
+        try:
+            filename = result.safe_full_image_name
+            if 'build_log' in result.container_details:
+                build_log = result.container_details.pop('build_log')
+                fs.store(filename + '.build.log', build_log, fs.LOGS_PATH)
+            
+            if 'test_log' in result.test_results:
+                test_log = result.test_results.pop('test_log')
+                fs.store(filename + '.basic-tests.log', test_log, fs.LOGS_PATH)
         
-        if 'test_log' in result.test_results:
-            test_log = result.test_results.pop('test_log')
-            fs.store(filename + '.basic-tests.log', test_log, fs.LOGS_PATH)
-    
-        formatted_result = format_result(result)
-        resp = fs.store(filename + '.yaml', formatted_result)
-        if not resp:
-            raise OSError("couldn't store results into artifacts directory")
+            formatted_result = format_result(result)
+            resp = fs.store(filename + '.yaml', formatted_result)
+        except Exception as e:
+            logger.error(f"couldn't store result of {filename} into artifacts directory, \nerror is {e}")
 
     # # update Home.md
     wiki.update_Home(images_full_names=full_names, git_short_hash=root.git_suffix)
     logger.info("home.md updated")
 
-    return True
+    # only all_pass images in full_names; all images in results
+    return len(full_names) == len(results)
 
     
 
