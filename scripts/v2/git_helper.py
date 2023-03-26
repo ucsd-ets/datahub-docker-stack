@@ -5,7 +5,7 @@ from pathlib import PurePath
 from os import path,environ
 import json
 
-from scripts.utils import store_var,get_specs
+from scripts.v2.utils import store_var,get_specs
 
 
 class GitHelper:

@@ -11,13 +11,12 @@ import os
 
 logger = get_logger()
 
-# os.environ['DOCKER_CLIENT_TIMEOUT'] = '300'
+# this should be set to >= docker client timeout, otherwise strange error.
 os.environ['COMPOSE_HTTP_TIMEOUT'] = '300'
-
 # prune funcs may timeout, see https://github.com/docker/compose/issues/3927
+# os.environ['DOCKER_CLIENT_TIMEOUT'] = '300'     # this doesn't work
 # solution: increase timeout in constructor directly.
 __docker_client = docker_client.from_env(timeout=300)
-# __docker_client = docker_client.from_env()
 
 
 class DockerError(Exception):
@@ -242,7 +241,7 @@ def prune(full_image_name: str) -> int:
 
 def prepull_image(orig_images: List[str]) -> bool:
     for full_name in orig_images:
-        logger.info(f'Tagging action: Pulling original image {full_name}')
+        # logger.info(f'Tagging action: Pulling original image {full_name}')
         try:
             assert full_name.count(':') == 1
         except AssertionError as e:
