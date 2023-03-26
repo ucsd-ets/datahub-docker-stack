@@ -5,6 +5,7 @@ from scripts.v2.utils import get_logger
 import os
 import logging
 import argparse
+import sys
 
 
 def main(dockerhub_username: str, dockerhub_password: str):
@@ -18,11 +19,15 @@ def main(dockerhub_username: str, dockerhub_password: str):
     root = build_tree(
         spec_yaml=spec, images_changed=images_changed, git_suffix=git_hash)
 
-    build_and_test_containers(root=root,
+    build_result = build_and_test_containers(root=root,
                               username=dockerhub_username,
                               password=dockerhub_password,
                               tag_prefix=tag_prefix,
                               all_info_cmds=all_info_cmds)
+    
+    if build_result is False:
+        logger.error("There was a problem while building one of the images. Please consult logs.")
+        sys.exit(5)
 
 
 # https://docs.python.org/3/library/logging.html#logging-levels
