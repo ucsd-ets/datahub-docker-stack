@@ -54,7 +54,6 @@ RUN pip install --no-cache-dir  datascience \
 	pillow \
 	tensorrt \
 	tensorflow==2.10.0 && \
-    WRONG COMMAND && \
 	fix-permissions $CONDA_DIR && \
 	fix-permissions /home/$NB_USER
 
