@@ -32,21 +32,18 @@ jobs:
       !contains(github.event.head_commit.message , 'skip ci') &&
       !contains(github.event.pull_request.title, 'skip ci')
     steps:
-      - name: Remove unnecessary files
-          run: |
-            sudo rm -rf /usr/share/dotnet
-            sudo rm -rf /opt/ghc
-            sudo rm -rf "/usr/local/share/boost"
-            sudo rm -rf "$AGENT_TOOLSDIRECTORY"
-
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
       
-      - name: Docker Cleanup
+      - name: Docker/ENV cleanup Cleanup
         run: |
           docker image prune -a -f
           docker container prune -f
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "/usr/local/share/boost"
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
 
       - name: Set up Python 3.8
         uses: actions/setup-python@v2
