@@ -51,8 +51,8 @@ RUN pip install --no-cache-dir  datascience \
 	opencv-python \
 	pycocotools \
 	pillow \
+	tensorrt \
 	tensorflow==2.10.0 && \
-	tensorrt && \
 	fix-permissions $CONDA_DIR && \
 	fix-permissions /home/$NB_USER
 
