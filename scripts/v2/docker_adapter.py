@@ -62,6 +62,16 @@ def build(node: Node) -> Tuple[bool, str]:
                 except:
                     pass
         print("Now we have these images: ", __docker_client.images.list())
+
+        # sometimes if the build fails there will be an empty image object
+        # <"Image": >, <"Image": datahub-base-notebook> instead of
+        # <"Image": "scipy-ml-notebook">, <"Image": "datahub-base-notebook">
+        # this should trigger an exception in the docker build, but it doesn't. manually fail
+        for i in __docker_client.images.list():
+            if(len(i.tags) == 0):
+                logger.error("This image didn't build correctly.")
+                return False, report
+
         return True, report
     except Exception as e:
         logger.error("couldnt build docker image; " + str(e))

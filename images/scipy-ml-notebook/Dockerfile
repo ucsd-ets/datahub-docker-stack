@@ -43,6 +43,7 @@ RUN mamba install \
 USER jovyan
 
 # Install pillow<7 due to dependency issue https://github.com/pytorch/vision/issues/1712
+# tensorrt installed to fix not having libnvinfer that has caused tensorflow issues.
 RUN pip install --no-cache-dir  datascience \
 	PyQt5 \
 	scapy \
