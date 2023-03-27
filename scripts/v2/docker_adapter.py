@@ -250,22 +250,34 @@ def prune(full_image_name: str) -> int:
 
 
 def prepull_image(orig_images: List[str]) -> bool:
-    for full_name in orig_images:
-        # logger.info(f'Tagging action: Pulling original image {full_name}')
-        try:
-            assert full_name.count(':') == 1
-        except AssertionError as e:
-            logger.error(f"More than 1 ':' in the full image name")
-            return False
-
-        img, tag = full_name.split(':')
-        img = img.lstrip()
-        tag = tag.rstrip()
-
-        try:
+    currImage = "placeholder"
+    try:
+        for full_name in orig_images:
+            currImage = full_name
+            # logger.info(f'Tagging action: Pulling original image {full_name}')
+            assert full_name.count(':') == 1, f"{full_name} should have exactly one :"
+            img, tag = full_name.split(':')
+            img = img.lstrip()
+            tag = tag.rstrip()
             __docker_client.images.pull(img, tag)
-        except Exception as e:
-            logger.error(f"Tagging action: Fail to pull {full_name}")
-            return False
-    
-    return True
+
+        return True
+    except Exception as e:
+        logger.error(f"Tagging action: Fail to pull {currImage}")
+        return False
+    finally:
+        __docker_client.close()
+
+
+def tag_stable(orig_fullname: str, tag_replace: str) -> bool:
+    try:
+        img_obj = __docker_client.images.get(orig_fullname)
+        assert orig_fullname.count(':') == 1, f"{orig_fullname} should have exactly one :"
+        repo, _ = orig_fullname.split(':')
+        img_obj.tag(repository=repo, tag=tag_replace)
+        return True
+    except Exception as e:
+        logger.error(f"Error when tagging image {orig_fullname}, \n{e}")
+        return False 
+    finally:
+        __docker_client.close()
