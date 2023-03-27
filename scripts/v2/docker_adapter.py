@@ -60,20 +60,21 @@ def build(node: Node) -> Tuple[bool, str]:
         #     rm=False
         # ):
         for line in generator:
-            raw_lines = line.decode('utf-8').split('\n')
-            raw_lines = [line.rstrip() for line in raw_lines]
+            logger.debug(f"dtype of line: {type(line)}; \n line: {line}")
+            # raw_lines = line.decode('utf-8').split('\n')
+            # raw_lines = [line.rstrip() for line in raw_lines]
 
-            for raw_line in raw_lines:
-                try:
-                    line_data = json.loads(raw_line, strict=False)
-                    actual_line = line_data['stream']
-                    if actual_line == '\n':
-                        continue
-                    # print(line_data['stream'])
-                    report += line_data['stream']
-                    logger.debug(f"{node.image_name}:{line_data['stream']}")
-                except:
-                    pass
+            # for raw_line in raw_lines:
+            #     try:
+            #         line_data = json.loads(raw_line, strict=False)
+            #         actual_line = line_data['stream']
+            #         if actual_line == '\n':
+            #             continue
+            #         # print(line_data['stream'])
+            #         report += line_data['stream']
+            #         logger.debug(f"{node.image_name}:{line_data['stream']}")
+            #     except:
+            #         pass
         print("Now we have these images: ", __docker_client.images.list())
 
         # # sometimes if the build fails there will be an empty image object
