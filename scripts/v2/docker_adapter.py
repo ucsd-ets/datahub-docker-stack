@@ -30,6 +30,10 @@ def set_docker_client(d: docker_client.DockerClient):
 
 def build(node: Node) -> Tuple[bool, str]:
     """Build a docker image from a node
+    Use build() from docker.client.images (high-level) instead of low-level API
+
+    Throws:
+        see https://docker-py.readthedocs.io/en/stable/images.html
 
     Args:
         node (Node): node to build
@@ -39,14 +43,23 @@ def build(node: Node) -> Tuple[bool, str]:
     try:
         report = ''
         logger.debug(f'Build')
-        for line in __docker_client.api.build(
+        img_obj, generator = __docker_client.images.build(
             path=node.filepath,
             dockerfile=node.dockerfile,
             tag=node.image_name + ':' + node.image_tag,
             buildargs=node.build_args,
             nocache=True,
             rm=False
-        ):
+        )
+        # for line in __docker_client.api.build(
+        #     path=node.filepath,
+        #     dockerfile=node.dockerfile,
+        #     tag=node.image_name + ':' + node.image_tag,
+        #     buildargs=node.build_args,
+        #     nocache=True,
+        #     rm=False
+        # ):
+        for line in generator:
             raw_lines = line.decode('utf-8').split('\n')
             raw_lines = [line.rstrip() for line in raw_lines]
 
@@ -63,19 +76,27 @@ def build(node: Node) -> Tuple[bool, str]:
                     pass
         print("Now we have these images: ", __docker_client.images.list())
 
-        # sometimes if the build fails there will be an empty image object
-        # <"Image": >, <"Image": datahub-base-notebook> instead of
-        # <"Image": "scipy-ml-notebook">, <"Image": "datahub-base-notebook">
-        # this should trigger an exception in the docker build, but it doesn't. manually fail
-        for i in __docker_client.images.list():
-            if(len(i.tags) == 0):
-                logger.error("This image didn't build correctly.")
-                return False, report
+        # # sometimes if the build fails there will be an empty image object
+        # # <"Image": >, <"Image": datahub-base-notebook> instead of
+        # # <"Image": "scipy-ml-notebook">, <"Image": "datahub-base-notebook">
+        # # this should trigger an exception in the docker build, but it doesn't. manually fail
+        # for i in __docker_client.images.list():
+        #     if(len(i.tags) == 0):
+        #         logger.error("This image didn't build correctly.")
+        #         return False, report
 
         return True, report
-    except Exception as e:
-        logger.error("couldnt build docker image; " + str(e))
+
+    except docker_client.errors.BuildError as build_e:
+        logger.error(f"Error during build of {node.image_name},\n {build_e}")
         return False, report
+    except docker_client.errors.APIError as api_e:
+        logger.error(f"Server returns error during build of {node.image_name},\n {api_e}")
+        return False, report
+    except Exception as e:
+        logger.error("Unrecognized error; \n" + str(e))
+        return False, report
+    
     finally:
         __docker_client.close()
 
