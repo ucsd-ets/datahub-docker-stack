@@ -60,31 +60,12 @@ def build(node: Node) -> Tuple[bool, str]:
         #     rm=False
         # ):
         for line in generator:
-            logger.debug(f"dtype of line: {type(line)}; \n line: {line}")
-            # raw_lines = line.decode('utf-8').split('\n')
-            # raw_lines = [line.rstrip() for line in raw_lines]
-
-            # for raw_line in raw_lines:
-            #     try:
-            #         line_data = json.loads(raw_line, strict=False)
-            #         actual_line = line_data['stream']
-            #         if actual_line == '\n':
-            #             continue
-            #         # print(line_data['stream'])
-            #         report += line_data['stream']
-            #         logger.debug(f"{node.image_name}:{line_data['stream']}")
-            #     except:
-            #         pass
-        print("Now we have these images: ", __docker_client.images.list())
-
-        # # sometimes if the build fails there will be an empty image object
-        # # <"Image": >, <"Image": datahub-base-notebook> instead of
-        # # <"Image": "scipy-ml-notebook">, <"Image": "datahub-base-notebook">
-        # # this should trigger an exception in the docker build, but it doesn't. manually fail
-        # for i in __docker_client.images.list():
-        #     if(len(i.tags) == 0):
-        #         logger.error("This image didn't build correctly.")
-        #         return False, report
+            # logger.debug(f"dtype of line: {type(line)}; \n line: {line}")
+            # line is of type dict
+            content_str = line.get('stream', '').strip()    # sth like 'Step 1/20 : ARG PYTHON_VERSION=python-3.9.5'
+            if content_str:     # if not empty string
+                report += content_str + '\n'
+        logger.info("Now we have these images: ", __docker_client.images.list())
 
         return True, report
 
