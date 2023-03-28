@@ -41,7 +41,7 @@ jobs:
           pip install ./doit
           rm -rf ./doit
           mkdir -p logs manifests
-          touch logs/run.log
+          touch logs/run.log logs/.empty
 
       - name: Set Python-specific environment variables
         run: |
