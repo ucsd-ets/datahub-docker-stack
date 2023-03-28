@@ -3,15 +3,7 @@ pjoin = os.path.join
 from shutil import rmtree
 from doit import get_var
 
-from scripts.git_helper import save_changed_images, save_git_info
-from scripts.docker_builder import run_build
-from scripts.docker_untested_pusher import run_untested_push
-from scripts.docker_tester import run_test
-from scripts.docker_pusher import run_push
-from scripts.docker_tagger import run_tagging
-from scripts.manifests import run_manifests, run_stable_manifests
-from scripts.docker_unit import *
-
+from scripts.v2.tagger import tagging_main
 from scripts.v2.wiki import update_Stable
 
 
@@ -51,7 +43,7 @@ def task_prep():
 def task_tag():
     """Tag and push images with new tags"""
     return {
-        'actions': [run_tagging],
+        'actions': [tagging_main],
         'uptodate': [False],
         'file_dep': ['artifacts/.empty', 'logs/.empty'],
         'targets': ['artifacts/IMAGES_TAGGED'],
@@ -59,12 +51,14 @@ def task_tag():
             {
                 'name': 'original_tag',
                 'long': 'original_tag',
+                'type': str,
                 'default': None
             },
             {
                 'name': 'dry_run',
                 'short': 's',
                 'long': 'dry_run',
+                'type': bool,
                 'default': False
             },
         ],

@@ -7,6 +7,12 @@ on:
         description: 'Orginal tag of images to be stable'
         default: '2099.3-somehash'
         required: true
+      dryRun:
+        type: boolean
+        description: 'stop after retrieving original image names'
+        default: true
+        required: true
+      
 
 jobs:
   tagging:
@@ -53,6 +59,7 @@ jobs:
         run: >
           doit tag
           --original_tag ${{ github.event.inputs.originalTag }}
+          --dry_run ${{ github.event.inputs.dryRun }}
 
       - name: Run stable manifests
         env:
