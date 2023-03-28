@@ -9,7 +9,7 @@ on:
         required: true
       dryRun:
         type: boolean
-        description: 'stop after retrieving original image names'
+        description: 'dry-run: retrieve original image names ONLY'
         default: true
         required: true
       
@@ -40,6 +40,8 @@ jobs:
           git clone https://github.com/davidzyx/doit
           pip install ./doit
           rm -rf ./doit
+          mkdir -p logs manifests
+          touch logs/run.log
 
       - name: Set Python-specific environment variables
         run: |
