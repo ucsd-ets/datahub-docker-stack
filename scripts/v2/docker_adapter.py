@@ -5,7 +5,7 @@ from typing import Tuple, Optional, List
 import pandas as pd
 
 from scripts.v2.tree import Node
-from scripts.v2.utils import get_logger
+from scripts.v2.utils import get_logger, store_var
 import os
 
 
@@ -65,7 +65,7 @@ def build(node: Node) -> Tuple[bool, str]:
             content_str = line.get('stream', '').strip()    # sth like 'Step 1/20 : ARG PYTHON_VERSION=python-3.9.5'
             if content_str:     # if not empty string
                 report += content_str + '\n'
-        logger.info("Now we have these images: ", __docker_client.images.list())
+        logger.info(f"Now we have these images: { __docker_client.images.list()}")
 
         return True, report
 
@@ -253,6 +253,14 @@ def prune(full_image_name: str) -> int:
 
 
 def prepull_image(orig_images: List[str]) -> bool:
+    """pull down all the images to docker in order to tag later
+
+    Args:
+        orig_images (List[str]): each is like 'ucsdets/datahub-base-notebook:2023.2-deadbeef'
+
+    Returns:
+        bool: success or failure
+    """
     currImage = "placeholder"
     try:
         for full_name in orig_images:
@@ -272,15 +280,70 @@ def prepull_image(orig_images: List[str]) -> bool:
         __docker_client.close()
 
 
-def tag_stable(orig_fullname: str, tag_replace: str) -> bool:
+def tag_stable(orig_fullname: str, tag_replace: str) -> Tuple[str, bool]:
+    """guarding wrapper around actual docker.image.tag()
+
+    Args:
+        orig_fullname (str): of format 'ucsdets/datahub-base-notebook:2023.2-deadbeef'
+        tag_replace (str): of format '2023.2-stable'
+
+    Returns:
+        str: 'ucsdets/datahub-base-notebook:2023.2-stable' or empty string if failed
+        bool: success or failure
+    """
     try:
         img_obj = __docker_client.images.get(orig_fullname)
         assert orig_fullname.count(':') == 1, f"{orig_fullname} should have exactly one :"
         repo, _ = orig_fullname.split(':')
         img_obj.tag(repository=repo, tag=tag_replace)
-        return True
+        return repo + ':' + tag_replace, True
     except Exception as e:
         logger.error(f"Error when tagging image {orig_fullname}, \n{e}")
-        return False 
+        return '', False 
     finally:
         __docker_client.close()
+
+def push_stable_images(stable_fullnames: List[str]) -> bool:
+    """given a list of stable image names, push them to dockerhub.
+    If success, these strings will be written to IMAGES_PUSHED in build-artifacts
+
+    Args:
+        stable_fullnames (List[str]): each is like 'ucsdets/datahub-base-notebook:2023.2-stable'
+
+    Returns:
+        bool: success or failure
+    """
+    images_pushed = []
+    for stable_name in stable_fullnames:
+        try:
+            # get image obj
+            stable_obj = __docker_client.images.get(stable_name)
+        except docker_client.errors.ImageNotFound:
+            logger.error(f"{stable_name} not inside the \
+                docker env {__docker_client.images.list()}")
+            break
+        except Exception as e:
+            logger.error(f"Something wrong with the server when get() {stable_name}")
+            break
+
+        try:
+            # push tagged image
+            repo, tag = stable_name.split(':')
+            resp = __docker_client.images.push(
+                repo, tag,
+                stream=True,
+                decode=True
+            )   # this will return a geneator of json-decoded dict
+            # can check push log here if anything goes wrong
+        except Exception as e:
+            logger.error(f"Something wrong with the server when push() {stable_name}")
+            break
+        images_pushed.append(stable_name)
+    # finally:
+    __docker_client.close()
+
+    if len(stable_fullnames) != len(images_pushed):
+        return False
+    else:
+        store_var('IMAGES_PUSHED', images_pushed)
+        return True
