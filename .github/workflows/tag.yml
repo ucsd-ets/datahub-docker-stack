@@ -54,6 +54,14 @@ jobs:
           repository: ${{github.repository}}.wiki
           path: wiki
 
+      - name: Setup artifacts
+        env:
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+          DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
+        run: |
+          doit prep
+          mkdir -p logs
+
       - name: Dry-run Tagging
         if: ${{ github.event.inputs.dryRun }}
         env:
