@@ -54,14 +54,24 @@ jobs:
           repository: ${{github.repository}}.wiki
           path: wiki
 
-      - name: Tag Images
+      - name: Dry-run Tagging
+        if: ${{ github.event.inputs.dryRun }}
         env:
           DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: >
           doit tag
           --original_tag ${{ github.event.inputs.originalTag }}
-          --dry_run ${{ github.event.inputs.dryRun }}
+          --dry_run
+        
+      - name: Tag Images
+        if: ${{ !github.event.inputs.dryRun }}
+        env:
+          DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: >
+          doit tag
+          --original_tag ${{ github.event.inputs.originalTag }}
 
       - name: Run stable manifests
         env:
