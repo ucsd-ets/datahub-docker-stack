@@ -32,7 +32,6 @@ USER jovyan
 # tf requirements: https://www.tensorflow.org/install/pip#linux
 RUN mamba install \
 	cudatoolkit=11.8 \
-	cudnn=8.6.0.163 \
 	nccl \
 	-y && \
 	fix-permissions $CONDA_DIR && \
@@ -52,6 +51,7 @@ RUN pip install --no-cache-dir  datascience \
 	opencv-python \
 	pycocotools \
 	pillow \
+	nvidia-cudnn-cu11==8.6.0.163 \
 	tensorrt \
 	tensorflow==2.12.0 && \
 	fix-permissions $CONDA_DIR && \
