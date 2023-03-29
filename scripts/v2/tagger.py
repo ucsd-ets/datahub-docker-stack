@@ -58,7 +58,7 @@ def run_tagging(
     tagged = [] # each element is like 'ucsdets/datahub-base-notebook:2023.2-stable'
     for img_orig in original_names:
         logger.info(f'Tagging {img_orig} with {stable_tag}')
-        img_stable, success = docker_adapter.tag_stable(orig_fullname=original_names, tag_replace=stable_tag)
+        img_stable, success = docker_adapter.tag_stable(orig_fullname=img_orig, tag_replace=stable_tag)
         if not success:
             logger.error(f"{img_orig} fails the tagging.")
             return False
