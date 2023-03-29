@@ -58,10 +58,10 @@ RUN pip install --no-cache-dir  datascience \
 	fix-permissions /home/$NB_USER
 
 # https://github.com/spesmilo/electrum/issues/7825
-RUN pip uninstall protobuf
-RUN pip uninstall protobuf
-RUN pip uninstall protobuf
-RUN pip uninstall protobuf
+RUN pip uninstall protobuf -y
+RUN pip uninstall protobuf -y 
+RUN pip uninstall protobuf -y
+RUN pip uninstall protobuf -y
 RUN pip install --no-cache-dir protobuf
 
 
