@@ -41,6 +41,8 @@ RUN mamba install \
 
 USER jovyan
 
+
+RUN pip install --no-cache-dir protobuf==3.20.3
 # Install pillow<7 due to dependency issue https://github.com/pytorch/vision/issues/1712
 # tensorrt installed to fix not having libnvinfer that has caused tensorflow issues.
 RUN pip install --no-cache-dir  datascience \
@@ -57,14 +59,14 @@ RUN pip install --no-cache-dir  datascience \
 	fix-permissions $CONDA_DIR && \
 	fix-permissions /home/$NB_USER
 
-RUN pip list
+#RUN pip list
 
 # https://github.com/spesmilo/electrum/issues/7825
-RUN pip uninstall protobuf -y
-RUN pip uninstall protobuf -y 
-RUN pip uninstall protobuf -y
-RUN pip uninstall protobuf -y
-RUN pip install --no-cache-dir protobuf==3.20.1
+#RUN pip uninstall protobuf -y
+#RUN pip uninstall protobuf -y 
+#RUN pip uninstall protobuf -y
+#RUN pip uninstall protobuf -y
+#RUN pip install --no-cache-dir protobuf==3.20.3
 
 
 # Update these in spec.yml according to https://pytorch.org/get-started/locally/
