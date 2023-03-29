@@ -61,6 +61,11 @@ jobs:
           doit prep
           mkdir -p logs
 
+      - name: Check Dry-run Variable
+        run: |
+          echo ${{ github.event.inputs.dryRun }}
+          echo ${{ !github.event.inputs.dryRun }}
+
       - name: Dry-run Tagging
         if: github.event.inputs.dryRun
         env:
