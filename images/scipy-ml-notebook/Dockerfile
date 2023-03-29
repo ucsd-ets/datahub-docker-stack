@@ -57,6 +57,9 @@ RUN pip install --no-cache-dir  datascience \
 	fix-permissions $CONDA_DIR && \
 	fix-permissions /home/$NB_USER
 
+RUN pip uninstall --no-cache-dir protobuf && pip uninstall --no-cache-dir protobuf && pip uninstall --no-cache-dir protobuf && pip uninstall --no-cache-dir protobuf && pip install --no-cache-dir protobuf
+
+
 # Update these in spec.yml according to https://pytorch.org/get-started/locally/
 ARG TORCH_VER="1.7.1+cu101"
 ARG TORCH_VIS_VER="0.8.2+cu101"
