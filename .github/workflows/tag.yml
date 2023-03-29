@@ -90,15 +90,17 @@ jobs:
         #  cp manifests/*.md wiki/
 
       - name: Push Wiki to GitHub
+        # if: >
+        #   ${{ !github.event.inputs.dryRun }} &&
+        #   !contains(github.base_ref , 'test') &&
+        #   !contains(github.base_ref , 'dev') &&
+        #   !contains(github.event.head_commit.message , 'skip push') &&
+        #   (
+        #     github.ref == 'refs/heads/master' || 
+        #     github.ref == 'refs/heads/main'
+        #   )
         if: >
-          ${{ !github.event.inputs.dryRun }} &&
-          !contains(github.base_ref , 'test') &&
-          !contains(github.base_ref , 'dev') &&
-          !contains(github.event.head_commit.message , 'skip push') &&
-          (
-            github.ref == 'refs/heads/master' || 
-            github.ref == 'refs/heads/main'
-          )
+          ${{ !github.event.inputs.dryRun }}
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: '[ci skip] Automated publish for ${{github.sha}}'
