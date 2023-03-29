@@ -7,7 +7,7 @@ USER root
 # https://pytorch.org/get-started/previous-versions/
 # https://www.tensorflow.org/install/source#linux
 
-ARG LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7 CUDA_VERSION=11.2
+ARG LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7 CUDA_VERSION=11.8
 
 RUN apt-get update && \
 	apt-get install -y \
@@ -32,7 +32,7 @@ USER jovyan
 # tf requirements: https://www.tensorflow.org/install/pip#linux
 RUN mamba install \
 	cudatoolkit=11.8 \
-	cudnn=8.6.0 \
+	cudnn=8.6.0.163 \
 	nccl \
 	-y && \
 	fix-permissions $CONDA_DIR && \
