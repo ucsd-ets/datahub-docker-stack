@@ -10,7 +10,6 @@ on:
       dryRun:
         type: boolean
         description: 'dry-run: retrieve original image names ONLY'
-        default: true
         required: true
       
 
@@ -63,7 +62,7 @@ jobs:
           mkdir -p logs
 
       - name: Dry-run Tagging
-        if: ${{ github.event.inputs.dryRun }}
+        if: github.event.inputs.dryRun
         env:
           DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
