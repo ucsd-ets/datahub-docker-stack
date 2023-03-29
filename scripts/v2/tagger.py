@@ -16,7 +16,7 @@ def run_tagging(
         original_tag, 
         username: str,
         password: str,
-        dry_run=True) -> bool:
+        dry_run=False) -> bool:
     """runner of tag images github workflow.
 
     Args:
@@ -72,7 +72,7 @@ def run_tagging(
     return docker_adapter.push_stable_images(stable_fullnames=tagged)
 
 
-def tagging_main(original_tag, dry_run=True):
+def tagging_main(original_tag, dry_run=False):
     os.environ['GITHUB_REF_NAME'] = 'refractor_buildtest'
     dockerhub_username = os.environ.get('DOCKERHUB_USER', None)
     dockerhub_token = os.environ.get('DOCKERHUB_TOKEN', None)
