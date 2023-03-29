@@ -33,7 +33,6 @@ USER jovyan
 RUN mamba install \
 	cudatoolkit=11.8 \
 	nccl \
-	protobuf \
 	-y && \
 	fix-permissions $CONDA_DIR && \
 	fix-permissions /home/$NB_USER
@@ -43,7 +42,10 @@ RUN mamba install \
 USER jovyan
 
 
-#RUN pip install --no-cache-dir protobuf==3.20.3
+# install protobuf to avoid weird base type error. seems like if we don't then it'll be installed twice.
+# https://github.com/spesmilo/electrum/issues/7825
+RUN pip install --no-cache-dir protobuf==3.20.3
+
 # Install pillow<7 due to dependency issue https://github.com/pytorch/vision/issues/1712
 # tensorrt installed to fix not having libnvinfer that has caused tensorflow issues.
 RUN pip install --no-cache-dir  datascience \
@@ -59,15 +61,6 @@ RUN pip install --no-cache-dir  datascience \
 	tensorflow==2.12.* && \
 	fix-permissions $CONDA_DIR && \
 	fix-permissions /home/$NB_USER
-
-#RUN pip list
-
-# https://github.com/spesmilo/electrum/issues/7825
-#RUN pip uninstall protobuf -y
-#RUN pip uninstall protobuf -y 
-#RUN pip uninstall protobuf -y
-#RUN pip uninstall protobuf -y
-#RUN pip install --no-cache-dir protobuf==3.20.3
 
 
 # Update these in spec.yml according to https://pytorch.org/get-started/locally/
