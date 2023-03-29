@@ -58,7 +58,11 @@ RUN pip install --no-cache-dir  datascience \
 	fix-permissions /home/$NB_USER
 
 # https://github.com/spesmilo/electrum/issues/7825
-RUN pip uninstall protobuf && pip uninstall protobuf && pip uninstall protobuf && pip uninstall protobuf && pip install --no-cache-dir protobuf
+RUN pip uninstall protobuf
+RUN pip uninstall protobuf
+RUN pip uninstall protobuf
+RUN pip uninstall protobuf
+RUN pip install --no-cache-dir protobuf
 
 
 # Update these in spec.yml according to https://pytorch.org/get-started/locally/
