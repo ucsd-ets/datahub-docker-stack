@@ -91,6 +91,7 @@ jobs:
 
       - name: Push Wiki to GitHub
         if: >
+          ${{ !github.event.inputs.dryRun }} &&
           !contains(github.base_ref , 'test') &&
           !contains(github.base_ref , 'dev') &&
           !contains(github.event.head_commit.message , 'skip push') &&
@@ -111,4 +112,3 @@ jobs:
           path: |
             artifacts
             manifests
-            wiki

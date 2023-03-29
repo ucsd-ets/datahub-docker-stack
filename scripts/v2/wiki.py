@@ -292,7 +292,9 @@ def update_Stable() -> bool:
     doc = '\n'.join(header + divider + content)
     with open(path.join('wiki', 'Stable Tag.md'), 'w') as f:
         f.write(doc)
-
+    # such that we can look at new Stable page even with dry_run
+    with open(path.join('artifacts', 'Stable Tag.md'), 'w') as f:
+        f.write(doc)
     return True
 
 

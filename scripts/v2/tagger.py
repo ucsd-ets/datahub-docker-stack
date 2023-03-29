@@ -45,6 +45,10 @@ def run_tagging(
 
     if dry_run:
         logger.info(f"Doing dry-run to check original_names: {original_names}")
+        tagged = [name.split(':')[0] + ':' + stable_tag for name in original_names]
+        store_var('IMAGES_TAGGED', tagged )
+        store_var('IMAGES_ORIGINAL', original_names )
+        logger.info("DRY_RUN: original images written to IMAGES_ORIGINAL, stable images to IMAGES_TAGGED.")
         return True
 
     logger.info("prepulling images")
