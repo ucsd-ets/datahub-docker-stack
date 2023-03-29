@@ -28,8 +28,6 @@ RUN chmod 777 /etc/datahub-profile.d/*.sh /tmp/activate.sh
 
 USER jovyan
 
-ENV CONDA_VERBOSITY=2
-
 # CUDA 11
 # tf requirements: https://www.tensorflow.org/install/pip#linux
 RUN mamba install \
