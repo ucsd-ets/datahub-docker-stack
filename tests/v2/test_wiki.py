@@ -77,10 +77,6 @@ class TestWiki(unittest.TestCase):
         run_test()
 
         return (mock_run_outputs, mock_markdown_table)
-
-
-    def run_update_Home(self):
-        pass
     
 
     ###### actual tests ######
@@ -117,10 +113,3 @@ class TestWiki(unittest.TestCase):
         git_short_hash = "TestCommit"
         success = update_Home(images_full_names, git_short_hash)
         assert success
-
-
-
-""" if __name__ == "__main__":
-    test_wiki = TestWiki()
-    test_wiki.setUpClass()
-    test_wiki.test_run_outputs() """
