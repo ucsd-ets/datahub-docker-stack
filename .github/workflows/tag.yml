@@ -100,7 +100,9 @@ jobs:
         #     github.ref == 'refs/heads/main'
         #   )
         if: >
-          ${{ !github.event.inputs.dryRun }}
+          ${{ 
+            !github.event.inputs.dryRun 
+          }}
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: '[ci skip] Automated publish for ${{github.sha}}'
