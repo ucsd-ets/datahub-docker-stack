@@ -52,7 +52,7 @@ def run_tagging(
         return True
 
     logger.info("prepulling images")
-    docker_adapter.prepull_image(orig_images=original_names)
+    docker_adapter.prepull_images(orig_images=original_names)
     logger.info("finished prepull")
 
     tagged = [] # each element is like 'ucsdets/datahub-base-notebook:2023.2-stable'

@@ -252,7 +252,7 @@ def prune(full_image_name: str) -> int:
         __docker_client.close()
 
 
-def prepull_image(orig_images: List[str]) -> bool:
+def prepull_images(orig_images: List[str]) -> bool:
     """pull down all the images to docker in order to tag later
 
     Args:
