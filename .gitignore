@@ -25,3 +25,6 @@ bin/
 
 # certs
 *.cer
+
+# docker login info for user test
+tests/cred.json
