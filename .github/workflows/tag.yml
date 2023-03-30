@@ -63,17 +63,17 @@ jobs:
 
       - name: Bool 1
         if: >
-          !github.event.inputs.dryRun
-        run: |
-          echo "dryRun is false" &&
+          !github.event.inputs.dryRun &&
           !contains(github.base_ref , 'test')
+        run: |
+          echo "dryRun is false"
 
       - name: Bool 2
         if: >
-          github.event.inputs.dryRun
-        run: |
-          echo "dryRun is true" &&
+          github.event.inputs.dryRun &&
           !contains(github.base_ref , 'test')
+        run: |
+          echo "dryRun is true"
 
       # - name: Bool 3
       #   if: >
@@ -101,17 +101,17 @@ jobs:
 
       - name: Bool 7
         if: >
-          github.event.inputs.dryRun == 'false'
-        run: |
-          echo "string: dryRun is false" &&
+          github.event.inputs.dryRun == 'false' &&
           !contains(github.base_ref , 'test')
+        run: |
+          echo "string: dryRun is false"
 
       - name: Bool 8
         if: >
-          github.event.inputs.dryRun == 'true'
-        run: |
-          echo "string: dryRun is true" &&
+          github.event.inputs.dryRun == 'true' &&
           !contains(github.base_ref , 'test')
+        run: |
+          echo "string: dryRun is true"
 
 
       - name: Dry-run Tagging
