@@ -65,49 +65,53 @@ jobs:
         if: >
           !github.event.inputs.dryRun
         run: |
-          echo "dryRun is false"
+          echo "dryRun is false" &&
+          !contains(github.base_ref , 'test')
 
       - name: Bool 2
         if: >
           github.event.inputs.dryRun
         run: |
-          echo "dryRun is true"
+          echo "dryRun is true" &&
+          !contains(github.base_ref , 'test')
 
-      - name: Bool 3
-        if: >
-          ${{ !github.event.inputs.dryRun }}
-        run: |
-          echo "YAML: dryRun is false"
+      # - name: Bool 3
+      #   if: >
+      #     ${{ !github.event.inputs.dryRun }}
+      #   run: |
+      #     echo "YAML: dryRun is false"
       
-      - name: Bool 4
-        if: >
-          ${{ github.event.inputs.dryRun }}
-        run: |
-          echo "YAML: dryRun is true"
+      # - name: Bool 4
+      #   if: >
+      #     ${{ github.event.inputs.dryRun }}
+      #   run: |
+      #     echo "YAML: dryRun is true"
 
-      - name: Bool 5
-        if: >
-          ${{ github.event.inputs.dryRun == 'false' }}
-        run: |
-          echo "YAML string: dryRun is false"
+      # - name: Bool 5
+      #   if: >
+      #     ${{ github.event.inputs.dryRun == 'false' }}
+      #   run: |
+      #     echo "YAML string: dryRun is false"
       
-      - name: Bool 6
-        if: >
-          ${{ github.event.inputs.dryRun == 'true' }}
-        run: |
-          echo "YAML string: dryRun is true"
+      # - name: Bool 6
+      #   if: >
+      #     ${{ github.event.inputs.dryRun == 'true' }}
+      #   run: |
+      #     echo "YAML string: dryRun is true"
 
       - name: Bool 7
         if: >
           github.event.inputs.dryRun == 'false'
         run: |
-          echo "string: dryRun is false"
+          echo "string: dryRun is false" &&
+          !contains(github.base_ref , 'test')
 
       - name: Bool 8
         if: >
           github.event.inputs.dryRun == 'true'
         run: |
-          echo "string: dryRun is true"
+          echo "string: dryRun is true" &&
+          !contains(github.base_ref , 'test')
 
 
       - name: Dry-run Tagging
