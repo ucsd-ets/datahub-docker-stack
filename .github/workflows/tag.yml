@@ -129,17 +129,19 @@ jobs:
         env:
           DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-        run: >
-          doit tag
-          --original_tag ${{ github.event.inputs.originalTag }}
+        run: |
+          echo "FAKE tag"
+        # run: >
+        #   doit tag
+        #   --original_tag ${{ github.event.inputs.originalTag }}
 
       - name: Run stable manifests
         env:
           DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
-          doit stable
-        #  cp manifests/*.md wiki/
+          echo "FAKE Run stable manifests"
+        #  doit stable
 
       - name: Push Wiki to GitHub
         if: >
@@ -151,10 +153,12 @@ jobs:
             github.ref == 'refs/heads/master' || 
             github.ref == 'refs/heads/main'
           )
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: '[ci skip] Automated publish for ${{github.sha}}'
-          repository: wiki/
+        run: |
+          echo "FAKE PUSH"
+        # uses: stefanzweifel/git-auto-commit-action@v4
+        # with:
+        #   commit_message: '[ci skip] Automated publish for ${{github.sha}}'
+        #   repository: wiki/
 
       - name: Archive artifacts and logs
         if: ${{ always() }}
