@@ -108,6 +108,7 @@ jobs:
           )
         run: |
           echo "string: dryRun is false"
+          echo ${{ github.ref }}
 
       - name: Bool 8
         if: >
