@@ -102,14 +102,18 @@ jobs:
       - name: Bool 7
         if: >
           github.event.inputs.dryRun == 'false' &&
-          !contains(github.base_ref , 'test')
+          !contains(github.base_ref , 'test') &&
+          !contains(github.base_ref , 'dev') &&
+          !contains(github.event.head_commit.message , 'skip push')
         run: |
           echo "string: dryRun is false"
 
       - name: Bool 8
         if: >
           github.event.inputs.dryRun == 'true' &&
-          !contains(github.base_ref , 'test')
+          !contains(github.base_ref , 'test') &&
+          !contains(github.base_ref , 'dev') &&
+          !contains(github.event.head_commit.message , 'skip push')
         run: |
           echo "string: dryRun is true"
 
