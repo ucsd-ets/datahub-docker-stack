@@ -75,8 +75,8 @@ RUN pip install torch==${TORCH_VER} torchvision==${TORCH_VIS_VER} torchaudio==${
 USER $NB_UID:$NB_GID
 ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
 
-ENV CUDNN_PATH='$(dirname $(python -c "import nvidia.cudnn;print(nvidia.cudnn.__file__)"))'
-ENV LD_LIBRARY_PATH='$LD_LIBRARY_PATH:$CONDA_PREFIX/lib/:$CUDNN_PATH/lib'
+ENV CUDNN_PATH=/opt/conda/lib/python3.9/site-packages/nvidia/cudnn
+ENV LD_LIBRARY_PATH='${LD_LIBRARY_PATH}:${CONDA_PREFIX}/lib/:${CUDNN_PATH}/lib'
 
 RUN . /tmp/activate.sh
 
