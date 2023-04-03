@@ -76,7 +76,7 @@ USER $NB_UID:$NB_GID
 ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
 
 ENV CUDNN_PATH=/opt/conda/lib/python3.9/site-packages/nvidia/cudnn
-ENV LD_LIBRARY_PATH='${LD_LIBRARY_PATH}:${CONDA_PREFIX}/lib/:${CUDNN_PATH}/lib'
+ENV LD_LIBRARY_PATH='${LD_LIBRARY_PATH}:${CUDNN_PATH}/lib'
 
 RUN . /tmp/activate.sh
 
