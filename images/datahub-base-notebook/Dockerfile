@@ -52,8 +52,9 @@ ARG JUPYTERHUB_VERSION=1.5.0
 
 # mistune added for nbgrader issues
 
+# coerce pandas to 1.5.3. 2.0 released april 3rd and currently breaks tests.
 RUN /usr/share/datahub/scripts/install-python-all.sh && \
-    pip install pandas 'mistune>=2' --upgrade && \
+    pip install pandas==1.5.3 'mistune>=2' --upgrade && \
     pip install nltk \
                 nbconvert==7.2.1 \
                 jupyterhub==$JUPYTERHUB_VERSION && \
