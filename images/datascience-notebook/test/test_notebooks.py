@@ -6,7 +6,7 @@ import logging
 import pytest
 import os
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger('datahub_docker_stacks')
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 
 

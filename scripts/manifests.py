@@ -15,8 +15,16 @@ from scripts.docker_info import get_layers_md_table
 
 
 def run_outputs(specs, image_key, image=None):
-    """
-    Run commands listed in manifests according to list
+    """Run info commands of each image and return outputs
+
+    Variable example value:
+        image_key, str: scipy-ml-notebook
+        image, str: ucsdets/scipy-ml-notebook
+        manifest_all: Dict
+        manifest_selected, List[str]: [PY_VER, CUDA_VERSION, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
+
+    Return:
+        outputs, List[Dict]: each Dict has description (str), output (str) of one image.
     """
     image_specs = specs['images'][image_key]
     if image is None:
@@ -96,6 +104,7 @@ def compile_history(compile_tag_history = False):
         cell_commit = url2mdlink(repo_url + '/commit/' + git_short_hash, f"`{git_short_hash}`")
         img_source = 'IMAGES_BUILT'
 
+    # image is like: ucsdets/datahub-base-notebook:2023.1-c11a915
     cell_images = list2cell([f"`{image}`" for image in read_var(img_source)])
     if compile_tag_history:
         cell_images += '|' + orig_images
@@ -121,7 +130,7 @@ def compile_history(compile_tag_history = False):
     return cell_commit, cell_images, cell_manifests
 
 
-def insert_history(markdown_fp):
+def insert_history():
     with open(path.join('wiki', 'Home.md'), 'r') as f:
         doc_str = f.read()
 
@@ -175,7 +184,7 @@ def run_manifests(stack_dir):
         print('Running image manifest for', image)
         run_report(specs, image_key, image=image)
 
-    insert_history('wiki/Home.md')
+    insert_history()
 
 def run_stable_manifests():
     stable_images = read_var('IMAGES_TAGGED')

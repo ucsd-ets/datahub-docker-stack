@@ -6,7 +6,7 @@ from scripts.utils import read_var, store_var
 from scripts.docker_pusher import push_images, docker_login
 import os
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('datahub_docker_stacks')
 
 
 def prepull_image(
@@ -37,7 +37,6 @@ def tag_image(
     assert img.tag(repository=repo, tag=tag)
 
 
-## def run_tagging(commit_tag, keyword, tag_replace, dry_run=False):
 def run_tagging(original_tag, dry_run=False):
     """
     Update1: #
@@ -46,22 +45,22 @@ def run_tagging(original_tag, dry_run=False):
     
     Update2: ##
     - use a single input field original_tag,
-    which is {keyword}-{commit_tag}, like 2021.3-deadb33f
-    - tag_replce will be '{keyword}-stable' always
+    which is {tag_prefix}-{short_hash}, like 2021.3-deadb33f
+    - tag_replce will be '{tag_prefix}-stable' always
     """
-    ## assert all([commit_tag, keyword, tag_replace]), 'None as input'
+    ## assert all([short_hash, tag_prefix, tag_replace]), 'None as input'
     assert original_tag and original_tag.count('-') == 1, \
         "None as input or incorrect input format (- at wrong place)"
     
-    ## break it into old commit_tag and keyword; 
+    ## break it into old short_hash and tag_prefix; 
     ## count('-') == 1 -> split list must have length 2
-    keyword, commit_tag = original_tag.rsplit('-', 1) ## str.rsplit() works from the right
-    tag_replace = keyword + '-stable'
+    tag_prefix, short_hash = original_tag.rsplit('-', 1) ## str.rsplit() works from the right
+    tag_replace = tag_prefix + '-stable'
 
     cli = docker.from_env()
     history = read_history()
     replace_dict = get_images_for_tag(
-        history, commit_tag, keyword, tag_replace)
+        history, short_hash, tag_prefix, tag_replace)
 
     if dry_run:
         print(replace_dict)

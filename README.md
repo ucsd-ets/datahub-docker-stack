@@ -10,7 +10,37 @@ For students and instructors, check out the offical [FAQ](https://support.ucsd.e
 
 For people who are trying to modify the image stack, here are some scenarios and instructions on each.
 
-**Important**: for all changes, it is advised to make a new branch with the name `dev_***` for developing and testing before merging it to the `main` branch for the official update. And also make sure all the changes are in **one** commit when you push to Github. This can be done by changing the first commit continuously: `git add . && git commit --amend`. Failure to do so may break the dependency between images. 
+### Setup virtual environment
+
+```bash
+python3 -m venv . # at root level
+source bin/activate
+which python # it'll point to current dir
+which pip # it'll point to current dir
+pip install -r scripts/requirements.txt
+
+#!!! IMPORTANT or else imports wont work
+export PYTHONPATH=$(pwd)
+```
+
+## Run scripts unit tests
+
+```bash
+python3 -m unittest tests/v2/test_tester.py
+
+# or
+pytest tests/v2/test_<filename>.py
+```
+
+## Manually run a module
+
+```bash
+
+# as an example
+python scriptss/v2/runner.py
+
+```
+
 
 ### Adding a New Image
 
@@ -44,34 +74,25 @@ For people who are trying to modify the image stack, here are some scenarios and
 We Use github workflow to builds new images if their is any change in the images or addtional images are added.
 .github:-
 The main.yml file contains the steps to build the image
-+ Initial download required for the images are installed
-+ Doit module is used to run the tasks
-    - install all the requirments for the images 
-    - Use doit unit build to build,test and push the image to DataHub repo
-    - Update the wiki  
-    - Store the artifacts and log    
-The Tag.yml file is used to tag the latest build <br>
 
 Image:- 
 - Folder containing the images and each images has its own docker file, test folder for test scripts.
 - Spec.yml file is important file where the dependecy of the image and build information specified for an image.
+
 Model:-
-- Spec.py used for reading the spec file and prepare build parameters
-- imagedef.py pydantic object used by spec.py
+- Deprecated
 
 scripts:-
-- dataojects.py contains the pydantic class
-- docker_unit.py used to build,test and push images
-    - ContainerFacade class controls the flow of the code
-    - build_test_push_containers method is used for building,test and push image
-- githelper has code for git related task
-- manifests.py has utils methods to maintain the manifests
-- Other docker file will be deprecated except for manifest
+- All code for project
 Tests:-
 - Contains the test file for testing the submodule
 - used with pytest can be called with pytest test_*.py
 
-dodo.py:-
-- We use doit python module to call the submodule 
-- Each task is called with parameters and expected outputs
+## Artifacts
 
+Build logs & files can be downloaded after the Github Action completes in an build-artifacts.zip file. Files include:
+
+- logs/<image>.build.log: build logs from docker
+- logs/<image>.tests.log: test logs from pytest
+- manifests/<image>.md: generated markdown for the wiki
+- wiki/*.md: all wiki files that have been updated

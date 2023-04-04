@@ -30,7 +30,7 @@ import json
 
 from tabulate import tabulate
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger('datahub_docker_stacks')
 
 
 class CondaPackageHelper:

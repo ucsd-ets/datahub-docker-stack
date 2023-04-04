@@ -20,7 +20,7 @@ from setuptools import Command
 import pytest
 import os
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger('datahub_docker_stacks')
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 
 WAIT_TIME = 15 or os.environ.get('WAIT_TIME')
@@ -29,7 +29,7 @@ JUPYTER_TOKEN = os.environ.get('JUPYTER_TOKEN')
 SERVICE_NAME = '127.0.0.1' or os.environ.get('SERVICE_NAME')
 
 
-@pytest.mark.skip(reason="Skipping test_rstudio() due to Selenium issue")
+# @pytest.mark.skip(reason="Skipping test_rstudio() due to Selenium issue")
 def test_rstudio(container):
 
     c = container.run(
@@ -51,7 +51,8 @@ def test_rstudio(container):
 
     # initialize the driver options and connect to the notebook
     options = Options()
-    options.headless = True
+    # options.headless = True   # deprecated
+    options.add_argument('--headless=new')  # more powerful functionality
     options.add_argument('--window-size=1920x1480')
     options.add_argument('--disable-gpu')
     options.add_argument('--disable-extensions')
@@ -171,9 +172,3 @@ def test_rstudio(container):
 
     LOGGER.info('Exited the notebook server')
     LOGGER.info('UI testing all pass!')
-
-    # except Exception as e:
-
-    #     LOGGER.error('failed selenium acceptance testing')
-    #     LOGGER.error(e)
-    #     raise e

@@ -1,8 +1,12 @@
 name: Docker
 
+env:
+  DOCKER_CLIENT_TIMEOUT: "300"
+  COMPOSE_HTTP_TIMEOUT: "300"
+
 on:
   push:
-    branches: [ main ]
+    branches: [ main, refractor_buildtest]
     paths:
       - "images/**"
       - "model/**"
@@ -32,10 +36,14 @@ jobs:
         with:
           fetch-depth: 0
       
-      - name: Install pip dependencies
+      - name: Docker/ENV cleanup Cleanup
         run: |
           docker image prune -a -f
           docker container prune -f
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "/usr/local/share/boost"
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
 
       - name: Set up Python 3.8
         uses: actions/setup-python@v2
@@ -59,6 +67,8 @@ jobs:
           git clone https://github.com/davidzyx/doit
           pip install ./doit
           rm -rf ./doit
+          mkdir -p logs manifests
+          touch logs/run.log
 
       - name: Set Python-specific environment variables
         run: |
@@ -69,17 +79,9 @@ jobs:
         env:
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
           DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
-          
         run: |
           doit prep
-
-      - name: Workflow tests
-        env:
-          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-          DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
-        run: |
-          coverage run -m pytest -v tests/test_docker_unit.py
-          coverage report
+          mkdir -p logs
 
       - name: Clone Wiki
         uses: actions/checkout@v2
@@ -94,18 +96,7 @@ jobs:
           GRPC_CERT: ${{ secrets.GRPC_CERT }}
           PREPUSH_IMAGES: '["ucsdets/scipy-ml-notebook"]'
         run: |
-          doit unit_build
-      #   used for building, prepushing, testing and pushing module
-
-      - name: Run manifests
-        env:
-          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-          DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
-        run: |
-          [ -f artifacts/IMAGES_BUILT ] && [ -s artifacts/IMAGES_BUILT ] && doit manifest || echo "no image updated"
-          ls manifests/*.md &> /dev/null && cp manifests/*.md wiki/ && echo "*.md copied to wiki" || echo "no *.md"
-      # if there is no image updated, skip doit
-      # if there is no *.md (no image updated), skip cp command
+          python3 scripts/v2/main.py
 
       - name: Push Wiki to GitHub
         if: >
@@ -114,7 +105,8 @@ jobs:
           !contains(github.event.head_commit.message , 'skip push') &&
           (
             github.ref == 'refs/heads/master' || 
-            github.ref == 'refs/heads/main'
+            github.ref == 'refs/heads/main' ||
+            github.ref == 'refs/heads/refractor_buildtest'
           )
         uses: stefanzweifel/git-auto-commit-action@v4
         with:

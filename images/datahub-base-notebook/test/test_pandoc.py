@@ -3,7 +3,7 @@
 
 import logging
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger('datahub_docker_stacks')
 
 
 def test_pandoc(container):

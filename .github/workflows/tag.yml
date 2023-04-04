@@ -7,18 +7,11 @@ on:
         description: 'Orginal tag of images to be stable'
         default: '2099.3-somehash'
         required: true
-      #commitTag:
-      #  description: 'Commit hash in cell'
-      #  default: 'deadb33f'
-      #  required: true
-      #keyword:
-      #  description: 'Filter by keyword'
-      #  default: '2021.3'
-      #  required: true
-      #tagReplace:
-      #  description: 'New tag to replace'
-      #  default: '2021.3.X'
-      #  required: true
+      dryRun:
+        type: boolean
+        description: 'dry-run: retrieve original image names ONLY'
+        required: true
+      
 
 jobs:
   tagging:
@@ -26,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install pip dependencies
+      - name: Docker Cleanup
         run: |
           docker image prune -a -f
           docker container prune -f
@@ -46,6 +39,8 @@ jobs:
           git clone https://github.com/davidzyx/doit
           pip install ./doit
           rm -rf ./doit
+          mkdir -p logs manifests
+          touch logs/run.log logs/.empty
 
       - name: Set Python-specific environment variables
         run: |
@@ -58,16 +53,32 @@ jobs:
           repository: ${{github.repository}}.wiki
           path: wiki
 
-      - name: Tag Images
+      - name: Setup artifacts
+        env:
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+          DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
+        run: |
+          doit prep
+          mkdir -p logs
+
+      - name: Dry-run Tagging
+        if: ${{ github.event.inputs.dryRun == 'true' }}
         env:
           DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: >
           doit tag
           --original_tag ${{ github.event.inputs.originalTag }}
-        #  --commit_tag ${{ github.event.inputs.commitTag }}
-        #  --keyword ${{ github.event.inputs.keyword }}
-        #  --tag_replace ${{ github.event.inputs.tagReplace }}
+          --dry_run
+        
+      - name: Tag Images
+        if: ${{ github.event.inputs.dryRun == 'false'}}
+        env:
+          DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: >
+          doit tag
+          --original_tag ${{ github.event.inputs.originalTag }}
 
       - name: Run stable manifests
         env:
@@ -75,16 +86,17 @@ jobs:
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
           doit stable
-          cp manifests/*.md wiki/
 
       - name: Push Wiki to GitHub
         if: >
+          (github.event.inputs.dryRun == 'false') &&
           !contains(github.base_ref , 'test') &&
           !contains(github.base_ref , 'dev') &&
           !contains(github.event.head_commit.message , 'skip push') &&
           (
             github.ref == 'refs/heads/master' || 
-            github.ref == 'refs/heads/main'
+            github.ref == 'refs/heads/main' ||
+            github.ref == 'refs/heads/refractor_buildtest'
           )
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
@@ -98,3 +110,4 @@ jobs:
           name: tag-artifacts
           path: |
             artifacts
+            manifests
