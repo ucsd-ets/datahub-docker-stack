@@ -71,6 +71,7 @@ def run_tagging(
     
     # try to login right before push
     # docker_adapter.login(username, password)
+    logger.info("Pushing all stable images to Dockerhub.")
     return docker_adapter.push_stable_images(stable_fullnames=tagged)
 
 

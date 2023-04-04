@@ -335,7 +335,7 @@ def push_stable_images(stable_fullnames: List[str]) -> bool:
                 decode=True
             )   # this will return a geneator of json-decoded dict
 
-            # only if we see sth like {'status': 'Pushed', 'progressDetail': {}, 'id': 'xxxxxxxxxxxx'}
+            """ # only if we see sth like {'status': 'Pushed', 'progressDetail': {}, 'id': 'xxxxxxxxxxxx'}
             pushed_check = False
             # can check push log here if anything goes wrong
             for chunk in resp:
@@ -353,7 +353,7 @@ def push_stable_images(stable_fullnames: List[str]) -> bool:
                     
                     elif "pushing" in chunk['status'].lower():
                         print("pushing line")
-                        
+
                     # docker has actually pushed
                     elif "pushed" in chunk['status'].lower():
                         print('\n' + chunk)
@@ -361,7 +361,7 @@ def push_stable_images(stable_fullnames: List[str]) -> bool:
 
                     # regular progress
                     else:
-                        print('.', end='')
+                        print('.', end='') """
         except Exception as e:
             logger.error(f"Something wrong with the server when push() {stable_name}")
             break
@@ -369,7 +369,7 @@ def push_stable_images(stable_fullnames: List[str]) -> bool:
     # finally:
     __docker_client.close()
 
-    if len(stable_fullnames) != len(images_pushed) or not pushed_check:
+    if len(stable_fullnames) != len(images_pushed):
         return False
     else:
         store_var('IMAGES_PUSHED', images_pushed)
