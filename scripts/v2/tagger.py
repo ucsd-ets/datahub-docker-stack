@@ -30,7 +30,7 @@ def run_tagging(
         bool: success or failure
     """
 
-    docker_adapter.login(username, password)
+    # docker_adapter.login(username, password)
     
     assert original_tag and original_tag.count('-') == 1, \
         "None as input or incorrect tag format (should be like '2023.2-deadbeef')"
@@ -69,6 +69,9 @@ def run_tagging(
     store_var('IMAGES_ORIGINAL', original_names )
     logger.info("original images written to IMAGES_ORIGINAL, stable images to IMAGES_TAGGED.")
     
+    # try to login right before push
+    docker_adapter.login(username, password)
+    logger.info("Pushing all stable images to Dockerhub.")
     return docker_adapter.push_stable_images(stable_fullnames=tagged)
 
 
