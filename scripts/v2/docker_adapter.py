@@ -304,7 +304,6 @@ def tag_stable(orig_fullname: str, tag_replace: str) -> Tuple[str, bool]:
         __docker_client.close()
 
 def push_stable_images(stable_fullnames: List[str]) -> bool:
-    import time
     """given a list of stable image names, push them to dockerhub.
     If success, these strings will be written to IMAGES_PUSHED in build-artifacts
 
@@ -336,16 +335,14 @@ def push_stable_images(stable_fullnames: List[str]) -> bool:
                 decode=True
             )   # this will return a geneator of json-decoded dict
 
-            if "scipy-ml" in repo or "rstudio" in repo:
-                print(f"{stable_name} slept")
-                time.sleep(20)
-
-            """ # only if we see sth like {'status': 'Pushed', 'progressDetail': {}, 'id': 'xxxxxxxxxxxx'}
-            pushed_check = False
             # can check push log here if anything goes wrong
             for chunk in resp:
-                # print("chuck is", chunk)
-                # logger.info(chunk)
+                """ 
+                NOTE: resp is a generator
+                We MUST go thru resp to ensure docker push is finished.
+                To show log (defined below), comment out 'continue'
+                """
+                continue
 
                 if 'status' in chunk:
                     # "The push refers to repository XXX_repo"
@@ -355,20 +352,12 @@ def push_stable_images(stable_fullnames: List[str]) -> bool:
                     # "XXX_tag: digest: sha256:XXX size: XXX"
                     elif tag in chunk['status']:
                         print('\n' + chunk['status'])
-                    
-                    elif "pushing" in chunk['status'].lower():
-                        print("pushing line")
-
-                    # docker has actually pushed
-                    elif "pushed" in chunk['status'].lower():
-                        print('\n' + chunk)
-                        pushed_check = True
 
                     # regular progress
                     else:
                         # print('.', end='')
                         print("****** ", chunk['status'])
-                         """
+                        
         except Exception as e:
             logger.error(f"Something wrong with the server when push() {stable_name}")
             break
