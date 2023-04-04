@@ -335,6 +335,22 @@ def push_stable_images(stable_fullnames: List[str]) -> bool:
                 decode=True
             )   # this will return a geneator of json-decoded dict
             # can check push log here if anything goes wrong
+            for chunk in resp:
+                # print("chuck is", chunk)
+                # logger.info(chunk)
+
+                if 'status' in chunk:
+                    # "The push refers to repository XXX_repo"
+                    if repo in chunk['status']:
+                        print(chunk['status'])
+
+                    # "XXX_tag: digest: sha256:XXX size: XXX"
+                    elif tag in chunk['status']:
+                        print('\n' + chunk['status'])
+
+                    # regular progress
+                    else:
+                        print('.', end='')
         except Exception as e:
             logger.error(f"Something wrong with the server when push() {stable_name}")
             break
