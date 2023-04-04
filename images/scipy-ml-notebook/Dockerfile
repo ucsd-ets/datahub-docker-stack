@@ -75,7 +75,9 @@ USER $NB_UID:$NB_GID
 ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
 
 #ENV CUDNN_PATH=/opt/conda/lib/python3.9/site-packages/nvidia/cudnn
-ENV LD_LIBRARY_PATH=/opt/conda/pkgs/cudnn-8.6.0.163-pypi_0 8.8.1.3-pypi_0/lib/:/opt/conda/pkgs/cudatoolkit-11.8.0-h37601d7_11/lib:/usr/local/nvidia/lib:/usr/local/nvidia/lib64:/lib/:/opt/conda/lib/python3.9/site-packages/nvidia/cudnn/lib
+
+# starts like this: /opt/conda/pkgs/cudnn-8.6.0.163-pypi_0 8.8.1.3-pypi_0/lib/:/opt/conda/pkgs/cudatoolkit-11.8.0-h37601d7_11/lib:/usr/local/nvidia/lib:/usr/local/nvidia/lib64
+ENV LD_LIBRARY_PATH="/opt/conda/pkgs/cudnn-8.6.0.163-pypi_0 8.8.1.3-pypi_0/lib/:/opt/conda/pkgs/cudatoolkit-11.8.0-h37601d7_11/lib:/usr/local/nvidia/lib:/usr/local/nvidia/lib64:/lib/:/opt/conda/lib/python3.9/site-packages/nvidia/cudnn/lib"
 
 RUN . /tmp/activate.sh
 
