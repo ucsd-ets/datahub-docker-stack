@@ -69,6 +69,8 @@ def run_tagging(
     store_var('IMAGES_ORIGINAL', original_names )
     logger.info("original images written to IMAGES_ORIGINAL, stable images to IMAGES_TAGGED.")
     
+    # try to login right before push
+    docker_adapter.login(username, password)
     return docker_adapter.push_stable_images(stable_fullnames=tagged)
 
 
