@@ -10,9 +10,9 @@ USER root
 ARG LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7 CUDA_VERSION=11.8
 
 RUN apt-get update && \
-	apt-get install -y \
-	libtinfo5 build-essential && \
-	apt-get clean && rm -rf /var/lib/apt/lists/*
+    apt-get install -y \
+    libtinfo5 build-essential && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Symbolic link for Stata 17 dependency on libncurses5
 RUN ln -s libncurses.so.6 /usr/lib/x86_64-linux-gnu/libncurses.so.5
@@ -56,6 +56,7 @@ RUN pip install --no-cache-dir  datascience \
 	tensorflow==2.12.* && \
 	fix-permissions $CONDA_DIR && \
 	fix-permissions /home/$NB_USER
+
 
 
 # Update these in spec.yml according to https://pytorch.org/get-started/locally/
