@@ -112,7 +112,7 @@ def push(node: Node) -> Tuple[bool, str]:
 
         res = ""
         for chunk in stream:
-            logger.info(chunk)
+            # logger.info(chunk)
 
             if 'status' in chunk:
                 # "The push refers to repository XXX_repo"
@@ -334,6 +334,9 @@ def push_stable_images(stable_fullnames: List[str]) -> bool:
                 stream=True,
                 decode=True
             )   # this will return a geneator of json-decoded dict
+
+            # only if we see sth like {'status': 'Pushed', 'progressDetail': {}, 'id': 'xxxxxxxxxxxx'}
+            pushed_check = False
             # can check push log here if anything goes wrong
             for chunk in resp:
                 # print("chuck is", chunk)
@@ -347,6 +350,14 @@ def push_stable_images(stable_fullnames: List[str]) -> bool:
                     # "XXX_tag: digest: sha256:XXX size: XXX"
                     elif tag in chunk['status']:
                         print('\n' + chunk['status'])
+                    
+                    elif "pushing" in chunk['status'].lower():
+                        print("pushing line")
+                        
+                    # docker has actually pushed
+                    elif "pushed" in chunk['status'].lower():
+                        print('\n' + chunk)
+                        pushed_check = True
 
                     # regular progress
                     else:
@@ -358,7 +369,7 @@ def push_stable_images(stable_fullnames: List[str]) -> bool:
     # finally:
     __docker_client.close()
 
-    if len(stable_fullnames) != len(images_pushed):
+    if len(stable_fullnames) != len(images_pushed) or not pushed_check:
         return False
     else:
         store_var('IMAGES_PUSHED', images_pushed)
