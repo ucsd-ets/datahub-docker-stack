@@ -304,6 +304,7 @@ def tag_stable(orig_fullname: str, tag_replace: str) -> Tuple[str, bool]:
         __docker_client.close()
 
 def push_stable_images(stable_fullnames: List[str]) -> bool:
+    import time
     """given a list of stable image names, push them to dockerhub.
     If success, these strings will be written to IMAGES_PUSHED in build-artifacts
 
@@ -335,7 +336,11 @@ def push_stable_images(stable_fullnames: List[str]) -> bool:
                 decode=True
             )   # this will return a geneator of json-decoded dict
 
-            # only if we see sth like {'status': 'Pushed', 'progressDetail': {}, 'id': 'xxxxxxxxxxxx'}
+            if "scipy-ml" in repo or "rstudio" in repo:
+                print(f"{stable_name} slept")
+                time.sleep(20)
+
+            """ # only if we see sth like {'status': 'Pushed', 'progressDetail': {}, 'id': 'xxxxxxxxxxxx'}
             pushed_check = False
             # can check push log here if anything goes wrong
             for chunk in resp:
@@ -363,6 +368,7 @@ def push_stable_images(stable_fullnames: List[str]) -> bool:
                     else:
                         # print('.', end='')
                         print("****** ", chunk['status'])
+                         """
         except Exception as e:
             logger.error(f"Something wrong with the server when push() {stable_name}")
             break
