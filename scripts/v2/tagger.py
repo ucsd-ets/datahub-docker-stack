@@ -30,7 +30,7 @@ def run_tagging(
         bool: success or failure
     """
 
-    docker_adapter.login(username, password)
+    # docker_adapter.login(username, password)
     
     assert original_tag and original_tag.count('-') == 1, \
         "None as input or incorrect tag format (should be like '2023.2-deadbeef')"
