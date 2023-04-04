@@ -117,7 +117,10 @@ def run_integration_tests(node: Node, result: Result) -> bool:
         result.test_results['integration_tests'] = 'skipped'
         return True     # if skipped, still need to proceed to later tasks
 
-    exit_code, report = run_tests(os.path.join(node.filepath, 'integration'))
+    exit_code, report = run_tests(
+        # run_tests() takes a list of dir
+        [ os.path.join(node.filepath, 'integration_tests') ]     
+    )
     result.test_results['integration_tests'] = 'Passed integration tests'
     result.test_results['test_log'] = report
     if exit_code != pytest.ExitCode.OK:
