@@ -126,9 +126,9 @@ def push(node: Node) -> Tuple[bool, str]:
                     res += formatted_log
                     logger.info(formatted_log)
 
-                # regular progress
+                # regular progress; skip
                 else:
-                    logger.info('.')
+                    continue
 
         return True, res
     except Exception as e:
