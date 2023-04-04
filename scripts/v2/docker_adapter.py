@@ -338,7 +338,7 @@ def push_stable_images(stable_fullnames: List[str]) -> bool:
 
             if "scipy-ml" in repo or "rstudio" in repo:
                 print(f"{stable_name} slept")
-                time.sleep(5)
+                time.sleep(20)
 
             """ # only if we see sth like {'status': 'Pushed', 'progressDetail': {}, 'id': 'xxxxxxxxxxxx'}
             pushed_check = False
