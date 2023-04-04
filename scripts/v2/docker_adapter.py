@@ -335,7 +335,7 @@ def push_stable_images(stable_fullnames: List[str]) -> bool:
                 decode=True
             )   # this will return a geneator of json-decoded dict
 
-            """ # only if we see sth like {'status': 'Pushed', 'progressDetail': {}, 'id': 'xxxxxxxxxxxx'}
+            # only if we see sth like {'status': 'Pushed', 'progressDetail': {}, 'id': 'xxxxxxxxxxxx'}
             pushed_check = False
             # can check push log here if anything goes wrong
             for chunk in resp:
@@ -361,7 +361,8 @@ def push_stable_images(stable_fullnames: List[str]) -> bool:
 
                     # regular progress
                     else:
-                        print('.', end='') """
+                        # print('.', end='')
+                        print("****** ", chunk['status'])
         except Exception as e:
             logger.error(f"Something wrong with the server when push() {stable_name}")
             break
