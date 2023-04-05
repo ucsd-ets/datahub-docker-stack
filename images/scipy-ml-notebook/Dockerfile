@@ -37,7 +37,7 @@ RUN mamba install \
 	fix-permissions $CONDA_DIR && \
 	fix-permissions /home/$NB_USER
 
-RUN mamba install -c nvidia cuda-nvcc=11.8.89 -y && \
+RUN mamba install -c "nvidia/label/cuda-11.8.0" cuda-nvcc -y && \
 	fix-permissions $CONDA_DIR && \
 	fix-permissions /home/$NB_USER
 
