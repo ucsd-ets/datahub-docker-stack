@@ -31,6 +31,7 @@ USER jovyan
 # CUDA 11
 # tf requirements: https://www.tensorflow.org/install/pip#linux
 RUN mamba install \
+	cudatoolkit=11.8 \
 	nccl \
 	-y && \
 	fix-permissions $CONDA_DIR && \
@@ -45,7 +46,6 @@ RUN pip install --no-cache-dir protobuf==3.20.3
 # Install pillow<7 due to dependency issue https://github.com/pytorch/vision/issues/1712
 # tensorrt installed to fix not having libnvinfer that has caused tensorflow issues.
 RUN pip install --no-cache-dir  datascience \
-	cuda-python==11.8 \
 	PyQt5 \
 	scapy \
 	nltk \
