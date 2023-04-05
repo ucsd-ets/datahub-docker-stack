@@ -41,6 +41,7 @@ RUN mamba install \
 # https://github.com/spesmilo/electrum/issues/7825
 RUN pip install --no-cache-dir protobuf==3.20.3
 
+# cuda-python installed to have parity with tensorflow and cudnn
 # Install pillow<7 due to dependency issue https://github.com/pytorch/vision/issues/1712
 # tensorrt installed to fix not having libnvinfer that has caused tensorflow issues.
 RUN pip install --no-cache-dir  datascience \
