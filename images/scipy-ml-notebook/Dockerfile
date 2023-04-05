@@ -32,6 +32,7 @@ USER jovyan
 # tf requirements: https://www.tensorflow.org/install/pip#linux
 RUN mamba install \
 	cudatoolkit=11.8 \
+	cuda-nvcc=11.8.0 \
 	nccl \
 	-y && \
 	fix-permissions $CONDA_DIR && \
