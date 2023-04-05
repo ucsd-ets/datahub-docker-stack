@@ -38,6 +38,9 @@ RUN mamba install \
 	fix-permissions $CONDA_DIR && \
 	fix-permissions /home/$NB_USER
 
+RUN mamba install -c nvidia cuda-nvcc=11.8.89 -y && \
+	fix-permissions $CONDA_DIR && \
+	fix-permissions /home/$NB_USER
 
 # install protobuf to avoid weird base type error. seems like if we don't then it'll be installed twice.
 # https://github.com/spesmilo/electrum/issues/7825
