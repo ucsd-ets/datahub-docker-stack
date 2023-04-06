@@ -55,6 +55,13 @@ def get_changed_images():
                 break
             if image_ref not in changed_images and image_ref not in tags['ChangeIgnore']:
                 changed_images.add(image_ref)
+
+    # temp fix: base/parent should be built whenever >=1 child is built
+    # since we use {BASE_TAG}-{GIT_HASH} as tag
+    # ONLY works for our single-level dependency
+    if len(changed_images) != 0:
+        changed_images.add("datahub-base-notebook")
+    
     return list(changed_images)
 
 
