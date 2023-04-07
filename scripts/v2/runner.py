@@ -217,6 +217,7 @@ def build_and_test_containers(
             if not node.rebuild:
                 logger.info(f"skipping node {node.image_name}")
                 result.container_details['image_built'] = False
+                full_names.append(result.full_image_name)
                 continue         
 
             # build image
