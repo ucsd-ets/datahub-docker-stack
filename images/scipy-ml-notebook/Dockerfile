@@ -11,7 +11,7 @@ ARG LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7 CUDA_VERSION=11.8
 
 RUN apt-get update && \
     apt-get install -y \
-    libtinfo5 build-essential lsof && \
+    libtinfo5 build-essential && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Symbolic link for Stata 17 dependency on libncurses5
