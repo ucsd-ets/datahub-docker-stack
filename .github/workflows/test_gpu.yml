@@ -1,4 +1,4 @@
-name: Docker
+name: GPU Test
 
 env:
   DOCKER_CLIENT_TIMEOUT: "300"
