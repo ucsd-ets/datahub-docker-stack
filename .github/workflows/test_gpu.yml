@@ -1,0 +1,41 @@
+name: Docker
+
+env:
+  DOCKER_CLIENT_TIMEOUT: "300"
+  COMPOSE_HTTP_TIMEOUT: "300"
+
+on:
+  push:
+    branches: [ tf-pytorch-manualtest]
+    paths:
+      - "images/**"
+      - "model/**"
+      - "scripts/**"
+      - "dodo.py"
+      - ".github/workflows/main.yml"
+  
+  workflow_dispatch:
+
+jobs:
+  docker-pipeline:
+    runs-on: ubuntu-latest
+    if: >
+      !contains(github.event.head_commit.message , 'skip ci') &&
+      !contains(github.event.pull_request.title, 'skip ci')
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      
+      - name: SSH to login
+        run: |
+          sudo apt install sshpass
+          echo "Going into dsmlp-login and running pytest."
+          output=$(sshpass -p ${{ secrets.DSMLP_LOGIN_PASSWORD }} ssh rmankini@dsmlp-login.ucsd.edu 'launch.sh -i ucsdets/scipy-ml-notebook:2023.2-d2108a5 -P Always -n 12 -W TEST_NBGRADER -g 1 -c 4 -m 32 -f pytest public/gpu_tests')
+          echo "$output"
+
+          if [[ "$output" == *"FAILURES"* ]]; then
+            echo "Failure detected."
+            exit 1
+          fi
+
