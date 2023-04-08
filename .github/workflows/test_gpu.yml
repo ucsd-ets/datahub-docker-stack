@@ -1,3 +1,11 @@
+# Tests Tensorflow and Pytorch by SSHing into dsmlp-login and booting up a container using the launch script.
+# The test currently uses the rmankini user but will soon be swapped to a test account.
+# The tests currently live in the TEST_NBGRADER public directory under tests_gpu, and are run by pytest.
+# (For those who don't know pytest, it parses all files and functions that have "test" in the name).
+
+# The tests typically run functions that engage the GPU. After the tests are run, the stdout of the entire SSH session is captured in a bash variable.
+# The output is parsed to make sure none of the pytests failed. The job will then fail if any failure are detected.
+
 name: GPU Test
 
 on:
