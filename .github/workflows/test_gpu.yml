@@ -17,6 +17,7 @@ jobs:
         run: |
           echo "Going into dsmlp-login and running pytest."
 
+          mkdir ~/.ssh
           touch ~/.ssh/config
           echo "UserKnownHostsFile=/dev/null" >> ~/.ssh/config
           echo "StrictHostKeyChecking=no" >> ~/.ssh/config
