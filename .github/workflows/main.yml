@@ -15,7 +15,7 @@ on:
       - ".github/workflows/main.yml"
 
   pull_request:
-    branches: [ main ]
+    branches: [ refractor_buildtest ]
     paths:
       - "images/**"
       - "model/**"
