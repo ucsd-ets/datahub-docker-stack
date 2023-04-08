@@ -1,20 +1,6 @@
 name: GPU Test
 
-env:
-  DOCKER_CLIENT_TIMEOUT: "300"
-  COMPOSE_HTTP_TIMEOUT: "300"
-
-on:
-  push:
-    branches: [ tf-pytorch-manualtest ]
-    paths:
-      - "images/**"
-      - "model/**"
-      - "scripts/**"
-      - "dodo.py"
-      - ".github/workflows/main.yml"
-  
-  workflow_dispatch:
+on: [push]
 
 jobs:
   docker-pipeline:
