@@ -22,7 +22,6 @@ jobs:
           echo "UserKnownHostsFile=/dev/null" >> ~/.ssh/config
           echo "StrictHostKeyChecking=no" >> ~/.ssh/config
 
-          sshpass -p ${{ secrets.DSMLP_LOGIN_PASSWORD }} ssh rmankini@dsmlp-login.ucsd.edu 'launch.sh -i ucsdets/scipy-ml-notebook:2023.2-d2108a5 -P Always -n 12 -W TEST_NBGRADER -g 1 -c 4 -m 32 -f pytest public/gpu_tests'
           output=$(sshpass -p ${{ secrets.DSMLP_LOGIN_PASSWORD }} ssh rmankini@dsmlp-login.ucsd.edu 'launch.sh -i ucsdets/scipy-ml-notebook:2023.2-d2108a5 -P Always -n 12 -W TEST_NBGRADER -g 1 -c 4 -m 32 -f pytest public/gpu_tests')
           echo "$output"
 
