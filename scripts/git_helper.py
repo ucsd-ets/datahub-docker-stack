@@ -33,7 +33,7 @@ class GitHelper:
         if (environ['GITHUB_REF_NAME'] == "main"):
             return git['log', '-m', -1, '--name-only', '--pretty=format:']().split()
             
-        return git['diff', "HEAD^ HEAD", '--name-only']().split()
+        return git['diff', "HEAD^", "HEAD", '--name-only']().split()
 
 
 def get_changed_images():
