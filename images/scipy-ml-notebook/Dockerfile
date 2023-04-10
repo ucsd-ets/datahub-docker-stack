@@ -8,6 +8,7 @@ USER root
 # https://www.tensorflow.org/install/source#linux
 
 ARG LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7 CUDA_VERSION=11.8
+ARG LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7 CUDA_VERSION=11.8
 
 RUN apt-get update && \
     apt-get install -y \
@@ -49,6 +50,7 @@ RUN pip install --no-cache-dir protobuf==3.20.3
 # cuda-python installed to have parity with tensorflow and cudnn
 # Install pillow<7 due to dependency issue https://github.com/pytorch/vision/issues/1712
 # tensorrt installed to fix not having libnvinfer that has caused tensorflow issues.
+# tensorrt installed to fix not having libnvinfer that has caused tensorflow issues.
 RUN pip install --no-cache-dir  datascience \
 	PyQt5 \
 	scapy \
@@ -77,7 +79,7 @@ RUN pip install torch==${TORCH_VER} torchvision==${TORCH_VIS_VER} torchaudio==${
 # RUN ln -s /usr/local/nvidia/bin/nvidia-smi /opt/conda/bin/nvidia-smi
 #RUN . /tmp/activate.sh && echo "Activate ran successfully"
 #
-USER $NB_UID:$NB_GID
+    USER $NB_UID:$NB_GID
 ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
 
 #ENV CUDNN_PATH=/opt/conda/lib/python3.9/site-packages/nvidia/cudnn
@@ -89,4 +91,3 @@ ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
 #sad issue with github ref
 
 RUN . /tmp/activate.sh
-

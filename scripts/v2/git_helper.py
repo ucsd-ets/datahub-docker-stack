@@ -55,6 +55,7 @@ def get_changed_images():
                 break
             if image_ref not in changed_images and image_ref not in tags['ChangeIgnore']:
                 changed_images.add(image_ref)
+    
     return list(changed_images)
 
 

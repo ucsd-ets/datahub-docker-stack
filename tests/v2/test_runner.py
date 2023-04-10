@@ -50,14 +50,15 @@ class TestRunner(unittest.TestCase):
         @patch('scripts.v2.wiki.update_Home', mock_wiki_update_Home)
         @patch('scripts.v2.docker_adapter.prune', mock_prune)
         def run_test():
-            build_and_test_containers(root, 'fake', 'fakepw', 'test', self.all_info_cmds)
+            return build_and_test_containers(root, 'fake', 'fakepw', 'test', self.all_info_cmds)
 
-        run_test()
+        res = run_test()
 
         return (
             mock_login, mock_build, mock_tester, mock_push, 
             mock_get, mock_wiki_write_report, 
-            mock_prune, mock_store, mock_wiki_update_Home
+            mock_prune, mock_store, mock_wiki_update_Home,
+            res
         )
     
     def test_build_all(self):
@@ -87,9 +88,11 @@ class TestRunner(unittest.TestCase):
         (
             mock_login, mock_build, mock_tester, mock_push, 
             mock_get, mock_wiki_write_report, 
-            mock_prune, mock_store, mock_wiki_update_Home
+            mock_prune, mock_store, mock_wiki_update_Home,
+            res
         ) = self.run_build_and_test_containers(root)
-        # build_and_test_containers(root, 'fake', 'fakepw', 'test')
+        
+        assert res, "build_and_test_containers() returns False"
 
         mock_login.assert_called_with('fake', 'fakepw')
 
@@ -142,23 +145,30 @@ class TestRunner(unittest.TestCase):
             children=[
                 c1, c2, c3
             ],
+            # NOTE: with current design using git-hash in tag,
+            # root must be rebuilt if any child is rebuilt, 
+            # even root itself has no change
+            # Thus, we set rebuild=False and expect it to be rebuilt
             rebuild=False
         )
 
         (
             mock_login, mock_build, mock_tester, mock_push, 
             mock_get, mock_wiki_write_report, 
-            mock_prune, mock_store, mock_wiki_update_Home
+            mock_prune, mock_store, mock_wiki_update_Home,
+            res
         ) = self.run_build_and_test_containers(root)
 
+        assert res, "build_and_test_containers() returns False"
+
         mock_login.assert_called_with('fake', 'fakepw')
-        imgs_looped_through = ['rstudio-notebook']
+        imgs_looped_through = ['datahub-base-notebook', 'rstudio-notebook']
         
         images_built = [arg.args[0].image_name for arg in mock_build.call_args_list]
         assert images_built == imgs_looped_through, images_built
 
-        # single basic test, no integration tests
-        assert mock_tester.call_count == 1, mock_tester.call_count
+        # root + 1 child basic test, no integration tests
+        assert mock_tester.call_count == 2, mock_tester.call_count
 
         images_pushed = [arg.args[0].image_name for arg in mock_push.call_args_list]
         assert images_pushed == imgs_looped_through, images_pushed
@@ -166,12 +176,12 @@ class TestRunner(unittest.TestCase):
         images_gotten = [arg.args[0].image_name for arg in mock_get.call_args_list]
         assert images_gotten == imgs_looped_through, images_gotten
 
-        assert mock_wiki_write_report.call_count == 1, mock_wiki_write_report.call_count
+        assert mock_wiki_write_report.call_count == 2, mock_wiki_write_report.call_count
 
-        assert mock_prune.call_count == 1, mock_prune.call_count
+        assert mock_prune.call_count == 2, mock_prune.call_count
 
-        # 4 yamls, 1 build log file & 1 test log file for actually built image
-        assert mock_store.call_count == 6, mock_store.call_count
+        # 4 yamls, 2 build log file & 2 test log file for actually built image
+        assert mock_store.call_count == 8, mock_store.call_count
 
         assert mock_wiki_update_Home.call_count == 1, mock_wiki_update_Home.call_count
 
@@ -208,9 +218,11 @@ class TestRunner(unittest.TestCase):
         (
             mock_login, mock_build, mock_tester, mock_push, 
             mock_get, mock_wiki_write_report, 
-            mock_prune, mock_store, mock_wiki_update_Home
+            mock_prune, mock_store, mock_wiki_update_Home,
+            res
         ) = self.run_build_and_test_containers(root)
 
+        assert res, "build_and_test_containers() returns False"
         mock_login.assert_called_with('fake', 'fakepw')
         assert mock_build.call_count == 0
         assert mock_tester.call_count == 0
