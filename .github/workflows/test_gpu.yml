@@ -36,7 +36,7 @@ jobs:
           echo "UserKnownHostsFile=/dev/null" >> ~/.ssh/config
           echo "StrictHostKeyChecking=no" >> ~/.ssh/config
 
-          output=$(sshpass -p ${{ secrets.DSMLP_LOGIN_PASSWORD }} ssh rmankini@dsmlp-login.ucsd.edu 'launch.sh -i ucsdets/scipy-ml-notebook:${{ github.event.inputs.originalTag }} -P Always -n 12 -W TEST_NBGRADER -g 1 -c 4 -m 32 -f pytest public/gpu_tests')
+          output=$(sshpass -p ${{ secrets.DSMLP_LOGIN_PASSWORD }} ssh rmankini@dsmlp-login.ucsd.edu 'launch.sh -i ucsdets/scipy-ml-notebook:${{ github.event.inputs.originalTag }} -P Always -n 12 -g 1 -c 4 -m 32 -f pytest /opt/workflow_tests')
           echo "$output"
 
           if [[ "$output" == *"FAILURES"* ]]; then
