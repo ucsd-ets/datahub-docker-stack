@@ -6,7 +6,7 @@ env:
 
 on:
   push:
-    branches: [ main, refractor_buildtest]
+    branches: [ main, refactor_clean ]
     paths:
       - "images/**"
       - "model/**"
