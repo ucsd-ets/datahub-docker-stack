@@ -40,15 +40,15 @@ class TestRunner(unittest.TestCase):
             },
         }
 
-        @patch('scripts.v2.docker_adapter.build', mock_build)
-        @patch('scripts.v2.runner.run_tests', mock_tester)
-        @patch('scripts.v2.docker_adapter.login', mock_login)
-        @patch('scripts.v2.docker_adapter.push', mock_push)
-        @patch('scripts.v2.fs.store', mock_store)
-        @patch('scripts.v2.docker_adapter.get_image_obj', mock_get)
-        @patch('scripts.v2.wiki.write_report', mock_wiki_write_report)
-        @patch('scripts.v2.wiki.update_Home', mock_wiki_update_Home)
-        @patch('scripts.v2.docker_adapter.prune', mock_prune)
+        @patch('scripts.docker_adapter.build', mock_build)
+        @patch('scripts.runner.run_tests', mock_tester)
+        @patch('scripts.docker_adapter.login', mock_login)
+        @patch('scripts.docker_adapter.push', mock_push)
+        @patch('scripts.fs.store', mock_store)
+        @patch('scripts.docker_adapter.get_image_obj', mock_get)
+        @patch('scripts.wiki.write_report', mock_wiki_write_report)
+        @patch('scripts.wiki.update_Home', mock_wiki_update_Home)
+        @patch('scripts.docker_adapter.prune', mock_prune)
         def run_test():
             return build_and_test_containers(root, 'fake', 'fakepw', 'test', self.all_info_cmds)
 

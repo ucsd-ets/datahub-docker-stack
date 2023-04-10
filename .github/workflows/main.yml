@@ -96,7 +96,7 @@ jobs:
           GRPC_CERT: ${{ secrets.GRPC_CERT }}
           PREPUSH_IMAGES: '["ucsdets/scipy-ml-notebook"]'
         run: |
-          python3 scripts/v2/main.py
+          python3 scripts/main.py
 
       - name: Push Wiki to GitHub
         if: >
