@@ -38,11 +38,6 @@ RUN mamba install \
 	-y && \
 	fix-permissions $CONDA_DIR && \
 	fix-permissions /home/$NB_USER
-	cudatoolkit=11.8 \
-	nccl \
-	-y && \
-	fix-permissions $CONDA_DIR && \
-	fix-permissions /home/$NB_USER
 
 RUN mamba install -c "nvidia/label/cuda-11.8.0" cuda-nvcc -y && \
 	fix-permissions $CONDA_DIR && \
@@ -84,7 +79,7 @@ RUN pip install torch==${TORCH_VER} torchvision==${TORCH_VIS_VER} torchaudio==${
 # RUN ln -s /usr/local/nvidia/bin/nvidia-smi /opt/conda/bin/nvidia-smi
 #RUN . /tmp/activate.sh && echo "Activate ran successfully"
 #
-USER $NB_UID:$NB_GID
+    USER $NB_UID:$NB_GID
 ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
 
 #ENV CUDNN_PATH=/opt/conda/lib/python3.9/site-packages/nvidia/cudnn
