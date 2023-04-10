@@ -8,6 +8,7 @@ USER root
 # https://www.tensorflow.org/install/source#linux
 
 ARG LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7 CUDA_VERSION=11.8
+ARG LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7 CUDA_VERSION=11.8
 
 RUN apt-get update && \
     apt-get install -y \
@@ -23,6 +24,7 @@ RUN chmod +x /run_jupyter.sh
 COPY cudatoolkit_env_vars.sh /etc/datahub-profile.d/cudatoolkit_env_vars.sh
 COPY cudnn_env_vars.sh /etc/datahub-profile.d/cudnn_env_vars.sh
 COPY activate.sh /tmp/activate.sh
+COPY manual-tests /opt/manual-tests
 
 RUN chmod 777 /etc/datahub-profile.d/*.sh /tmp/activate.sh
 
@@ -36,13 +38,23 @@ RUN mamba install \
 	-y && \
 	fix-permissions $CONDA_DIR && \
 	fix-permissions /home/$NB_USER
+	cudatoolkit=11.8 \
+	nccl \
+	-y && \
+	fix-permissions $CONDA_DIR && \
+	fix-permissions /home/$NB_USER
 
+RUN mamba install -c "nvidia/label/cuda-11.8.0" cuda-nvcc -y && \
+	fix-permissions $CONDA_DIR && \
+	fix-permissions /home/$NB_USER
 
 # install protobuf to avoid weird base type error. seems like if we don't then it'll be installed twice.
 # https://github.com/spesmilo/electrum/issues/7825
 RUN pip install --no-cache-dir protobuf==3.20.3
 
+# cuda-python installed to have parity with tensorflow and cudnn
 # Install pillow<7 due to dependency issue https://github.com/pytorch/vision/issues/1712
+# tensorrt installed to fix not having libnvinfer that has caused tensorflow issues.
 # tensorrt installed to fix not having libnvinfer that has caused tensorflow issues.
 RUN pip install --no-cache-dir  datascience \
 	PyQt5 \

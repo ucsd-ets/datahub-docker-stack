@@ -74,6 +74,7 @@ EXCLUDED_PACKAGES = [
     "cudnn",
     "nccl",
     "cudatoolkit",
+    "cuda-nvcc"
 ]
 
 
