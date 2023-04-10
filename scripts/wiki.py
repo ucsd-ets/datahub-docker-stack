@@ -8,11 +8,11 @@ import logging
 import docker
 import pandas as pd
 
-from scripts.v2.utils import *
-from scripts.v2.tree import Node, load_spec
-from scripts.v2.docker_adapter import run_simple_command, __docker_client
-from scripts.v2.git_helper import GitHelper     # has it been used?
-from scripts.v2.fs import MANIFEST_PATH
+from scripts.utils import *
+from scripts.tree import Node, load_spec
+from scripts.docker_adapter import run_simple_command, __docker_client
+from scripts.git_helper import GitHelper     # has it been used?
+from scripts.fs import MANIFEST_PATH
 
 
 

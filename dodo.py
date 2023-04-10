@@ -3,8 +3,8 @@ pjoin = os.path.join
 from shutil import rmtree
 from doit import get_var
 
-from scripts.v2.tagger import tagging_main
-from scripts.v2.wiki import update_Stable
+from scripts.tagger import tagging_main
+from scripts.wiki import update_Stable
 
 
 import pytest

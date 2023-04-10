@@ -1,7 +1,7 @@
-from scripts.v2 import git_helper
-from scripts.v2.tree import build_tree, load_spec
-from scripts.v2.runner import build_and_test_containers
-from scripts.v2.utils import get_logger
+from scripts import git_helper
+from scripts.tree import build_tree, load_spec
+from scripts.runner import build_and_test_containers
+from scripts.utils import get_logger
 import os
 import logging
 import argparse

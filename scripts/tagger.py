@@ -5,8 +5,8 @@ import logging
 import argparse
 import sys
 
-from scripts.v2.utils import get_logger, read_history, query_images, read_var, store_var
-from scripts.v2 import docker_adapter
+from scripts.utils import get_logger, read_history, query_images, read_var, store_var
+from scripts import docker_adapter
 
 logger = get_logger()
 

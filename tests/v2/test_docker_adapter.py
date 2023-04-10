@@ -3,8 +3,8 @@ requests you can make
 """
 
 # our scripts to be tested
-from scripts.v2 import docker_adapter as internal_docker
-from scripts.v2.tree import Node
+from scripts import docker_adapter as internal_docker
+from scripts.tree import Node
 
 from unittest.mock import MagicMock, patch
 import unittest

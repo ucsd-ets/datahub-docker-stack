@@ -1,7 +1,7 @@
-from scripts.v2.runner import *
-from scripts.v2.tree import *
-from scripts.v2.fs import *
-from scripts.v2.wiki import *
+from scripts.runner import *
+from scripts.tree import *
+from scripts.fs import *
+from scripts.wiki import *
 from unittest.mock import MagicMock, patch
 import unittest
 import pytest
