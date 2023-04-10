@@ -27,6 +27,7 @@ COPY cudatoolkit_env_vars.sh /etc/datahub-profile.d/cudatoolkit_env_vars.sh
 COPY cudnn_env_vars.sh /etc/datahub-profile.d/cudnn_env_vars.sh
 COPY activate.sh /tmp/activate.sh
 COPY manual-tests /opt/manual-tests
+COPY workflow_tests /opt/workflow_tests
 
 RUN chmod 777 /etc/datahub-profile.d/*.sh /tmp/activate.sh
 
