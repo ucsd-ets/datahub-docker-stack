@@ -26,7 +26,8 @@ RUN chmod +x /run_jupyter.sh
 COPY cudatoolkit_env_vars.sh /etc/datahub-profile.d/cudatoolkit_env_vars.sh
 COPY cudnn_env_vars.sh /etc/datahub-profile.d/cudnn_env_vars.sh
 COPY activate.sh /tmp/activate.sh
-COPY manual-tests /opt/tests
+COPY manual-tests /opt/tests/manual
+COPY workflow_tests /opt/tests/workflow_tests
 
 RUN chmod 777 /etc/datahub-profile.d/*.sh /tmp/activate.sh
 
