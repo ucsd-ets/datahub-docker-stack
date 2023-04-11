@@ -3,7 +3,7 @@ FROM ucsdets/datahub-base-notebook:$BASE_TAG
 
 USER jovyan
 
-# add comment here to coerce rebuild
+# to coerce rebuild
 
 RUN pip install dpkt \
                 nose \
