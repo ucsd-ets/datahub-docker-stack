@@ -49,13 +49,22 @@ def get_changed_images():
     with open('images/change_ignore.json','r') as ftp:
         tags = json.load(ftp)
     
+    full_rebuild = False
+    # use commit message to force full rebuild
+    if("full rebuild" in GitHelper.commit_message().lower()):
+        changed_images.update(images)
+        full_rebuild = True
+
+
     for file in changed_files:
+        if(full_rebuild):
+            break
         fp = PurePath(file)
         logger.info(f"Detecting changed file: {file}")
         # need to be under images and must be a folder
         if fp.parts[0] == 'images':
             image_ref = fp.parts[1]
-            if image_ref in tags['BuildAll'] or environ['GITHUB_REF_NAME'] == 'main' or "full rebuild" in GitHelper.commit_message().lower():
+            if image_ref in tags['BuildAll'] or environ['GITHUB_REF_NAME'] == 'main':
                 changed_images.update(images)
                 # included all images so break and proceed as all images needs to be built
                 break
