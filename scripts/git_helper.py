@@ -55,7 +55,7 @@ def get_changed_images():
         # need to be under images and must be a folder
         if fp.parts[0] == 'images':
             image_ref = fp.parts[1]
-            if image_ref in tags['BuildAll'] or environ['GITHUB_REF_NAME'] == 'main':
+            if image_ref in tags['BuildAll'] or environ['GITHUB_REF_NAME'] == 'main' or "full rebuild" in GitHelper.commit_message().lower():
                 changed_images.update(images)
                 # included all images so break and proceed as all images needs to be built
                 break
