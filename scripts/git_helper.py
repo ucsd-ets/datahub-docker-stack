@@ -29,7 +29,7 @@ class GitHelper:
 
     @staticmethod
     def commit_changed_files() -> list:
-        print(environ['GITHUB_REF_NAME'])
+        print(f"Github ref name: {environ['GITHUB_REF_NAME']}")
         return git['diff', "HEAD^", "HEAD", '--name-only']().split()
 
 
