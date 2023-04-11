@@ -3,8 +3,8 @@ requests you can make
 """
 
 # our scripts to be tested
-from scripts.v2 import docker_adapter as internal_docker
-from scripts.v2.tree import Node
+from scripts import docker_adapter as internal_docker
+from scripts.tree import Node
 
 from unittest.mock import MagicMock, patch
 import unittest
@@ -75,7 +75,7 @@ class TestDocker(unittest.TestCase):
         mock_images = MagicMock(pull=mock_pull)
         mock_close = MagicMock()
         
-        @patch('scripts.v2.docker_adapter.__docker_client', images=mock_images, close=mock_close)
+        @patch('scripts.docker_adapter.__docker_client', images=mock_images, close=mock_close)
         def run_test(pos_arg):
             # NOTE: need pos_arg when we @patch with keyword-arg
             return internal_docker.prepull_images(self.orig_images)
@@ -97,7 +97,7 @@ class TestDocker(unittest.TestCase):
         mock_images = MagicMock(get=mock_get)
         mock_close = MagicMock()
 
-        @patch('scripts.v2.docker_adapter.__docker_client', images=mock_images, close=mock_close)
+        @patch('scripts.docker_adapter.__docker_client', images=mock_images, close=mock_close)
         def run_test(pos_arg):
             return internal_docker.tag_stable(self.orig_images[0], self.tag_replace)
 
@@ -118,8 +118,8 @@ class TestDocker(unittest.TestCase):
 
         # NOTE: need an extra MagicMock obj to mock docker submodule (images)
         mock_images = MagicMock(get=mock_get, push=mock_push)
-        @patch('scripts.v2.docker_adapter.__docker_client', images=mock_images, close=mock_close)
-        @patch('scripts.v2.docker_adapter.store_var', mock_store_var)
+        @patch('scripts.docker_adapter.__docker_client', images=mock_images, close=mock_close)
+        @patch('scripts.docker_adapter.store_var', mock_store_var)
         def run_test(pos_arg):
             # NOTE: need pos_arg when we @patch with keyword-arg
             return internal_docker.push_stable_images(self.stable_fullnames)

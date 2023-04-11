@@ -5,9 +5,8 @@ import logging
 import argparse
 import sys
 
-from scripts.docker_pusher import push_images, docker_login
-from scripts.v2.utils import get_logger, read_history, query_images, read_var, store_var
-from scripts.v2 import docker_adapter
+from scripts.utils import get_logger, read_history, query_images, read_var, store_var
+from scripts import docker_adapter
 
 logger = get_logger()
 
@@ -74,7 +73,6 @@ def run_tagging(
 
 
 def tagging_main(original_tag, dry_run=False):
-    os.environ['GITHUB_REF_NAME'] = 'refractor_buildtest'
     dockerhub_username = os.environ.get('DOCKERHUB_USER', None)
     dockerhub_token = os.environ.get('DOCKERHUB_TOKEN', None)
     if not dockerhub_username or not dockerhub_token:

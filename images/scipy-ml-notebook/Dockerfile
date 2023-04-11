@@ -7,7 +7,7 @@ USER root
 # https://pytorch.org/get-started/previous-versions/
 # https://www.tensorflow.org/install/source#linux
 
-# coerce rebuild
+# coerce rebuild in only this nteb
 
 ARG LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7 CUDA_VERSION=11.8
 ARG LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7 CUDA_VERSION=11.8

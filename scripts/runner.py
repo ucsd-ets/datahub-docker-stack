@@ -1,4 +1,4 @@
-from scripts.v2.utils import get_logger
+from scripts.utils import get_logger
 from dataclasses import dataclass, field
 from typing import List, Dict, Tuple
 from io import StringIO
@@ -9,11 +9,11 @@ import logging
 import sys
 
 
-from scripts.v2.tree import Node, build_tree, load_spec
-from scripts.v2 import docker_adapter
-from scripts.v2 import fs
-from scripts.v2 import wiki
-from scripts.v2.utils import convert_size
+from scripts.tree import Node, build_tree, load_spec
+from scripts import docker_adapter
+from scripts import fs
+from scripts import wiki
+from scripts.utils import convert_size
 
 logger = get_logger()
 

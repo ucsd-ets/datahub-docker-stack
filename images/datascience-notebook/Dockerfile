@@ -3,6 +3,8 @@ FROM ucsdets/datahub-base-notebook:$BASE_TAG
 
 USER jovyan
 
+# to coerce rebuild
+
 RUN pip install dpkt \
                 nose \
                 datascience && \

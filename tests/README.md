@@ -27,11 +27,22 @@ For people who are trying to modify the image stack, here are some scenarios and
 
 1. Clone the repository and make a new branch: `git checkout -b dev_***_notebook`.
 2. Under `image/`, find the respective directory for the image you want to change. A manifest of a recent build can be found in the [wiki](https://github.com/ucsd-ets/datahub-docker-stack/wiki) section. An example of a manifest is [here](https://github.com/ucsd-ets/datahub-docker-stack/wiki/ucsdets-datahub-base-notebook-2021.2-ec12f6b).
-3. Make the changes and commit to Github. Make a pull request from the new branch to `main` through the Github interface. Do not merge right now and wait for the workflow ([Github Action](https://github.com/ucsd-ets/datahub-docker-stack/actions)) to finish. It will build the image stack and test each image for features, but it will not push any changes to Dockerhub.
-4. If the workflow failed, go to the action details page and debug the issue. Push a new change by amending the first commit `git add . && git commit --amend`.
-5. If the workflow completed successfully (a green check to the left of the commit), you can now safely merge the pull request to the `main` branch.
-6. The workflow will now run again and push the images to Dockerhub.
+3. Make the changes and commit to Github. Note, that putting the words "full rebuild" in your commit message will trigger all of the images to rebuild within the workflow.
+4. Make a pull request from the new branch to `main` through the Github interface. Do not merge right now and wait for the workflow ([Github Action](https://github.com/ucsd-ets/datahub-docker-stack/actions)) to finish. It will build the image stack and test each image for features, but it will not push any changes to Dockerhub.
+5. If the workflow failed, go to the action details page and debug the issue. Push a new change by amending the first commit `git add . && git commit --amend`.
+6. If the workflow completed successfully (a green check to the left of the commit), you can now safely merge the pull request to the `main` branch.
+7. The workflow will now run again and push the images to Dockerhub.
 
+### GitHub Action Build Pipeline Behavior
+To save build time, not all images necessarily build with every change to the repository.
+
+The current behavior can be found under `scripts/get_helper.py` under the `get_changed_items()` function. Typically, if a file under any of the `images/` subdirectories is changed, that image will be slated for rebuilding.
+
+Normally, the commit will check the files that were changed between the current commit being tested and the last commit. If a change is detected in the DataHub Base Notebook, then all child images are rebuilt. If a child image is changed, the parent needs to be rebuilt so that the child has an image to pull from, but the siblings will not be changed.
+
+If the commit was made in main, all images will be rebuilt so that the Tag Images action will have 4 rebuilt images to push to stable. Ideally we shouldn't be making changes to main very often, so full rebuilds on this branch shouldn't result in much time loss.
+
+Sometimes you might want to make changes in scripts or other underlying config files that would alter the build behavior but wouldn't normally trigger a rebuild. If the commit message has "full rebuild" in it, then all of our images will be rebuilt.
 
 ### Overview of the Repository
 We Use github workflow to builds new images if their is any change in the images or addtional images are added.
@@ -43,7 +54,8 @@ We Use github workflow to builds new images if their is any change in the images
                 2) Use doit unit build to build,test and push the image to DataHub repo
                 3) Update the wiki  
                 4) Store the artifacts and logs
-        The Tag.yml file is used to tag the latest build 
+        The Tag.yml file is used to tag the latest build. It requires test_gpu.yml passes.
+        Test_Gpu.yml is used to test an image with a specified tag for the scipy-ml notebook. It can be triggered manually.
 
 Images:-
         1) Folder containing the images and each images has its own docker file, test folder for test scripts.

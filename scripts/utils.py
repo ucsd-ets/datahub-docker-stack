@@ -1,14 +1,17 @@
 import io
 import yaml
 import json
-import logging
+import math
 from os.path import join as pjoin
 from os.path import isfile
 from io import StringIO
 import bitmath
+import logging
 from pandas import NaT, Series, read_csv, concat
 from collections import deque
-from typing import List,Dict
+from typing import List, Dict
+
+__logger_setup = False
 
 def get_specs(f_yaml:str)->Dict:
     """
@@ -158,9 +161,9 @@ def insert_row(md_str:str, new_content:list)->str:
                             2], lines[table_i[0]+2:table_i[-1]+1]
 
     n_columns = header[0].count('|') - 1
-    print(n_columns)
+    # print(n_columns)
     for line_tup in new_content:
-        print(line_tup)
+        # print(line_tup)
         assert len(line_tup) == n_columns
         assert all(isinstance(s, str) for s in line_tup)
 
@@ -206,7 +209,7 @@ def fulltag2fn(tag):
 def get_prev_tag(img_name, tag_prefix=None):
     assert ':' not in img_name
 
-    csv = strip_csv_from_md('wiki/Image-Dependency.md')
+    csv = strip_csv_from_md('wiki/Image Dependency.md')
     built_tags = csv_to_pd(csv).index
 
     if tag_prefix:
@@ -276,3 +279,43 @@ def get_level_order(image)->dict:
         order[curr.image_name] =cnt
         cnt += 1
     return order
+
+def get_logger(level: int = logging.INFO):
+    global __logger_setup
+    
+    logger = logging.getLogger('datahub_docker_stacks')
+    logger.setLevel(level)
+    if __logger_setup:
+        return logger
+    
+    logging.basicConfig()
+    logger = logging.getLogger('datahub_docker_stacks')
+
+    formatter = logging.Formatter("%(levelname)s:%(message)s")
+
+    file_handler = logging.FileHandler("logs/run.log")
+    file_handler.setFormatter(formatter)
+    logger.addHandler(file_handler)
+
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(formatter)
+    logger.addHandler(console_handler)
+    __logger_setup = True
+    return logger
+
+def str_presenter(dumper, data):
+    """configures yaml for dumping multiline strings
+    Ref: https://stackoverflow.com/questions/8640959/how-can-i-control-what-scalar-form-pyyaml-uses-for-my-data"""
+    if len(data.splitlines()) > 1:  # check for multiline string
+        return dumper.represent_scalar('tag:yaml.org,2002:str', data, style='|')
+    return dumper.represent_scalar('tag:yaml.org,2002:str', data)
+
+def convert_size(size_bytes: int) -> str:
+    """https://stackoverflow.com/questions/5194057/better-way-to-convert-file-sizes-in-python"""
+    if size_bytes == 0:
+        return 0
+    size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+    i = int(math.floor(math.log(size_bytes, 1024)))
+    p = math.pow(1024, i)
+    s = round(size_bytes / p, 2)        
+    return "%s %s" % (s, size_name[i])

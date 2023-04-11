@@ -1,4 +1,4 @@
-from scripts.v2.tree import *
+from scripts.tree import *
 
 def test_load_spec():
     # TODO load fake yaml

@@ -1,7 +1,7 @@
-from scripts.v2.wiki import *      # functions that we run tests on
-from scripts.v2.docker_adapter import *
-from scripts.v2.tree import *
-from scripts.v2.fs import *
+from scripts.wiki import *      # functions that we run tests on
+from scripts.docker_adapter import *
+from scripts.tree import *
+from scripts.fs import *
 
 from unittest.mock import MagicMock, patch
 import unittest
@@ -47,7 +47,7 @@ class TestWiki(unittest.TestCase):
 
 
         # run_simple_command() HAS BEEN IMPORTED INTO wiki.py!!!
-        @patch('scripts.v2.wiki.run_simple_command', mock_run_command)
+        @patch('scripts.wiki.run_simple_command', mock_run_command)
         def run_test():
             run_outputs(self.test_node, self.all_info_cmds)
 
@@ -65,8 +65,8 @@ class TestWiki(unittest.TestCase):
         mock_run_outputs = MagicMock(return_value=output_list)
         mock_markdown_table = MagicMock(return_value="Table Placeholder")
 
-        @patch('scripts.v2.wiki.run_outputs', mock_run_outputs)
-        @patch('scripts.v2.wiki.get_layers_md_table', mock_markdown_table)
+        @patch('scripts.wiki.run_outputs', mock_run_outputs)
+        @patch('scripts.wiki.get_layers_md_table', mock_markdown_table)
         def run_test():
             write_report(
                 self.test_node, 
@@ -81,7 +81,7 @@ class TestWiki(unittest.TestCase):
 
     ###### actual tests ######
 
-    # @pytest.mark.skip(reason="MagicMock failed to mock scripts.v2.docker_adapter.run_simple_command")
+    # @pytest.mark.skip(reason="MagicMock failed to mock scripts.docker_adapter.run_simple_command")
     def test_run_outputs(self):
         
         mock_run_command = self.run_run_outputs()

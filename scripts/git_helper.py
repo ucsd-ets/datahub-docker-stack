@@ -7,6 +7,8 @@ import json
 
 from scripts.utils import store_var,get_specs
 
+from scripts.utils import get_logger
+logger = get_logger()
 
 class GitHelper:
     @staticmethod
@@ -27,11 +29,14 @@ class GitHelper:
 
     @staticmethod
     def commit_changed_files() -> list:
-        print(environ['GITHUB_REF_NAME'])
-        if (environ['GITHUB_REF_NAME'] == "main"):
-            return git['log', '-m', -1, '--name-only', '--pretty=format:']().split()
-            
-        return git['diff', 'origin/main', '--name-only']().split()
+        print(f"Github ref name: {environ['GITHUB_REF_NAME']}")
+        print(f"Changed files: { git['diff', 'HEAD^', 'HEAD', '--name-only']().split() }")
+        return git['diff', "HEAD^", "HEAD", '--name-only']().split()
+    
+    @staticmethod
+    def get_branch_name() -> str:
+        print(f"Github ref name: {environ['GITHUB_REF_NAME']}")
+        return environ['GITHUB_REF_NAME']
 
 
 def get_changed_images():
@@ -43,9 +48,23 @@ def get_changed_images():
     # read all build tags
     with open('images/change_ignore.json','r') as ftp:
         tags = json.load(ftp)
+        
+    # use commit message to force full rebuild
+    if("full rebuild" in GitHelper.commit_message().lower()):
+        logger.info("Triggering full rebuild based on commit message.")
+        changed_images.update(images)
+        return list(changed_images)
     
+    # if the commit is in main, do a full rebuild, as the stable tag action needs 4 images to make stable.
+    elif(environ['GITHUB_REF_NAME'] == 'main'):
+        logger.info("Triggering full rebuild based on being in the main branch.")
+        changed_images.update(images)
+        return list(changed_images)
+
+
     for file in changed_files:
         fp = PurePath(file)
+        logger.info(f"Detecting changed file: {file}")
         # need to be under images and must be a folder
         if fp.parts[0] == 'images':
             image_ref = fp.parts[1]
@@ -54,7 +73,9 @@ def get_changed_images():
                 # included all images so break and proceed as all images needs to be built
                 break
             if image_ref not in changed_images and image_ref not in tags['ChangeIgnore']:
+                logger.info(f"Changed file {file} belongs to {image_ref}. Will rebuild.")
                 changed_images.add(image_ref)
+    
     return list(changed_images)
 
 

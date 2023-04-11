@@ -1,7 +1,7 @@
-from scripts.v2 import git_helper
-from scripts.v2.tree import build_tree, load_spec
-from scripts.v2.runner import build_and_test_containers
-from scripts.v2.utils import get_logger
+from scripts import git_helper
+from scripts.tree import build_tree, load_spec
+from scripts.runner import build_and_test_containers
+from scripts.utils import get_logger
 import os
 import logging
 import argparse
@@ -15,6 +15,12 @@ def main(dockerhub_username: str, dockerhub_password: str):
 
     images_changed = git_helper.get_changed_images()
     git_hash = git_helper.GitHelper.commit_hash_tag_shortened()
+    # code for if/when we decide to change tags to branch names instead of hash refs.
+    # git_hash = git_helper.GitHelper.get_branch_name().replace("/", "-")
+
+    # if(git_hash == "stable"):
+        #logger.error("Please don't name your branch name stable.")
+        #sys.exit(5)
 
     root = build_tree(
         spec_yaml=spec, images_changed=images_changed, git_suffix=git_hash)
@@ -51,8 +57,6 @@ if __name__ == '__main__':
     parsed_args = parser.parse_args()
     logger = get_logger(LOGLEVEL_MAP[parsed_args.log_level])
 
-    # this variable will automatically be set by github
-    os.environ['GITHUB_REF_NAME'] = 'refractor_buildtest'
     dockerhub_username = os.environ.get('DOCKERHUB_USER', None)
     dockerhub_token = os.environ.get('DOCKERHUB_TOKEN', None)
     if not dockerhub_username or not dockerhub_token:

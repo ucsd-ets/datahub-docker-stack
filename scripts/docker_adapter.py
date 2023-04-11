@@ -4,8 +4,8 @@ import json
 from typing import Tuple, Optional, List
 import pandas as pd
 
-from scripts.v2.tree import Node
-from scripts.v2.utils import get_logger, store_var
+from scripts.tree import Node
+from scripts.utils import get_logger, store_var
 import os
 
 
