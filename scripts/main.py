@@ -16,6 +16,10 @@ def main(dockerhub_username: str, dockerhub_password: str):
     images_changed = git_helper.get_changed_images()
     git_hash = git_helper.GitHelper.get_branch_name().replace("/", "-")
 
+    if(git_hash == "stable"):
+        logger.error("Please don't name your branch name stable.")
+        sys.exit(5)
+
     root = build_tree(
         spec_yaml=spec, images_changed=images_changed, git_suffix=git_hash)
 
