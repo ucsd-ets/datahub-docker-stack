@@ -51,8 +51,6 @@ if __name__ == '__main__':
     parsed_args = parser.parse_args()
     logger = get_logger(LOGLEVEL_MAP[parsed_args.log_level])
 
-    # this variable will automatically be set by github
-    os.environ['GITHUB_REF_NAME'] = 'refractor_buildtest'
     dockerhub_username = os.environ.get('DOCKERHUB_USER', None)
     dockerhub_token = os.environ.get('DOCKERHUB_TOKEN', None)
     if not dockerhub_username or not dockerhub_token:
