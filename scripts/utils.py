@@ -286,6 +286,7 @@ def get_logger(level: int = logging.INFO):
     logger = logging.getLogger('datahub_docker_stacks')
     logger.setLevel(level)
     if __logger_setup:
+        logger.info(f"Module {__name__} reusing a existing logger")
         return logger
     
     logging.basicConfig()
@@ -301,6 +302,7 @@ def get_logger(level: int = logging.INFO):
     console_handler.setFormatter(formatter)
     logger.addHandler(console_handler)
     __logger_setup = True
+    logger.info(f"Module {__name__} created a new logger")
     return logger
 
 def str_presenter(dumper, data):
