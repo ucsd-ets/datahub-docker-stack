@@ -14,11 +14,13 @@ def main(dockerhub_username: str, dockerhub_password: str):
     tag_prefix = spec['tag']['prefix']
 
     images_changed = git_helper.get_changed_images()
-    git_hash = git_helper.GitHelper.get_branch_name().replace("/", "-")
+    git_hash = git_helper.GitHelper.commit_hash_tag_shortened()
+    # code for if/when we decide to change tags to branch names instead of hash refs.
+    # git_hash = git_helper.GitHelper.get_branch_name().replace("/", "-")
 
-    if(git_hash == "stable"):
-        logger.error("Please don't name your branch name stable.")
-        sys.exit(5)
+    # if(git_hash == "stable"):
+        #logger.error("Please don't name your branch name stable.")
+        #sys.exit(5)
 
     root = build_tree(
         spec_yaml=spec, images_changed=images_changed, git_suffix=git_hash)
