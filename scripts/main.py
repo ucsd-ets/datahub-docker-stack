@@ -17,8 +17,8 @@ def main(dockerhub_username: str, dockerhub_password: str):
     git_hash = git_helper.GitHelper.get_branch_name().replace("/", "-")
 
     if(git_hash == "stable"):
-        logger.error("Please don't name your branch name stable.")
-        sys.exit(5)
+        # logger.error("Please don't name your branch name stable.")
+        sys.exit("Please don't name your branch name stable.")
 
     root = build_tree(
         spec_yaml=spec, images_changed=images_changed, git_suffix=git_hash)
@@ -53,13 +53,12 @@ parser.add_argument('-l', '--log-level', choices=list(LOGLEVEL_MAP.keys()), type
 
 if __name__ == '__main__':
     parsed_args = parser.parse_args()
-    logger = get_logger(LOGLEVEL_MAP[parsed_args.log_level])
+    # logger = get_logger(LOGLEVEL_MAP[parsed_args.log_level])
 
     dockerhub_username = os.environ.get('DOCKERHUB_USER', None)
     dockerhub_token = os.environ.get('DOCKERHUB_TOKEN', None)
     if not dockerhub_username or not dockerhub_token:
-        logger.error('dockerhub username or password not set')
-        exit(1)
+        sys.exit("'dockerhub username or password not set'")
 
     main(dockerhub_username=dockerhub_username,
          dockerhub_password=dockerhub_token)
