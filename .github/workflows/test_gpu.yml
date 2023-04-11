@@ -15,6 +15,13 @@ on:
         description: 'Tag to be tested.'
         default: '2099.3-somehash'
         required: true
+  workflow_call:
+    inputs:
+      originalTag: 
+        description: 'Tag to be tested.'
+        default: '2099.3-somehash'
+        required: true
+        type: string
 
 jobs:
   docker-pipeline:
@@ -30,6 +37,9 @@ jobs:
       - name: SSH to login
         run: |
           echo "Going into dsmlp-login and running pytest."
+          echo "Using hash ${{ github.event.inputs.originalTag }}."
+          
+          sudo apt-get install sshpass
 
           mkdir ~/.ssh
           touch ~/.ssh/config
