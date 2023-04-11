@@ -32,6 +32,11 @@ class GitHelper:
         print(f"Github ref name: {environ['GITHUB_REF_NAME']}")
         print(f"Changed files: { git['diff', 'HEAD^', 'HEAD', '--name-only']().split() }")
         return git['diff', "HEAD^", "HEAD", '--name-only']().split()
+    
+    @staticmethod
+    def get_branch_name() -> str:
+        print(f"Github ref name: {environ['GITHUB_REF_NAME']}")
+        return environ['GITHUB_REF_NAME']
 
 
 def get_changed_images():
