@@ -51,6 +51,13 @@ def get_changed_images():
         
     # use commit message to force full rebuild
     if("full rebuild" in GitHelper.commit_message().lower()):
+        logger.info("Triggering full rebuild based on commit message.")
+        changed_images.update(images)
+        return list(changed_images)
+    
+    # if the commit is in main, do a full rebuild, as the stable tag action needs 4 images to make stable.
+    elif(environ['GITHUB_REF_NAME'] == 'main'):
+        logger.info("Triggering full rebuild based on being in the main branch.")
         changed_images.update(images)
         return list(changed_images)
 
@@ -61,7 +68,7 @@ def get_changed_images():
         # need to be under images and must be a folder
         if fp.parts[0] == 'images':
             image_ref = fp.parts[1]
-            if image_ref in tags['BuildAll'] or environ['GITHUB_REF_NAME'] == 'main':
+            if image_ref in tags['BuildAll']:
                 changed_images.update(images)
                 # included all images so break and proceed as all images needs to be built
                 break
