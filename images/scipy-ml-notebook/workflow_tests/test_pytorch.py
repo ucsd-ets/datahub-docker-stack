@@ -93,9 +93,6 @@ def neural_network():
     else:
         raise Exception("Test failed...output was " + str(outList))
 
-    # Empties Torch CUDA Cache
-    torch.cuda.empty_cache()
-
 
 def length_of_dataset_no_cuda():
     # Test 4 - Calculate dataset length w/out CUDA
@@ -192,9 +189,6 @@ def multiply_dataset_calculate_mean_cuda():
                 return ("Test passed!")
             else:
                 raise Exception("Test failed...output was " + str(exactFloat))
-
-    # Empties Torch CUDA Cache
-    torch.cuda.empty_cache()
 
 
 def test_can_access_cuda():
