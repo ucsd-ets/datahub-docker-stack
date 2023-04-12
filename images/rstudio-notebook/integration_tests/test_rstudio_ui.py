@@ -10,13 +10,11 @@ from selenium.webdriver import Chrome
 from selenium.webdriver.support.ui import WebDriverWait as webdriverwait
 import selenium.webdriver.support.expected_conditions as ec
 from selenium.webdriver.common.by import By as by
-import time, logging, copy
-import logging
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
-
 from setuptools import Command
-
+import time, logging, copy
+import logging
 import pytest
 import os
 
