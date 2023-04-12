@@ -63,8 +63,8 @@ def test_rstudio(container):
     # else:
     #     raise TypeError('Must specify JUPYTER_TOKEN as environment variable')
     
-    LOGGER.info("Rstudio UI test: container status: ", c.status)
-    LOGGER.info("Rstudio UI test: container log: ", c.logs())
+    LOGGER.info(f"Rstudio UI test: container status: {c.status}")
+    LOGGER.info(f"Rstudio UI test: container log: {c.logs()}")
     current_retries = 0
     while True:
 

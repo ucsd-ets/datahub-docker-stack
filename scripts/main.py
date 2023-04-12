@@ -30,8 +30,7 @@ def main(dockerhub_username: str, dockerhub_password: str):
                               all_info_cmds=all_info_cmds)
     
     if build_result is False:
-        logger.error("There was a problem while building one of the images. Please consult logs.")
-        sys.exit(5)
+        sys.exit("There was a problem while building one of the images. Please consult logs.")
 
 
 # https://docs.python.org/3/library/logging.html#logging-levels
