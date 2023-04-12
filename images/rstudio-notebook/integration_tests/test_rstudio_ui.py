@@ -23,7 +23,7 @@ LOGGER = get_logger()
 
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 
-WAIT_TIME = 15 or os.environ.get('WAIT_TIME')
+WAIT_TIME = 60 or os.environ.get('WAIT_TIME')
 MAX_RETRIES = 5 or os.environ.get('MAX_RETRIES')
 JUPYTER_TOKEN = os.environ.get('JUPYTER_TOKEN')
 SERVICE_NAME = '127.0.0.1' or os.environ.get('SERVICE_NAME')
@@ -98,7 +98,7 @@ def test_rstudio(container):
     )
     rstudio_button.click()
 
-    time.sleep(WAIT_TIME + 15)
+    time.sleep(WAIT_TIME)
     LOGGER.info('RStudio ok')
     LOGGER.info('Loading datascience-rstudio.Rmd')
 
@@ -128,14 +128,14 @@ def test_rstudio(container):
     file_close = browser.find_element(by.XPATH,'//*[@id="rstudio_file_accept_open"]')
     file_close.click()
     LOGGER.info('datascience-rstudio.Rmd ok')
-    time.sleep(WAIT_TIME+15)
+    time.sleep(WAIT_TIME)
     
     LOGGER.info('Checking knit')
     
     ActionChains(browser).key_down(Keys.CONTROL).key_down(Keys.SHIFT).send_keys("k").perform()
     LOGGER.info('knit clicked worked')
     
-    time.sleep(WAIT_TIME + 15)
+    time.sleep(WAIT_TIME)
     browser.save_screenshot('artifacts/screenshot.png')
     notebook = browser.window_handles[0]
     browser.switch_to.window(notebook)
