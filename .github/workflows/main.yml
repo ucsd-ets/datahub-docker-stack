@@ -6,7 +6,6 @@ env:
 
 on:
   push:
-    branches: [ main, feature/clean_refactor ]
     paths:
       - "images/**"
       - "model/**"
