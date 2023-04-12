@@ -11,15 +11,15 @@ name: GPU Test
 on:
   workflow_dispatch:
     inputs:
-      originalTag: 
-        description: 'Tag to be tested.'
-        default: '2099.3-somehash'
+      originalTag:
+        description: "Tag to be tested."
+        default: "2099.3-somehash"
         required: true
   workflow_call:
     inputs:
-      originalTag: 
-        description: 'Tag to be tested.'
-        default: '2099.3-somehash'
+      originalTag:
+        description: "Tag to be tested."
+        default: "2099.3-somehash"
         required: true
         type: string
 
@@ -33,12 +33,12 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      
+
       - name: SSH to login
         run: |
           echo "Going into dsmlp-login and running pytest."
           echo "Using hash ${{ github.event.inputs.originalTag }}."
-          
+
           sudo apt-get install sshpass
 
           mkdir ~/.ssh
@@ -48,11 +48,10 @@ jobs:
 
           echo "About to SSH."
 
-          output=$(sshpass -p ${{ secrets.DSMLP_LOGIN_PASSWORD }} ssh grader-test-01@dsmlp-login.ucsd.edu 'launch.sh -i ucsdets/scipy-ml-notebook:${{ github.event.inputs.originalTag }} -P Always -n 12 -g 1 -c 4 -m 32 -f pytest /opt/workflow_tests')
+          output=$(sshpass -p ${{ secrets.DSMLP_LOGIN_PASSWORD }} ssh grader-test-01@dsmlp-login.ucsd.edu 'launch.sh -i ucsdets/scipy-ml-notebook:${{ github.event.inputs.originalTag }} -P Always -g 1 -c 4 -m 32 -f pytest /opt/workflow_tests')
           echo "$output"
 
           if [[ "$output" == *"FAILURES"* ]]; then
             echo "Failure detected."
             exit 1
           fi
-
