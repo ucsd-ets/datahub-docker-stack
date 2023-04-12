@@ -18,7 +18,9 @@ import logging
 import pytest
 import os
 
-LOGGER = logging.getLogger('datahub_docker_stacks')
+from scripts.utils import get_logger
+LOGGER = get_logger()
+
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 
 WAIT_TIME = 15 or os.environ.get('WAIT_TIME')
@@ -34,18 +36,6 @@ def test_rstudio(container):
         ports={'8888/tcp':8888},
         command=["jupyter","notebook",'--port=8888',"--ip=0.0.0.0","-NotebookApp.token=''","--NotebookApp.password=''"],
     )
-
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    LOGGER.setLevel(logging.INFO)
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.INFO)
-    ch.setFormatter(formatter)
-    LOGGER.addHandler(ch)
-
-    fh = logging.FileHandler('artifacts/ui-test.log')
-    fh.setLevel(logging.INFO)
-    fh.setFormatter(formatter)
-    LOGGER.addHandler(fh)
 
     # initialize the driver options and connect to the notebook
     options = Options()
@@ -73,8 +63,8 @@ def test_rstudio(container):
     # else:
     #     raise TypeError('Must specify JUPYTER_TOKEN as environment variable')
     
-    LOGGER.info(c.status)
-    LOGGER.info(c.logs())
+    LOGGER.info("Rstudio UI test: container status: ", c.status)
+    LOGGER.info("Rstudio UI test: container log: ", c.logs())
     current_retries = 0
     while True:
 
@@ -169,4 +159,4 @@ def test_rstudio(container):
     quit_btn.click()
 
     LOGGER.info('Exited the notebook server')
-    LOGGER.info('UI testing all pass!')
+    LOGGER.info('RStudio UI test: all pass!')
