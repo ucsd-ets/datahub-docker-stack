@@ -19,6 +19,7 @@ import pytest
 import os
 
 from scripts.utils import get_logger
+from scripts import fs
 LOGGER = get_logger()
 
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -65,6 +66,7 @@ def test_rstudio(container):
     
     LOGGER.info(f"Rstudio UI test: container status: {c.status}")
     LOGGER.info(f"Rstudio UI test: container log: {c.logs()}")
+    LOGGER.info(f'CHECK WAIT_TIME: {WAIT_TIMEs}')
     current_retries = 0
     while True:
 
@@ -86,17 +88,29 @@ def test_rstudio(container):
     # check only 1 tab
     assert len(browser.window_handles) == 1
 
-    # select the new button + create a python notebook
-    LOGGER.info('Checking RStudio')
-    new_button = webdriverwait(browser, WAIT_TIME).until(
-        ec.element_to_be_clickable((by.ID, 'new-dropdown-button'))
-    )
-    new_button.click()
+    try:
+        # select the new button + create a python notebook
+        LOGGER.info('Checking RStudio')
+        new_button = webdriverwait(browser, WAIT_TIME).until(
+            ec.element_to_be_clickable((by.ID, 'new-dropdown-button'))
+        )
+        new_button.click()
 
-    rstudio_button = webdriverwait(browser, WAIT_TIME).until(
-        ec.element_to_be_clickable((by.LINK_TEXT, 'RStudio'))
-    )
-    rstudio_button.click()
+        rstudio_button = webdriverwait(browser, WAIT_TIME).until(
+            ec.element_to_be_clickable((by.LINK_TEXT, 'RStudio'))
+        )
+        rstudio_button.click()
+    except Exception as e:
+        # save screenshot
+        ss_name = 'error_ss.png'
+        browser.save_screenshot(ss_name)
+        local_path = os.path.join(fs.LOGS_PATH, ss_name)
+        # copy the screenshot from the container to the local machine
+        with open(local_path, "wb") as local_file:
+            data, _ = container.get_archive(ss_name)
+            for chunk in data:
+                local_file.write(chunk)
+        raise Exception("Button Time out, check error screenshot in logs/")
 
     time.sleep(WAIT_TIME)
     LOGGER.info('RStudio ok')
