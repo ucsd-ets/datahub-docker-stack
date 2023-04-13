@@ -89,7 +89,7 @@ def test_rstudio(container):
             current_retries += 1
             LOGGER.info('Could not connect to server at {0} yet... Retry count = {1}'.format(baseurl, current_retries))
             LOGGER.info(browser.page_source)
-            time.sleep(SLEEP_TIME)
+            time.sleep(WAIT_TIME)   # to load jupyter notebook homepage
         LOGGER.info('Connected to jupyter notebook')
 
         # check only 1 tab
@@ -176,8 +176,9 @@ def test_rstudio(container):
         browser.save_screenshot(ss_name)
         local_path = os.path.join(fs.LOGS_PATH, ss_name)
         # copy the screenshot from the container to the local machine
-        with open(local_path, "wb") as local_file:
-            data, _ = container.get_archive(ss_name)
-            for chunk in data:
-                local_file.write(chunk)
+        browser.save_screenshot(local_path)
+        # with open(local_path, "wb") as local_file:
+        #     data, _ = container.get_archive(ss_name)
+        #     for chunk in data:
+        #         local_file.write(chunk)
         raise Exception("Button Time out, check error screenshot in logs/")
