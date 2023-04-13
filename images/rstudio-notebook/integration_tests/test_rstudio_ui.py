@@ -66,7 +66,7 @@ def test_rstudio(container):
     
     LOGGER.info(f"Rstudio UI test: container status: {c.status}")
     LOGGER.info(f"Rstudio UI test: container log: {c.logs()}")
-    LOGGER.info(f'CHECK WAIT_TIME: {WAIT_TIMEs}')
+    LOGGER.info(f'CHECK WAIT_TIME: {WAIT_TIME}')
     current_retries = 0
     while True:
 
