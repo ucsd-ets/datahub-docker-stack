@@ -45,7 +45,7 @@ jobs:
 
           echo "About to SSH."
 
-          output=$(sshpass -p ${{ secrets.DSMLP_LOGIN_PASSWORD }} ssh grader-test-01@dsmlp-login.ucsd.edu 'launch.sh -i ucsdets/datahub-base-notebook:${{ github.event.inputs.originalTag }} -P Always -f cd /opt/workflow_tests && pytest')
+          output=$(sshpass -p ${{ secrets.DSMLP_LOGIN_PASSWORD }} ssh grader-test-01@dsmlp-login.ucsd.edu 'launch.sh -i ucsdets/datahub-base-notebook:${{ github.event.inputs.originalTag }} -P Always -f sh -c "cd /opt/workflow_tests && pytest"')
           echo "$output"
 
           if [[ "$output" == *"FAILURES"* ]]; then
