@@ -1,0 +1,54 @@
+# Copied from GPU Test
+# CDs into /opt/workflow_tests/ and runs pytest
+# Runs a bunch of R tests
+# Does it onto the base notebook
+
+name: R Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      originalTag:
+        description: "Tag to be tested."
+        default: "2099.3-somehash"
+        required: true
+  workflow_call:
+    inputs:
+      originalTag:
+        description: "Tag to be tested."
+        default: "2099.3-somehash"
+        required: true
+        type: string
+
+jobs:
+  docker-pipeline:
+    runs-on: ubuntu-latest
+    if: >
+      !contains(github.event.head_commit.message , 'skip ci') &&
+      !contains(github.event.pull_request.title, 'skip ci')
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: SSH to login
+        run: |
+          echo "Going into dsmlp-login and running pytest."
+          echo "Using hash ${{ github.event.inputs.originalTag }}."
+
+          sudo apt-get install sshpass
+
+          mkdir ~/.ssh
+          touch ~/.ssh/config
+          echo "UserKnownHostsFile=/dev/null" >> ~/.ssh/config
+          echo "StrictHostKeyChecking=no" >> ~/.ssh/config
+
+          echo "About to SSH."
+
+          output=$(sshpass -p ${{ secrets.DSMLP_LOGIN_PASSWORD }} ssh grader-test-01@dsmlp-login.ucsd.edu 'launch.sh -i ucsdets/datahub-base-notebook:${{ github.event.inputs.originalTag }} -P Always -f cd /opt/workflow_tests && pytest')
+          echo "$output"
+
+          if [[ "$output" == *"FAILURES"* ]]; then
+            echo "Failure detected."
+            exit 1
+          fi
