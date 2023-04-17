@@ -2,44 +2,23 @@
 
 This Github repository builds and maintains the [standard suite of Docker containers](https://support.ucsd.edu/services?id=kb_article_view&sysparm_article=KB0032173&sys_kb_id=e61b198e1b74781048e9cae5604bcbe0) supported by UC San Diego Educational Technology Services.
 
-## Usage
+Currently, we support 4 images:
 
-For students and instructors, check out the offical [FAQ](https://support.ucsd.edu/services?id=kb_article_view&sysparm_article=KB0030470&sys_kb_id=aee8868b1b15f810506f64e8624bcb5e) for running containers on the DSMLP platform.
+* datahub-base-notebook (the base notebook all others inherit from)
+* datascience-notebook (dpkt + nose + datascience libs)
+* scipy-ml-notebook (has PyTorch/Tensorflow + GPU Support)
+* rstudio-notebook (installs the RStudio IDE)
 
-## Maintenance
-
-For people who are trying to modify the image stack, here are some scenarios and instructions on each.
+The images are built and pushed to [our organization at DockerHub](https://hub.docker.com/orgs/ucsdets/members) through GitHub Actions. We also use GitHub actions for testing and pushing our stable images to production. [See actions.md](actions.md) for high-level details on how our pipeline works. [You may also check out scripts/README.md](/scripts/README.md) for a more indepth look at the underlying Python code, including logic for which images are run and an overview for how we run tests within the containers.
 
 ### Setup virtual environment
 
-```bash
-python3 -m venv . # at root level
-source bin/activate
-which python # it'll point to current dir
-which pip # it'll point to current dir
-pip install -r scripts/requirements.txt
+Is this necessary? Do you ever run this code locally Thomas?
 
-#!!! IMPORTANT or else imports wont work
-export PYTHONPATH=$(pwd)
-```
+## Testing the Containers
 
-## Run scripts unit tests
 
-```bash
-python3 -m unittest tests/v2/test_tester.py
-
-# or
-pytest tests/v2/test_<filename>.py
-```
-
-## Manually run a module
-
-```bash
-
-# as an example
-python scriptss/v2/runner.py
-
-```
+## Testing /Scripts
 
 
 ### Adding a New Image
@@ -68,25 +47,6 @@ python scriptss/v2/runner.py
 2. `cd images`
 3. `export TEST_IMAGE=MYIMAGE` replace `MYIMAGE` with your locally built image name
 4. `pytest tests_common` as an example
-
-
-### Overview of the Repository
-We Use github workflow to builds new images if their is any change in the images or addtional images are added.
-.github:-
-The main.yml file contains the steps to build the image
-
-Image:- 
-- Folder containing the images and each images has its own docker file, test folder for test scripts.
-- Spec.yml file is important file where the dependecy of the image and build information specified for an image.
-
-Model:-
-- Deprecated
-
-scripts:-
-- All code for project
-Tests:-
-- Contains the test file for testing the submodule
-- used with pytest can be called with pytest test_*.py
 
 ## Artifacts
 
