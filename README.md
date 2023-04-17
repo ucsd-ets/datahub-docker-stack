@@ -9,7 +9,7 @@ Currently, we support 4 images:
 * scipy-ml-notebook (has PyTorch/Tensorflow + GPU Support)
 * rstudio-notebook (installs the RStudio IDE)
 
-The images are built and pushed to [our organization at DockerHub](https://hub.docker.com/orgs/ucsdets/members) through GitHub Actions. We also use GitHub actions for testing and pushing our stable images to production. [See actions.md](actions.md) for high-level details on how our pipeline works. [You may also check out scripts/README.md](/scripts/README.md) for a more indepth look at the underlying Python code, including logic for which images are run and an overview for how we run tests within the containers.
+The images are built and pushed to [our organization at DockerHub](https://hub.docker.com/orgs/ucsdets/members) through GitHub Actions. We also use GitHub actions for testing and pushing our stable images to production. [See actions.md](/Documentations/actions.md) for high-level details on how our pipeline works. [You may also check out scripts.md](/Documentations/scripts.md) for a more indepth look at the underlying Python code, including logic for which images are run and an overview for how we run tests within the containers.
 
 ### Setup virtual environment
 
