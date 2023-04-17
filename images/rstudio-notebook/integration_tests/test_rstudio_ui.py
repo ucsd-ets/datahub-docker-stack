@@ -79,8 +79,12 @@ def test_rstudio(container):
                 raise Exception('Max retry limit hit, could not connect to jupyter server')
             
             browser.get(baseurl)
+            browser.save_screenshot(os.path.join(fs.LOGS_PATH, f"getURL_{current_retries}.png"))
 
             if browser.page_source != '<html><head></head><body></body></html>':
+                LOGGER.info("*** Check page source and save screenshot to page_source.png: \n")
+                LOGGER.info(browser.page_source)
+                browser.save_screenshot(os.path.join(fs.LOGS_PATH, f"page_source.png"))
                 break
 
             current_retries += 1
@@ -89,6 +93,7 @@ def test_rstudio(container):
             time.sleep(WAIT_TIME)   # to load jupyter notebook homepage
         LOGGER.info('Connected to jupyter notebook')
         time.sleep(SLEEP_TIME)
+        browser.save_screenshot(os.path.join(fs.LOGS_PATH, f"after_connected.png"))
 
         # check only 1 tab
         assert len(browser.window_handles) == 1
