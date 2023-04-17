@@ -3,6 +3,8 @@ import re
 import pytest
 import subprocess
 
+# Hardcoded path
+commonPath = "/home/runner/work/datahub-docker-stack/datahub-docker-stack/images/tests_common/"
 
 def get_installed_r_packages():
     command = "conda list | grep -E 'r-.+'"
@@ -21,7 +23,7 @@ def get_installed_r_packages():
 
 def test_required_r_packages_installed():
     result = subprocess.run(
-        ["Rscript", "dump_r_packages.R"], capture_output=True, text=True)
+        ["Rscript", commonPath+"test_r_dump_packages.R"], capture_output=True, text=True)
     output = result.stdout
 
     # Make sure result query actually captured libraries
@@ -52,9 +54,10 @@ def test_r_func():
     # List of "fatal" terms from Rscript
     errorList = ["Failed", "Fatal", "Error"]
 
-    result = subprocess.run(["Rscript", "test_func.R"],
+    result = subprocess.run(["Rscript", commonPath+"test_r_func.R"],
                             capture_output=True, text=True)
 
     status = False
     for error in errorList:
         assert error not in result.stdout
+        assert error.lower() not in result.stdout
