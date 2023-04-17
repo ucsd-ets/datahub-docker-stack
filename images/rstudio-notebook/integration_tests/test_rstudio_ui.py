@@ -24,13 +24,13 @@ LOGGER = get_logger()
 
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 
-WAIT_TIME = 60 or os.environ.get('WAIT_TIME')   # long break when loading sth;
+WAIT_TIME = os.environ.get('WAIT_TIME', 60)   # long break when loading sth;
 SLEEP_TIME = 5    # short break between operations
 FIND_TIME = 10     # tolerence when driver (we call it browser) find element
 
-MAX_RETRIES = 5 or os.environ.get('MAX_RETRIES')
+MAX_RETRIES = os.environ.get('MAX_RETRIES', 5)
 JUPYTER_TOKEN = os.environ.get('JUPYTER_TOKEN')
-SERVICE_NAME = '127.0.0.1' or os.environ.get('SERVICE_NAME')
+SERVICE_NAME = os.environ.get('SERVICE_NAME', '127.0.0.1')
 
 
 # @pytest.mark.skip(reason="Skipping test_rstudio() due to Selenium issue")
@@ -62,17 +62,14 @@ def test_rstudio(container):
 
     # give it some time for nbconvert to run and to spin up notebook server
     baseurl = 'http://{0}:8888'.format(SERVICE_NAME)
-
-    # if JUPYTER_TOKEN:
-    #     baseurl = '{0}/?token={1}'.format(baseurl, JUPYTER_TOKEN)
-    # else:
-    #     raise TypeError('Must specify JUPYTER_TOKEN as environment variable')
     
     LOGGER.info(f"Rstudio UI test: container status: {c.status}")
     LOGGER.info(f"Rstudio UI test: container log: {c.logs()}")
     LOGGER.debug(f'CHECK WAIT_TIME: {WAIT_TIME}')
     LOGGER.debug(f'CHECK SLEEP_TIME: {SLEEP_TIME}')
     LOGGER.debug(f'CHECK FIND_TIME: {FIND_TIME}')
+    
+    LOGGER.info(f"MAX_RETRIES: {MAX_RETRIES}; SERVICE_NAME: {SERVICE_NAME}")
 
     current_retries = 0
     # pack everything inside a try-catch. Screenshot when an error is thrown
@@ -91,18 +88,19 @@ def test_rstudio(container):
             LOGGER.info(browser.page_source)
             time.sleep(WAIT_TIME)   # to load jupyter notebook homepage
         LOGGER.info('Connected to jupyter notebook')
+        time.sleep(SLEEP_TIME)
 
         # check only 1 tab
         assert len(browser.window_handles) == 1
 
         # select the new button + create a python notebook
         LOGGER.info('Checking RStudio')
-        new_button = webdriverwait(browser, WAIT_TIME).until(
+        new_button = webdriverwait(browser, FIND_TIME).until(
             ec.element_to_be_clickable((by.ID, 'new-dropdown-button'))
         )
         new_button.click()
 
-        rstudio_button = webdriverwait(browser, WAIT_TIME).until(
+        rstudio_button = webdriverwait(browser, FIND_TIME).until(
             ec.element_to_be_clickable((by.LINK_TEXT, 'RStudio'))
         )
         rstudio_button.click()
