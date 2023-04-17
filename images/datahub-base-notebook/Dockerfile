@@ -40,9 +40,6 @@ RUN cat /tmp/jupyter_notebook_config_extra.py >> /etc/jupyter/jupyter_notebook_c
     chmod -R uga+x /etc/jupyter/jupyter_notebook_config.py && \
     chmod -R uga+x /etc/jupyter/nbgrader_config.py
 
-# Workflow tests
-COPY workflow_tests /opt/workflow_tests
-
 # VSCode code-server
 RUN curl -fsSL https://code-server.dev/install.sh | sh -s -- --prefix=/usr/local
 
