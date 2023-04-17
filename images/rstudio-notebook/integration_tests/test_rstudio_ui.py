@@ -38,7 +38,13 @@ def test_rstudio(container):
 
     c = container.run(
         ports={'8888/tcp':8888},
-        command=["jupyter","notebook",'--port=8888',"--ip=0.0.0.0","-NotebookApp.token=''","--NotebookApp.password=''"],
+        command=[
+            "jupyter", "notebook",
+            "--ServerApp.port=8888",
+            "--ServerApp.ip=0.0.0.0",
+            "--ServerApp.token=''",
+            "--ServerApp.password=''"
+        ],
     )
 
     # initialize the driver options and connect to the notebook
@@ -72,6 +78,8 @@ def test_rstudio(container):
     LOGGER.info(f"MAX_RETRIES: {MAX_RETRIES}; SERVICE_NAME: {SERVICE_NAME}")
 
     current_retries = 0
+    time.sleep(SLEEP_TIME)  # wait for container to exec `jupyter notebook` command
+    LOGGER.info(f"###### TEST STARTED ######")
     # pack everything inside a try-catch. Screenshot when an error is thrown
     try:
         while True:
