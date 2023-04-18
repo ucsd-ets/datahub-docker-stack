@@ -77,7 +77,7 @@ def get_installed_r_packages(container):
     return installed_packages
 
 
-def test_required_r_packages_installed(container):
+def test_required_r_packages_installed():
     result = subprocess.run(
         ["Rscript", commonPath+"test_r_dump_packages.R"], capture_output=True, text=True)
     output = result.stdout
