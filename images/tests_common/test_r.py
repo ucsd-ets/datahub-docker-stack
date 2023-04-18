@@ -26,9 +26,6 @@ def test_required_r_packages_installed(container):
     cmd = c.exec_run("sh -c \"Rscript " + commonPath + "test_r_dump_packages.R\"")
     output = cmd.output.decode("utf-8")
 
-    # Stop container
-    c.stop()
-
     # Make sure result query actually captured libraries
     check_r_errors(output)
 
@@ -69,9 +66,6 @@ def get_installed_r_packages(container):
     if cmd.output[0] != 0:
         raise RuntimeError(f"Error executing command: {result}")
 
-    # Stop container
-    c.stop()
-
     # Get newline - r package name
     installed_packages = set(re.findall(
         r"\n(r-[a-z0-9_]+)", result, re.IGNORECASE))
@@ -87,9 +81,6 @@ def test_r_func(container):
     )
     cmd = c.exec_run("sh -c \"Rscript " + commonPath + "test_r_func.R\"")
     output = cmd.output.decode("utf-8")
-
-    # Stop container
-    c.stop()
 
     check_r_errors(output)
         
