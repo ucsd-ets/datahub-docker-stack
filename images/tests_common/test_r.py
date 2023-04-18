@@ -62,13 +62,11 @@ def get_installed_r_packages(container):
         tty=True,
         command=["start.sh"],
     )
-    cmd = c.exec_run("conda list | grep -E 'r-.+'")
+    cmd = c.exec_run("sh -c \"conda list | grep -E 'r-.+'\"")
     result = cmd.output.decode("utf-8")
     
-    raise RuntimeError("Result test::: " + result)
-
-    #if result.returncode != 0:
-    #    raise RuntimeError(f"Error executing command: {result.stderr}")
+    if result.returncode != 0:
+        raise RuntimeError(f"Error executing command: {result.stderr}")
 
     # Get newline - r package name
     installed_packages = set(re.findall(
@@ -89,6 +87,8 @@ def test_required_r_packages_installed(container):
     # output = output.lower()
 
     installed = get_installed_r_packages(container)
+    
+    raise RuntimeError("THIS SHOULD FAIL HERE, LIST OF INSTALLED PACKAGES: " + installed)
 
     # Shear off r- parts of r packages
     installed = [s.replace("r-", "") for s in installed]
