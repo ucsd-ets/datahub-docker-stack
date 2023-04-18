@@ -24,6 +24,7 @@ def test_required_r_packages_installed(container):
     )
     cmd = c.exec_run("sh -c \"Rscript " + commonPath + "test_r_dump_packages.R\"")
     output = cmd.output.decode("utf-8")
+    rv = c.wait(timeout=3)
 
     # Make sure result query actually captured libraries
     check_r_errors(output)
@@ -32,19 +33,13 @@ def test_required_r_packages_installed(container):
     output = output.lower()
 
     # Get packages that R itself recognizes
-    # TODO: Uncomment, testing 
-    #installed = get_installed_r_packages(container)
+    installed = get_installed_r_packages(container)
 
     # Shear off r- parts of r packages
-    # TODO: Uncomment, testing 
-    # installed = [s.replace("r-", "") for s in installed]
-    # TODO: Remove
-    installed = ["s","s"]
+    installed = [s.replace("r-", "") for s in installed]
 
     # Ensure that all packages listed by conda are recognized by R
     for package in installed:
-        # TODO: Remove break, testing
-        break
         print(package)
         try:
             assert package in output
@@ -64,10 +59,11 @@ def get_installed_r_packages(container):
     )
     cmd = c.exec_run("sh -c \"conda list | grep -E 'r-.+'\"")
     result = cmd.output.decode("utf-8")
+    rv = c.wait(timeout=3)
     
     # cmd.output returns a tuple: (exit_code, result)
     # This gets the exit_code from that tuple
-    if cmd.output[0] != 0:
+    if rv != 0:
         raise RuntimeError(f"Error executing command: {result}")
 
     # Get newline - r package name
@@ -86,6 +82,8 @@ def test_r_func(container):
     output = cmd.output.decode("utf-8")
 
     check_r_errors(output)
+    
+    rv = c.wait(timeout=3)
         
 @pytest.mark.skip(reason="Internal method to check R when we run it")
 # R does not seem to return bash exit codes.
