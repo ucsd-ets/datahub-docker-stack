@@ -11,7 +11,7 @@ LOGGER = logging.getLogger('datahub_docker_stacks')
 from helpers import CondaPackageHelper
 
 # Hardcoded path (TODO: Change to where you copy tests in Docker img)
-commonPath = "/home/runner/work/datahub-docker-stack/datahub-docker-stack/images/tests_common/"
+commonPath = "/opt/manual-tests/"
 
 # List of "fatal" terms from Rscript
 errorList = ["Failed", "Fatal", "Error"]

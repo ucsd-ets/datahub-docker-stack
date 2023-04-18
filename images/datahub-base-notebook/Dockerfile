@@ -47,6 +47,10 @@ USER jovyan
 
 COPY start-code-server.sh /usr/local/bin/start-notebook.d/
 
+# Copy over manual R tests to /opt/manual-tests
+COPY /../tests_common/test_r_dump_packages.R /opt/manual-tests
+COPY /../tests_common/test_r_func.R /opt/manual-tests
+
 ARG PY_VER_SHORT=3.9
 ARG JUPYTERHUB_VERSION=1.5.0
 
