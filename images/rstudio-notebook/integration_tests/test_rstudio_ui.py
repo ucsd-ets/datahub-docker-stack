@@ -42,8 +42,7 @@ def test_rstudio(container):
             "jupyter", "notebook",
             "--ServerApp.port=8888",
             "--ServerApp.ip=0.0.0.0",
-            "--ServerApp.token=''",
-            "--ServerApp.password=''"
+            "--NotebookApp.token=''"
         ],
     )
 
