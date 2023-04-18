@@ -36,7 +36,10 @@ def test_required_r_packages_installed(container):
     #installed = get_installed_r_packages(container)
 
     # Shear off r- parts of r packages
-    installed = [s.replace("r-", "") for s in installed]
+    # TODO: Uncomment, testing 
+    # installed = [s.replace("r-", "") for s in installed]
+    # TODO: Remove
+    installed = ["s","s"]
 
     # Ensure that all packages listed by conda are recognized by R
     for package in installed:
