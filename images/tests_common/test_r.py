@@ -10,54 +10,15 @@ LOGGER = logging.getLogger('datahub_docker_stacks')
 
 from helpers import CondaPackageHelper
 
-# Hardcoded path
+# Hardcoded path (TODO: Change to where you copy tests in Docker img)
 commonPath = "/home/runner/work/datahub-docker-stack/datahub-docker-stack/images/tests_common/"
 
-'''
-def get_installed_r_packages():
-    command = "conda list | grep -E 'r-.+'"
-    result = subprocess.run(command, shell=True, text=True,
-                            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+# List of "fatal" terms from Rscript
+errorList = ["Failed", "Fatal", "Error"]
 
-    if result.returncode != 0:
-        raise RuntimeError(f"Error executing command: {result.stderr}")
-
-    # Get newline - r package name
-    installed_packages = set(re.findall(
-        r"\n(r-[a-z0-9_]+)", result.stdout, re.IGNORECASE))
-
-    return installed_packages
-
-
-def test_required_r_packages_installed():
-    result = subprocess.run(
-        ["Rscript", commonPath+"test_r_dump_packages.R"], capture_output=True, text=True)
-    output = result.stdout
-
-    # Make sure result query actually captured libraries
-    assert "Fatal" not in output
-
-    # Lowercase all output
-    output = output.lower()
-
-    installed = get_installed_r_packages()
-
-    # Shear off r- parts of r packages
-    installed = [s.replace("r-", "") for s in installed]
-
-    for package in installed:
-        print(package)
-        try:
-            assert package in output
-        except:
-            # Uh oh spaghettio
-            raise Exception(
-                package + " is not in R's list of installed packages")
-
-    print("All Conda R packages are detected by R")
-'''
-
+# https://docker-py.readthedocs.io/en/stable/containers.html
 def get_installed_r_packages(container):
+    # Get R packages from conda inside container
     c = container.run(
         tty=True,
         command=["start.sh"],
@@ -77,23 +38,27 @@ def get_installed_r_packages(container):
     return installed_packages
 
 def test_required_r_packages_installed(container):
-    #result = subprocess.run(
-    #    ["Rscript", commonPath+"test_r_dump_packages.R"], capture_output=True, text=True)
-    #output = result.stdout
+    # Run Rscript inside of container
+    c = container.run(
+        tty=True,
+        command=["start.sh"],
+    )
+    cmd = c.exec_run("sh -c \"Rscript " + commonPath + "test_r_dump_packages.R\"")
+    output = cmd.output.decode("utf-8")
 
     # Make sure result query actually captured libraries
-    # assert "Fatal" not in output
+    check_r_errors(output)
 
     # Lowercase all output
-    # output = output.lower()
+    output = output.lower()
 
+    # Get packages that R itself recognizes
     installed = get_installed_r_packages(container)
-    
-    raise RuntimeError("THIS SHOULD FAIL HERE, LIST OF INSTALLED PACKAGES: " + installed)
 
     # Shear off r- parts of r packages
     installed = [s.replace("r-", "") for s in installed]
 
+    # Ensure that all packages listed by conda are recognized by R
     for package in installed:
         print(package)
         try:
@@ -105,15 +70,21 @@ def test_required_r_packages_installed(container):
 
     print("All Conda R packages are detected by R")
 
-def test_r_func():
+def test_r_func(container):
+    # Run basic functions in R, ensure that env is functional
+    c = container.run(
+        tty=True,
+        command=["start.sh"],
+    )
+    cmd = c.exec_run("sh -c \"Rscript " + commonPath + "test_r_func.R\"")
+    output = cmd.output.decode("utf-8")
 
-    # List of "fatal" terms from Rscript
-    errorList = ["Failed", "Fatal", "Error"]
-
-    result = subprocess.run(["Rscript", commonPath+"test_r_func.R"],
-                            capture_output=True, text=True)
-
-    status = False
+    check_r_errors(output)
+        
+@pytest.mark.skip(reason="Internal method to check R when we run it")
+# R does not seem to return bash exit codes.
+# This is our workaround for that.
+def check_r_errors(strToCheck):
     for error in errorList:
-        assert error not in result.stdout
-        assert error.lower() not in result.stdout
+        assert error not in strToCheck
+        assert error.lower() not in strToCheck
