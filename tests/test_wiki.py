@@ -74,6 +74,14 @@ class TestWiki(unittest.TestCase):
                 self.all_info_cmds
             )
 
+        try:
+            docker.from_env().images.get(self.test_node.full_image_name)
+        except Exception as e:
+            raise Exception(
+                f"Docker client cannot found {self.test_node.full_image_name}\n" +
+                f"Please use cd to tests/ and run $ docker build . -f test.Dockerfile -t ucsdets/datahub-docker-stacks:pushtest"
+            )
+
         run_test()
 
         return (mock_run_outputs, mock_markdown_table)
