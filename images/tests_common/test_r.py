@@ -77,18 +77,18 @@ def get_installed_r_packages(container):
     return installed_packages
 
 
-def test_required_r_packages_installed():
-    result = subprocess.run(
-        ["Rscript", commonPath+"test_r_dump_packages.R"], capture_output=True, text=True)
-    output = result.stdout
+def test_required_r_packages_installed(container):
+    #result = subprocess.run(
+    #    ["Rscript", commonPath+"test_r_dump_packages.R"], capture_output=True, text=True)
+    #output = result.stdout
 
     # Make sure result query actually captured libraries
-    assert "Fatal" not in output
+    # assert "Fatal" not in output
 
     # Lowercase all output
-    output = output.lower()
+    # output = output.lower()
 
-    installed = get_installed_r_packages()
+    installed = get_installed_r_packages(container)
 
     # Shear off r- parts of r packages
     installed = [s.replace("r-", "") for s in installed]
