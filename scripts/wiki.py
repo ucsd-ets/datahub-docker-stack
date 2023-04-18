@@ -317,7 +317,7 @@ if __name__ == "__main__":
     test_node = Node(
         image_name='ucsdets/datahub-docker-stacks',
         image_tag='pushtest',
-        filepath='tests/v2',
+        filepath='tests',
         children=[],
         rebuild=False,
         image_built=False,
