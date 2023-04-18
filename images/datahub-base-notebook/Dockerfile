@@ -43,14 +43,14 @@ RUN cat /tmp/jupyter_notebook_config_extra.py >> /etc/jupyter/jupyter_notebook_c
 # VSCode code-server
 RUN curl -fsSL https://code-server.dev/install.sh | sh -s -- --prefix=/usr/local
 
-USER jovyan
-
-COPY start-code-server.sh /usr/local/bin/start-notebook.d/
-
 # Copy over R tests to /opt/manual-tests
 RUN mkdir /opt/manual-tests
 COPY /test/test_r_dump_packages.R /opt/manual-tests
 COPY /test/test_r_func.R /opt/manual-tests
+
+USER jovyan
+
+COPY start-code-server.sh /usr/local/bin/start-notebook.d/
 
 ARG PY_VER_SHORT=3.9
 ARG JUPYTERHUB_VERSION=1.5.0

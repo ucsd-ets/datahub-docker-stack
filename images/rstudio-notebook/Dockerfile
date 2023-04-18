@@ -51,12 +51,12 @@ RUN R -e "install.packages('rjson', repos='http://cran.rstudio.com/')" && \
 COPY ./test /home/jovyan/
 #/usr/share/datahub/tests/datascience-rstudio-docker
 
-USER $NB_USER
-
 # Copy over R tests to /opt/manual-tests
 RUN mkdir /opt/manual-tests
 COPY /test/test_r_dump_packages.R /opt/manual-tests
 COPY /test/test_r_func.R /opt/manual-tests
+
+USER $NB_USER
 
 RUN conda init bash
 
