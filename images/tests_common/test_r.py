@@ -66,14 +66,13 @@ def get_installed_r_packages(container):
     result = cmd.output.decode("utf-8")
     
     if cmd.returncode != 0:
-        raise RuntimeError(f"Error executing command: {result.stderr}")
+        raise RuntimeError(f"Error executing command: {result}")
 
     # Get newline - r package name
     installed_packages = set(re.findall(
-        r"\n(r-[a-z0-9_]+)", result.stdout, re.IGNORECASE))
+        r"\n(r-[a-z0-9_]+)", result, re.IGNORECASE))
 
     return installed_packages
-
 
 def test_required_r_packages_installed(container):
     #result = subprocess.run(
