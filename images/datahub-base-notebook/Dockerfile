@@ -48,6 +48,7 @@ USER jovyan
 COPY start-code-server.sh /usr/local/bin/start-notebook.d/
 
 # Copy over R tests to /opt/manual-tests
+RUN mkdir /opt/manual-tests
 COPY /test/test_r_dump_packages.R /opt/manual-tests
 COPY /test/test_r_func.R /opt/manual-tests
 

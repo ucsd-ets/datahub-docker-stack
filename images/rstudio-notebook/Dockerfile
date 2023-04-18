@@ -54,6 +54,7 @@ COPY ./test /home/jovyan/
 USER $NB_USER
 
 # Copy over R tests to /opt/manual-tests
+RUN mkdir /opt/manual-tests
 COPY /test/test_r_dump_packages.R /opt/manual-tests
 COPY /test/test_r_func.R /opt/manual-tests
 
