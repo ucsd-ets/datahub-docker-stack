@@ -23,7 +23,7 @@ def test_required_r_packages_installed(container):
         remove=True,
         command=["start.sh"],
     )
-    cmd = c.exec_run("sh -c \"Rscript " + commonPath + "test_r_dump_packages.R\"")
+    cmd = c.exec_run("sh -c \"Rscript " + commonPath + "test_r_dump_packages.R & exit\"")
     output = cmd.output.decode("utf-8")
 
     # Make sure result query actually captured libraries
@@ -58,7 +58,7 @@ def get_installed_r_packages(container):
         remove=True,
         command=["start.sh"],
     )
-    cmd = c.exec_run("sh -c \"conda list | grep -E 'r-.+'\"")
+    cmd = c.exec_run("sh -c \"conda list | grep -E 'r-.+' & exit\"")
     result = cmd.output.decode("utf-8")
     
     # cmd.output returns a tuple: (exit_code, result)
@@ -79,7 +79,7 @@ def test_r_func(container):
         remove=True,
         command=["start.sh"],
     )
-    cmd = c.exec_run("sh -c \"Rscript " + commonPath + "test_r_func.R\"")
+    cmd = c.exec_run("sh -c \"Rscript " + commonPath + "test_r_func.R & exit\"")
     output = cmd.output.decode("utf-8")
 
     check_r_errors(output)
