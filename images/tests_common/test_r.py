@@ -20,11 +20,14 @@ def test_required_r_packages_installed(container):
     # Run Rscript inside of container
     c = container.run(
         tty=True,
+        remove=True,
         command=["start.sh"],
     )
     cmd = c.exec_run("sh -c \"Rscript " + commonPath + "test_r_dump_packages.R\"")
     output = cmd.output.decode("utf-8")
-    rv = c.wait(timeout=3)
+
+    # Stop container
+    c.stop()
 
     # Make sure result query actually captured libraries
     check_r_errors(output)
@@ -55,16 +58,19 @@ def get_installed_r_packages(container):
     # Get R packages from conda inside container
     c = container.run(
         tty=True,
+        remove=True,
         command=["start.sh"],
     )
     cmd = c.exec_run("sh -c \"conda list | grep -E 'r-.+'\"")
     result = cmd.output.decode("utf-8")
-    rv = c.wait(timeout=3)
     
     # cmd.output returns a tuple: (exit_code, result)
     # This gets the exit_code from that tuple
-    if rv != 0:
+    if cmd.output[0] != 0:
         raise RuntimeError(f"Error executing command: {result}")
+
+    # Stop container
+    c.stop()
 
     # Get newline - r package name
     installed_packages = set(re.findall(
@@ -76,14 +82,16 @@ def test_r_func(container):
     # Run basic functions in R, ensure that env is functional
     c = container.run(
         tty=True,
+        remove=True,
         command=["start.sh"],
     )
     cmd = c.exec_run("sh -c \"Rscript " + commonPath + "test_r_func.R\"")
     output = cmd.output.decode("utf-8")
 
+    # Stop container
+    c.stop()
+
     check_r_errors(output)
-    
-    rv = c.wait(timeout=3)
         
 @pytest.mark.skip(reason="Internal method to check R when we run it")
 # R does not seem to return bash exit codes.
