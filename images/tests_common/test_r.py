@@ -20,10 +20,9 @@ def test_required_r_packages_installed(container):
     # Run Rscript inside of container
     c = container.run(
         tty=True,
-        remove=True,
         command=["start.sh"],
     )
-    cmd = c.exec_run("sh -c \"Rscript " + commonPath + "test_r_dump_packages.R & exit\"")
+    cmd = c.exec_run("sh -c \"Rscript " + commonPath + "test_r_dump_packages.R\"")
     output = cmd.output.decode("utf-8")
 
     # Make sure result query actually captured libraries
@@ -55,10 +54,9 @@ def get_installed_r_packages(container):
     # Get R packages from conda inside container
     c = container.run(
         tty=True,
-        remove=True,
         command=["start.sh"],
     )
-    cmd = c.exec_run("sh -c \"conda list | grep -E 'r-.+' & exit\"")
+    cmd = c.exec_run("sh -c \"conda list | grep -E 'r-.+'\"")
     result = cmd.output.decode("utf-8")
     
     # cmd.output returns a tuple: (exit_code, result)
@@ -76,10 +74,9 @@ def test_r_func(container):
     # Run basic functions in R, ensure that env is functional
     c = container.run(
         tty=True,
-        remove=True,
         command=["start.sh"],
     )
-    cmd = c.exec_run("sh -c \"Rscript " + commonPath + "test_r_func.R & exit\"")
+    cmd = c.exec_run("sh -c \"Rscript " + commonPath + "test_r_func.R\"")
     output = cmd.output.decode("utf-8")
 
     check_r_errors(output)
