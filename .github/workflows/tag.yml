@@ -14,8 +14,16 @@ on:
       
 
 jobs:
+  gpu_test:
+    uses: ./.github/workflows/test_gpu.yml
+    with:
+      originalTag: ${{ github.event.inputs.originalTag }}
+    secrets:
+      inherit
+    
   tagging:
     runs-on: ubuntu-latest
+    needs: gpu_test
     steps:
       - uses: actions/checkout@v2
 

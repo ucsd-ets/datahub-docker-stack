@@ -9,6 +9,8 @@ from scripts.utils import store_var,get_specs
 
 from scripts.utils import get_logger
 logger = get_logger()
+from scripts.utils import get_logger
+logger = get_logger()
 
 class GitHelper:
     @staticmethod
@@ -51,6 +53,13 @@ def get_changed_images():
         
     # use commit message to force full rebuild
     if("full rebuild" in GitHelper.commit_message().lower()):
+        logger.info("Triggering full rebuild based on commit message.")
+        changed_images.update(images)
+        return list(changed_images)
+    
+    # if the commit is in main, do a full rebuild, as the stable tag action needs 4 images to make stable.
+    elif(environ['GITHUB_REF_NAME'] == 'main'):
+        logger.info("Triggering full rebuild based on being in the main branch.")
         changed_images.update(images)
         return list(changed_images)
 

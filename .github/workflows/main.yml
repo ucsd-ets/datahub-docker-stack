@@ -6,7 +6,6 @@ env:
 
 on:
   push:
-    branches: [ main, logger_dup_debug ]
     paths:
       - "images/**"
       - "model/**"
