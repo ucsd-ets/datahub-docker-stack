@@ -65,7 +65,7 @@ def get_installed_r_packages(container):
     cmd = c.exec_run("sh -c \"conda list | grep -E 'r-.+'\"")
     result = cmd.output.decode("utf-8")
     
-    if result.returncode != 0:
+    if cmd.returncode != 0:
         raise RuntimeError(f"Error executing command: {result.stderr}")
 
     # Get newline - r package name
