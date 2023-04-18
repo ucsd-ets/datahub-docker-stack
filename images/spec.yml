@@ -50,3 +50,4 @@ all_info_cmds:
   CUDA_VERSION:
     description: CUDA Version
     command: bash -c 'conda list | grep "cuda\|cudnn\|nccl"'
+
