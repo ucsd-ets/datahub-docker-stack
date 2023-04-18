@@ -104,7 +104,7 @@ def run_basic_tests(node: Node, result: Result) -> bool:
 
     result.test_results['basic_tests'] = 'Passed basic tests'
     result.test_results['test_log'] = report
-    if exit_code != pytest.ExitCode.OK or exit_code != pytest.ExitCode.NO_TESTS_COLLECTED:
+    if exit_code != pytest.ExitCode.OK and exit_code != pytest.ExitCode.NO_TESTS_COLLECTED:
         result.success = False
         result.test_results['basic_tests'] = 'Failed basic tests'
         return False
@@ -123,7 +123,7 @@ def run_integration_tests(node: Node, result: Result) -> bool:
     )
     result.test_results['integration_tests'] = 'Passed integration tests'
     result.test_results['test_log'] = report
-    if exit_code != pytest.ExitCode.OK or exit_code != pytest.ExitCode.NO_TESTS_COLLECTED:
+    if exit_code != pytest.ExitCode.OK and exit_code != pytest.ExitCode.NO_TESTS_COLLECTED:
         result.success = False
         result.test_results['integration_tests'] = 'Failed integration tests'
         return False
