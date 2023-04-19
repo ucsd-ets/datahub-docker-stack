@@ -66,7 +66,7 @@ def get_changed_images():
 
     for file in changed_files:
         fp = PurePath(file)
-        logger.info(f"Detecting changed file: {file}")
+        logger.debug(f"Detecting changed file: {file}")
         # need to be under images and must be a folder
         if fp.parts[0] == 'images':
             image_ref = fp.parts[1]

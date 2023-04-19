@@ -181,7 +181,7 @@ def run_simple_command(node: Node, cmd: str) -> Tuple[str, bool]:
         out = container.exec_run(cmd)
         assert out.exit_code == 0, f"Command: {cmd} failed"
         result_str = out.output.decode("utf-8").rstrip()
-        logger.info(f"Command result: {result_str}")
+        logger.debug(f"Command result: {result_str}")
 
         return result_str, True
     except Exception as e:
@@ -233,7 +233,7 @@ def prune(full_image_name: str) -> int:
     try:
         for func_name, prune in prune_funcs:
             resp = prune()
-            logger.info(f"from prune function {func_name}, resp is {resp}")
+            logger.debug(f"from prune function {func_name}, resp is {resp}")
             if not 'SpaceReclaimed' in resp:
                 logger.error(
                     f'SpaceReclaimed not in API response for prune function {func_name}. \
