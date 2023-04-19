@@ -7,8 +7,12 @@ from os.path import isfile
 from io import StringIO
 import bitmath
 import logging
+import logging
 from pandas import NaT, Series, read_csv, concat
 from collections import deque
+from typing import List, Dict
+
+__logger_setup = False
 from typing import List, Dict
 
 __logger_setup = False
@@ -292,6 +296,7 @@ def get_logger(level: int = logging.INFO):
     logger = logging.getLogger('datahub_docker_stacks')
 
     formatter = logging.Formatter("%(levelname)s:%(message)s")
+    logger.propagate = False
 
     file_handler = logging.FileHandler("logs/run.log")
     file_handler.setFormatter(formatter)

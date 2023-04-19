@@ -2,6 +2,10 @@ from scripts import git_helper
 from scripts.tree import build_tree, load_spec
 from scripts.runner import build_and_test_containers
 from scripts.utils import get_logger
+from scripts import git_helper
+from scripts.tree import build_tree, load_spec
+from scripts.runner import build_and_test_containers
+from scripts.utils import get_logger
 import os
 import logging
 import argparse
@@ -32,8 +36,7 @@ def main(dockerhub_username: str, dockerhub_password: str):
                               all_info_cmds=all_info_cmds)
     
     if build_result is False:
-        logger.error("There was a problem while building one of the images. Please consult logs.")
-        sys.exit(5)
+        sys.exit("There was a problem while building one of the images. Please consult logs.")
 
 
 # https://docs.python.org/3/library/logging.html#logging-levels
@@ -55,13 +58,12 @@ parser.add_argument('-l', '--log-level', choices=list(LOGLEVEL_MAP.keys()), type
 
 if __name__ == '__main__':
     parsed_args = parser.parse_args()
-    logger = get_logger(LOGLEVEL_MAP[parsed_args.log_level])
+    # logger = get_logger(LOGLEVEL_MAP[parsed_args.log_level])
 
     dockerhub_username = os.environ.get('DOCKERHUB_USER', None)
     dockerhub_token = os.environ.get('DOCKERHUB_TOKEN', None)
     if not dockerhub_username or not dockerhub_token:
-        logger.error('dockerhub username or password not set')
-        exit(1)
+        sys.exit("'dockerhub username or password not set'")
 
     main(dockerhub_username=dockerhub_username,
          dockerhub_password=dockerhub_token)

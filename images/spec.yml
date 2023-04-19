@@ -25,7 +25,7 @@ images:
   rstudio-notebook:
     image_name: ucsdets/rstudio-notebook
     depend_on: datahub-base-notebook
-    integration_tests: false
+    integration_tests: true
     info_cmds: [PY_VER, PIP_LIST, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
 
 tag:
@@ -50,3 +50,4 @@ all_info_cmds:
   CUDA_VERSION:
     description: CUDA Version
     command: bash -c 'conda list | grep "cuda\|cudnn\|nccl"'
+
