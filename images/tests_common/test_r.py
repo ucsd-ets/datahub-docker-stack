@@ -57,10 +57,7 @@ def get_installed_r_packages(container):
         command=["start.sh"],
         ports={'8888/tcp':8897} # key is port inside container; value is local (github runtime) port
     )
-    cmd = c.exec_run(cmd=[
-         'sh', '-c',
-         '"conda list | grep -E \'^r-.*\'"'
-    ])
+    cmd = c.exec_run("sh -c \"conda list | grep -E '^r-.*'\"")
     result = cmd.output.decode("utf-8")
     
     # Check exit code
