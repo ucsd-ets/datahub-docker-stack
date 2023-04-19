@@ -19,10 +19,11 @@ def test_required_r_packages_installed(container):
         command=["start.sh"],
         ports={'8888/tcp':8899} # key is port inside container; value is local (github runtime) port
     )
-    cmd = c.exec_run(cmd=[
-         'sh', '-c',
-         f'"Rscript {commonPath}test_r_dump_packages.R"'
-    ])
+    cmd = c.exec_run("sh -c \"Rscript " + commonPath + "test_r_dump_packages.R\"")
+    # cmd = c.exec_run(cmd=[
+    #     'sh', '-c',
+    #     f'"Rscript {commonPath}test_r_dump_packages.R"'
+    # ])
     output = cmd.output.decode("utf-8")
 
     # Make sure result query actually captured libraries
@@ -45,7 +46,7 @@ def test_required_r_packages_installed(container):
         except:
             # Uh oh spaghettio
             raise Exception(
-                package + " is not in R's list of installed packages. R package list: " + output + "Conda package list: " + "|".join(installed))
+                package + " is not in R's list of installed packages")
 
     print("All Conda R packages are detected by R")
 
@@ -77,10 +78,7 @@ def test_r_func(container):
         command=["start.sh"],
         ports={'8888/tcp':8896} # key is port inside container; value is local (github runtime) port
     )
-    cmd = c.exec_run(cmd=[
-         'sh', '-c',
-         f'"Rscript {commonPath}test_r_func.R"'
-    ])
+    cmd = c.exec_run("sh -c \"Rscript " + commonPath + "test_r_func.R\"")
     output = cmd.output.decode("utf-8")
 
     check_r_errors(output)
