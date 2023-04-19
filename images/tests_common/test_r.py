@@ -102,4 +102,4 @@ def check_r_errors(strToCheck):
 # This is our workaround for that.
 def docker_cleanup(container):
     container.stop()
-    container.remove()
+    # container.remove()
