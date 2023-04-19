@@ -45,7 +45,7 @@ def test_required_r_packages_installed(container):
         except:
             # Uh oh spaghettio
             raise Exception(
-                package + " is not in R's list of installed packages")
+                package + " is not in R's list of installed packages. R package list: " + output + "Conda package list: " + installed)
 
     print("All Conda R packages are detected by R")
 
