@@ -4,11 +4,7 @@ import pytest
 import subprocess
 import logging
 
-from packaging import version
-
 LOGGER = logging.getLogger('datahub_docker_stacks')
-
-from helpers import CondaPackageHelper
 
 # Hardcoded path (TODO: Change to where you copy tests in Docker img)
 commonPath = "/opt/manual-tests/"
@@ -29,8 +25,6 @@ def test_required_r_packages_installed(container):
     #     f'"Rscript {commonPath}test_r_dump_packages.R"'
     # ])
     output = cmd.output.decode("utf-8")
-    
-    c.stop()
 
     # Make sure result query actually captured libraries
     check_r_errors(output)
@@ -55,7 +49,6 @@ def test_required_r_packages_installed(container):
                 package + " is not in R's list of installed packages")
 
     print("All Conda R packages are detected by R")
-    c.remove()
 
 # https://docker-py.readthedocs.io/en/stable/containers.html
 def get_installed_r_packages(container):
@@ -69,8 +62,6 @@ def get_installed_r_packages(container):
     cmd = c.exec_run("sh -c \"conda list | grep -E '^r-.*'\"")
     result = cmd.output.decode("utf-8")
     
-    c.stop()
-    
     # Check exit code
     # TODO: If this does not work, remove. Will not match with R if it fails regardless
     if cmd.exit_code != 0:
@@ -79,8 +70,6 @@ def get_installed_r_packages(container):
     # Get newline - r package name
     installed_packages = set(re.findall(
         r"(r-[a-z0-9_]+)", result, re.IGNORECASE))
-
-    c.remove()
     
     return installed_packages
 
@@ -93,12 +82,8 @@ def test_r_func(container):
     )
     cmd = c.exec_run("sh -c \"Rscript " + commonPath + "test_r_func.R\"")
     output = cmd.output.decode("utf-8")
-    
-    c.stop()
 
     check_r_errors(output)
-    
-    c.remove()
         
 @pytest.mark.skip(reason="Internal method to check R when we run it")
 # R does not seem to return bash exit codes.
