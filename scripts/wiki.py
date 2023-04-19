@@ -19,7 +19,8 @@ from scripts.fs import MANIFEST_PATH
 logger = get_logger()
 
 def run_outputs(node: Node, all_info_cmds:Dict) -> List[Dict]: 
-    """Run info commands of each image and return outputs. Wrapper around run_simple_command()
+    """Create a container & Run info commands of each image and return outputs. 
+    Wrapper around run_simple_command()
 
     Args:
         node (Node): _description_
@@ -28,21 +29,44 @@ def run_outputs(node: Node, all_info_cmds:Dict) -> List[Dict]:
     Returns:
         List[Dict]: each Dict has description (str), output (str) of one image.
     """
-    
+    # Create docker container
+    logger.info(f"Creating container for image {node.full_image_name} ...")
+    logger.info(f"Following images exist: {__docker_client.images.list()}")
     outputs = []
-    for key in node.info_cmds:
-        if key not in all_info_cmds.keys():
-            logger.error(f"command definition of {key} in {node.image_name} not found in spec.yml; skip")
-            continue
-        
-        logging.debug(f"Running command {all_info_cmds[key]['command']}")
-        cmd_output, cmd_success = run_simple_command(
-            node,
-            all_info_cmds[key]['command']
-        )
 
-        description = all_info_cmds[key]['description']
-        outputs.append(dict(description=description, output=cmd_output))
+    try:
+        container = __docker_client.containers.run(
+            image=node.full_image_name, command='/bin/bash', tty=True, detach=True,
+        )   # If detach is True, a Container object is returned instead.
+    except Exception as e:
+        logger.error(e)
+        logger.error(
+            f"*** docker container failed to run on image {node.full_image_name} ***")
+        return []
+
+    else:
+        logger.info(f"Container {container.name} created")
+        for key in node.info_cmds:
+            if key not in all_info_cmds.keys():
+                logger.error(f"command definition of {key} in {node.image_name} not found in spec.yml; skip")
+                continue
+            
+            logging.debug(f"Running command {all_info_cmds[key]['command']}")
+            cmd_output, cmd_success = run_simple_command(
+                container,
+                node,
+                all_info_cmds[key]['command']
+            )
+
+            description = all_info_cmds[key]['description']
+            outputs.append(dict(description=description, output=cmd_output))
+
+    finally:
+        if container:
+            logger.info(f"Removing container {container.name} ...")
+            container.remove(force=True)
+            logger.info(f"Container {container.name} removed")
+        __docker_client.close()
     
     return outputs
 
