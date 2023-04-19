@@ -47,7 +47,9 @@ def test_required_r_packages_installed(container):
             # Uh oh spaghettio
             raise Exception(
                 package + " is not in R's list of installed packages")
-
+            
+    docker_cleanup(container)
+    
     print("All Conda R packages are detected by R")
 
 # https://docker-py.readthedocs.io/en/stable/containers.html
@@ -69,6 +71,8 @@ def get_installed_r_packages(container):
     installed_packages = set(re.findall(
         r"(r-[a-z0-9_]+)", result, re.IGNORECASE))
     
+    docker_cleanup(container)
+    
     return installed_packages
 
 def test_r_func(container):
@@ -82,6 +86,8 @@ def test_r_func(container):
     output = cmd.output.decode("utf-8")
 
     check_r_errors(output)
+    
+    docker_cleanup(container)
         
 @pytest.mark.skip(reason="Internal method to check R when we run it")
 # R does not seem to return bash exit codes.
@@ -90,3 +96,10 @@ def check_r_errors(strToCheck):
     for error in errorList:
         assert error not in strToCheck
         assert error.lower() not in strToCheck
+
+@pytest.mark.skip(reason="Internal method to cleanup Docker container")
+# R does not seem to return bash exit codes.
+# This is our workaround for that.
+def docker_cleanup(container):
+    container.stop()
+    container.remove()
