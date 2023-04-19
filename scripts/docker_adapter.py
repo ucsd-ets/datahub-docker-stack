@@ -149,10 +149,12 @@ def get_image_obj(node: Node) -> docker_client.models.images.Image:
         return None
 
 
-def run_simple_command(node: Node, cmd: str) -> Tuple[str, bool]:
-    """Create a docker container, run a command, return the output, and remove the container.
+def run_simple_command(container: docker_client.models.containers.Container,
+        node: Node, cmd: str) -> Tuple[str, bool]:
+    """Given a docker container, run a command, return the output, and remove the container.
 
     Args:
+        container: the detached container created by run(tty=True)
         node (Node): _description_
         cmd (str): terminal command to exec, e.g. "conda list"
 
@@ -160,28 +162,13 @@ def run_simple_command(node: Node, cmd: str) -> Tuple[str, bool]:
         str: terminal output decoded as string
         bool: success/faliure
     """
-    # Create docker container
-    logger.info(f"Creating container for image {node.full_image_name} ...")
-    logger.info(f"Following images exist: {__docker_client.images.list()}")
-    try:
-        container = __docker_client.containers.run(
-            image=node.full_image_name, command='/bin/bash', tty=True, detach=True,
-        )   # If detach is True, a Container object is returned instead.
-    except Exception as e:
-        logger.error(e)
-        print(
-            f"*** docker container failed to run on image {node.full_image_name} ***")
-        return "Failed to create container", False
-
-    logger.info(f"Container {container.name} created")
-
     # Run command
     logger.info(f"Running cmd: '{cmd}' on container: {container}")
     try:
         out = container.exec_run(cmd)
         assert out.exit_code == 0, f"Command: {cmd} failed"
         result_str = out.output.decode("utf-8").rstrip()
-        logger.info(f"Command result: {result_str}")
+        logger.debug(f"Command result: {result_str}")
 
         return result_str, True
     except Exception as e:
@@ -189,12 +176,6 @@ def run_simple_command(node: Node, cmd: str) -> Tuple[str, bool]:
         print(
             f"*** docker container on image {node.image_name} failed to exec cmd {cmd} ***")
         return "Failed to execute cmd", False
-    finally:
-        if container:
-            logger.info(f"Removing container {container.name} ...")
-            container.remove(force=True)
-            logger.info(f"Container {container.name} removed")
-        __docker_client.close()
 
 
 def list_images():
@@ -233,7 +214,7 @@ def prune(full_image_name: str) -> int:
     try:
         for func_name, prune in prune_funcs:
             resp = prune()
-            logger.info(f"from prune function {func_name}, resp is {resp}")
+            logger.debug(f"from prune function {func_name}, resp is {resp}")
             if not 'SpaceReclaimed' in resp:
                 logger.error(
                     f'SpaceReclaimed not in API response for prune function {func_name}. \

@@ -49,9 +49,9 @@ RUN R -e "install.packages('rjson', repos='http://cran.rstudio.com/')" && \
     R -e "install.packages('session', repos='http://cran.rstudio.com/')"
 
 COPY ./test /home/jovyan/
+COPY ./integration_tests /home/jovyan/
 #/usr/share/datahub/tests/datascience-rstudio-docker
 
 USER $NB_USER
 
 RUN conda init bash
-
