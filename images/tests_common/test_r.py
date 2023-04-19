@@ -59,7 +59,7 @@ def get_installed_r_packages(container):
     )
     cmd = c.exec_run(cmd=[
          'sh', '-c',
-         '"sh -c \"conda list | grep -E \'^r-.*\'\""'
+         '"conda list | grep -E \'^r-.*\'\""'
     ])
     result = cmd.output.decode("utf-8")
     
