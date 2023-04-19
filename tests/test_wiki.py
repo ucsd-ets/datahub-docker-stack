@@ -14,7 +14,7 @@ class TestWiki(unittest.TestCase):
         self.test_node = Node(
             image_name='ucsdets/datahub-docker-stacks',
             image_tag='pushtest',
-            filepath='tests/v2',
+            filepath='tests',
             children=[],
             rebuild=False,
             image_built=False,
@@ -72,6 +72,14 @@ class TestWiki(unittest.TestCase):
                 self.test_node, 
                 docker.from_env().images.get(self.test_node.full_image_name), 
                 self.all_info_cmds
+            )
+
+        try:
+            docker.from_env().images.get(self.test_node.full_image_name)
+        except Exception as e:
+            raise Exception(
+                f"Docker client cannot found {self.test_node.full_image_name}\n" +
+                f"Please use cd to tests/ and run $ docker build . -f test.Dockerfile -t ucsdets/datahub-docker-stacks:pushtest"
             )
 
         run_test()

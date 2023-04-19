@@ -9,6 +9,8 @@ from scripts.utils import store_var,get_specs
 
 from scripts.utils import get_logger
 logger = get_logger()
+from scripts.utils import get_logger
+logger = get_logger()
 
 class GitHelper:
     @staticmethod
@@ -64,11 +66,11 @@ def get_changed_images():
 
     for file in changed_files:
         fp = PurePath(file)
-        logger.info(f"Detecting changed file: {file}")
+        logger.debug(f"Detecting changed file: {file}")
         # need to be under images and must be a folder
         if fp.parts[0] == 'images':
             image_ref = fp.parts[1]
-            if image_ref in tags['BuildAll']:
+            if image_ref in tags['BuildAll'] or environ['GITHUB_REF_NAME'] == 'main':
                 changed_images.update(images)
                 # included all images so break and proceed as all images needs to be built
                 break
