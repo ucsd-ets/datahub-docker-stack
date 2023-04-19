@@ -6,7 +6,7 @@ import logging
 
 LOGGER = logging.getLogger('datahub_docker_stacks')
 
-# Hardcoded path (TODO: Change to where you copy tests in Docker img)
+# Hardcoded path
 commonPath = "/opt/manual-tests/"
 
 # List of "fatal" terms from Rscript
@@ -19,11 +19,10 @@ def test_required_r_packages_installed(container):
         command=["start.sh"],
         ports={'8888/tcp':8899} # key is port inside container; value is local (github runtime) port
     )
-    cmd = c.exec_run("sh -c \"Rscript " + commonPath + "test_r_dump_packages.R\"")
-    # cmd = c.exec_run(cmd=[
-    #     'sh', '-c',
-    #     f'"Rscript {commonPath}test_r_dump_packages.R"'
-    # ])
+    cmd = c.exec_run(cmd=[
+         'sh', '-c',
+         f'"Rscript {commonPath}test_r_dump_packages.R"'
+    ])
     output = cmd.output.decode("utf-8")
 
     # Make sure result query actually captured libraries
@@ -58,12 +57,13 @@ def get_installed_r_packages(container):
         command=["start.sh"],
         ports={'8888/tcp':8897} # key is port inside container; value is local (github runtime) port
     )
-    # cmd = c.exec_run("sh -c \"conda list | grep -E 'r-.+'\"")
-    cmd = c.exec_run("sh -c \"conda list | grep -E '^r-.*'\"")
+    cmd = c.exec_run(cmd=[
+         'sh', '-c',
+         '"sh -c \"conda list | grep -E \'^r-.*\'\""'
+    ])
     result = cmd.output.decode("utf-8")
     
     # Check exit code
-    # TODO: If this does not work, remove. Will not match with R if it fails regardless
     if cmd.exit_code != 0:
         raise RuntimeError(f"Error ({cmd.output[0]}) executing command: {result}")
 
@@ -80,7 +80,10 @@ def test_r_func(container):
         command=["start.sh"],
         ports={'8888/tcp':8896} # key is port inside container; value is local (github runtime) port
     )
-    cmd = c.exec_run("sh -c \"Rscript " + commonPath + "test_r_func.R\"")
+    cmd = c.exec_run(cmd=[
+         'sh', '-c',
+         f'"Rscript {commonPath}test_r_func.R"'
+    ])
     output = cmd.output.decode("utf-8")
 
     check_r_errors(output)
