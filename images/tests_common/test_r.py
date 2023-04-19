@@ -48,7 +48,7 @@ def test_required_r_packages_installed(container):
             raise Exception(
                 package + " is not in R's list of installed packages")
             
-    docker_cleanup(container)
+    docker_cleanup(c)
     
     print("All Conda R packages are detected by R")
 
@@ -71,7 +71,7 @@ def get_installed_r_packages(container):
     installed_packages = set(re.findall(
         r"(r-[a-z0-9_]+)", result, re.IGNORECASE))
     
-    docker_cleanup(container)
+    docker_cleanup(c)
     
     return installed_packages
 
@@ -87,7 +87,7 @@ def test_r_func(container):
 
     check_r_errors(output)
     
-    docker_cleanup(container)
+    docker_cleanup(c)
         
 @pytest.mark.skip(reason="Internal method to check R when we run it")
 # R does not seem to return bash exit codes.
