@@ -62,19 +62,20 @@ def get_installed_r_packages(container):
         command=["start.sh"],
         ports={'8888/tcp':8897} # key is port inside container; value is local (github runtime) port
     )
-    cmd = c.exec_run("sh -c \"conda list | grep -E 'r-.+'\"")
+    # cmd = c.exec_run("sh -c \"conda list | grep -E 'r-.+'\"")
+    cmd = c.exec_run("sh -c \"conda list | grep -E '^r-.*'\"")
     result = cmd.output.decode("utf-8")
     
     # cmd.output returns a tuple: (exit_code, result)
     # This gets the exit_code from that tuple
     # TODO: grep is returning 1, meaning no lines were modified...even though this doesn't seem to be the case
     # Investigate then only allow for 0 to pass
-    if cmd.output[0] > 1:
+    if cmd.output[0] != 0:
         raise RuntimeError(f"Error ({cmd.output[0]}) executing command: {result}")
 
     # Get newline - r package name
     installed_packages = set(re.findall(
-        r"\n(r-[a-z0-9_]+)", result, re.IGNORECASE))
+        r"(r-[a-z0-9_]+)", result, re.IGNORECASE))
 
     return installed_packages
 
