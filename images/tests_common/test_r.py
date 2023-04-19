@@ -17,7 +17,7 @@ def test_required_r_packages_installed(container):
     c = container.run(
         tty=True,
         command=["start.sh"],
-        ports={'8888/tcp':8899} # key is port inside container; value is local (github runtime) port
+        ports={'8888/tcp':8890} # key is port inside container; value is local (github runtime) port
     )
     cmd = c.exec_run("sh -c \"Rscript " + commonPath + "test_r_dump_packages.R\"")
     # cmd = c.exec_run(cmd=[
