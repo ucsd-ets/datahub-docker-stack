@@ -1,5 +1,17 @@
 library(testthat)
 
+### IMPORTS HERE
+library(randomForest)
+library(tinyverse)
+library(markdown)
+library(lubridate)
+library(DT)
+library(MASS)
+library(RColorBrewer)
+library(shiny)
+library(Matrix)
+library(rvest)
+
 ### FUNCTIONS HERE
 simple_linear_regression <- function() {
     model <- lm(iris$Sepal.Width ~ iris$Sepal.Length)
