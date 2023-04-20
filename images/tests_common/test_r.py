@@ -13,20 +13,13 @@ commonPath = "/opt/manual-tests/"
 errorList = ["Failed", "Fatal", "Error"]
 
 def test_required_r_packages_installed(container):
-    #TODO: Remove testing
-    raise Exception("test")
-
     # Run Rscript inside of container
     c = container.run(
         tty=True,
         command=["start.sh"],
         ports={'8888/tcp':8892} # key is port inside container; value is local (github runtime) port
     )
-    cmd = c.exec_run("sh -c \"Rscript " + commonPath + "test_r_dump_packages.R\"")
-    # cmd = c.exec_run(cmd=[
-    #     'sh', '-c',
-    #     f'"Rscript {commonPath}test_r_dump_packages.R"'
-    # ])
+    cmd = c.exec_run(f"sh -c \"Rscript {commonPath}test_r_dump_packages.R\"")
     output = cmd.output.decode("utf-8")
 
     # Make sure result query actually captured libraries
@@ -68,7 +61,7 @@ def get_installed_r_packages(container):
     
     # Check exit code
     if cmd.exit_code != 0:
-        raise RuntimeError(f"Error ({cmd.output[0]}) executing command: {result}")
+        raise RuntimeError(f"Error ({cmd.exit_code}) executing command: {result}")
 
     # Get newline - r package name
     installed_packages = set(re.findall(
@@ -85,7 +78,7 @@ def test_r_func(container):
         command=["start.sh"],
         ports={'8888/tcp':8896} # key is port inside container; value is local (github runtime) port
     )
-    cmd = c.exec_run("sh -c \"Rscript " + commonPath + "test_r_func.R\"")
+    cmd = c.exec_run(f"sh -c \"Rscript {commonPath}test_r_func.R\"")
     output = cmd.output.decode("utf-8")
 
     check_r_errors(output)
@@ -101,8 +94,6 @@ def check_r_errors(strToCheck):
         assert error.lower() not in strToCheck
 
 @pytest.mark.skip(reason="Internal method to cleanup Docker container")
-# R does not seem to return bash exit codes.
-# This is our workaround for that.
+# Simple cleanup to run after finish w/target container.
 def docker_cleanup(container):
     container.stop()
-    # container.remove()
