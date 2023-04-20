@@ -1,4 +1,4 @@
-# datahub-docker-stack
+# DataHub Docker Stack: Home Page (TODO)
 
 This Github repository builds and maintains the [standard suite of Docker containers](https://support.ucsd.edu/services?id=kb_article_view&sysparm_article=KB0032173&sys_kb_id=e61b198e1b74781048e9cae5604bcbe0) supported by UC San Diego Educational Technology Services.
 
@@ -11,15 +11,13 @@ Currently, we support 4 images:
 
 The images are built and pushed to [our organization at DockerHub](https://hub.docker.com/orgs/ucsdets/members) through GitHub Actions. We also use GitHub actions for testing and pushing our stable images to production. [See actions.md](/Documentations/actions.md) for high-level details on how our pipeline works. [You may also check out scripts.md](/Documentations/scripts.md) for a more indepth look at the underlying Python code, including logic for which images are run and an overview for how we run tests within the containers.
 
-### Setup virtual environment
+## Setup virtual environment
 
 Is this necessary? Do you ever run this code locally Thomas?
 
 ## Testing the Containers
 
-
 ## Testing /Scripts
-
 
 ### Adding a New Image
 
@@ -47,12 +45,3 @@ Is this necessary? Do you ever run this code locally Thomas?
 2. `cd images`
 3. `export TEST_IMAGE=MYIMAGE` replace `MYIMAGE` with your locally built image name
 4. `pytest tests_common` as an example
-
-## Artifacts
-
-Build logs & files can be downloaded after the Github Action completes in an build-artifacts.zip file. Files include:
-
-- logs/<image>.build.log: build logs from docker
-- logs/<image>.tests.log: test logs from pytest
-- manifests/<image>.md: generated markdown for the wiki
-- wiki/*.md: all wiki files that have been updated
