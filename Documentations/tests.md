@@ -1,4 +1,4 @@
-# Docker stacks testing
+# DataHub Docker Stack: Tests (TODO)
 
 We test our images using `pytest` module.
 
