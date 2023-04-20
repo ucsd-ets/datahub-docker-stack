@@ -43,6 +43,11 @@ RUN cat /tmp/jupyter_notebook_config_extra.py >> /etc/jupyter/jupyter_notebook_c
 # VSCode code-server
 RUN curl -fsSL https://code-server.dev/install.sh | sh -s -- --prefix=/usr/local
 
+# Copy over R tests to /opt/manual-tests
+RUN mkdir /opt/manual-tests
+COPY /test/test_r_dump_packages.R /opt/manual-tests
+COPY /test/test_r_func.R /opt/manual-tests
+
 USER jovyan
 
 COPY start-code-server.sh /usr/local/bin/start-notebook.d/
@@ -56,8 +61,8 @@ ARG JUPYTERHUB_VERSION=1.5.0
 RUN /usr/share/datahub/scripts/install-python-all.sh && \
     pip install pandas==1.5.3 'mistune>=2' --upgrade && \
     pip install nltk \
-                nbconvert==7.2.1 \
-                jupyterhub==$JUPYTERHUB_VERSION && \
+    nbconvert==7.2.1 \
+    jupyterhub==$JUPYTERHUB_VERSION && \
     mamba install -c conda-forge rise -y && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
@@ -71,6 +76,6 @@ ENV JUPYTERHUB_USER=${NB_USER}
 
 # Install jupyterlab extensions
 RUN pip install jupyterlab-github jupyterlab-latex jupyterlab-git \
-jupyterlab-fasta jupyterlab-pullrequests jupyterlab-geojson
+    jupyterlab-fasta jupyterlab-pullrequests jupyterlab-geojson
 
 WORKDIR /home/jovyan
