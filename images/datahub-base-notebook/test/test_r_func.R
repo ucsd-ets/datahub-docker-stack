@@ -2,7 +2,7 @@ library(testthat)
 
 ### IMPORTS HERE
 library(randomForest)
-library(tinyverse)
+library(tidyverse)
 library(markdown)
 library(lubridate)
 library(DT)
