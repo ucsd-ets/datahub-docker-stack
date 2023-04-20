@@ -13,6 +13,9 @@ commonPath = "/opt/manual-tests/"
 errorList = ["Failed", "Fatal", "Error"]
 
 def test_required_r_packages_installed(container):
+    #TODO: Remove testing
+    raise Exception("test")
+
     # Run Rscript inside of container
     c = container.run(
         tty=True,
