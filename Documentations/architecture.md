@@ -47,7 +47,7 @@ to run the pipeline. For testing, we use pytest.
 ├── Documentations  # Docs for each key component, in markdown
 │   ├── ...
 ├── LICENSE.txt
-├── README.md
+├── README.md   # Home page, with table of contents of docs
 ├── dodo.py     # definition for more complex workflow task, use pydoit module
 ├── images      # All image definitions & resources. See images.md 
 │   ├── change_ignore.json

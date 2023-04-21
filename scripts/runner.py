@@ -18,10 +18,6 @@ from scripts.utils import convert_size
 logger = get_logger()
 
 
-class RunnerError(Exception):
-    pass
-
-
 @dataclass
 class Result:
     success: bool = False

@@ -23,47 +23,43 @@ package informations and publishing them to the project wiki, and steps to
 dump logs and various artifacts that were produced in the Action run into
 zip files and uploaded for reference.
 
-This action define by `main.yml` kicks off our entire pipeline. It happens on all PRs to the main branch and all commits on all branches.
+This action defined by `main.yml` kicks off our entire pipeline. It happens on all PRs to the main branch and all commits on all branches. (Tips: to skip action on push, add "skip ci" to your commit message.)
 
 ### Pipeline Details
 
-(TODO: UPDATE below steps)
+A general introduction to `jobs::docker_pipeline` steps in `main.yml`
 
-- When the workflow is first triggered, the doit will create subfolders in the
-project root for storing files. (`artifacts/`, `manifests/`, `logs/`)
-- `artifacts/` is storing strings and lists for persisting variables between
-doit tasks, also stores meta information for building, etc
+**Before anything is triggered, Github will check for "skip ci" in PR title and commit message. If the string is found, the entire workflow is skipped.**
+
+**Github runner/runtime** is the top-level caller of the following actions/steps.
+
+- set up the environment by doing general clean-up and dependency installations.
+- **`Setup artifacts`**: create subfolders in the project root for storing files.
+(`artifacts/`, `manifests/`, `logs/`) See [file system doc](./scripts.md#file-system) for more.
 - The pipeline will then look for changes in the `images/` in the latest git
 commit determine which images' source was changed and will be used to determine
 what images need to be updated. The list of changed images is kept in
 `artifacts/IMAGES_CHANGED`.
-- If the pipeline script or the workflow file was changed, the pipeline will
-default to re-building the whole stack.
-- As a result, only push commits to Github one at a time as Github will only
-trigger on the lastest commit in a push event.
-- The wiki is cloned to get the dependency table.
-- The list of images that need to be built is calculated and is then built
-in the order according to the dependency table.
-- The list of images that were built is then store in `artifacts/IMAGES_BUILT`.
-- Output, size, and timestamp for each layer built is also stored as a json.
-- Tests are then run according to the source in `tests_common` or individual
-`test` folders inside each image source folder.
-- Tests from upstream (base images) will be added to the current image to be
-tested again.
-- All the tests are run regardless of any of them does not pass.
-- Images that fails any test will be included in `artifacts/IMAGES_TEST_ERROR`
-and images that pass all tests will be included in `artifacts/IMAGES_TEST_PASSED`.
-- The workflow will only proceed if and only if all tests for all built images
-versions are passed.
-- Image manifests are generated and store under `manifests/`
-- Images that were built are then pushed to DockerHub.
-- Manifests are then moved to wiki folder and committed.
-- Workflow will archive artifacts for reference and debugging
-(`artifacts/`, `manifests/`, `logs/`)
-
-First, it cleans the environment up in the GitHub runner (removing vestigial files and making sure the docker environment is clean) to save space. It then installs relevant dependencies (Python + some libs, Selenium, pydoit). It then checks out the wiki and runs `python3 scripts/main.py`, which kicks off the Python code that updates our wiki + builds, tests, and pushes the Docker stack. [See scripts.md for a more indepth look at our pipeline.](./scripts.md)
-
-After the Python code exits successfully, the updated Wiki is pushed to GitHub as well as some logs that are attached to the Action as build artifacts.
+- **`Clone Wiki`**: clone the `wiki/`, which is a Github backend hidden folder consisting of
+`Home.md` and all individual pages of successful image build. The primary purpose is to update
+`Home.md` if this is a successful build.
+- **`Build stack`**: perform all core tasks of this pipeline which can be broken down into
+the following steps [See scripts.md for a more in-depth look at this step.](./scripts.md):
+  - use git API to check what files have changed.
+  - load information from [spec.yml](../images/spec.yml).
+  - use above 2 information, build a n-nary tree to encode all details for following tasks.
+  - login to DockerHub
+  - do a BFS on the tree. For each tree node (corresponding to an image):
+    - build
+    - test
+    - push to DockerHub
+    - run some information commands and write outputs to individual wiki page
+    - reclaim space (clean cache).
+  - store logs in .yml format to build_artifacts
+  - update **the local copy** of `Home.md`; see its function doc
+- **`Push Wiki to GitHub`**: (activate ONLY IF **`Build stack`** is successful AND `git.ref`, which is current branch, is main) make the changes to `Home.md` and new image wiki pages permanent and public.
+- **`Archive artifacts and logs`**: zip `artifacts/`, `manifests/`, and `logs/` and make it ready
+  for download at Action summary page.
 
 ## tag.yml
 
