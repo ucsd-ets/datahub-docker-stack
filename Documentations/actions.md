@@ -1,4 +1,4 @@
-# DataHub Docker Stack: GitHub Actions (TODO)
+# DataHub Docker Stack: GitHub Actions
 
 We have three main actions that we use to develop, test, and deploy our Docker Stack.
 
@@ -23,7 +23,7 @@ package informations and publishing them to the project wiki, and steps to
 dump logs and various artifacts that were produced in the Action run into
 zip files and uploaded for reference.
 
-This action defined by `main.yml` kicks off our entire pipeline. It happens on all PRs to the main branch and all commits on all branches. (Tips: to skip action on push, add "skip ci" to your commit message.)
+This action defined by `main.yml` triggers our entire pipeline. It happens on all PRs to the main branch and all commits on all branches. (Tips: to skip action on push, add "skip ci" to your commit message.)
 
 ### Pipeline Details
 
@@ -49,12 +49,7 @@ the following steps [See scripts.md for a more in-depth look at this step.](./sc
   - load information from [spec.yml](../images/spec.yml).
   - use above 2 information, build a n-nary tree to encode all details for following tasks.
   - login to DockerHub
-  - do a BFS on the tree. For each tree node (corresponding to an image):
-    - build
-    - test
-    - push to DockerHub
-    - run some information commands and write outputs to individual wiki page
-    - reclaim space (clean cache).
+  - do a BFS on the tree. For each tree Node (corresponding to an image), a list of operations is carried out. See [scripts.py](scripts.md/#the-build-process)
   - store logs in .yml format to build_artifacts
   - update **the local copy** of `Home.md`; see its function doc
 - **`Push Wiki to GitHub`**: (activate ONLY IF **`Build stack`** is successful AND `git.ref`, which is current branch, is main) make the changes to `Home.md` and new image wiki pages permanent and public.
