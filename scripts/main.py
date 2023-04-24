@@ -41,12 +41,13 @@ def main(dockerhub_username: str, dockerhub_password: str):
 
 # https://docs.python.org/3/library/logging.html#logging-levels
 LOGLEVEL_MAP = {
+    # from top to bottom: 10, 20, 30, 40, 50, 0
+    'DEBUG': logging.DEBUG,
     'INFO': logging.INFO,
     'WARNING': logging.WARNING,
-    'DEBUG': logging.DEBUG,
+    'ERROR': logging.ERROR,
     'CRITICAL': logging.CRITICAL,
-    'NOTSET': logging.NOTSET,
-    'ERROR': logging.ERROR
+    'NOTSET': logging.NOTSET
 }
 
 parser = argparse.ArgumentParser(
