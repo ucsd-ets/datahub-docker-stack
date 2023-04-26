@@ -12,16 +12,16 @@ logger = get_logger()
 class Node:
     # required args
     image_name: str
-    git_suffix: str = ""
+    git_suffix: str
     children: List = field(default_factory=list)
     build_args: Dict = field(default_factory=dict)
     # optioanl args
     filepath: str = ""
     dockerfile: str = 'Dockerfile'
     rebuild: bool = False
-    image_built: bool = False
+    image_built: bool = False  # determined during runtime
     integration_tests: bool = False
-    image_tag: str = ""
+    image_tag: str = ""  # determined during runtime
     info_cmds: List = field(default_factory=list)
 
     @property

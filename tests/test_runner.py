@@ -64,15 +64,18 @@ class TestRunner(unittest.TestCase):
     def test_build_all(self):
         c1 = Node(
             image_name='datascience-notebook',
+            git_suffix='test',
             filepath='images'
         )
         c2 = Node(
             image_name='scipy-ml-notebook',
             filepath='images',
+            git_suffix='test',
             integration_tests=True
         )
         c3 = Node(
             image_name='rstudio-notebook',
+            git_suffix='test',
             filepath='images'
         )
         root = Node(
