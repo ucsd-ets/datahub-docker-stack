@@ -1,5 +1,7 @@
 # DataHub Docker Stack: GitHub Actions
 
+The images are built and pushed to [our organization at DockerHub](https://hub.docker.com/orgs/ucsdets/members) through GitHub Actions. We also use GitHub Actions for testing and pushing our stable images to production. [You may also check out scripts.md](/Documentations/scripts.md) for a more indepth look at the Python code underlying these actions.
+
 We have three main actions that we use to develop, test, and deploy our Docker Stack.
 
 - [main.yml](../.github/workflows/main.yml)
@@ -20,7 +22,7 @@ Build, test, and deploy will be building the Docker images, testing images if
 they have the right contents and features, and lastly publishing it on
 Dockerhub. We also add in steps to generate image "manifests" for listing out
 package informations and publishing them to the project wiki, and steps to
-dump logs and various artifacts that were produced in the Action run into
+dump logs and various artifacts that were produced in the Actions run into
 zip files and uploaded for reference.
 
 This action defined by `main.yml` triggers our entire pipeline. It happens on all PRs to the main branch and all commits on all branches. (Tips: to skip action on push, add "skip ci" to your commit message.)
@@ -54,7 +56,7 @@ the following steps [See scripts.md for a more in-depth look at this step.](./sc
   - update **the local copy** of `Home.md`; see its function doc
 - **`Push Wiki to GitHub`**: (activate ONLY IF **`Build stack`** is successful AND `git.ref`, which is current branch, is main) make the changes to `Home.md` and new image wiki pages permanent and public.
 - **`Archive artifacts and logs`**: zip `artifacts/`, `manifests/`, and `logs/` and make it ready
-  for download at Action summary page.
+  for download at Actions summary page.
 
 ## tag.yml
 

@@ -30,7 +30,7 @@ This document describes the underlying scripts that build, test, and push our do
   - By "Wiki", we refer to the hidden `wiki/` folder managed by Github, which renders Wiki pages.
   - Wiki of this repo contains a `Home.md`, a `Stable_Tag.md`, and individual .md files for each image currently or previously in use.
   - We will call those individual .md files "(image) manifests".
-  - NOTE: manifests are created locally in Github Action runtime, stored to build-arfiacts, but will not be found in the Github Wiki pages unless under certain conditions. See **`Push Wiki to GitHub`** step in [actions.md](actions.md)
+  - NOTE: manifests are created locally in Github Actions runtime, stored to build-arfiacts, but will not be found in the Github Wiki pages unless under certain conditions. See **`Push Wiki to GitHub`** step in [actions.md](actions.md)
 
 **The following scripts are specific to our [main.yml](/.github/workflows/main.yml) workflow.**
 
@@ -82,7 +82,7 @@ After `python3 main.py` is called from main.yml, it does a few things to ensure 
 - Useful information of each image from previous section is all stored in [`Result`](/scripts/runner.py#L22). It will be parsed to strings and written to the following directories:
 - `artifacts/`: it contains the [`Result`](/scripts/runner.py#L22) turned into a .yml file for each "started" image.
 - `logs/`: it contains various types of logs that may help with debug
-  - a `run.log` which is the same as what we see in the Github Action page.
+  - a `run.log` which is the same as what we see in the Github Actions page.
   - a `<image_fullname>.build.log` which is the console output during `docker build` of each image.
   - a `<image_fullname>.basic-tests.log` which is the pytest output of basic test of each image.
   - ALL other useful debugging information of ALL file formats can and should be stored here. E.g. screenshots by Selenium upon test failure.

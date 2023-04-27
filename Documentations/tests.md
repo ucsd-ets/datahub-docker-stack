@@ -1,4 +1,4 @@
-# DataHub Docker Stack: Tests (TODO)
+# DataHub Docker Stack: Tests
 
 This document introduces tests in this repo, with focus on the difference of various types of tests.
 
@@ -25,7 +25,7 @@ script tests are located in `/tests` and only depends on functions defined in th
 
 They are executed locally with `$ pytest tests/test_<module name>.py`.
 
-We highly recommend you write a script test when you create a new module or change an existing module AND run all existing script tests. This is to make sure your change can integrate with existing architectures and save your time before launching and waiting for Github Action workflow.
+We highly recommend you write a script test when you create a new module or change an existing module AND run all existing script tests. This is to make sure your change can integrate with existing architectures and save your time before launching and waiting for Github Actions workflow.
 
 Here is a directory structure of the folder:
 
@@ -102,7 +102,7 @@ Location: `/images/<image_name>/workflow_tests` folder.
 
 They are a little tricky. Technically, they are "manually triggered automated" tests. This means they will not be included in our automated pipeline (defined by [`main.yml`](/.github/workflows/main.yml)).
 
-Instead, they are defined in separate .yml files in `.github/workflows/`, and manually triggered on Github Action page. The details of how to create the matching .yml file will be a long discussion and won't be expanded here. [Official doc](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions) is always a good place to start. You can also look at the [existing one](/.github/workflows/test_gpu.yml) we have.
+Instead, they are defined in separate .yml files in `.github/workflows/`, and manually triggered on Github Actions page. The details of how to create the matching .yml file will be a long discussion and won't be expanded here. [Official doc](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions) is always a good place to start. You can also look at the [existing one](/.github/workflows/test_gpu.yml) we have.
 
 Workflow tests are designed to hold expensive but not-so-important tests. The purpose is to reduce the runtime of the main pipeline by running these tests only when necessary (e.g. before tagging stable images)
 
