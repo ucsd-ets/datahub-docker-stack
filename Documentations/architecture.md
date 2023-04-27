@@ -82,7 +82,7 @@ to run the pipeline. For testing, we use pytest.
 │   │   ├── activate.sh
 │   │   ├── cudatoolkit_env_vars.sh
 │   │   ├── cudnn_env_vars.sh
-│   │   ├── manual-tests
+│   │   ├── manual_tests
 │   │   │   ├── pytorch_mtest.ipynb
 │   │   │   └── tensorflow_mtest.ipynb
 │   │   ├── run_jupyter.sh

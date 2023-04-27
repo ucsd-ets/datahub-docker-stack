@@ -9,7 +9,7 @@ This document introduces the `images/` folder and the Docker images we maintain 
 - One sub-directory under `images/` equals one unique docker image
 - Each sub-directory should/may* contain the following image-specific assets:
   - `Dockerfile`: specify the steps to build the image. See [Docker official doc](https://docs.docker.com/engine/reference/builder/). It should use **build-args** to dynamically point to arbitary base image (see [sample](/images/scipy-ml-notebook/Dockerfile#L1) for details)
-  - tests folders: tests specific to this image can be stored under `test/`, `integration_tests/`, `workflow_tests/` and `manual-tests/` depending on their test scenarios. See [tests.md](tests.md) for more details.
+  - tests folders: tests specific to this image can be stored under `test/`, `integration_tests/`, `workflow_tests/` and `manual_tests/` depending on their test scenarios. See [tests.md](tests.md) for more details.
   - scripts folders: functionality files (usually in .py) and configuration files (in .sh) to be executed inside the docker container. The common usecase for .sh files is when configuration commands are too many, too long, and contains many environment variables (e.g. `$PATH`). They are mounted to the docker container via Dockerfile `COPY` command.
   - **NOTE**: Above 2 folders are COMPLETELY different from `/scripts` and `/tests` under root level which contains all backend scripts and their respetive tests.
 - Folder `tests_common/` contains the pytests for every image. This means any changes to existing images and any new image being added should pass tests here before making permanent.
