@@ -78,4 +78,16 @@ ENV JUPYTERHUB_USER=${NB_USER}
 RUN pip install jupyterlab-github jupyterlab-latex jupyterlab-git \
     jupyterlab-fasta jupyterlab-pullrequests jupyterlab-geojson
 
+# Datascience packages
+RUN pip install dpkt \
+    nose \
+    datascience && \
+    python -c 'import matplotlib.pyplot' && \
+    fix-permissions $CONDA_DIR && \
+    fix-permissions /home/$NB_USER
+
+RUN conda clean -tipsy
+
+# ENV SHELL=/bin/bash Weird, this line is in the datascience and rstudio notebooks but not scipyml
+
 WORKDIR /home/jovyan
