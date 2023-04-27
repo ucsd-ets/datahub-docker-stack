@@ -1,7 +1,7 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
+
 # This file is copied from the datascience image
-# TODO: Consider renaming this now that it is no longer in the datascience test folder
 
 import logging
 
