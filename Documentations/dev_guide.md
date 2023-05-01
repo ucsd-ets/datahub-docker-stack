@@ -112,6 +112,8 @@ $ pip install -r scripts/requirements.txt
 
 ## Running script tests
 
-1. Activate the virtual environment `$ source bin/activate`
+Side Note: For `test_wiki.py` to work, please create 3 folders `logs/`, `manifests/`, and `wiki/` under project root. In addition, please copy this [Home_original.md](/tests/Home_original.md) into `wiki/`.
+
+1. Activate the virtual environment `$ source bin/activate` 
 2. `$ pytest tests/test_<module name>.py` to test a individual module
 3. OR `$ pytest tests` to test all modules
