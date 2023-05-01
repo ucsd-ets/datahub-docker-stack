@@ -49,6 +49,7 @@ what images need to be updated. The list of changed images is kept in
 the following steps [See scripts.md for a more in-depth look at this step.](./scripts.md):
   - use git API to check what files have changed.
   - load information from [spec.yml](../images/spec.yml).
+    - This is where all images get their year-quarter prefix from (i.e. 2023.2). It is under tag.prefix.  
   - use above 2 information, build a n-nary tree to encode all details for following tasks.
   - login to DockerHub
   - do a BFS on the tree. For each tree Node (corresponding to an image), a list of operations is carried out. See [scripts.py](scripts.md/#the-build-process)
