@@ -7,7 +7,7 @@ import logging
 LOGGER = logging.getLogger('datahub_docker_stacks')
 
 # Hardcoded path
-commonPath = "/opt/manual-tests/"
+commonPath = "/opt/manual_tests/"
 
 # List of "fatal" terms from Rscript
 errorList = ["Failed", "Fatal", "Error"]
