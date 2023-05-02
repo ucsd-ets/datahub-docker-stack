@@ -64,7 +64,7 @@ If you are familiar with the concepts already, this [cheatsheet](https://dockerl
 
 ## Setup Virtual Environment
 
-If you want to run any Python code from a project locally, it's always a good habbit to create a virtual environment and install all required packages there. You can either use conda environment or python venv. They have some subtle difference but are functionally the same for our purpose
+If you want to run any Python code from a project locally, it's always a good habit to create a virtual environment and install all required packages there. You can either use conda environment or python venv. They have some subtle difference but are functionally the same for our purpose
 
 ```bash
 # create a Python venv locally (root of this repo)
@@ -93,15 +93,15 @@ $ pip install -r scripts/requirements.txt
 
 1. Clone the repository and make a new branch: `git checkout -b dev_***_notebook`.
 2. Make a new directory under `./images` with the name being the base-name of the new image. For example, for `ucsdets/scipy-ml-notebook`, make a new directory `./images/scipy-ml-notebook`.
-3. Modify `./images/spec.yml`. Add a new key under `/images` with the new base-name. Fill in the full `image_name`, its upstream image base-name `depend_on`. To understand what other fields do, please refer to our [images.md](/Documentations/images.md#L20)
-4. Under the new directory, add the Dockerfile and the neccessary bits for building the container. For how to write a Dockerfile, please refer to the[official doc](https://docs.docker.com/engine/reference/builder/) or other tutorials.
-5. Follow the instructions in [images.md](/Documentations/images.md#recommened-steps-to-follow)
+3. Modify `./images/spec.yml`. Add a new key under `/images` with the new base-name. Fill in the full `image_name`, its upstream image base-name `depend_on`. To understand what other fields do, please refer to our [images.md](/Documentation/images.md#L20)
+4. Under the new directory, add the Dockerfile and the neccessary bits for building the container. For how to write a Dockerfile, please refer to the [official doc](https://docs.docker.com/engine/reference/builder/) or other tutorials.
+5. Follow the instructions in [images.md](/Documentation/images.md#recommened-steps-to-follow)
 
 ## Modifying an Image (fix bugs or add features)
 
 1. Clone the repository and make a new branch: `$ git checkout -b dev_<image name>`.
 2. Under `image/`, find the respective directory for the image you want to change. A manifest of a recent build can be found in the [wiki](https://github.com/ucsd-ets/datahub-docker-stack/wiki) section. An example of a manifest is [here](https://github.com/ucsd-ets/datahub-docker-stack/wiki/ucsdets-datahub-base-notebook-2021.2-ec12f6b).
-3. Follow the instructions in [images.md](/Documentations/images.md#recommened-steps-to-follow). This time step #1 should be editing the exisiting Dockerfile.
+3. Follow the instructions in [images.md](/Documentation/images.md#recommened-steps-to-follow). This time step #1 should be editing the exisiting Dockerfile.
 
 ## Running image tests
 

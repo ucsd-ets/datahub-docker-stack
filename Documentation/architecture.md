@@ -44,7 +44,7 @@ to run the pipeline. For testing, we use pytest.
 │       ├── main.yml
 │       ├── tag.yml
 │       └── test_gpu.yml         
-├── Documentations  # Docs for each key component, in markdown
+├── Documentation  # Docs for each key component, in markdown
 │   ├── ...
 ├── LICENSE.txt
 ├── README.md   # Home page, with table of contents of docs

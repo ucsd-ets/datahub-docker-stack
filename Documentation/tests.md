@@ -106,4 +106,4 @@ Instead, they are defined in separate .yml files in `.github/workflows/`, and ma
 
 Workflow tests are designed to hold expensive but not-so-important tests. The purpose is to reduce the runtime of the main pipeline by running these tests only when necessary (e.g. before tagging stable images)
 
-Following from that, you can choose to embed the workflow tests inside another workflow. For our **test_gpu** workflow, it's triggered everytime during the **stable tagging** workflow, [see](/.github/workflows/tag.yml#L17).
+Following from that, you can choose to embed the workflow tests inside another workflow. For our **test_gpu** workflow, it's triggered everytime during the **stable tagging** workflow, [workflow definition](/.github/workflows/tag.yml#L17) and [actions.md](/Documentation/actions.md#test_gpuyml).

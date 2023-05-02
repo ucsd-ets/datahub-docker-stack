@@ -39,7 +39,7 @@ Things to note when you attempt to add a new image to the repo.
 
 ### recommened steps to follow
 
-Please refer to Docker documentations and our [development guide](dev_guide.md) for detail usage of commands below.
+Please refer to Docker [Official Docs](https://docs.docker.com/engine/reference/run/) and our [development guide](dev_guide.md) for detail usage of commands below.
 
 1. Write a Dockerfile and `$docker build` locally.
 2. `$docker run` and enters the container to try out features & functionalities.
