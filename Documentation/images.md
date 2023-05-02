@@ -37,7 +37,7 @@ Things to note when you attempt to add a new image to the repo.
 - They can also be used for swapping out variables for different plans.
 - Can put custom variables in `spec.yml` file.
 
-### recommened steps to follow
+### recommended steps to follow
 
 Please refer to Docker [Official Docs](https://docs.docker.com/engine/reference/run/) and our [development guide](dev_guide.md) for detail usage of commands below.
 
@@ -62,5 +62,5 @@ while changing the base ref at any time.
 - When a dependent images gets its source updated, instead of building the base
 image again, only build the dependent image by changing the base ref to the
 old remote tag of the image and build from there.
-- `stable` tags will be given to the lastest built image in each image/plan for
+- `stable` tags will be given to the latest built image in each image/plan for
 use in production. This process is manually triggered with on Github Action. See [tag.yml](actions.md#tagyml)

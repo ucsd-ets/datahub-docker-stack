@@ -18,8 +18,8 @@ Here are the commands (signature + example) you will use often:
 ```bash
 # Build an image from a local Dockerfile
 # <path> is where the Dockerfile stays in
-$ docker built -t <image_name>:<tag> <path>
-$ docker built -t rstudio-notebook:myTest ./images/rstudio-notebook
+$ docker build -t <image_name>:<tag> <path>
+$ docker build -t rstudio-notebook:myTest ./images/rstudio-notebook
 
 # List images
 $ docker images
