@@ -2,13 +2,11 @@ import os
 pjoin = os.path.join
 from shutil import rmtree
 from doit import get_var
+import pytest
+import requests
 
 from scripts.tagger import tagging_main
 from scripts.wiki import update_Stable
-
-
-import pytest
-import requests
 
 
 DOIT_CONFIG = dict(
@@ -18,7 +16,6 @@ DOIT_CONFIG = dict(
 # get_var(<key>, <default_val>)
 USE_STACK = get_var('stack_dir', 'images')
 
-# KEEP
 def task_prep():
     """Prep directory for logs and artifacts"""
 
@@ -39,7 +36,6 @@ def task_prep():
     }
 
 
-# KEEP
 def task_tag():
     """Tag and push images with new tags"""
     return {
@@ -64,8 +60,6 @@ def task_tag():
         ],
     }
 
-# KEEP
-# TODO: rewrite function
 def task_stable():
     """Build image manifests for all stable tagged images"""
     return {

@@ -14,6 +14,7 @@ class TestWiki(unittest.TestCase):
         self.test_node = Node(
             image_name='ucsdets/datahub-docker-stacks',
             image_tag='pushtest',
+            git_suffix="test",
             filepath='tests',
             children=[],
             rebuild=False,

@@ -18,10 +18,6 @@ from scripts.utils import convert_size
 logger = get_logger()
 
 
-class RunnerError(Exception):
-    pass
-
-
 @dataclass
 class Result:
     success: bool = False
@@ -75,7 +71,7 @@ def run_tests(testdirs: List[str], pytest_exec=pytest.main) -> Tuple[pytest.Exit
         output = sys.stdout.getvalue()
 
     except Exception as e:
-        logging.error('Failed to execut pytests; {e}')
+        logging.error(f'Failed to execut pytests; {e}')
         return pytest.ExitCode.TESTS_FAILED, ''
     finally:
         sys.stdout.close()
