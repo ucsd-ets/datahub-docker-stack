@@ -1,9 +1,5 @@
 #!/usr/bin/python
 
-"""To be used with docker compose
-this must be python3.5 code
-"""
-
 import selenium
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver import Chrome

@@ -8,7 +8,8 @@ sudo apt -y install google-chrome-stable
 
 # instead of using command-line arg passed in from Github Secrets,
 # we grab the Chrome version and download matching ChromeDriver
-chrome_version=$(google-chrome --version | grep -iE "[0-9.]{10,20}")
+# `$ google-chrome --version` will return `Google Chrome 36.0.1985.125`
+chrome_version=$(grep -iEo "[0-9.]{10,20}" <(google-chrome --version))
 echo "The Chrome version is: ${chrome_version}"
 wget https://chromedriver.storage.googleapis.com/${chrome_version}/chromedriver_linux64.zip
 unzip chromedriver_linux64.zip 
