@@ -1,5 +1,5 @@
 ARG BASE_TAG=latest
-FROM ucsdets/datahub-base-notebook:${BASE_TAG}
+FROM ucsdets/datascience-notebook:${BASE_TAG}
 #$BASE_TAG
 #2021.3-31e0c4e
 

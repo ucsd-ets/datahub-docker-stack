@@ -55,7 +55,7 @@ Please refer to Docker [Official Docs](https://docs.docker.com/engine/reference/
 ## Image Update Details
 
 - Every newly pushed images will get a git-hash stamp at the end of the tag
-(`ucsdets/datahub-base-notebook:2021.2-5f71d3b`)
+(`ucsdets/datascience-notebook:2021.2-5f71d3b`)
 - The `FROM` statement in `Dockerfile` will include `ARG` in the image ref to
 support arbitary tags at run-time. This allows for fixating the Dockerfile
 while changing the base ref at any time.

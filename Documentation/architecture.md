@@ -52,23 +52,19 @@ to run the pipeline. For testing, we use pytest.
 ├── images      # All image definitions & resources. See images.md 
 │   ├── change_ignore.json
 │   ├── conftest.py    # pytest setup for image acceptance; by Jupyter Development Team (3rd party).
-│   ├── datahub-base-notebook
+│   ├── datascience-notebook
 │   │   ├── Dockerfile  # image definition for docker
 │   │   ├── scripts     # .sh & .py scripts used for container setup
 │   │   │   └── ...
 │   │   ├── start-code-server.sh
 │   │   └── test    # image acceptance tests
+│   │       ├── data
+│   │       │   └── test-notebook.ipynb
 │   │       ├── test_container_options.py
 │   │       ├── test_package_managers.py
 │   │       ├── test_pandoc.py
 │   │       ├── test_python.py
 │   │       └── test_start_container.py
-│   ├── datascience-notebook
-│   │   ├── Dockerfile
-│   │   ├── test
-│   │   │   ├── data
-│   │   │   │   └── test-notebook.ipynb
-│   │   └── └── test_notebooks.py
 │   ├── rstudio-notebook
 │   │   ├── Dockerfile
 │   │   ├── integration_tests

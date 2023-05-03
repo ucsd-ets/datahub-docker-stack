@@ -100,7 +100,7 @@ $ pip install -r scripts/requirements.txt
 ## Modifying an Image (fix bugs or add features)
 
 1. Clone the repository and make a new branch: `$ git checkout -b dev_<image name>`.
-2. Under `image/`, find the respective directory for the image you want to change. A manifest of a recent build can be found in the [wiki](https://github.com/ucsd-ets/datahub-docker-stack/wiki) section. An example of a manifest is [here](https://github.com/ucsd-ets/datahub-docker-stack/wiki/ucsdets-datahub-base-notebook-2021.2-ec12f6b).
+2. Under `image/`, find the respective directory for the image you want to change. A manifest of a recent build can be found in the [wiki](https://github.com/ucsd-ets/datahub-docker-stack/wiki) section. An example of a manifest is [here](https://github.com/ucsd-ets/datahub-docker-stack/wiki/ucsdets-datascience-notebook-2021.2-ec12f6b).
 3. Follow the instructions in [images.md](/Documentation/images.md#recommened-steps-to-follow). This time step #1 should be editing the exisiting Dockerfile.
 
 ## Running Image Tests

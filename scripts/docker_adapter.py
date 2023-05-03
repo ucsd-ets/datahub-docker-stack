@@ -191,7 +191,7 @@ def prune(full_image_name: str) -> int:
     """clear build & test cache, reclaim space
 
     Args:
-        full_image_name (str): sth like ucsdets/datahub-base-notebook:2023.2-deadbeef
+        full_image_name (str): sth like ucsdets/datascience-notebook:2023.2-deadbeef
 
     Returns:
         int: space reclaimed in number of bytes.
@@ -237,7 +237,7 @@ def prepull_images(orig_images: List[str]) -> bool:
     """pull down all the images to docker in order to tag later
 
     Args:
-        orig_images (List[str]): each is like 'ucsdets/datahub-base-notebook:2023.2-deadbeef'
+        orig_images (List[str]): each is like 'ucsdets/datascience-notebook:2023.2-deadbeef'
 
     Returns:
         bool: success or failure
@@ -265,11 +265,11 @@ def tag_stable(orig_fullname: str, tag_replace: str) -> Tuple[str, bool]:
     """guarding wrapper around actual docker.image.tag()
 
     Args:
-        orig_fullname (str): of format 'ucsdets/datahub-base-notebook:2023.2-deadbeef'
+        orig_fullname (str): of format 'ucsdets/datascience-notebook:2023.2-deadbeef'
         tag_replace (str): of format '2023.2-stable'
 
     Returns:
-        str: 'ucsdets/datahub-base-notebook:2023.2-stable' or empty string if failed
+        str: 'ucsdets/datascience-notebook:2023.2-stable' or empty string if failed
         bool: success or failure
     """
     try:
@@ -289,7 +289,7 @@ def push_stable_images(stable_fullnames: List[str]) -> bool:
     If success, these strings will be written to IMAGES_PUSHED in build-artifacts
 
     Args:
-        stable_fullnames (List[str]): each is like 'ucsdets/datahub-base-notebook:2023.2-stable'
+        stable_fullnames (List[str]): each is like 'ucsdets/datascience-notebook:2023.2-stable'
 
     Returns:
         bool: success or failure

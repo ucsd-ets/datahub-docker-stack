@@ -55,7 +55,7 @@ Common tests are located in `/images/tests_common`.
 
 They check against basic container features that MUST hold for EACH image presented in this repo.
 
-Side Note: If an image is based upon **datahub-base-notebook**, which is the single root in the dependency tree, it's almost guaranteed to pass common tests.
+Side Note: If an image is based upon **datascience-notebook**, which is the single root in the dependency tree, it's almost guaranteed to pass common tests.
 
 ## Image-specific Tests
 

@@ -56,7 +56,7 @@ After `python3 main.py` is called from main.yml, it does a few things to ensure 
 
 - It parses and stores static information defined in [spec.yml](/images/spec.yml). For more details, see [images.md](./images.md/#image-stack-details) for what information it contains. [`load_spec()`](/scripts/tree.py#L41)
 - It detects which files have been changed, which dictates which images will be rebuilt. [`get_changed_images()`](scripts/git_helper.py#L44)
-  - Currently, a change to the base image (datahub-base-notebook) will trigger a full rebuild on all children, and a change to one child image will rebuild the parent image (so the child has something to inherit from in the build process) but not the siblings.
+  - Currently, a change to the base image (datascience-notebook) will trigger a full rebuild on all children, and a change to one child image will rebuild the parent image (so the child has something to inherit from in the build process) but not the siblings.
   - Detection is done on the basis of comparing the current commit pushed and the last commit pushed within the current branch. I.e. if any file was changed in `images/scipy-ml-notebook` in the current commit, but a file wasn't changed in any of the other image subdirs of `images`, the only scipy-ml and the base notebook will be updated. But there are some extra rules:
     - If the action is triggered by a PR, then it will check for ALL files changed in the PR instead of just the latest commit in the PR.
     - If you put "full rebuild" in your commit message, all of this logic is ignored and all images are rebuilt.

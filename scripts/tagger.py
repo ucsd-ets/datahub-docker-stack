@@ -54,7 +54,7 @@ def run_tagging(
     docker_adapter.prepull_images(orig_images=original_names)
     logger.info("finished prepull")
 
-    tagged = [] # each element is like 'ucsdets/datahub-base-notebook:2023.2-stable'
+    tagged = [] # each element is like 'ucsdets/datascience-notebook:2023.2-stable'
     for img_orig in original_names:
         logger.info(f'Tagging {img_orig} with {stable_tag}')
         img_stable, success = docker_adapter.tag_stable(orig_fullname=img_orig, tag_replace=stable_tag)
