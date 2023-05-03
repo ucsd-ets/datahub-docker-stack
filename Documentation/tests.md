@@ -63,7 +63,7 @@ Image-specific tests are located in `/images/<image_name>/` folder.
 
 Depending on the test scenario and complexity, they are further divided into these categories:
 
-### basic tests (REQUIRED)
+### Basic Tests (REQUIRED)
 
 Location: `/images/<image_name>/test` folder.
 
@@ -71,7 +71,7 @@ Basic tests are automated tests that will be executed during the workflow pipeli
 
 Relatively simple tests should be put here, and the features they test against should be **internal** to the container. i.e. If something works on your local Docker environment, you are sure it will also work in the production environment (DSMLP).
 
-### integration tests
+### Integration Tests
 
 Location: `/images/<image_name>/integration_tests` folder.
 
@@ -86,7 +86,7 @@ Currently we only have integration tests for our **rstudio-notebook** image chec
 
 [Selenium Webdriver](https://www.selenium.dev/documentation/webdriver/) is a great tool people use to automate tests which involves user actions (open new Tab, click button, etc.)
 
-### manual tests
+### Manual Tests
 
 Location: `/images/<image_name>/manual_tests` folder.
 
@@ -96,7 +96,7 @@ When you want to test/measure something interactively, when something is too com
 
 For example, you can use a .ipynb to train some neural network with tensorflow in real and look at the computation performance in the container. [See](/images/scipy-ml-notebook/manual_tests/tensorflow_mtest.ipynb)
 
-### workflow tests
+### Workflow Tests
 
 Location: `/images/<image_name>/workflow_tests` folder.
 

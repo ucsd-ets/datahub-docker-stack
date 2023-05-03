@@ -13,7 +13,7 @@ We have three main actions that we use to develop, test, and deploy our Docker S
 
 We use a tool called **doit** that allows for more complicated actions to be written and executed during Actions. See [dodo.py for those functions.](/dodo.py)
 
-## main.yml
+## `main.yml`
 
 ### CI/CD Pipeline Overview
 
@@ -59,7 +59,7 @@ the following steps [See scripts.md for a more in-depth look at this step.](./sc
 - **`Archive artifacts and logs`**: zip `artifacts/`, `manifests/`, and `logs/` and make it ready
   for download at Actions summary page.
 
-## tag.yml
+## `tag.yml`
 
 This action is run manually and requires a given tag that all 4 images have been pushed with at one point (i.e. 2023.2-a1239a). There is an optional dry-run setting that allows you to verify the output of the action without actually pushing new stable images.
 
@@ -69,7 +69,7 @@ The tag pulls the year and quarter from the tag on the pre-existing image, regar
 
 This action will not run until the test_gpu.yml has been run and passed.
 
-## test_gpu.yml
+## `test_gpu.yml`
 
 This action tests code that requires the usage of a GPU on the scipy-ml-notebook. It can be run manually, but will also run everytime tag.yml is called. It takes the same tag argument that tag.yml does.
 

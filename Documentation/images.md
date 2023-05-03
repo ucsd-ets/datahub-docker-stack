@@ -31,13 +31,13 @@ This document introduces the `images/` folder and the Docker images we maintain 
 
 Things to note when you attempt to add a new image to the repo.
 
-### build args
+### `build_args`
 
-- Build args are expected to be used in dynamic image tags for base refs.
+- They are expected to be used in dynamic image tags for base refs.
 - They can also be used for swapping out variables for different plans.
 - Can put custom variables in `spec.yml` file.
 
-### recommended steps to follow
+### Recommended Steps to Follow
 
 Please refer to Docker [Official Docs](https://docs.docker.com/engine/reference/run/) and our [development guide](dev_guide.md) for detail usage of commands below.
 

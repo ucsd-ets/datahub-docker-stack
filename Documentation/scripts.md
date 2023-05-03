@@ -52,7 +52,7 @@ This document describes the underlying scripts that build, test, and push our do
 
 After `python3 main.py` is called from main.yml, it does a few things to ensure the entire build process is correct, successful, and its outcomes (images + Wiki) ready for production or debug. See [main.main()](/scripts/main.py#L15)
 
-### 1. Prework: setup the build-info tree
+### 1. Prework: Setup the `build-info` Tree
 
 - It parses and stores static information defined in [spec.yml](/images/spec.yml). For more details, see [images.md](./images.md/#image-stack-details) for what information it contains. [`load_spec()`](/scripts/tree.py#L41)
 - It detects which files have been changed, which dictates which images will be rebuilt. [`get_changed_images()`](scripts/git_helper.py#L44)
@@ -77,7 +77,7 @@ After `python3 main.py` is called from main.yml, it does a few things to ensure 
 - If any of the above steps fail, subsequent images will not be checked. We break from the loop and move to the Postwork below.
 - But as long as steps of an image start, a [`Result`](/scripts/runner.py#L22) is created to store the results of each step.
 
-### 3. Postwork: archive build-artifacts
+### 3. Postwork: archive `build-artifacts`
 
 - Useful information of each image from previous section is all stored in [`Result`](/scripts/runner.py#L22). It will be parsed to strings and written to the following directories:
 - `artifacts/`: it contains the [`Result`](/scripts/runner.py#L22) turned into a .yml file for each "started" image.
