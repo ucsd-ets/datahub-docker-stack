@@ -55,11 +55,9 @@ jobs:
           pip install -r scripts/requirements.txt
       
       - name: Install selenium dependecies for r studio
-        env:
-          CHROMEDRIVER_VERSION: ${{ secrets.CHROMEDRIVER_VERSION }}
         run: |
           chmod +x ./scripts/selenium_setup.sh 
-          ./scripts/selenium_setup.sh $CHROMEDRIVER_VERSION
+          ./scripts/selenium_setup.sh
           
       - name: Install pydoit fixed
         run: |
@@ -103,9 +101,7 @@ jobs:
           !contains(github.base_ref , 'dev') &&
           !contains(github.event.head_commit.message , 'skip push') &&
           (
-            github.ref == 'refs/heads/master' || 
-            github.ref == 'refs/heads/main' ||
-            github.ref == 'refs/heads/refractor_buildtest'
+            github.ref == 'refs/heads/main'
           )
         uses: stefanzweifel/git-auto-commit-action@v4
         with:

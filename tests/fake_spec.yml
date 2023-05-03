@@ -1,0 +1,43 @@
+images:
+  root:
+    image_name: ucsdets/root
+
+  child1:
+    image_name: ucsdets/child1
+    depend_on: root
+
+  child2:
+    image_name: ucsdets/child1
+    depend_on: root
+
+  child3:
+    image_name: ucsdets/child3
+    depend_on: root
+
+  child4:
+    image_name: ucsdets/child4
+    depend_on: root
+
+tag:
+  prefix: '2023.2'
+
+all_info_cmds:
+  PY_VER:
+    description: Python Version
+    command: python --version
+  PIP_LIST:
+    description: pip Packages
+    command: pip list
+  CONDA_INFO:
+    description: Conda Info
+    command: conda info
+  CONDA_LIST:
+    description: Conda Packages
+    command: conda list
+  APT_PKG_LIST:
+    description: System Packages
+    command: apt list --installed
+  CUDA_VERSION:
+    description: CUDA Version
+    command: bash -c 'conda list | grep "cuda\|cudnn\|nccl"'
+

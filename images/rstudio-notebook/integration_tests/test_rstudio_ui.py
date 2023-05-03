@@ -1,9 +1,5 @@
 #!/usr/bin/python
 
-"""To be used with docker compose
-this must be python3.5 code
-"""
-
 import selenium
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver import Chrome
@@ -12,6 +8,7 @@ import selenium.webdriver.support.expected_conditions as ec
 from selenium.webdriver.common.by import By as by
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
+
 from setuptools import Command
 import time, logging, copy
 import logging

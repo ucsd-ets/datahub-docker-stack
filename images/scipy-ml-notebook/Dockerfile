@@ -28,7 +28,7 @@ COPY cudnn_env_vars.sh /etc/datahub-profile.d/cudnn_env_vars.sh
 COPY activate.sh /tmp/activate.sh
 COPY workflow_tests /opt/workflow_tests
 
-ADD manual-tests /opt/manual-tests
+ADD manual_tests /opt/manual_tests
 
 RUN chmod 777 /etc/datahub-profile.d/*.sh /tmp/activate.sh
 

@@ -27,6 +27,7 @@ class TestDocker(unittest.TestCase):
         internal_docker.set_docker_client(self.docker)
         self.test_node = Node(
             image_name='ucsdets/datahub-docker-stacks',
+            git_suffix="test",
             image_tag='pushtest',
             filepath='tests',
             children=[],
