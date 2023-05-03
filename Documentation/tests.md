@@ -77,14 +77,22 @@ Location: `/images/<image_name>/integration_tests` folder.
 
 Integration tests are also automated tests executed during the workflow pipeline. But as opposed to basic tests, they happen **after** the image push.
 
-Integration tests focus on features **external** to the container. i.e. something that works on your local Docker environment may not work on DSMLP. Here are 2 major contents convered by integration tests.
+Integration tests focus on features **external** to the container. i.e. something that works on your local Docker environment may not work on DSMLP. Here are 2 major contents covered by integration tests.
 
 - network connection: e.g. port number, 404 issue
 - UI: e.g. pop-up window, page layout
 
 Currently we only have integration tests for our **rstudio-notebook** image checking against R-Studio UI.
 
-[Selenium Webdriver](https://www.selenium.dev/documentation/webdriver/) is a great tool people use to automate tests which involves user actions (open new Tab, click button, etc.)
+#### **Additional Information on Selenium and Integration-Test Setups
+
+- [Selenium](https://www.selenium.dev/) is a great tool people use to automate tests which involves user actions (open new Tab, click button, etc.) in a Browser.
+- [Selenium Webdriver](https://www.selenium.dev/documentation/webdriver/) is the key componet that make Selenium work.
+- There are different webdrivers corresponding to different major browsers. We use Google Chrome and its Chrome Driver, which is also the most common choice.
+- There is a somehow tricky compatibility issue: Selenium is managed by its own development team, and Chrome Driver is managed by some Google team. Selenium has a great backward-compatibility, meaning it can be driven by any version of Chrome Driver. On the other hand, the compatibility of Chrome broswer and driver is very brittle. In normal case, if the browser major version and driver major version differ by 2 or more, the compatibility breaks. And this doesn't happen rarely. On average, Google Chrome stable advances by 1 major version per month. (By "major version", we mean the 112 in `Version 112.0.5615.137`, for example.)
+- We run [this script](/scripts/selenium_setup.sh) during the [main pipeline setup stage](/.github/workflows/main.yml#57) to configure the Github Actions runtime as well as solve the issue above.
+- In rare case where you want to add more configuration to the Github Actions runtime, you may add the bash commands directly in
+[selenium_setup.sh](/scripts/selenium_setup.sh) or create a new script + a new workflow step (in `main.yml`), depending on whether your change is related to Selenium/Chrome/Driver.
 
 ### Manual Tests
 
