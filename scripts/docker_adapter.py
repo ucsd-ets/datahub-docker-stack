@@ -63,12 +63,15 @@ def build(node: Node) -> Tuple[bool, str]:
             if content_str:     # if not empty string
                 # time each major step (Step 1/23 : xxx)
                 if content_str[:4] == "Step":
-                    duration = datetime.datetime.now() - start_t
-                    seconds = duration.total_seconds()
-                    minutes = int(seconds // 60)
-                    seconds = int(seconds % 60)
-                    report += f'[{minutes}min {seconds}s] '
-                    start_t = datetime.datetime.now()
+                    # duration = datetime.datetime.now() - start_t
+                    # seconds = duration.total_seconds()
+                    # minutes = int(seconds // 60)
+                    # seconds = int(seconds % 60)
+                    # report += f'[{minutes}min {seconds}s] '
+                    # start_t = datetime.datetime.now()
+                    logger.info(f"{content_str}")
+                    for key, value in line.items():
+                        logger.info(f"key: {key}, value: {value}")
                 report += content_str + '\n'
         logger.info(f"Now we have these images: { __docker_client.images.list()}")
 
