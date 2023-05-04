@@ -44,34 +44,40 @@ def build(node: Node) -> Tuple[bool, str]:
     try:
         report = ''
         logger.debug(f'Build')
-        img_obj, generator = __docker_client.images.build(
+        """ img_obj, generator = __docker_client.images.build(
             path=node.filepath,
             dockerfile=node.dockerfile,
             tag=node.image_name + ':' + node.image_tag,
             buildargs=node.build_args,
             nocache=True,
             rm=False
-        )
+        ) """
         # BUG NOTE: The following unpacking of generator must be included.
         # Otherwise the function will return before `docker build` completes,
         # causing unknown behavior.
         start_t = datetime.datetime.now()
-        for line in generator:
-            # logger.debug(f"dtype of line: {type(line)}; \n line: {line}")
+        for line in __docker_client.api.build(
+            path=node.filepath,
+            dockerfile=node.dockerfile,
+            tag=node.image_name + ':' + node.image_tag,
+            buildargs=node.build_args,
+            nocache=True,
+            rm=False
+        ):
             # line is of type dict
             content_str = line.get('stream', '').strip()    # sth like 'Step 1/20 : ARG PYTHON_VERSION=python-3.9.5'
             if content_str:     # if not empty string
                 # time each major step (Step 1/23 : xxx)
                 if content_str[:4] == "Step":
-                    # duration = datetime.datetime.now() - start_t
-                    # seconds = duration.total_seconds()
-                    # minutes = int(seconds // 60)
-                    # seconds = int(seconds % 60)
-                    # report += f'[{minutes}min {seconds}s] '
-                    # start_t = datetime.datetime.now()
-                    logger.info(f"{content_str}")
-                    for key, value in line.items():
-                        logger.info(f"key: {key}, value: {value}")
+                    duration = datetime.datetime.now() - start_t
+                    seconds = duration.total_seconds()
+                    minutes = int(seconds // 60)
+                    seconds = int(seconds % 60)
+                    report += f'[{minutes}min {seconds}s] '
+                    start_t = datetime.datetime.now()
+                    # logger.info(f"{content_str}")
+                    # for key, value in line.items():
+                    #     logger.info(f"key: {key}, value: {value}")
                 report += content_str + '\n'
         logger.info(f"Now we have these images: { __docker_client.images.list()}")
 
