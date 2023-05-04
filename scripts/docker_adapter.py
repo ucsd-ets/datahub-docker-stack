@@ -56,6 +56,7 @@ def build(node: Node) -> Tuple[bool, str]:
         # Otherwise the function will return before `docker build` completes,
         # causing unknown behavior.
         start_t = datetime.datetime.now()
+        step = 0
         for line in __docker_client.api.build(
             path=node.filepath,
             dockerfile=node.dockerfile,
@@ -74,12 +75,17 @@ def build(node: Node) -> Tuple[bool, str]:
                     seconds = duration.total_seconds()
                     minutes = int(seconds // 60)
                     seconds = int(seconds % 60)
-                    report += f'[{minutes}min {seconds}s] '
+                    report += f'Step {step} took [{minutes}min {seconds}s] \n'
+                    step += 1
                     start_t = datetime.datetime.now()
-                    # logger.info(f"{content_str}")
-                    # for key, value in line.items():
-                    #     logger.info(f"key: {key}, value: {value}")
+
                 report += content_str + '\n'
+        # time for last step
+        duration = datetime.datetime.now() - start_t
+        seconds = duration.total_seconds()
+        minutes = int(seconds // 60)
+        seconds = int(seconds % 60)
+        report += f'Step {step} took [{minutes}min {seconds}s] \n'
         logger.info(f"Now we have these images: { __docker_client.images.list()}")
 
         return True, report

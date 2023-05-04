@@ -7,6 +7,7 @@ import yaml
 import pytest
 import logging
 import sys
+import datetime
 
 
 from scripts.tree import Node, build_tree, load_spec
@@ -127,6 +128,13 @@ def run_integration_tests(node: Node, result: Result) -> bool:
     return True
 
 
+# helper: get timestamp
+def get_time_duration(last_t):
+    duration = (datetime.datetime.now() - last_t).total_seconds()
+    minutes = int(duration // 60)
+    seconds = int(duration % 60)
+    return minutes, seconds
+
 def build_and_test_containers(
         root: Node,
         username: str,
@@ -200,6 +208,7 @@ def build_and_test_containers(
     results = []        # no matter success or failure
     full_names = []     # a list of all-success image full names
     for node in node_order:
+        last_t = datetime.datetime.now()
         try:
             logger.info(f'Processing node = {node.image_name}')
 
@@ -227,6 +236,9 @@ def build_and_test_containers(
                 break
             else:
                 logger.info(f"successfully built {node.full_image_name}")
+            m, s = get_time_duration(last_t)
+            logger.info(f"TIME: Build took {m} mins {s} secs")
+            last_t = datetime.datetime.now()
         
             # basic and common tests
             logger.info(f"Testing {node.full_image_name}")
@@ -240,7 +252,9 @@ def build_and_test_containers(
                 break
             else:
                 logger.info(f"{node.full_image_name} passed common tests")
-
+            m, s = get_time_duration(last_t)
+            logger.info(f"TIME: Basic tests took {m} mins {s} secs")
+            last_t = datetime.datetime.now()
 
             # push step
             resp, report = docker_adapter.push(node)
@@ -252,7 +266,9 @@ def build_and_test_containers(
                 break
             else:
                 logger.info(f"{node.full_image_name} pushed successfully")
-
+            m, s = get_time_duration(last_t)
+            logger.info(f"TIME: Push took {m} mins {s} secs")
+            last_t = datetime.datetime.now()
 
             # integration tests
             resp = run_integration_tests(node, result)
@@ -262,6 +278,9 @@ def build_and_test_containers(
                 break
             else:
                 logger.info(f"{node.full_image_name} passed integration tests (or don't have any)")
+            m, s = get_time_duration(last_t)
+            logger.info(f"TIME: Integration tests took {m} mins {s} secs")
+            last_t = datetime.datetime.now()
 
             # update wiki page of individual image that
             #       has been successfully [built, pushed, tested]
@@ -273,6 +292,9 @@ def build_and_test_containers(
             else:
                 wiki.write_report(node, image_obj, all_info_cmds)
                 logger.info(f"{node.full_image_name} wiki page is created")
+            m, s = get_time_duration(last_t)
+            logger.info(f"TIME: Wiki took {m} mins {s} secs")
+            last_t = datetime.datetime.now()
 
             # if all-passed, the image should appear on Home.md
             logger.info(f"{node.full_image_name} will appear on Home.md")
@@ -290,6 +312,9 @@ def build_and_test_containers(
                 # delete cache and reclaim space
                 space_reclaimed = convert_size(docker_adapter.prune(node.full_image_name))
                 logger.info(f"Reclaimed {space_reclaimed} from pruning docker")
+                m, s = get_time_duration(last_t)
+                logger.info(f"TIME: Prune took {m} mins {s} secs")
+                last_t = datetime.datetime.now()
         ### EXIT main loop ###
 
     # store results 
