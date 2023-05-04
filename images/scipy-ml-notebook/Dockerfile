@@ -95,3 +95,4 @@ ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
 #sad issue with github ref
 
 RUN . /tmp/activate.sh
+

@@ -62,6 +62,7 @@ def build(node: Node) -> Tuple[bool, str]:
             tag=node.image_name + ':' + node.image_tag,
             buildargs=node.build_args,
             nocache=True,
+            decode=True,
             rm=False
         ):
             # line is of type dict
