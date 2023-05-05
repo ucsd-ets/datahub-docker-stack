@@ -10,7 +10,6 @@ USER root
 # coerce rebuild in only this nteb
 
 ARG LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7 CUDA_VERSION=11.8
-ARG LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7 CUDA_VERSION=11.8
 
 RUN apt-get update && \
     apt-get install -y \
@@ -23,11 +22,9 @@ RUN ln -s libncurses.so.6 /usr/lib/x86_64-linux-gnu/libncurses.so.5
 COPY run_jupyter.sh /
 RUN chmod +x /run_jupyter.sh
 
-COPY cudatoolkit_env_vars.sh /etc/datahub-profile.d/cudatoolkit_env_vars.sh
-COPY cudnn_env_vars.sh /etc/datahub-profile.d/cudnn_env_vars.sh
+COPY cudatoolkit_env_vars.sh cudnn_env_vars.sh /etc/datahub-profile.d/
 COPY activate.sh /tmp/activate.sh
 COPY workflow_tests /opt/workflow_tests
-
 ADD manual_tests /opt/manual_tests
 
 RUN chmod 777 /etc/datahub-profile.d/*.sh /tmp/activate.sh
@@ -71,9 +68,9 @@ RUN pip install --no-cache-dir  datascience \
 
 
 # Update these in spec.yml according to https://pytorch.org/get-started/locally/
-ARG TORCH_VER="1.7.1+cu101"
-ARG TORCH_VIS_VER="0.8.2+cu101"
-ARG TORCH_AUD_VER="0.7.2"
+ARG TORCH_VER="1.7.1+cu101" \
+    TORCH_VIS_VER="0.8.2+cu101" \
+    TORCH_AUD_VER="0.7.2"
 
 # torch must be installed separately since it requires a non-pypi repo. See stable version above
 RUN pip install torch==${TORCH_VER} torchvision==${TORCH_VIS_VER} torchaudio==${TORCH_AUD_VER} \
