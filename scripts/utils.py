@@ -7,7 +7,7 @@ from os.path import isfile
 from io import StringIO
 import bitmath
 import logging
-import logging
+import datetime
 from pandas import NaT, Series, read_csv, concat
 from collections import deque
 from typing import List, Dict
@@ -324,3 +324,11 @@ def convert_size(size_bytes: int) -> str:
     p = math.pow(1024, i)
     s = round(size_bytes / p, 2)        
     return "%s %s" % (s, size_name[i])
+
+# helper: get timestamp and update last_t
+def get_time_duration(last_t):
+    duration = (datetime.datetime.now() - last_t).total_seconds()
+    minutes = int(duration // 60)
+    seconds = int(duration % 60)
+    last_t = datetime.datetime.now()
+    return last_t, minutes, seconds

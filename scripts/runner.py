@@ -1,4 +1,4 @@
-from scripts.utils import get_logger
+from scripts.utils import get_logger, get_time_duration
 from dataclasses import dataclass, field
 from typing import List, Dict, Tuple
 from io import StringIO
@@ -128,13 +128,6 @@ def run_integration_tests(node: Node, result: Result) -> bool:
     return True
 
 
-# helper: get timestamp
-def get_time_duration(last_t):
-    duration = (datetime.datetime.now() - last_t).total_seconds()
-    minutes = int(duration // 60)
-    seconds = int(duration % 60)
-    return minutes, seconds
-
 def build_and_test_containers(
         root: Node,
         username: str,
@@ -208,7 +201,7 @@ def build_and_test_containers(
     results = []        # no matter success or failure
     full_names = []     # a list of all-success image full names
     for node in node_order:
-        last_t = datetime.datetime.now()
+        last_t = datetime.datetime.now()  # to log timestamp
         try:
             logger.info(f'Processing node = {node.image_name}')
 
@@ -236,9 +229,8 @@ def build_and_test_containers(
                 break
             else:
                 logger.info(f"successfully built {node.full_image_name}")
-            m, s = get_time_duration(last_t)
+            last_t, m, s = get_time_duration(last_t)
             logger.info(f"TIME: Build took {m} mins {s} secs")
-            last_t = datetime.datetime.now()
         
             # basic and common tests
             logger.info(f"Testing {node.full_image_name}")
@@ -252,9 +244,8 @@ def build_and_test_containers(
                 break
             else:
                 logger.info(f"{node.full_image_name} passed common tests")
-            m, s = get_time_duration(last_t)
+            last_t, m, s = get_time_duration(last_t)
             logger.info(f"TIME: Basic tests took {m} mins {s} secs")
-            last_t = datetime.datetime.now()
 
             # push step
             resp, report = docker_adapter.push(node)
@@ -266,9 +257,8 @@ def build_and_test_containers(
                 break
             else:
                 logger.info(f"{node.full_image_name} pushed successfully")
-            m, s = get_time_duration(last_t)
+            last_t, m, s = get_time_duration(last_t)
             logger.info(f"TIME: Push took {m} mins {s} secs")
-            last_t = datetime.datetime.now()
 
             # integration tests
             resp = run_integration_tests(node, result)
@@ -278,9 +268,8 @@ def build_and_test_containers(
                 break
             else:
                 logger.info(f"{node.full_image_name} passed integration tests (or don't have any)")
-            m, s = get_time_duration(last_t)
+            last_t, m, s = get_time_duration(last_t)
             logger.info(f"TIME: Integration tests took {m} mins {s} secs")
-            last_t = datetime.datetime.now()
 
             # update wiki page of individual image that
             #       has been successfully [built, pushed, tested]
@@ -292,9 +281,8 @@ def build_and_test_containers(
             else:
                 wiki.write_report(node, image_obj, all_info_cmds)
                 logger.info(f"{node.full_image_name} wiki page is created")
-            m, s = get_time_duration(last_t)
+            last_t, m, s = get_time_duration(last_t)
             logger.info(f"TIME: Wiki took {m} mins {s} secs")
-            last_t = datetime.datetime.now()
 
             # if all-passed, the image should appear on Home.md
             logger.info(f"{node.full_image_name} will appear on Home.md")
@@ -308,18 +296,21 @@ def build_and_test_containers(
             results.append(result)
             logger.info(f"*** Build-and-Test main loop: {node.image_name} success ? {result.success}")
 
-            if result.container_details['image_built']:
-                # delete cache and reclaim space
-                space_reclaimed = convert_size(docker_adapter.prune(node.full_image_name))
-                logger.info(f"Reclaimed {space_reclaimed} from pruning docker")
-                m, s = get_time_duration(last_t)
-                logger.info(f"TIME: Prune took {m} mins {s} secs")
-                last_t = datetime.datetime.now()
+            ### Try: Prune after all build & test
+                
         ### EXIT main loop ###
 
     # store results 
+    last_t = datetime.datetime.now()  # to log timestamp
     for result in results:
         try:
+            if result.container_details['image_built']:
+                # delete cache and reclaim space
+                space_reclaimed = convert_size(docker_adapter.prune(result.full_image_name))
+                logger.info(f"Reclaimed {space_reclaimed} from pruning docker")
+                last_t, m, s = get_time_duration(last_t)
+                logger.info(f"TIME: Prune took {m} mins {s} secs")
+            
             filename = result.safe_full_image_name
             if 'build_log' in result.container_details:
                 build_log = result.container_details.pop('build_log')

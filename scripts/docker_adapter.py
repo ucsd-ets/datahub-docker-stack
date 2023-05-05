@@ -5,7 +5,7 @@ from typing import Tuple, Optional, List
 import pandas as pd
 
 from scripts.tree import Node
-from scripts.utils import get_logger, store_var
+from scripts.utils import get_logger, store_var, get_time_duration
 import os
 import datetime
 
@@ -55,8 +55,8 @@ def build(node: Node) -> Tuple[bool, str]:
         # BUG NOTE: The following unpacking of generator must be included.
         # Otherwise the function will return before `docker build` completes,
         # causing unknown behavior.
-        start_t = datetime.datetime.now()
         step = 0
+        last_t = datetime.datetime.now()
         for line in __docker_client.api.build(
             path=node.filepath,
             dockerfile=node.dockerfile,
@@ -71,21 +71,14 @@ def build(node: Node) -> Tuple[bool, str]:
             if content_str:     # if not empty string
                 # time each major step (Step 1/23 : xxx)
                 if content_str[:4] == "Step":
-                    duration = datetime.datetime.now() - start_t
-                    seconds = duration.total_seconds()
-                    minutes = int(seconds // 60)
-                    seconds = int(seconds % 60)
-                    report += f'Step {step} took [{minutes}min {seconds}s] \n'
+                    last_t, m, s = get_time_duration(last_t)
+                    report += f'Step {step} took [{m} min {s} sec] \n'
                     step += 1
-                    start_t = datetime.datetime.now()
 
                 report += content_str + '\n'
         # time for last step
-        duration = datetime.datetime.now() - start_t
-        seconds = duration.total_seconds()
-        minutes = int(seconds // 60)
-        seconds = int(seconds % 60)
-        report += f'Step {step} took [{minutes}min {seconds}s] \n'
+        last_t, m, s = get_time_duration(last_t)
+        report += f'Step {step} took [{m} min {s} sec] \n'
         logger.info(f"Now we have these images: { __docker_client.images.list()}")
 
         return True, report
