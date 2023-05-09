@@ -60,6 +60,9 @@ jobs:
           remove-codeql: 'true'
           remove-docker-images: 'true'
 
+      - name: Checkout after Free Space
+        uses: actions/checkout@v3
+
       - name: Check Free Space POST
         run: |
           echo "Free space:"
