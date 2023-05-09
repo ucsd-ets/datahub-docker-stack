@@ -305,11 +305,12 @@ def build_and_test_containers(
     for result in results:
         try:
             if result.container_details['image_built']:
-                # delete cache and reclaim space
+                logger.info(f"{result.full_image_name} skips pruning.")
+                """ # delete cache and reclaim space
                 space_reclaimed = convert_size(docker_adapter.prune(result.full_image_name))
                 logger.info(f"Reclaimed {space_reclaimed} from pruning docker")
                 last_t, m, s = get_time_duration(last_t)
-                logger.info(f"TIME: Prune took {m} mins {s} secs")
+                logger.info(f"TIME: Prune took {m} mins {s} secs") """
             
             filename = result.safe_full_image_name
             if 'build_log' in result.container_details:
