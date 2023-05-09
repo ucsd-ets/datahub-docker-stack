@@ -31,7 +31,7 @@ jobs:
       !contains(github.event.head_commit.message , 'skip ci') &&
       !contains(github.event.pull_request.title, 'skip ci')
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       
@@ -44,8 +44,29 @@ jobs:
           sudo rm -rf "/usr/local/share/boost"
           sudo rm -rf "$AGENT_TOOLSDIRECTORY"
 
+      - name: Check Free Space PRE
+        run: |
+          echo "Free space:"
+          df -h
+
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@master
+        with:
+          root-reserve-mb: 512
+          swap-size-mb: 1024
+          remove-dotnet: 'true'
+          remove-android: 'true'
+          remove-haskell: 'true'
+          remove-codeql: 'true'
+          remove-docker-images: 'true'
+
+      - name: Check Free Space POST
+        run: |
+          echo "Free space:"
+          df -h
+
       - name: Set up Python 3.8
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: 3.8
 
@@ -81,7 +102,7 @@ jobs:
           mkdir -p logs
 
       - name: Clone Wiki
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           repository: ${{github.repository}}.wiki
           path: wiki
@@ -110,7 +131,7 @@ jobs:
 
       - name: Archive artifacts and logs
         if: ${{ always() }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
           path: |
