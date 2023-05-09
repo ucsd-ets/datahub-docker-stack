@@ -51,7 +51,7 @@ jobs:
           remove-android: 'false'
           remove-haskell: 'false'
           remove-codeql: 'false'
-          remove-docker-images: 'true'
+          remove-docker-images: 'false'
 
       - name: Checkout after Free Space
         uses: actions/checkout@v3

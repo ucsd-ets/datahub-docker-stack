@@ -31,7 +31,7 @@ RUN chmod 777 /etc/datahub-profile.d/*.sh /tmp/activate.sh
 
 USER jovyan
 
-# CUDA 11
+# CUDA 11 
 # tf requirements: https://www.tensorflow.org/install/pip#linux
 RUN mamba install \
 	cudatoolkit=11.8 \
