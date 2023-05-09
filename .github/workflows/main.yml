@@ -31,7 +31,7 @@ jobs:
       !contains(github.event.head_commit.message , 'skip ci') &&
       !contains(github.event.pull_request.title, 'skip ci')
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       
@@ -66,7 +66,7 @@ jobs:
           df -h
 
       - name: Set up Python 3.8
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v3
         with:
           python-version: 3.8
 
@@ -102,7 +102,7 @@ jobs:
           mkdir -p logs
 
       - name: Clone Wiki
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
         with:
           repository: ${{github.repository}}.wiki
           path: wiki
@@ -124,14 +124,14 @@ jobs:
           (
             github.ref == 'refs/heads/main'
           )
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@v3
         with:
           commit_message: "[ci skip] Automated publish for ${{github.sha}}"
           repository: wiki/
 
       - name: Archive artifacts and logs
         if: ${{ always() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: build-artifacts
           path: |
