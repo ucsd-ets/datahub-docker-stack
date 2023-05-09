@@ -31,18 +31,11 @@ jobs:
       !contains(github.event.head_commit.message , 'skip ci') &&
       !contains(github.event.pull_request.title, 'skip ci')
     steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+      # - uses: actions/checkout@v3
+      #   with:
+      #     fetch-depth: 0
       
-      - name: Docker/ENV cleanup Cleanup
-        run: |
-          docker image prune -a -f
-          docker container prune -f
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf /opt/ghc
-          sudo rm -rf "/usr/local/share/boost"
-          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+      
 
       - name: Check Free Space PRE
         run: |
@@ -62,6 +55,17 @@ jobs:
 
       - name: Checkout after Free Space
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Docker/ENV cleanup Cleanup
+        run: |
+          docker image prune -a -f
+          docker container prune -f
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "/usr/local/share/boost"
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
 
       - name: Check Free Space POST
         run: |
