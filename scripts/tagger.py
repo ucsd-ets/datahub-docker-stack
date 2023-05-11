@@ -19,7 +19,7 @@ def run_tagging(
     """runner of tag images github workflow.
 
     Args:
-        original_tag (_type_): by user input in workflow, sth like '2023.2-deadbeef'
+        original_tag (_type_): by user input in workflow, sth like '2023.2-<branch_name>'
         username (str): docker username, passed in as env variable
         password (str): docker token, passed in as env variable
         dry_run (bool, optional): True if we just want to check which images will be tagged. 
@@ -32,7 +32,7 @@ def run_tagging(
     docker_adapter.login(username, password)
     
     assert original_tag and original_tag.count('-') == 1, \
-        "None as input or incorrect tag format (should be like '2023.2-deadbeef')"
+        "None as input or incorrect tag format (should be like '2023.2-<branch_name>')"
      
     ## count('-') == 1 -> split list must have length 2
     tag_prefix, short_hash = original_tag.rsplit('-', 1) 

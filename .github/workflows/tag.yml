@@ -5,7 +5,7 @@ on:
     inputs:
       originalTag: 
         description: 'Orginal tag of images to be stable'
-        default: '2099.3-somehash'
+        default: '2099.3-<branch_name>'
         required: true
       dryRun:
         type: boolean
