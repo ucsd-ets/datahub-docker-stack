@@ -305,6 +305,11 @@ def build_and_test_containers(
             logger.info(f"*** Build-and-Test main loop: {node.image_name} success ? {result.success}")
 
             ### Try: Prune after all build & test
+            if node.prune:
+                space_reclaimed = convert_size(docker_adapter.prune(node.full_image_name))
+                logger.info(f"Reclaimed {space_reclaimed} from pruning docker")
+                last_t, m, s = get_time_duration(last_t)
+                logger.info(f"TIME: Prune took {m} mins {s} secs")
                 
         ### EXIT main loop ###
 
