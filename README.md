@@ -11,6 +11,25 @@ Currently, we support 4 images:
 - scipy-ml-notebook (has PyTorch/Tensorflow + GPU Support)
 - rstudio-notebook (installs the RStudio IDE)
 
+```mermaid {code_block=true}
+%%{ init: { 'flowchart': { 'curve': 'linear' } } }%%
+
+flowchart RL
+    A[juptyer/datascience-notebook]
+
+    B[ucsd-ets/datahub-base-notebook]
+    B --> |is a| A
+
+    C2[ucsd-ets/datascience-notebook]
+    C2 --> B
+    
+    C3[ucsd-ets/scipy-ml-notebook]
+    C3 --> B
+
+    C1[ucsd-ets/rstudio-notebook]
+    C1 --> B
+```
+
 ## Documentation
 
 To learn more about how each component works, please navigate to its own documentation. We suggest reading [Architecture](/Documentation/architecture.md) first.
