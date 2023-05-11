@@ -31,16 +31,18 @@ def run_tagging(
 
     docker_adapter.login(username, password)
     
-    assert original_tag and original_tag.count('-') == 1, \
+    # <branch_name> may contain more '-', but there must be one before it.
+    assert original_tag and original_tag.count('-') >= 1, \
         "None as input or incorrect tag format (should be like '2023.2-<branch_name>')"
      
-    ## count('-') == 1 -> split list must have length 2
-    tag_prefix, short_hash = original_tag.rsplit('-', 1) 
+    # split only once from left -> 2 parts
+    tag_prefix, branch_name = original_tag.split('-', 1) 
+    branch_name = branch_name.replace("/", "_")
     stable_tag = tag_prefix + '-stable'
 
     # will only read image info from Home.md
     history = read_history()
-    original_names = query_images(history, short_hash, tag_prefix)  # a list
+    original_names = query_images(history, branch_name, tag_prefix)  # a list
 
     if dry_run:
         logger.info(f"Doing dry-run to check original_names: {original_names}")
