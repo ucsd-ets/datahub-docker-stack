@@ -5,7 +5,7 @@ on:
     inputs:
       originalTag: 
         description: 'Orginal tag of images to be stable; please double check branch name.'
-        default: "2099.3-${{(github.base_ref}}"
+        default: "2099.3-${{ github.ref }}"
         required: true
       dryRun:
         type: boolean
