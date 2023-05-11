@@ -178,7 +178,7 @@ def build_and_test_containers(
         for _ in range(len(q)):
             node = q.pop(0)
             node.image_tag = tag_prefix + '-' + node.git_suffix
-            node_order.append(node)
+            logger.info(f"### {node.image_name} rebuild before check? {node.rebuild}")  # TO REMOVE
 
             for child in node.children:
                 if node.rebuild:
@@ -189,14 +189,22 @@ def build_and_test_containers(
                 })
                 q.append(child)
 
+            # determine bool rebuild at runtime AFTER
+            # pushing children to the queue
+            # This ensures a branch-first build of parent NOT trigger
+            # an unnecessary child rebuild
+            node.rebuild = node.rebuild or not docker_adapter.image_tag_exists(node)
+            logger.info(f"### {node.image_name} rebuild after check? {node.rebuild}")  # TO REMOVE
+            node_order.append(node)
+
     # temp fix: base/parent should be built whenever >=1 child is built
     # since we use {BASE_TAG}-{GIT_HASH} as tag
     # ONLY works for our single-level dependency
-    if any(node.rebuild for node in node_order):
-        # this is root.
-        if not node_order[0].rebuild:
-            node_order[0].rebuild = True
-            logger.info(f"Root/Base image {root.image_name} has to be rebuilt due to child change.")
+    # if any(node.rebuild for node in node_order):
+    #     # this is root.
+    #     if not node_order[0].rebuild:
+    #         node_order[0].rebuild = True
+    #         logger.info(f"Root/Base image {root.image_name} has to be rebuilt due to child change.")
 
     results = []        # no matter success or failure
     full_names = []     # a list of all-success image full names

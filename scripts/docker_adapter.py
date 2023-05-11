@@ -115,6 +115,25 @@ def login(
         raise DockerError(e)
 
 
+def image_tag_exists(node: Node) -> bool:
+    """Given a node with full tag (node.image_tag),
+    return whether the node with this tag exists in Dockerhub
+
+    Args:
+        node (Node): _description_
+
+    Returns:
+        bool: exists/not
+    """
+    logger.info(f"***** Dockerhub: Checking image {node.image_name}")
+    image_tag_list =  __docker_client.images.list(
+        name=node.image_name, 
+        filters={'reference': f"{node.image_name}:{node.image_tag}"}
+    )
+    logger.info(f"***** Dockerhub: image.list is {image_tag_list}")
+    return len(image_tag_list) > 0
+
+
 def push(node: Node) -> Tuple[bool, str]:
 
     try:
