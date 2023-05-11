@@ -16,6 +16,7 @@ on:
 jobs:
   gpu_test:
     uses: ./.github/workflows/test_gpu.yml
+    if: ${{ github.event.inputs.dryRun == 'false'}}
     with:
       originalTag: ${{ github.event.inputs.originalTag }}
     secrets:
