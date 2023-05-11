@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
     inputs:
       originalTag: 
-        description: 'Orginal tag of images to be stable'
-        default: '2099.3-<branch_name>'
+        description: 'Orginal tag of images to be stable; please double check branch name.'
+        default: "2099.3-${{ github.ref.split('/')[2] }}"
         required: true
       dryRun:
         type: boolean
