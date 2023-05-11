@@ -224,7 +224,7 @@ def prune(full_image_name: str) -> int:
     """clear build & test cache, reclaim space
 
     Args:
-        full_image_name (str): sth like ucsdets/datahub-base-notebook:2023.2-deadbeef
+        full_image_name (str): sth like ucsdets/datahub-base-notebook:2023.2-<branch_name>
 
     Returns:
         int: space reclaimed in number of bytes.
@@ -247,7 +247,8 @@ def prune(full_image_name: str) -> int:
     try:
         for func_name, prune in prune_funcs:
             resp = prune()
-            logger.debug(f"from prune function {func_name}, resp is {resp}")
+            # TODO: change back to debug
+            logger.info(f"from prune function {func_name}, resp is {resp}")
             if not 'SpaceReclaimed' in resp:
                 logger.error(
                     f'SpaceReclaimed not in API response for prune function {func_name}. \
@@ -270,7 +271,7 @@ def prepull_images(orig_images: List[str]) -> bool:
     """pull down all the images to docker in order to tag later
 
     Args:
-        orig_images (List[str]): each is like 'ucsdets/datahub-base-notebook:2023.2-deadbeef'
+        orig_images (List[str]): each is like 'ucsdets/datahub-base-notebook:2023.2-<branch_name>'
 
     Returns:
         bool: success or failure
@@ -298,7 +299,7 @@ def tag_stable(orig_fullname: str, tag_replace: str) -> Tuple[str, bool]:
     """guarding wrapper around actual docker.image.tag()
 
     Args:
-        orig_fullname (str): of format 'ucsdets/datahub-base-notebook:2023.2-deadbeef'
+        orig_fullname (str): of format 'ucsdets/datahub-base-notebook:2023.2-<branch_name>'
         tag_replace (str): of format '2023.2-stable'
 
     Returns:
