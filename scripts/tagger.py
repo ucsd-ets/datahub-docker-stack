@@ -41,8 +41,11 @@ def run_tagging(
     stable_tag = tag_prefix + '-stable'
 
     # will only read image info from Home.md
-    history = read_history()
-    original_names = query_images(history, branch_name, tag_prefix)  # a list
+    try:
+        history = read_history()
+        original_names = query_images(history, branch_name, tag_prefix)  # a list
+    except Exception as e:
+        logger.error(f"Error when reading original image information, {e}")
 
     if dry_run:
         logger.info(f"Doing dry-run to check original_names: {original_names}")

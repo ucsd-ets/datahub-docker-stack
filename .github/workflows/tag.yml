@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       originalTag: 
-        description: 'Orginal tag; please check Wiki page'
+        description: 'Orginal tag; please ensure its appearance on Wiki homepage'
         default: '2099.3-<branch_name>'
         required: true
       dryRun:
