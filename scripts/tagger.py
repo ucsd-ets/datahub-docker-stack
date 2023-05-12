@@ -46,6 +46,7 @@ def run_tagging(
         original_names = query_images(history, branch_name, tag_prefix)  # a list
     except Exception as e:
         logger.error(f"Error when reading original image information, {e}")
+        return False
 
     if dry_run:
         logger.info(f"Doing dry-run to check original_names: {original_names}")
