@@ -197,15 +197,6 @@ def build_and_test_containers(
             logger.info(f"### {node.image_name} rebuild after check? {node.rebuild}")  # TO REMOVE
             node_order.append(node)
 
-    # temp fix: base/parent should be built whenever >=1 child is built
-    # since we use {BASE_TAG}-{GIT_HASH} as tag
-    # ONLY works for our single-level dependency
-    # if any(node.rebuild for node in node_order):
-    #     # this is root.
-    #     if not node_order[0].rebuild:
-    #         node_order[0].rebuild = True
-    #         logger.info(f"Root/Base image {root.image_name} has to be rebuilt due to child change.")
-
     results = []        # no matter success or failure
     full_names = []     # a list of all-success image full names
     for node in node_order:
@@ -316,15 +307,7 @@ def build_and_test_containers(
     # store results 
     last_t = datetime.datetime.now()  # to log timestamp
     for result in results:
-        try:
-            if result.container_details['image_built']:
-                logger.info(f"{result.full_image_name} skips pruning.")
-                """ # delete cache and reclaim space
-                space_reclaimed = convert_size(docker_adapter.prune(result.full_image_name))
-                logger.info(f"Reclaimed {space_reclaimed} from pruning docker")
-                last_t, m, s = get_time_duration(last_t)
-                logger.info(f"TIME: Prune took {m} mins {s} secs") """
-            
+        try:            
             filename = result.safe_full_image_name
             if 'build_log' in result.container_details:
                 build_log = result.container_details.pop('build_log')

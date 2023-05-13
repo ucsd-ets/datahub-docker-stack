@@ -247,8 +247,7 @@ def prune(full_image_name: str) -> int:
     try:
         for func_name, prune in prune_funcs:
             resp = prune()
-            # TODO: change back to debug
-            logger.info(f"from prune function {func_name}, resp is {resp}")
+            logger.debug(f"from prune function {func_name}, resp is {resp}")
             if not 'SpaceReclaimed' in resp:
                 logger.error(
                     f'SpaceReclaimed not in API response for prune function {func_name}. \
@@ -317,6 +316,7 @@ def tag_stable(orig_fullname: str, tag_replace: str) -> Tuple[str, bool]:
         return '', False 
     finally:
         __docker_client.close()
+
 
 def push_stable_images(stable_fullnames: List[str]) -> bool:
     """given a list of stable image names, push them to dockerhub.
