@@ -4,8 +4,7 @@ FROM jupyter/datascience-notebook:$PYTHON_VERSION
 USER root
 
 # see https://github.com/phusion/baseimage-docker/issues/319#issuecomment-1058835363
-ENV DEBIAN_FRONTEND noninteractive
-ENV DEBCONF_NOWARNINGS="yes"
+ENV DEBIAN_FRONTEND=noninteractive DEBCONF_NOWARNINGS="yes"
 
 RUN apt-get update -y && \
     apt-get -qq install -y --no-install-recommends \
@@ -44,16 +43,15 @@ RUN cat /tmp/jupyter_notebook_config_extra.py >> /etc/jupyter/jupyter_notebook_c
 RUN curl -fsSL https://code-server.dev/install.sh | sh -s -- --prefix=/usr/local
 
 # Copy over R tests to /opt/manual_tests
-RUN mkdir /opt/manual_tests
-COPY /test/test_r_dump_packages.R /opt/manual_tests
-COPY /test/test_r_func.R /opt/manual_tests
+# RUN mkdir /opt/manual_tests
+# COPY /test/test_r_dump_packages.R /test/test_r_func.R /opt/manual_tests
+ADD /test/test_r_dump_packages.R /test/test_r_func.R /opt/manual_tests/
 
 USER jovyan
 
 COPY start-code-server.sh /usr/local/bin/start-notebook.d/
 
-ARG PY_VER_SHORT=3.9
-ARG JUPYTERHUB_VERSION=1.5.0
+ARG PY_VER_SHORT=3.9 JUPYTERHUB_VERSION=1.5.0
 
 # mistune added for nbgrader issues
 
@@ -71,8 +69,7 @@ RUN /usr/share/datahub/scripts/install-python-all.sh && \
     chmod -R +r /opt/conda/etc/jupyter/nbconfig
 
 # nbgrader requires some variables set to just run the notebook server
-ENV NBGRADER_COURSEID="NA"
-ENV JUPYTERHUB_USER=${NB_USER}
+ENV NBGRADER_COURSEID="NA" JUPYTERHUB_USER=${NB_USER}
 
 # Install jupyterlab extensions
 RUN pip install jupyterlab-github jupyterlab-latex jupyterlab-git \
