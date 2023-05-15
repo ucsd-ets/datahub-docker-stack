@@ -20,7 +20,7 @@ flowchart RL
     B[ucsd-ets/datascience-notebook]
     B --> |is a| A
     
-    C3[ucsd-ets/scipy-ml-notebook]
+    C2[ucsd-ets/scipy-ml-notebook]
     C2 --> B
 
     C1[ucsd-ets/rstudio-notebook]
