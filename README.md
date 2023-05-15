@@ -6,8 +6,7 @@ This Github repository builds and maintains the [standard suite of Docker contai
 
 Currently, we support 4 images:
 
-- datahub-base-notebook (the base notebook from which all others inherit)
-- datascience-notebook (dpkt + nose + datascience libs)
+- datascience-notebook (base notebook from which all others inherit + dpkt + nose + datascience libs)
 - scipy-ml-notebook (has PyTorch/Tensorflow + GPU Support)
 - rstudio-notebook (installs the RStudio IDE)
 
