@@ -17,14 +17,11 @@ Currently, we support 4 images:
 flowchart RL
     A[juptyer/datascience-notebook]
 
-    B[ucsd-ets/datahub-base-notebook]
+    B[ucsd-ets/datascience-notebook]
     B --> |is a| A
-
-    C2[ucsd-ets/datascience-notebook]
-    C2 --> B
     
     C3[ucsd-ets/scipy-ml-notebook]
-    C3 --> B
+    C2 --> B
 
     C1[ucsd-ets/rstudio-notebook]
     C1 --> B
