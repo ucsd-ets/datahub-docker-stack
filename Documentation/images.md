@@ -52,15 +52,16 @@ Please refer to Docker [Official Docs](https://docs.docker.com/engine/reference/
 9. Push your fix. There could be many commits but should be only one push in a single fix attempt. A git push will trigger the pipeline again.
 10. Repeat steps 7-9 until the pipeline action passes.
 
-## Image Update Details
+## Image Update Details: About Image Tag
 
-- Every newly pushed images will get a git-hash stamp at the end of the tag
-(`ucsdets/datahub-base-notebook:2021.2-5f71d3b`)
+- The usage of a Docker image tag is very similar to the branch in a Github repo. Some common tag choices
+are "stable", "latest", "beta", "dev", etc.
+- And very naturally, we use the branch name and combine it with the "year.quarter" prefix to form our Docker image tag. A tag in this form gives us developers a clear idea of the time and purpose of a group of images. For example, `ucsdets/datascience-notebook:2021.2-update_pytorch`.
+- At the same time, we save the pain from finer-grained tag/identifier aiming to give a unique tag to each image we previously built. 99% of the time, there is a 1-1 correspondence between a branch and a feature/debug update, and we need multiple build attempts before making things work. Thus, it's unnecessary to distinguish between images under the same branch.
 - The `FROM` statement in `Dockerfile` will include `ARG` in the image ref to
 support arbitary tags at run-time. This allows for fixating the Dockerfile
-while changing the base ref at any time.
-- When a dependent images gets its source updated, instead of building the base
-image again, only build the dependent image by changing the base ref to the
-old remote tag of the image and build from there.
-- `stable` tags will be given to the latest built image in each image/plan for
-use in production. This process is manually triggered with on Github Action. See [tag.yml](actions.md#tagyml)
+while constructing a "year.quater-<branch_name>" tag as `ARG` at run time.
+- When a child image gets its source updated, instead of building the base/parent
+image again, we only build the child image, if on the same branch, because the tag remains the same.
+- `stable` tags will be given to the latest-built production-ready image in each image/plan for
+usage. This process is manually triggered with on Github Action. See [tag.yml](actions.md#tagyml)

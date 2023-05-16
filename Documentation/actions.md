@@ -39,7 +39,7 @@ A general introduction to `jobs::docker_pipeline` steps in `main.yml`
 - **`Setup artifacts`**: create subfolders in the project root for storing files.
 (`artifacts/`, `manifests/`, `logs/`) See [file system doc](./scripts.md#file-system) for more.
 - The pipeline will then look for changes in the `images/` in the latest git
-commit determine which images' source was changed and will be used to determine
+commit to determine which images' source was changed. This information will be used to determine
 what images need to be updated. The list of changed images is kept in
 `artifacts/IMAGES_CHANGED`.
 - **`Clone Wiki`**: clone the `wiki/`, which is a Github backend hidden folder consisting of
@@ -61,7 +61,7 @@ the following steps [See scripts.md for a more in-depth look at this step.](./sc
 
 ## tag.yml
 
-This action is run manually and requires a given tag that all 4 images have been pushed with at one point (i.e. 2023.2-a1239a). There is an optional dry-run setting that allows you to verify the output of the action without actually pushing new stable images.
+This action is run manually and requires a given tag that all 4 images have been pushed with at one point (i.e. 2023.2-dev_branch). There is an optional dry-run setting that allows you to verify the output of the action without actually pushing new stable images.
 
 After being executed, the action pulls each image in the stack from DockerHub using the ``doit tag`` as defined in [dodo.py](/dodo.py) and then pushes them back up to DockerHub using the format "**ucsdets\<image_name\>:\<year\>.\<quarter\>-stable**". For example: **ucsdets/datascience-notebook:2023.2-stable**.
 
@@ -71,6 +71,6 @@ This action will not run until the test_gpu.yml has been run and passed.
 
 ## test_gpu.yml
 
-This action tests code that requires the usage of a GPU on the scipy-ml-notebook. It can be run manually, but will also run everytime tag.yml is called. It takes the same tag argument that tag.yml does.
+This action executes code that actually requires the usage of a GPU (that is, training some simple ML model instead of calling `is_gpu_available()` or something) on the scipy-ml-notebook. It can be run manually, but will also run everytime tag.yml is called. It takes the same tag argument that tag.yml does.
 
 When executed, the action logs onto dsmlp-login.ucsd.edu as grader-test-01 (who's password is stored in the GitHub Actions secrets, and should be updated if the account's password is to be changed). It then launches the scipy-ml-notebook with the specified tag and runs pytest to verify that Tensorflow and PyTorch work. This test is required to pass for tag.yml to be run.
