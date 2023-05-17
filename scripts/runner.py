@@ -199,6 +199,9 @@ def build_and_test_containers(
 
     results = []        # no matter success or failure
     full_names = []     # a list of all-success image full names
+
+    # prepull images inorder to use cache
+    docker_adapter.prepull_images([node.full_image_name for node in node_order], allow_failure=True)
     for node in node_order:
         last_t = datetime.datetime.now()  # to log timestamp
         try:

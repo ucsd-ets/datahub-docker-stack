@@ -64,7 +64,8 @@ def build(node: Node) -> Tuple[bool, str]:
             buildargs=node.build_args,
             nocache=False,
             decode=True,
-            rm=False
+            rm=False,
+            cache_from=[node.full_image_name]
         ):
             # line is of type dict
             content_str = line.get('stream', '').strip()    # sth like 'Step 1/20 : ARG PYTHON_VERSION=python-3.9.5'
@@ -266,11 +267,12 @@ def prune(full_image_name: str) -> int:
         __docker_client.close()
 
 
-def prepull_images(orig_images: List[str]) -> bool:
+def prepull_images(orig_images: List[str], allow_failure: bool = False) -> bool:
     """pull down all the images to docker in order to tag later
 
     Args:
         orig_images (List[str]): each is like 'ucsdets/datahub-base-notebook:2023.2-<branch_name>'
+        allow_failure (bool, default to False): whether we allow pulling non-existing image
 
     Returns:
         bool: success or failure
@@ -288,7 +290,10 @@ def prepull_images(orig_images: List[str]) -> bool:
 
         return True
     except Exception as e:
-        logger.error(f"Tagging action: Fail to pull {currImage}")
+        if allow_failure:
+            logger.info(f"Fail to pull {currImage}, cannot use cache during build")
+        else:
+            logger.error(f"Tagging action: Fail to pull {currImage}")
         return False
     finally:
         __docker_client.close()
