@@ -6,10 +6,25 @@ This Github repository builds and maintains the [standard suite of Docker contai
 
 Currently, we support 4 images:
 
-- datahub-base-notebook (the base notebook from which all others inherit)
-- datascience-notebook (dpkt + nose + datascience libs)
+- datascience-notebook (base notebook from which all others inherit w/ dpkt + nose + datascience libs)
 - scipy-ml-notebook (has PyTorch/Tensorflow + GPU Support)
 - rstudio-notebook (installs the RStudio IDE)
+
+```mermaid {code_block=true}
+%%{ init: { 'flowchart': { 'curve': 'linear' } } }%%
+
+flowchart RL
+    A[juptyer/datascience-notebook]
+
+    B[ucsd-ets/datascience-notebook]
+    B --> |is a| A
+    
+    C2[ucsd-ets/scipy-ml-notebook]
+    C2 --> B
+
+    C1[ucsd-ets/rstudio-notebook]
+    C1 --> B
+```
 
 ## Documentation
 

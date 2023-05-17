@@ -12,9 +12,9 @@ USER root
 ARG LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7 CUDA_VERSION=11.8
 
 RUN apt-get update && \
-    apt-get install -y \
-    libtinfo5 build-essential && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+	apt-get install -y \
+	libtinfo5 build-essential && \
+	apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Symbolic link for Stata 17 dependency on libncurses5
 RUN ln -s libncurses.so.6 /usr/lib/x86_64-linux-gnu/libncurses.so.5
@@ -78,7 +78,9 @@ RUN pip install torch==${TORCH_VER} torchvision==${TORCH_VIS_VER} torchaudio==${
 
 # to use nvidia-smi command to check GPU & driver
 # RUN ln -s /usr/local/nvidia/bin/nvidia-smi /opt/conda/bin/nvidia-smi
+
 # RUN . /tmp/activate.sh && echo "Activate ran successfully"
+
 
 USER $NB_UID:$NB_GID
 ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
@@ -90,5 +92,11 @@ ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
 # then the gpu can be detected via CLI.
 #ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/opt/conda/lib/python3.9/site-packages/nvidia/cudnn/lib
 #sad issue with github ref
+
+
+# Does some CONDA/CUDA stuff
+# Copy libdevice file to the required path
+RUN mkdir -p $CONDA_DIR/lib/nvvm/libdevice && \
+	cp $CONDA_DIR/lib/libdevice.10.bc $CONDA_DIR/lib/nvvm/libdevice/
 
 RUN . /tmp/activate.sh
