@@ -29,6 +29,11 @@ class Node:
     def full_image_name(self):
         return self.image_name + ':' + self.image_tag
 
+    # TODO: temporary, should be removed later
+    @property
+    def stable_image_name(self):
+        return self.image_name + ':' + self.image_tag[:6] + '-stable' 
+
     def print_info(self):
         print( f"""image_name: {self.image_name},
                 git_suffix: {self.git_suffix}, 
