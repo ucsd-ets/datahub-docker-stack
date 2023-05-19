@@ -193,15 +193,20 @@ def build_and_test_containers(
             # pushing children to the queue
             # This ensures a branch-first build of parent NOT trigger
             # an unnecessary child rebuild
-            node.rebuild = node.rebuild or not docker_adapter.image_tag_exists(node)
-            logger.info(f"### {node.image_name} rebuild after check? {node.rebuild}")  # TO REMOVE
+
+            ## Can docker build go to Dockerhub and fetch existing image:tag for FROM (at Dockerfile first line)?
+            # node.rebuild = node.rebuild or (len(node.children) > 0 and not docker_adapter.image_tag_exists(node) )
+            # logger.info(f"### {node.image_name} rebuild after check? {node.rebuild}")  # TO REMOVE
             node_order.append(node)
 
     results = []        # no matter success or failure
     full_names = []     # a list of all-success image full names
 
     # prepull images inorder to use cache
+    last_t = datetime.datetime.now()  # to log timestamp
     docker_adapter.prepull_images([node.full_image_name for node in node_order], allow_failure=True)
+    last_t, m, s = get_time_duration(last_t)
+    logger.info(f"TIME: Prepull took {m} mins {s} secs")
     for node in node_order:
         last_t = datetime.datetime.now()  # to log timestamp
         try:

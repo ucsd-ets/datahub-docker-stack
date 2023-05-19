@@ -54,4 +54,3 @@ COPY ./test ./integration_tests /home/jovyan/
 USER $NB_USER
 
 RUN conda init bash
-
