@@ -277,27 +277,51 @@ def prepull_images(orig_images: List[str], allow_failure: bool = False) -> bool:
     Returns:
         bool: success or failure
     """
-    currImage = "placeholder"
-    try:
+    if allow_failure:
+        # try to pull each image:<curr_tag>
+        # if fail, try to pull image:<year.quarter-stable>
+        stable_tag = "PLACEHOLDER"
         for full_name in orig_images:
-            currImage = full_name
-            # logger.info(f'Tagging action: Pulling original image {full_name}')
             assert full_name.count(':') == 1, f"{full_name} should have exactly one :"
             img, tag = full_name.split(':')
             img = img.lstrip()
             tag = tag.rstrip()
-            __docker_client.images.pull(img, tag)
+            try:
+                __docker_client.images.pull(img, tag)
+            except Exception as e:
+                # TODO: change stable_tag to "stable" after we implement global stable tag
+                prefix, suffix = tag.split('-', 1)
+                stable_tag = f"{prefix}-stable"
+            else:
+                continue
+            
+            # try to pull stable image
+            try:
+                logger.info(f"Fail to pull {full_name}, will try {img}:{stable_tag}")
+                __docker_client.images.pull(img, stable_tag)
+            except Exception as e:
+                logger.info(f"Fail to pull {img}:{stable_tag} either, this image cannot use cache during build")
 
-        return True
-    except Exception as e:
-        if allow_failure:
-            logger.info(f"Fail to pull {currImage}, cannot use cache during build")
-        else:
-            logger.error(f"Tagging action: Fail to pull {currImage}")
-        return False
-    finally:
-        __docker_client.close()
+    else:  # tagging action, don't allow pull failure
+        currImage = "placeholder"
+        try:
+            for full_name in orig_images:
+                currImage = full_name
+                # logger.info(f'Tagging action: Pulling original image {full_name}')
+                assert full_name.count(':') == 1, f"{full_name} should have exactly one :"
+                img, tag = full_name.split(':')
+                img = img.lstrip()
+                tag = tag.rstrip()
+                __docker_client.images.pull(img, tag)
 
+            return True
+        except Exception as e:
+            logger.error(f"Tagging action ERROR: Fail to pull {currImage}")
+            return False
+    # finally
+    __docker_client.close()
+    # the only case we return False is allow_failure == False, and we fail to pull
+    return True
 
 def tag_stable(orig_fullname: str, tag_replace: str) -> Tuple[str, bool]:
     """guarding wrapper around actual docker.image.tag()
