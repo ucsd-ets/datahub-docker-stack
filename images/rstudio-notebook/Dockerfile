@@ -7,8 +7,8 @@ USER root
 
 # Follow instructions atL https://www.rstudio.com/products/rstudio/download-server/
 ENV RSTUDIO_PKG=rstudio-server-1.4.1717-amd64.deb \
-    RSTUDIO_URL=https://download2.rstudio.org/server/bionic/amd64/${RSTUDIO_PKG} \
     RSESSION_PROXY_RSTUDIO_1_4=true
+ENV RSTUDIO_URL=https://download2.rstudio.org/server/bionic/amd64/${RSTUDIO_PKG}
 
 # rstudio installation expects R to live under /usr/bin, /bin/, etc.
 RUN ln -s /opt/conda/bin/R /usr/bin/R && \

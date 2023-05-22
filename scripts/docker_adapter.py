@@ -267,41 +267,46 @@ def prune(full_image_name: str) -> int:
         __docker_client.close()
 
 
-def prepull_images(orig_images: List[str], allow_failure: bool = False) -> bool:
+def prepull_images(orig_images: List[str], build_prepull: bool = False) -> bool:
     """pull down all the images to docker in order to tag later
 
     Args:
         orig_images (List[str]): each is like 'ucsdets/datahub-base-notebook:2023.2-<branch_name>'
-        allow_failure (bool, default to False): whether we allow pulling non-existing image
+        build_prepull (bool, default to False): whether we allow pulling non-existing image
 
     Returns:
         bool: success or failure
     """
-    if allow_failure:
+    if build_prepull:
         # try to pull each image:<curr_tag>
         # if fail, try to pull image:<year.quarter-stable>
         stable_tag = "PLACEHOLDER"
+        self_success = True
         for full_name in orig_images:
             assert full_name.count(':') == 1, f"{full_name} should have exactly one :"
             img, tag = full_name.split(':')
             img = img.lstrip()
             tag = tag.rstrip()
+            # first try pull "self"
             try:
                 __docker_client.images.pull(img, tag)
             except Exception as e:
                 # TODO: change stable_tag to "stable" after we implement global stable tag
                 prefix, suffix = tag.split('-', 1)
                 stable_tag = f"{prefix}-stable"
+                self_success = False
             else:
                 continue
             
-            # try to pull stable image
+            # if "self" never gets pushed to Dockerhub, try to pull stable image
             try:
                 logger.info(f"Fail to pull {full_name}, will try {img}:{stable_tag}")
                 __docker_client.images.pull(img, stable_tag)
             except Exception as e:
                 logger.info(f"Fail to pull {img}:{stable_tag} either, this image cannot use cache during build")
-
+        
+        return self_success
+    
     else:  # tagging action, don't allow pull failure
         currImage = "placeholder"
         try:
@@ -318,10 +323,8 @@ def prepull_images(orig_images: List[str], allow_failure: bool = False) -> bool:
         except Exception as e:
             logger.error(f"Tagging action ERROR: Fail to pull {currImage}")
             return False
-    # finally
-    __docker_client.close()
-    # the only case we return False is allow_failure == False, and we fail to pull
-    return True
+        # all images pulled
+        return True
 
 def tag_stable(orig_fullname: str, tag_replace: str) -> Tuple[str, bool]:
     """guarding wrapper around actual docker.image.tag()
