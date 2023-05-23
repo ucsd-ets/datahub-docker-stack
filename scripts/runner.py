@@ -198,15 +198,11 @@ def build_and_test_containers(
     full_names = []     # a list of all-success image full names
 
     # prepull images inorder to use cache
-    last_t = datetime.datetime.now()  # to log timestamp
-    # 1st attempt: try pull only changed image
-    self_success = docker_adapter.prepull_images([node.full_image_name for node in node_order if node.rebuild], build_prepull=True)
-    # 2nd attempt: if first attempt failed, we are on a new branch and have cold cache.
-    # Thus, we try to pull all images (the helper will resort to stable tag) and mark all as rebuild
-    if not self_success:
-        logger.info(f"Not all images required exist on Dockerhub. Will do a full rebuild which saves time for all future builds.")
-        docker_adapter.prepull_images([node.full_image_name for node in node_order], build_prepull=True)
-        for i in range(len(node_order)):
+    # AND mark rebuild for those without cache yet
+    for i, node in enumerate(node_order):
+        if not docker_adapter.pull_build_cache(node):
+            # self doesn't exist on Dockerhub, rebuild
+            logger.info(f"{node.full_image_name} doesn't exist on Dockerhub. Will rebuild and save futre build time.")
             node_order[i].rebuild = True
     last_t, m, s = get_time_duration(last_t)
     logger.info(f"TIME: Prepull took {m} mins {s} secs")

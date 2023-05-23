@@ -267,64 +267,75 @@ def prune(full_image_name: str) -> int:
         __docker_client.close()
 
 
-def prepull_images(orig_images: List[str], build_prepull: bool = False) -> bool:
+def prepull_tagging_images(orig_images: List[str]) -> bool:
     """pull down all the images to docker in order to tag later
 
     Args:
         orig_images (List[str]): each is like 'ucsdets/datahub-base-notebook:2023.2-<branch_name>'
-        build_prepull (bool, default to False): whether we allow pulling non-existing image
 
     Returns:
         bool: success or failure
     """
-    if build_prepull:
-        # try to pull each image:<curr_tag>
-        # if fail, try to pull image:<year.quarter-stable>
-        stable_tag = "PLACEHOLDER"
-        self_success = True
+    currImage = "placeholder"
+    try:
         for full_name in orig_images:
+            currImage = full_name
+            # logger.info(f'Tagging action: Pulling original image {full_name}')
             assert full_name.count(':') == 1, f"{full_name} should have exactly one :"
             img, tag = full_name.split(':')
             img = img.lstrip()
             tag = tag.rstrip()
-            # first try pull "self"
-            try:
-                __docker_client.images.pull(img, tag)
-            except Exception as e:
-                # TODO: change stable_tag to "stable" after we implement global stable tag
-                prefix, suffix = tag.split('-', 1)
-                stable_tag = f"{prefix}-stable"
-                self_success = False
-            else:
-                continue
-            
-            # if "self" never gets pushed to Dockerhub, try to pull stable image
-            try:
-                logger.info(f"Fail to pull {full_name}, will try {img}:{stable_tag}")
-                __docker_client.images.pull(img, stable_tag)
-            except Exception as e:
-                logger.info(f"Fail to pull {img}:{stable_tag} either, this image cannot use cache during build")
-        
-        return self_success
-    
-    else:  # tagging action, don't allow pull failure
-        currImage = "placeholder"
-        try:
-            for full_name in orig_images:
-                currImage = full_name
-                # logger.info(f'Tagging action: Pulling original image {full_name}')
-                assert full_name.count(':') == 1, f"{full_name} should have exactly one :"
-                img, tag = full_name.split(':')
-                img = img.lstrip()
-                tag = tag.rstrip()
-                __docker_client.images.pull(img, tag)
+            __docker_client.images.pull(img, tag)
 
-            return True
-        except Exception as e:
-            logger.error(f"Tagging action ERROR: Fail to pull {currImage}")
-            return False
-        # all images pulled
         return True
+    except Exception as e:
+        logger.error(f"Tagging action ERROR: Fail to pull {currImage}")
+        return False
+    # all images pulled
+    return True
+
+
+def pull_build_cache(node: Node) -> bool:
+    """Go to Dockerhub and attempt the following 2 things:
+    1. try to pull node.full_image_name
+    2. if step 1 failed, pull node.stable_image_name
+
+    Note:
+        step 1 is for cache usage + determine rebuild (for a fresh branch, even if an image
+            receives no change now, we want to rebuild it to protect dependency 
+            and be able to use cache later)
+        step 2 is purely for cache usage. We don't really care if it fails
+
+    Returns:
+        bool: whether step 1 is successful. 
+    """
+    full_name = node.full_image_name
+    try:
+        assert full_name.count(':') == 1, f"{full_name} should have exactly one :"
+        img, tag = full_name.split(':')
+        img = img.lstrip()
+        tag = tag.rstrip()
+
+        # step 1
+        __docker_client.images.pull(img, tag)
+    except AssertionError as ae:
+        logger.error(f"image format wrong: {ae}")
+        return False
+    except Exception as e:
+        logger.info(f"Fail to pull {full_name}, will try {node.stable_image_name}")
+        # TODO: change stable_tag from "<prefix>-stable" to "stable" after we implement global stable tag
+        prefix, suffix = tag.split('-', 1)
+        stable_tag = f"{prefix}-stable"
+        # step 2
+        try:
+            __docker_client.images.pull(img, stable_tag)
+        except Exception as e_stable:
+            logger.error(f"Fail to pull {node.stable_image_name}. We suggest use an existing BASE_TAG in spec.")
+        return False
+    else:
+        # step 1 successful
+        return True
+
 
 def tag_stable(orig_fullname: str, tag_replace: str) -> Tuple[str, bool]:
     """guarding wrapper around actual docker.image.tag()
