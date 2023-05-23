@@ -3,6 +3,7 @@ import logging
 import json
 from typing import Tuple, Optional, List
 import pandas as pd
+import subprocess
 
 from scripts.tree import Node
 from scripts.utils import get_logger, store_var, get_time_duration
@@ -295,16 +296,21 @@ def prepull_tagging_images(orig_images: List[str]) -> bool:
     return True
 
 
+def on_Dockerhub(img: str, tag: str) -> bool:
+    command = ["docker", "manifest", "inspect", f"{img}:{tag}"]
+    result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    # bash command returns 0 on success (found image), 1 on failure
+    return result.returncode == 0
+
 def pull_build_cache(node: Node) -> bool:
     """Go to Dockerhub and attempt the following 2 things:
-    1. try to pull node.full_image_name
-    2. if step 1 failed, pull node.stable_image_name
+    1. see if self (same image:tag) exists on Dockerhub
+    2. Act accordingly, see inline comment below
 
     Note:
-        step 1 is for cache usage + determine rebuild (for a fresh branch, even if an image
-            receives no change now, we want to rebuild it to protect dependency 
-            and be able to use cache later)
-        step 2 is purely for cache usage. We don't really care if it fails
+        This function helps decide: 
+            whether to pull the cache; 
+            which cache version (self or stable) to use;
 
     Returns:
         bool: whether step 1 is successful. 
@@ -315,26 +321,30 @@ def pull_build_cache(node: Node) -> bool:
         img, tag = full_name.split(':')
         img = img.lstrip()
         tag = tag.rstrip()
-
-        # step 1
-        __docker_client.images.pull(img, tag)
+        # check existence on Dockerhub before pull
+        found = on_Dockerhub(img, tag)
+        if found:
+            if not node.rebuild:
+                # cache exists, but no plan to rebuild this run
+                return True
+            # needs rebuild and has cache: pull cache
+            __docker_client.images.pull(img, tag)
+            return True
+        else:
+            # no cache: pull stable cache and let caller change .rebuild to True
+            logger.info(f"{full_name} not on Dockerhub yet, will try {node.stable_image_name}")
+            # TODO: change stable_tag from "<prefix>-stable" to "stable" after we implement global stable tag
+            prefix, suffix = tag.split('-', 1)
+            stable_tag = f"{prefix}-stable"
+            __docker_client.images.pull(img, stable_tag)
+            return False
+    
     except AssertionError as ae:
         logger.error(f"image format wrong: {ae}")
         return False
     except Exception as e:
-        logger.info(f"Fail to pull {full_name}, will try {node.stable_image_name}")
-        # TODO: change stable_tag from "<prefix>-stable" to "stable" after we implement global stable tag
-        prefix, suffix = tag.split('-', 1)
-        stable_tag = f"{prefix}-stable"
-        # step 2
-        try:
-            __docker_client.images.pull(img, stable_tag)
-        except Exception as e_stable:
-            logger.error(f"Fail to pull {node.stable_image_name}. We suggest use an existing BASE_TAG in spec.")
+        logger.error(f"Fail to pull {node.stable_image_name}. Please double check BASE_TAG in spec.")
         return False
-    else:
-        # step 1 successful
-        return True
 
 
 def tag_stable(orig_fullname: str, tag_replace: str) -> Tuple[str, bool]:

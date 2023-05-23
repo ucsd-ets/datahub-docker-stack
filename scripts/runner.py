@@ -189,9 +189,6 @@ def build_and_test_containers(
                 })
                 q.append(child)
 
-            ## Can docker build go to Dockerhub and fetch existing image:tag for FROM (at Dockerfile first line)?
-            # node.rebuild = node.rebuild or (len(node.children) > 0 and not docker_adapter.image_tag_exists(node) )
-            # logger.info(f"### {node.image_name} rebuild after check? {node.rebuild}")  # TO REMOVE
             node_order.append(node)
 
     results = []        # no matter success or failure
@@ -199,10 +196,11 @@ def build_and_test_containers(
 
     # prepull images inorder to use cache
     # AND mark rebuild for those without cache yet
+    last_t = datetime.datetime.now()  # to log timestamp
     for i, node in enumerate(node_order):
         if not docker_adapter.pull_build_cache(node):
             # self doesn't exist on Dockerhub, rebuild
-            logger.info(f"{node.full_image_name} doesn't exist on Dockerhub. Will rebuild and save futre build time.")
+            logger.info(f"{node.full_image_name} doesn't exist on Dockerhub. Will rebuild and save future build time.")
             node_order[i].rebuild = True
     last_t, m, s = get_time_duration(last_t)
     logger.info(f"TIME: Prepull took {m} mins {s} secs")
