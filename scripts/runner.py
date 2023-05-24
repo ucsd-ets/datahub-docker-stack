@@ -170,6 +170,9 @@ def build_and_test_containers(
     """
 
     docker_adapter.login(username, password)
+    # try login also via CLI to check image existence on Dockerhub later
+    login_cmd = f"docker login -u {username} -p {password}"
+    os.system(login_cmd)
 
     q = [root]
     node_order = []
