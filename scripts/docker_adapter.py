@@ -307,6 +307,8 @@ def on_Dockerhub(img: str, tag: str) -> bool:
 
     command = ["docker", "--config", docker_config_dir, "manifest", "inspect", f"{img}:{tag}"]
     result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    logger.error(f"{result.stdout.decode().strip()}")
+    logger.error(f"{result.stderr.decode().strip()}")
     # bash command returns 0 on success (found image), 1 on failure
     return result.returncode == 0
 
