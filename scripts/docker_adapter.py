@@ -303,14 +303,14 @@ def on_Dockerhub(img: str, tag: str) -> bool:
     Returns:
         bool: exist or not
     """
-    docker_config_dir = os.path.expanduser("~/.docker")  # Path to the Docker configuration directory
 
-    command = ["docker", "--config", docker_config_dir, "manifest", "inspect", f"{img}:{tag}"]
-    result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    logger.error(f"{result.stdout.decode().strip()}")
-    logger.error(f"{result.stderr.decode().strip()}")
+    # command = ["docker", "manifest", "inspect", f"{img}:{tag}"]
+    command = f"docker manifest inspect {img}:{tag} > /dev/null"
+    # result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    exit_code = os.system(command)
     # bash command returns 0 on success (found image), 1 on failure
-    return result.returncode == 0
+    # return result.returncode == 0
+    return exit_code == 0
 
 def pull_build_cache(node: Node) -> bool:
     """Go to Dockerhub and attempt the following 2 things:
