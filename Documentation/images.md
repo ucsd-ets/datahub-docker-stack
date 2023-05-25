@@ -65,3 +65,31 @@ while constructing a "year.quater-<branch_name>" tag as `ARG` at run time.
 image again, we only build the child image, if on the same branch, because the tag remains the same.
 - `stable` tags will be given to the latest-built production-ready image in each image/plan for
 usage. This process is manually triggered with on Github Action. See [tag.yml](actions.md#tagyml)
+
+## Image Build Cache
+
+Cache is critical in terms of build efficiency. Based on our experiment, doing a full rebuild from scratch takes around 50 mins, while a rebuild utilizing cache takes only 15 mins.
+
+**What is Cache?**
+
+In docker, cache can be loosely defined as "image layers that already exist in your storage". Docker image is composed of layers, each corresponding to one command in the Dockerfile. To have a better idea, you may fetch a Dockerfile (better non-trivial) to your current dir and try the following:
+
+1. `$docker build -t test_img:fresh .` (The . is part of the command saying the Dockerfile is in the current dir) You will find each `STEP` like installation is actually carried out and will take some time.
+2. `$docker build -t test_img:repeat .` We build again without changing the Dockerfile at all. This time you will find the build process finishes instantly, because each `STEP` is `CACHED`.
+3. Add some trivial command, like `RUN echo "Hello"` at the second last step, then run `$docker build -t test_img:new_step .` You will find that all commands before your new command still utilize cache, but the last command which comes after the new one does not.
+
+**Local or Remote Cache?**
+
+When building images locally, Docker will automatically utilize the cached layers, because those layers are presented somewhere in the local storage. But this doesn't hold for Github Actions, because after each action run, our runtime environment will be deallocated and the next run will start from a new environment.
+
+There is a "local" solution, which is leveraging the [`Caches Management` provided by Github](https://github.com/ucsd-ets/datahub-docker-stack/actions/caches). The problem is cache stroage there is limited to 5GB and this is much lower than our need.
+
+Another choice, or a workaround, is to use "remote" cache. This means we `docker pull` the image beforehand such that `docker build` can utilize the cache. This is less efficient than local cache, and may be worse than not using cache if download is slow. We use this approach, because the download bandwidth offered by Github is good and the time we spend on pulling/downloading is a lot shorter than no-cache build time.
+
+**Logic: what to do in different cache scenarios of an image?**
+
+In each action run, for each image, we always perform a [Dockerhub-existence check](/scripts/docker_adapter.py#L299). This is a very cheap `$docker manifest inspect` command. It will check whether the same image with the same tag (the branch name) is presented on Dockerhub. This is the best-choice cache.
+
+1. If it's there, but `node.rebuild` is false, we won't bother pulling the image.
+2. If it's there, and `node.rebuild` is true, we pull the image and use it as cache later.
+3. If it's not there, we mark `node.rebuild` to true even if it's false, because this "unnecessary" rebuild will provide cache and save build time in future runs. Then we pull the stable image `<node.image_name>:stable` and use it as cache later. This is the sub-optimal cache choice because the image definition on a dev branch can be quite different from the current stable definition, and thus not many layers are cached.
