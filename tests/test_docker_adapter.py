@@ -79,7 +79,7 @@ class TestDocker(unittest.TestCase):
         @patch('scripts.docker_adapter.__docker_client', images=mock_images, close=mock_close)
         def run_test(pos_arg):
             # NOTE: need pos_arg when we @patch with keyword-arg
-            return internal_docker.prepull_images(self.orig_images)
+            return internal_docker.prepull_tagging_images(self.orig_images)
 
         result = run_test()
         return (result, mock_pull, mock_close)

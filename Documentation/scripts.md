@@ -67,7 +67,8 @@ After `python3 main.py` is called from main.yml, it does a few things to ensure 
 
 ### 2. Core: [`build_and_test_containers()`](/scripts/runner.py#L130)
 
-- It logins to the Docker client with Github secrets **DOCKERHUB_TOKEN** and **DOCKERHUB_USER**. [`login()`](/scripts/docker_adapter.py#L86)
+- It logs into the Docker client of Python SDK with Github secrets **DOCKERHUB_TOKEN** and **DOCKERHUB_USER**. [`login()`](/scripts/docker_adapter.py#L86)
+- It also logs into the Docker daemon directly using `docker login` CLI. This enables the checking of existence of an image with a particular tag on Dockerhub, see [build cache explanation](/Documentation/images.md#image-build-cache) and [its implementation](/scripts/docker_adapter.py#L315) for more details.
 - It performs a BFS on the build-info tree and does the following to each Node if isn't marked skipped:
   - build: The corresponding Dockerfile at `images/<image_name>` is run to build an image. [`build()`](/scripts/docker_adapter.py#L31)
   - basic test: Image-specific tests in `images/<image_name>/tests/` and common tests (apply to all images) in `images/tests_common/` are executed within the Docker container. [`run_basic_test()`](/scripts/runner.py#L94)

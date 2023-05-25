@@ -1,14 +1,12 @@
 ARG BASE_TAG=latest
 FROM ucsdets/datahub-base-notebook:${BASE_TAG}
-#$BASE_TAG
-#2021.3-31e0c4e
 
 USER root
 
 # Follow instructions atL https://www.rstudio.com/products/rstudio/download-server/
 ENV RSTUDIO_PKG=rstudio-server-1.4.1717-amd64.deb \
-    RSTUDIO_URL=https://download2.rstudio.org/server/bionic/amd64/${RSTUDIO_PKG} \
     RSESSION_PROXY_RSTUDIO_1_4=true
+ENV RSTUDIO_URL=https://download2.rstudio.org/server/bionic/amd64/${RSTUDIO_PKG}
 
 # rstudio installation expects R to live under /usr/bin, /bin/, etc.
 RUN ln -s /opt/conda/bin/R /usr/bin/R && \
@@ -39,9 +37,8 @@ RUN ( echo 'LD_PRELOAD=/opt/k8s-support/lib/libnss_wrapper.so'; echo 'NSS_WRAPPE
 
 # The desktop package uses /usr/lib/rstudio/bin
 ENV PATH="${PATH}:/usr/lib/rstudio-server/bin" \
+    SHELL=/bin/bash \ 
     LD_LIBRARY_PATH="/usr/lib/R/lib:/lib:/usr/lib/x86_64-linux-gnu:/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/amd64/server:/opt/conda/lib/R/lib"
-
-ENV SHELL=/bin/bash
 
 COPY ./lib /opt/k8s-support/lib
 

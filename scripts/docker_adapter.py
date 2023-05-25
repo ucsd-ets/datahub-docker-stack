@@ -3,6 +3,7 @@ import logging
 import json
 from typing import Tuple, Optional, List
 import pandas as pd
+import subprocess
 
 from scripts.tree import Node
 from scripts.utils import get_logger, store_var, get_time_duration
@@ -65,7 +66,7 @@ def build(node: Node) -> Tuple[bool, str]:
             nocache=False,
             decode=True,
             rm=False,
-            cache_from=[node.full_image_name]
+            cache_from=[node.full_image_name, node.stable_image_name]
         ):
             # line is of type dict
             content_str = line.get('stream', '').strip()    # sth like 'Step 1/20 : ARG PYTHON_VERSION=python-3.9.5'
@@ -267,12 +268,11 @@ def prune(full_image_name: str) -> int:
         __docker_client.close()
 
 
-def prepull_images(orig_images: List[str], allow_failure: bool = False) -> bool:
+def prepull_tagging_images(orig_images: List[str]) -> bool:
     """pull down all the images to docker in order to tag later
 
     Args:
         orig_images (List[str]): each is like 'ucsdets/datahub-base-notebook:2023.2-<branch_name>'
-        allow_failure (bool, default to False): whether we allow pulling non-existing image
 
     Returns:
         bool: success or failure
@@ -290,13 +290,71 @@ def prepull_images(orig_images: List[str], allow_failure: bool = False) -> bool:
 
         return True
     except Exception as e:
-        if allow_failure:
-            logger.info(f"Fail to pull {currImage}, cannot use cache during build")
-        else:
-            logger.error(f"Tagging action: Fail to pull {currImage}")
+        logger.error(f"Tagging action ERROR: Fail to pull {currImage}")
         return False
-    finally:
-        __docker_client.close()
+    # all images pulled
+    return True
+
+
+def on_Dockerhub(img: str, tag: str) -> bool:
+    """Check whether img:tag exist on the Dockerhub. 
+    Helper called by pull_build_cache()
+
+    Returns:
+        bool: exist or not
+    """
+
+    # command = ["docker", "manifest", "inspect", f"{img}:{tag}"]
+    command = f"docker manifest inspect {img}:{tag} > /dev/null"
+    # result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    exit_code = os.system(command)
+    # bash command returns 0 on success (found image), 1 on failure
+    # return result.returncode == 0
+    return exit_code == 0
+
+def pull_build_cache(node: Node) -> bool:
+    """Go to Dockerhub and attempt the following 2 things:
+    1. see if self (same image:tag) exists on Dockerhub
+    2. Act accordingly, see inline comment below
+
+    Note:
+        This function helps decide: 
+            whether to pull the cache; 
+            which cache version (self or stable) to use;
+
+    Returns:
+        bool: whether self cache exists
+    """
+    full_name = node.full_image_name
+    try:
+        assert full_name.count(':') == 1, f"{full_name} should have exactly one :"
+        img, tag = full_name.split(':')
+        img = img.lstrip()
+        tag = tag.rstrip()
+        # check existence on Dockerhub before pull
+        found = on_Dockerhub(img, tag)
+        if found:
+            if not node.rebuild:
+                # cache exists, but no plan to rebuild this run
+                return True
+            # needs rebuild and has cache: pull cache
+            __docker_client.images.pull(img, tag)
+            return True
+        else:
+            # no cache: pull stable cache and let caller change .rebuild to True
+            logger.info(f"{full_name} not on Dockerhub yet, will try {node.stable_image_name}")
+            # TODO: change stable_tag from "<prefix>-stable" to "stable" after we implement global stable tag
+            prefix, suffix = tag.split('-', 1)
+            stable_tag = f"{prefix}-stable"
+            __docker_client.images.pull(img, stable_tag)
+            return False
+    
+    except AssertionError as ae:
+        logger.error(f"image format wrong: {ae}")
+        return False
+    except Exception as e:
+        logger.error(f"Fail to pull {node.stable_image_name}. Please double check BASE_TAG in spec.")
+        return False
 
 
 def tag_stable(orig_fullname: str, tag_replace: str) -> Tuple[str, bool]:

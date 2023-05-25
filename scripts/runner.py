@@ -170,6 +170,9 @@ def build_and_test_containers(
     """
 
     docker_adapter.login(username, password)
+    # try login also via CLI to check image existence on Dockerhub later
+    login_cmd = f"echo $DOCKERHUB_TOKEN | docker login -u {username} --password-stdin"
+    os.system(login_cmd)
 
     q = [root]
     node_order = []
@@ -189,19 +192,23 @@ def build_and_test_containers(
                 })
                 q.append(child)
 
-            # determine bool rebuild at runtime AFTER
-            # pushing children to the queue
-            # This ensures a branch-first build of parent NOT trigger
-            # an unnecessary child rebuild
-            node.rebuild = node.rebuild or not docker_adapter.image_tag_exists(node)
-            logger.info(f"### {node.image_name} rebuild after check? {node.rebuild}")  # TO REMOVE
             node_order.append(node)
 
     results = []        # no matter success or failure
     full_names = []     # a list of all-success image full names
 
     # prepull images inorder to use cache
-    docker_adapter.prepull_images([node.full_image_name for node in node_order], allow_failure=True)
+    # AND mark rebuild for those without cache yet
+    last_t = datetime.datetime.now()  # to log timestamp
+    for i, node in enumerate(node_order):
+        if not docker_adapter.pull_build_cache(node):
+            # self doesn't exist on Dockerhub, rebuild
+            logger.info(f"{node.full_image_name} doesn't exist on Dockerhub. Will rebuild and save future build time.")
+            node_order[i].rebuild = True
+    last_t, m, s = get_time_duration(last_t)
+    logger.info(f"TIME: Prepull took {m} mins {s} secs")
+
+    # MAIN loop: look at image one by one
     for node in node_order:
         last_t = datetime.datetime.now()  # to log timestamp
         try:
