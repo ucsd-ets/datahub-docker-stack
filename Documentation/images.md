@@ -82,7 +82,7 @@ In docker, cache can be loosely defined as "image layers that already exist in y
 
 When building images locally, Docker will automatically utilize the cached layers, because those layers are presented somewhere in the local storage. But this doesn't hold for Github Actions, because after each action run, our runtime environment will be deallocated and the next run will start from a new environment.
 
-There is a "local" solution, which is leveraging the [`Caches Management` provided by Github](https://github.com/ucsd-ets/datahub-docker-stack/actions/caches). The problem is cache stroage there is limited to 5GB and this is much lower than our need.
+There is a "local" solution, which is leveraging the [`Caches Management` provided by Github](https://github.com/ucsd-ets/datahub-docker-stack/actions/caches). The problem is cache storage there is limited to 5GB and this is much lower than our need.
 
 Another choice, or a workaround, is to use "remote" cache. This means we `docker pull` the image beforehand such that `docker build` can utilize the cache. This is less efficient than local cache, and may be worse than not using cache if download is slow. We use this approach, because the download bandwidth offered by Github is good and the time we spend on pulling/downloading is a lot shorter than no-cache build time.
 
