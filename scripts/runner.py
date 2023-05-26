@@ -203,7 +203,8 @@ def build_and_test_containers(
     for i, node in enumerate(node_order):
         if not docker_adapter.pull_build_cache(node):
             # self doesn't exist on Dockerhub, rebuild
-            logger.info(f"{node.full_image_name} doesn't exist on Dockerhub. Will rebuild and save future build time.")
+            logger.info(f"{node.full_image_name} doesn't exist on Dockerhub. \
+                It will be built from stable image's cache and save future build time.")
             node_order[i].rebuild = True
     last_t, m, s = get_time_duration(last_t)
     logger.info(f"TIME: Prepull took {m} mins {s} secs")
