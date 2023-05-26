@@ -31,7 +31,6 @@ def run_outputs(node: Node, all_info_cmds:Dict) -> List[Dict]:
     """
     # Create docker container
     logger.info(f"Creating container for image {node.full_image_name} ...")
-    logger.info(f"Following images exist: {__docker_client.images.list()}")
     outputs = []
 
     try:

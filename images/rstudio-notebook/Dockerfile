@@ -1,14 +1,12 @@
 ARG BASE_TAG=latest
 FROM ucsdets/datahub-base-notebook:${BASE_TAG}
-#$BASE_TAG
-#2021.3-31e0c4e
 
 USER root
 
 # Follow instructions atL https://www.rstudio.com/products/rstudio/download-server/
-ENV RSTUDIO_PKG=rstudio-server-1.4.1717-amd64.deb
+ENV RSTUDIO_PKG=rstudio-server-1.4.1717-amd64.deb \
+    RSESSION_PROXY_RSTUDIO_1_4=true
 ENV RSTUDIO_URL=https://download2.rstudio.org/server/bionic/amd64/${RSTUDIO_PKG}
-ENV RSESSION_PROXY_RSTUDIO_1_4=true
 
 # rstudio installation expects R to live under /usr/bin, /bin/, etc.
 RUN ln -s /opt/conda/bin/R /usr/bin/R && \
@@ -38,18 +36,16 @@ RUN mkdir -p /etc/rstudio && echo 'auth-minimum-user-id=100' >> /etc/rstudio/rse
 RUN ( echo 'LD_PRELOAD=/opt/k8s-support/lib/libnss_wrapper.so'; echo 'NSS_WRAPPER_PASSWD=/tmp/passwd.wrap'; echo 'NSS_WRAPPER_GROUP=/tmp/group.wrap' ) >> /opt/conda/lib/R/etc/Renviron.site
 
 # The desktop package uses /usr/lib/rstudio/bin
-ENV PATH="${PATH}:/usr/lib/rstudio-server/bin"
-ENV LD_LIBRARY_PATH="/usr/lib/R/lib:/lib:/usr/lib/x86_64-linux-gnu:/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/amd64/server:/opt/conda/lib/R/lib"
-
-ENV SHELL=/bin/bash
+ENV PATH="${PATH}:/usr/lib/rstudio-server/bin" \
+    SHELL=/bin/bash \ 
+    LD_LIBRARY_PATH="/usr/lib/R/lib:/lib:/usr/lib/x86_64-linux-gnu:/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/amd64/server:/opt/conda/lib/R/lib"
 
 COPY ./lib /opt/k8s-support/lib
 
 RUN R -e "install.packages('rjson', repos='http://cran.rstudio.com/')" && \
     R -e "install.packages('session', repos='http://cran.rstudio.com/')"
 
-COPY ./test /home/jovyan/
-COPY ./integration_tests /home/jovyan/
+COPY ./test ./integration_tests /home/jovyan/
 #/usr/share/datahub/tests/datascience-rstudio-docker
 
 USER $NB_USER

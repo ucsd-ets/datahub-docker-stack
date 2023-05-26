@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
     inputs:
       originalTag: 
-        description: 'Orginal tag of images to be stable'
-        default: '2099.3-somehash'
+        description: 'Orginal tag; please ensure its appearance on Wiki homepage'
+        default: '2099.3-<branch_name>'
         required: true
       dryRun:
         type: boolean
@@ -18,6 +18,7 @@ jobs:
     uses: ./.github/workflows/test_gpu.yml
     with:
       originalTag: ${{ github.event.inputs.originalTag }}
+      dryRun: ${{ github.event.inputs.dryRun == 'true' }}
     secrets:
       inherit
     
@@ -25,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: gpu_test
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Docker Cleanup
         run: |
@@ -33,7 +34,7 @@ jobs:
           docker container prune -f
 
       - name: Set up Python 3.8
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: 3.8
 
@@ -56,7 +57,7 @@ jobs:
           echo "PYTHONUNBUFFERED=TRUE" >> $GITHUB_ENV
 
       - name: Clone Wiki
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: ${{github.repository}}.wiki
           path: wiki
@@ -106,14 +107,14 @@ jobs:
             github.ref == 'refs/heads/main' ||
             github.ref == 'refs/heads/refractor_buildtest'
           )
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@v3
         with:
           commit_message: '[ci skip] Automated publish for ${{github.sha}}'
           repository: wiki/
 
       - name: Archive artifacts and logs
         if: ${{ always() }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: tag-artifacts
           path: |

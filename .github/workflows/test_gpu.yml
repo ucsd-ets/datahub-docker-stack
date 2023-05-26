@@ -15,6 +15,11 @@ on:
         description: "Tag to be tested."
         default: "2099.3-somehash"
         required: true
+      dryRun:
+        type: boolean
+        description: 'dry-run: retrieve original image names ONLY'
+        default: false
+        required: false
   workflow_call:
     inputs:
       originalTag:
@@ -22,6 +27,11 @@ on:
         default: "2099.3-somehash"
         required: true
         type: string
+      dryRun:
+        type: boolean
+        description: 'dry-run: retrieve original image names ONLY'
+        default: false
+        required: true
 
 jobs:
   docker-pipeline:
@@ -30,11 +40,12 @@ jobs:
       !contains(github.event.head_commit.message , 'skip ci') &&
       !contains(github.event.pull_request.title, 'skip ci')
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
       - name: SSH to login
+        if: ${{ github.event.inputs.dryRun == 'false'}}
         run: |
           echo "Going into dsmlp-login and running pytest."
           echo "Using hash ${{ github.event.inputs.originalTag }}."

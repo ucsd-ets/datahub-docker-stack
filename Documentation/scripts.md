@@ -56,17 +56,19 @@ After `python3 main.py` is called from main.yml, it does a few things to ensure 
 
 - It parses and stores static information defined in [spec.yml](/images/spec.yml). For more details, see [images.md](./images.md/#image-stack-details) for what information it contains. [`load_spec()`](/scripts/tree.py#L41)
 - It detects which files have been changed, which dictates which images will be rebuilt. [`get_changed_images()`](scripts/git_helper.py#L44)
-  - Currently, a change to the base image (datahub-base-notebook) will trigger a full rebuild on all children, and a change to one child image will rebuild the parent image (so the child has something to inherit from in the build process) but not the siblings.
-  - Detection is done on the basis of comparing the current commit pushed and the last commit pushed within the current branch. I.e. if any file was changed in `images/scipy-ml-notebook` in the current commit, but a file wasn't changed in any of the other image subdirs of `images`, the only scipy-ml and the base notebook will be updated. But there are some extra rules:
+  - Currently, a change to the base image (datahub-base-notebook) will trigger a full rebuild on all children, but a change to one child image will NOT rebuild the parent image.
+  - Detection is done on the basis of comparing the current commit pushed and the last commit pushed within the current branch. I.e. if any file was changed in `images/scipy-ml-notebook` in the current commit, but a file wasn't changed in any of the other image subdirs of `images`, then only scipy-ml will be updated. But there are some extra rules:
     - If the action is triggered by a PR, then it will check for ALL files changed in the PR instead of just the latest commit in the PR.
     - If you put "full rebuild" in your commit message, all of this logic is ignored and all images are rebuilt.
+    - If this is the first Github Actions run of the current branch, all images are rebuilt.
     - If the commit was done to main, a full rebuild is done anyway since these images may go to production.
-- It detects the 8-char short-hash of the GitHub commit used to trigger the workflow (i.e. ace12319). This hash is used to suffix the tags of the images to be pushed. [`commit_hash_tag_shortened()`](scripts/git_helper.py#L25)
-- It builds the root node that contains information about all of the images to be built and pushed, which is passed off to the runner. [`build_tree()`](/scripts/tree.py#L59)
+- This current branch name is used to suffix the tags of the images to be pushed. [`get_branch_name()`](scripts/git_helper.py#L39)
+- It constructs the root node that contains information about all of the images to be built and pushed, which is passed off to the runner. [`build_tree()`](/scripts/tree.py#L59)
 
 ### 2. Core: [`build_and_test_containers()`](/scripts/runner.py#L130)
 
-- It logins to the Docker client with Github secrets **DOCKERHUB_TOKEN** and **DOCKERHUB_USER**. [`login()`](/scripts/docker_adapter.py#L86)
+- It logs into the Docker client of Python SDK with Github secrets **DOCKERHUB_TOKEN** and **DOCKERHUB_USER**. [`login()`](/scripts/docker_adapter.py#L86)
+- It also logs into the Docker daemon directly using `docker login` CLI. This enables the checking of existence of an image with a particular tag on Dockerhub, see [build cache explanation](/Documentation/images.md#image-build-cache) and [its implementation](/scripts/docker_adapter.py#L315) for more details.
 - It performs a BFS on the build-info tree and does the following to each Node if isn't marked skipped:
   - build: The corresponding Dockerfile at `images/<image_name>` is run to build an image. [`build()`](/scripts/docker_adapter.py#L31)
   - basic test: Image-specific tests in `images/<image_name>/tests/` and common tests (apply to all images) in `images/tests_common/` are executed within the Docker container. [`run_basic_test()`](/scripts/runner.py#L94)

@@ -31,21 +31,44 @@ jobs:
       !contains(github.event.head_commit.message , 'skip ci') &&
       !contains(github.event.pull_request.title, 'skip ci')
     steps:
-      - uses: actions/checkout@v2
+      # - name: Maximize build space
+      #   uses: easimon/maximize-build-space@master
+      #   with:
+      #     root-reserve-mb: 512
+      #     swap-size-mb: 1024
+      #     remove-dotnet: 'false'
+      #     remove-android: 'false'
+      #     remove-haskell: 'false'
+      #     remove-codeql: 'false'
+      #     remove-docker-images: 'false'
+
+      - name: Checkout after Free Space
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      
+
+      - name: Check Free Space 0
+        run: |
+          echo "Free space:"
+          df -h
+
       - name: Docker/ENV cleanup Cleanup
         run: |
           docker image prune -a -f
           docker container prune -f
+          sudo rm -rf /usr/local/lib/android
           sudo rm -rf /usr/share/dotnet
           sudo rm -rf /opt/ghc
           sudo rm -rf "/usr/local/share/boost"
           sudo rm -rf "$AGENT_TOOLSDIRECTORY"
 
+      - name: Check Free Space 1
+        run: |
+          echo "Free space:"
+          df -h
+
       - name: Set up Python 3.8
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: 3.8
 
@@ -81,11 +104,16 @@ jobs:
           mkdir -p logs
 
       - name: Clone Wiki
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: ${{github.repository}}.wiki
           path: wiki
 
+      - name: Check Free Space 2
+        run: |
+          echo "Free space:"
+          df -h
+      
       - name: Build stack
         env:
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -95,6 +123,11 @@ jobs:
         run: |
           python3 scripts/main.py
 
+      - name: Check Free Space 3
+        run: |
+          echo "Free space:"
+          df -h
+
       - name: Push Wiki to GitHub
         if: >
           !contains(github.base_ref , 'test') &&
@@ -103,14 +136,14 @@ jobs:
           (
             github.ref == 'refs/heads/main'
           )
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@v3
         with:
           commit_message: "[ci skip] Automated publish for ${{github.sha}}"
           repository: wiki/
 
       - name: Archive artifacts and logs
         if: ${{ always() }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: build-artifacts
           path: |

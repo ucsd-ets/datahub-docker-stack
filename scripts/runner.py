@@ -1,4 +1,4 @@
-from scripts.utils import get_logger
+from scripts.utils import get_logger, get_time_duration
 from dataclasses import dataclass, field
 from typing import List, Dict, Tuple
 from io import StringIO
@@ -7,6 +7,7 @@ import yaml
 import pytest
 import logging
 import sys
+import datetime
 
 
 from scripts.tree import Node, build_tree, load_spec
@@ -169,6 +170,9 @@ def build_and_test_containers(
     """
 
     docker_adapter.login(username, password)
+    # try login also via CLI to check image existence on Dockerhub later
+    login_cmd = f"echo $DOCKERHUB_TOKEN | docker login -u {username} --password-stdin"
+    os.system(login_cmd)
 
     q = [root]
     node_order = []
@@ -177,7 +181,7 @@ def build_and_test_containers(
         for _ in range(len(q)):
             node = q.pop(0)
             node.image_tag = tag_prefix + '-' + node.git_suffix
-            node_order.append(node)
+            logger.info(f"### {node.image_name} rebuild before check? {node.rebuild}")  # TO REMOVE
 
             for child in node.children:
                 if node.rebuild:
@@ -188,18 +192,26 @@ def build_and_test_containers(
                 })
                 q.append(child)
 
-    # temp fix: base/parent should be built whenever >=1 child is built
-    # since we use {BASE_TAG}-{GIT_HASH} as tag
-    # ONLY works for our single-level dependency
-    if any(node.rebuild for node in node_order):
-        # this is root.
-        if not node_order[0].rebuild:
-            node_order[0].rebuild = True
-            logger.info(f"Root/Base image {root.image_name} has to be rebuilt due to child change.")
+            node_order.append(node)
 
     results = []        # no matter success or failure
     full_names = []     # a list of all-success image full names
+
+    # prepull images inorder to use cache
+    # AND mark rebuild for those without cache yet
+    last_t = datetime.datetime.now()  # to log timestamp
+    for i, node in enumerate(node_order):
+        if not docker_adapter.pull_build_cache(node):
+            # self doesn't exist on Dockerhub, rebuild
+            logger.info(f"{node.full_image_name} doesn't exist on Dockerhub. \
+                It will be built from stable image's cache and save future build time.")
+            node_order[i].rebuild = True
+    last_t, m, s = get_time_duration(last_t)
+    logger.info(f"TIME: Prepull took {m} mins {s} secs")
+
+    # MAIN loop: look at image one by one
     for node in node_order:
+        last_t = datetime.datetime.now()  # to log timestamp
         try:
             logger.info(f'Processing node = {node.image_name}')
 
@@ -227,6 +239,8 @@ def build_and_test_containers(
                 break
             else:
                 logger.info(f"successfully built {node.full_image_name}")
+            last_t, m, s = get_time_duration(last_t)
+            logger.info(f"TIME: Build took {m} mins {s} secs")
         
             # basic and common tests
             logger.info(f"Testing {node.full_image_name}")
@@ -240,7 +254,8 @@ def build_and_test_containers(
                 break
             else:
                 logger.info(f"{node.full_image_name} passed common tests")
-
+            last_t, m, s = get_time_duration(last_t)
+            logger.info(f"TIME: Basic tests took {m} mins {s} secs")
 
             # push step
             resp, report = docker_adapter.push(node)
@@ -252,7 +267,8 @@ def build_and_test_containers(
                 break
             else:
                 logger.info(f"{node.full_image_name} pushed successfully")
-
+            last_t, m, s = get_time_duration(last_t)
+            logger.info(f"TIME: Push took {m} mins {s} secs")
 
             # integration tests
             resp = run_integration_tests(node, result)
@@ -262,6 +278,8 @@ def build_and_test_containers(
                 break
             else:
                 logger.info(f"{node.full_image_name} passed integration tests (or don't have any)")
+            last_t, m, s = get_time_duration(last_t)
+            logger.info(f"TIME: Integration tests took {m} mins {s} secs")
 
             # update wiki page of individual image that
             #       has been successfully [built, pushed, tested]
@@ -273,6 +291,8 @@ def build_and_test_containers(
             else:
                 wiki.write_report(node, image_obj, all_info_cmds)
                 logger.info(f"{node.full_image_name} wiki page is created")
+            last_t, m, s = get_time_duration(last_t)
+            logger.info(f"TIME: Wiki took {m} mins {s} secs")
 
             # if all-passed, the image should appear on Home.md
             logger.info(f"{node.full_image_name} will appear on Home.md")
@@ -286,15 +306,19 @@ def build_and_test_containers(
             results.append(result)
             logger.info(f"*** Build-and-Test main loop: {node.image_name} success ? {result.success}")
 
-            if result.container_details['image_built']:
-                # delete cache and reclaim space
+            ### Try: Prune after all build & test
+            if result.container_details['image_built'] and node.prune:
                 space_reclaimed = convert_size(docker_adapter.prune(node.full_image_name))
                 logger.info(f"Reclaimed {space_reclaimed} from pruning docker")
+                last_t, m, s = get_time_duration(last_t)
+                logger.info(f"TIME: Prune {node.image_name} took {m} mins {s} secs")
+                
         ### EXIT main loop ###
 
     # store results 
+    last_t = datetime.datetime.now()  # to log timestamp
     for result in results:
-        try:
+        try:            
             filename = result.safe_full_image_name
             if 'build_log' in result.container_details:
                 build_log = result.container_details.pop('build_log')

@@ -19,7 +19,7 @@ def run_tagging(
     """runner of tag images github workflow.
 
     Args:
-        original_tag (_type_): by user input in workflow, sth like '2023.2-deadbeef'
+        original_tag (_type_): by user input in workflow, sth like '2023.2-<branch_name>'
         username (str): docker username, passed in as env variable
         password (str): docker token, passed in as env variable
         dry_run (bool, optional): True if we just want to check which images will be tagged. 
@@ -31,16 +31,22 @@ def run_tagging(
 
     docker_adapter.login(username, password)
     
-    assert original_tag and original_tag.count('-') == 1, \
-        "None as input or incorrect tag format (should be like '2023.2-deadbeef')"
+    # <branch_name> may contain more '-', but there must be one before it.
+    assert original_tag and original_tag.count('-') >= 1, \
+        "None as input or incorrect tag format (should be like '2023.2-<branch_name>')"
      
-    ## count('-') == 1 -> split list must have length 2
-    tag_prefix, short_hash = original_tag.rsplit('-', 1) 
+    # split only once from left -> 2 parts
+    tag_prefix, branch_name = original_tag.split('-', 1) 
+    branch_name = branch_name.replace("/", "_")
     stable_tag = tag_prefix + '-stable'
 
     # will only read image info from Home.md
-    history = read_history()
-    original_names = query_images(history, short_hash, tag_prefix)  # a list
+    try:
+        history = read_history()
+        original_names = query_images(history, branch_name, tag_prefix)  # a list
+    except Exception as e:
+        logger.error(f"Error when reading original image information, {e}")
+        return False
 
     if dry_run:
         logger.info(f"Doing dry-run to check original_names: {original_names}")
@@ -51,7 +57,7 @@ def run_tagging(
         return True
 
     logger.info("prepulling images")
-    docker_adapter.prepull_images(orig_images=original_names)
+    docker_adapter.prepull_tagging_images(orig_images=original_names)
     logger.info("finished prepull")
 
     tagged = [] # each element is like 'ucsdets/datahub-base-notebook:2023.2-stable'

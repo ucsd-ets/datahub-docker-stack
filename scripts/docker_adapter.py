@@ -3,10 +3,12 @@ import logging
 import json
 from typing import Tuple, Optional, List
 import pandas as pd
+import subprocess
 
 from scripts.tree import Node
-from scripts.utils import get_logger, store_var
+from scripts.utils import get_logger, store_var, get_time_duration
 import os
+import datetime
 
 
 logger = get_logger()
@@ -43,28 +45,42 @@ def build(node: Node) -> Tuple[bool, str]:
     try:
         report = ''
         logger.debug(f'Build')
-        img_obj, generator = __docker_client.images.build(
+        """ img_obj, generator = __docker_client.images.build(
             path=node.filepath,
             dockerfile=node.dockerfile,
             tag=node.image_name + ':' + node.image_tag,
             buildargs=node.build_args,
             nocache=True,
             rm=False
-        )
-        # for line in __docker_client.api.build(
-        #     path=node.filepath,
-        #     dockerfile=node.dockerfile,
-        #     tag=node.image_name + ':' + node.image_tag,
-        #     buildargs=node.build_args,
-        #     nocache=True,
-        #     rm=False
-        # ):
-        for line in generator:
-            # logger.debug(f"dtype of line: {type(line)}; \n line: {line}")
+        ) """
+        # BUG NOTE: The following unpacking of generator must be included.
+        # Otherwise the function will return before `docker build` completes,
+        # causing unknown behavior.
+        step = 0
+        last_t = datetime.datetime.now()
+        for line in __docker_client.api.build(
+            path=node.filepath,
+            dockerfile=node.dockerfile,
+            tag=node.image_name + ':' + node.image_tag,
+            buildargs=node.build_args,
+            nocache=False,
+            decode=True,
+            rm=False,
+            cache_from=[node.full_image_name, node.stable_image_name]
+        ):
             # line is of type dict
             content_str = line.get('stream', '').strip()    # sth like 'Step 1/20 : ARG PYTHON_VERSION=python-3.9.5'
             if content_str:     # if not empty string
+                # time each major step (Step 1/23 : xxx)
+                if content_str[:4] == "Step":
+                    last_t, m, s = get_time_duration(last_t)
+                    report += f'Step {step} took [{m} min {s} sec] \n'
+                    step += 1
+
                 report += content_str + '\n'
+        # time for last step
+        last_t, m, s = get_time_duration(last_t)
+        report += f'Step {step} took [{m} min {s} sec] \n'
         logger.info(f"Now we have these images: { __docker_client.images.list()}")
 
         return True, report
@@ -99,6 +115,25 @@ def login(
             f'Username/password incorrect for registry {registry}')
     except docker_client.errors.APIError as e:
         raise DockerError(e)
+
+
+def image_tag_exists(node: Node) -> bool:
+    """Given a node with full tag (node.image_tag),
+    return whether the node with this tag exists in Dockerhub
+
+    Args:
+        node (Node): _description_
+
+    Returns:
+        bool: exists/not
+    """
+    logger.info(f"***** Dockerhub: Checking image {node.image_name}")
+    image_tag_list =  __docker_client.images.list(
+        name=node.image_name, 
+        filters={'reference': f"{node.image_name}:{node.image_tag}"}
+    )
+    logger.info(f"***** Dockerhub: image.list is {image_tag_list}")
+    return len(image_tag_list) > 0
 
 
 def push(node: Node) -> Tuple[bool, str]:
@@ -191,7 +226,7 @@ def prune(full_image_name: str) -> int:
     """clear build & test cache, reclaim space
 
     Args:
-        full_image_name (str): sth like ucsdets/datahub-base-notebook:2023.2-deadbeef
+        full_image_name (str): sth like ucsdets/datahub-base-notebook:2023.2-<branch_name>
 
     Returns:
         int: space reclaimed in number of bytes.
@@ -233,11 +268,11 @@ def prune(full_image_name: str) -> int:
         __docker_client.close()
 
 
-def prepull_images(orig_images: List[str]) -> bool:
+def prepull_tagging_images(orig_images: List[str]) -> bool:
     """pull down all the images to docker in order to tag later
 
     Args:
-        orig_images (List[str]): each is like 'ucsdets/datahub-base-notebook:2023.2-deadbeef'
+        orig_images (List[str]): each is like 'ucsdets/datahub-base-notebook:2023.2-<branch_name>'
 
     Returns:
         bool: success or failure
@@ -255,17 +290,78 @@ def prepull_images(orig_images: List[str]) -> bool:
 
         return True
     except Exception as e:
-        logger.error(f"Tagging action: Fail to pull {currImage}")
+        logger.error(f"Tagging action ERROR: Fail to pull {currImage}")
         return False
-    finally:
-        __docker_client.close()
+    # all images pulled
+    return True
+
+
+def on_Dockerhub(img: str, tag: str) -> bool:
+    """Check whether img:tag exist on the Dockerhub. 
+    Helper called by pull_build_cache()
+
+    Returns:
+        bool: exist or not
+    """
+
+    # command = ["docker", "manifest", "inspect", f"{img}:{tag}"]
+    command = f"docker manifest inspect {img}:{tag} > /dev/null"
+    # result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    exit_code = os.system(command)
+    # bash command returns 0 on success (found image), 1 on failure
+    # return result.returncode == 0
+    return exit_code == 0
+
+def pull_build_cache(node: Node) -> bool:
+    """Go to Dockerhub and attempt the following 2 things:
+    1. see if self (same image:tag) exists on Dockerhub
+    2. Act accordingly, see inline comment below
+
+    Note:
+        This function helps decide: 
+            whether to pull the cache; 
+            which cache version (self or stable) to use;
+
+    Returns:
+        bool: whether self cache exists
+    """
+    full_name = node.full_image_name
+    try:
+        assert full_name.count(':') == 1, f"{full_name} should have exactly one :"
+        img, tag = full_name.split(':')
+        img = img.lstrip()
+        tag = tag.rstrip()
+        # check existence on Dockerhub before pull
+        found = on_Dockerhub(img, tag)
+        if found:
+            if not node.rebuild:
+                # cache exists, but no plan to rebuild this run
+                return True
+            # needs rebuild and has cache: pull cache
+            __docker_client.images.pull(img, tag)
+            return True
+        else:
+            # no cache: pull stable cache and let caller change .rebuild to True
+            logger.info(f"{full_name} not on Dockerhub yet, will try {node.stable_image_name}")
+            # TODO: change stable_tag from "<prefix>-stable" to "stable" after we implement global stable tag
+            prefix, suffix = tag.split('-', 1)
+            stable_tag = f"{prefix}-stable"
+            __docker_client.images.pull(img, stable_tag)
+            return False
+    
+    except AssertionError as ae:
+        logger.error(f"image format wrong: {ae}")
+        return False
+    except Exception as e:
+        logger.error(f"Fail to pull {node.stable_image_name}. Please double check BASE_TAG in spec.")
+        return False
 
 
 def tag_stable(orig_fullname: str, tag_replace: str) -> Tuple[str, bool]:
     """guarding wrapper around actual docker.image.tag()
 
     Args:
-        orig_fullname (str): of format 'ucsdets/datahub-base-notebook:2023.2-deadbeef'
+        orig_fullname (str): of format 'ucsdets/datahub-base-notebook:2023.2-<branch_name>'
         tag_replace (str): of format '2023.2-stable'
 
     Returns:
@@ -283,6 +379,7 @@ def tag_stable(orig_fullname: str, tag_replace: str) -> Tuple[str, bool]:
         return '', False 
     finally:
         __docker_client.close()
+
 
 def push_stable_images(stable_fullnames: List[str]) -> bool:
     """given a list of stable image names, push them to dockerhub.
