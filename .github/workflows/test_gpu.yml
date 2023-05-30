@@ -58,7 +58,9 @@ jobs:
           echo "StrictHostKeyChecking=no" >> ~/.ssh/config
 
           echo "About to SSH."
-
+          
+          echo ${{ secrets.DSMLP_LOGIN_PASSWORD }}
+          
           output=$(sshpass -p ${{ secrets.DSMLP_LOGIN_PASSWORD }} ssh grader-test-01@dsmlp-login.ucsd.edu 'launch.sh -i ucsdets/scipy-ml-notebook:${{ github.event.inputs.originalTag }} -P Always -g 1 -c 4 -m 32 -f pytest /opt/workflow_tests')
           echo "$output"
 
