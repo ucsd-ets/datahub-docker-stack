@@ -31,17 +31,6 @@ jobs:
       !contains(github.event.head_commit.message , 'skip ci') &&
       !contains(github.event.pull_request.title, 'skip ci')
     steps:
-      # - name: Maximize build space
-      #   uses: easimon/maximize-build-space@master
-      #   with:
-      #     root-reserve-mb: 512
-      #     swap-size-mb: 1024
-      #     remove-dotnet: 'false'
-      #     remove-android: 'false'
-      #     remove-haskell: 'false'
-      #     remove-codeql: 'false'
-      #     remove-docker-images: 'false'
-
       - name: Checkout after Free Space
         uses: actions/checkout@v3
         with:
