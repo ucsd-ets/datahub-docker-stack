@@ -262,7 +262,9 @@ def query_images(history, tag_suffix, tag_prefix):
         for line in images_this_quarter
         if tag_suffix in line
     ]
-    assert len(filtered_images) > 0, f"No images have tag suffix {tag_suffix} in Home.md"
+    # assert len(filtered_images) > 0, f"No images have tag suffix {tag_suffix} in Home.md"
+    if len(filtered_images) == 0:
+        return []
     return filtered_images[0]
 
 

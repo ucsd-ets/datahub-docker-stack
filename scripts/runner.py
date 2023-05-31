@@ -333,9 +333,6 @@ def build_and_test_containers(
         except Exception as e:
             logger.error(f"couldn't store result of {filename} into artifacts directory, \nerror is {e}")
 
-    # # update Home.md
-    wiki.update_Home(images_full_names=full_names, git_short_hash=root.git_suffix)
-    logger.info("home.md updated")
 
     # only all_pass images in full_names; all images in results
     return len(full_names) == len(results)

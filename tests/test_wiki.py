@@ -118,7 +118,16 @@ class TestWiki(unittest.TestCase):
         with open(path.join('wiki', 'Home.md'), 'w') as f:
             f.write(doc_str)
 
-        images_full_names = [f"test_image_{i}:test_tag" for i in range(1, 5)]
-        git_short_hash = "TestCommit"
-        success = update_Home(images_full_names, git_short_hash)
+        success = update_Home()
+        assert success
+
+    def test_update_Stable(self):
+        # trick to make this test repeatable:
+        # keep a clean Home.md and rename it "Home_original.md"
+        with open(path.join('wiki', 'Stable_Tag_original.md'), 'r') as f:
+            doc_str = f.read()
+        with open(path.join('wiki', 'Stable_Tag.md'), 'w') as f:
+            f.write(doc_str)
+
+        success = update_Stable()
         assert success
