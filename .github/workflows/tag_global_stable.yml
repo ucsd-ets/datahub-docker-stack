@@ -1,6 +1,9 @@
 name: Tag Global Stable Images
 
 on:
+  push:
+    branches:
+      - wiki+global-stable
   workflow_dispatch:
     inputs:
       stablePrefix: 
@@ -73,7 +76,7 @@ jobs:
           --dry_run
           --global_stable
         
-      - name: Tag Images
+      - name: Tag Global Stable
         if: ${{ github.event.inputs.dryRun == 'false' }}
         env:
           DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
