@@ -16,7 +16,6 @@ on:
 jobs:    
   global_stable_tagging:
     runs-on: ubuntu-latest
-    needs: gpu_test
     steps:
       - uses: actions/checkout@v3
 
