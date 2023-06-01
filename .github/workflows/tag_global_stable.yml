@@ -1,9 +1,6 @@
 name: Tag Global Stable Images
 
 on:
-  push:
-    branches:
-      - wiki+global-stable
   workflow_dispatch:
     inputs:
       stablePrefix: 
