@@ -93,3 +93,20 @@ In each action run, for each image, we always perform a [Dockerhub-existence che
 1. If it's there, but `node.rebuild` is false, we won't bother pulling the image.
 2. If it's there, and `node.rebuild` is true, we pull the image and use it as cache later.
 3. If it's not there, we mark `node.rebuild` to true even if it's false, because this "unnecessary" rebuild will provide cache and save build time in future runs. Then we pull the stable image `<node.image_name>:stable` and use it as cache later. This is the sub-optimal cache choice because the image definition on a dev branch can be quite different from the current stable definition, and thus not many layers are cached.
+
+## Wiki: Image Manifest for Users
+
+In Github, there is a Wiki tab that are designed to store documentation of the repo. We decided to put our documentation (you are reading one of them) to in a folder and use Wiki tab for another purpose: store the information of those images in production use. The information of each image will be stored in individual .md files and we will call them "(image) manifests".
+
+Our Wiki consists of the following 3 parts:
+
+1. A [`Home.md`](https://github.com/ucsd-ets/datahub-docker-stack/wiki): it stores the production images in every quarter. Images whose manifests are in `Home.md` has the form of **<image_name>:<year_quarter>-stable**, like **ucsdets/datascience-notebook:2023.2-stable**
+2. A [`Stable_Tag.md`](https://github.com/ucsd-ets/datahub-docker-stack/wiki/Stable-Tag): it stores the production images currently being used and gets updated each quarter. Images whose manifests are in `Stable_Tag.md` has the form of **<image_name>:stable**, like **ucsdets/datascience-notebook:stable**
+3. Individual manifest for each production image. Their file name has the form of **<image_name>-<year_quarter>-stable.md**, like **ucsdets-datascience-notebook-2023.2-stable.md** Note that all `/`, `:`, etc. are replaced with `-` because this filename will also be part of its [url in the Wiki](https://github.com/ucsd-ets/datahub-docker-stack/wiki/ucsdets-datahub-base-notebook-2023.2-stable).
+
+***Why do we need separate stable tag?***
+
+Each production image has a "year-quarter-stable" (we will call it 'stable' in short) in the form of **ucsdets/datascience-notebook:2023.2-stable** and a "global-stable" tag in the form of **ucsdets/datascience-notebook:stable**. The content of them is exactly the same, but we want to keep 2 "copies" or "names" of each image for the following reasons:
+
+1. Stable tag images persists and keeps track of our updates & changes in each quarter. Also, if unfortunately the production images of a quarter contain serious bugs that cannot be fixed immediately, we can roll back to those for previous quarters.
+2. Global-stable tag only holds temporary information "what images are in production usage this quarter?" It gives additional convenience because when we use these images (creating a Docker container with some launch script) elsewhere, we don't need to update the command or script (**......2023.2-stable** to **......2023.3-stable**) on a regular basis.
