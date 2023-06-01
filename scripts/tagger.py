@@ -45,7 +45,7 @@ def run_tagging(
     _spec = get_specs('images/spec.yml')  # a dictionary
     # a list of 'datascience-notebook'
     _images = list(_spec['images'].keys())
-    original_names = ['ucsdets/' + name + original_tag for name in _images]
+    original_names = ['ucsdets/' + name + ':' + original_tag for name in _images]
 
     if dry_run:
         logger.info(f"Doing dry-run to check original_names: {original_names}")
