@@ -2,12 +2,14 @@
 
 The images are built and pushed to [our organization at DockerHub](https://hub.docker.com/orgs/ucsdets/members) through GitHub Actions. We also use GitHub Actions for testing and pushing our stable images to production. [You may also check out scripts.md](/Documentation/scripts.md) for a more indepth look at the Python code underlying these actions.
 
-We have three main actions that we use to develop, test, and deploy our Docker Stack.
+We have four actions that we use to develop, test, and deploy our Docker Stack.
 
 - [main.yml](../.github/workflows/main.yml)
   - Build + push + test images.
 - [tag.yml](../.github/workflows/tag.yml)
-  - Give images the "stable" tag that we use for production images.
+  - Give "stable" tag to production images.
+- [tag_global_stable.yml](../.github/workflows/tag_global_stable.yml)
+  - Give an extra "global-stable" tag to production images.
 - [test_gpu.yml](../.github/workflows/test_gpu.yml)
   - Test GPU code on our scipy-ml-notebook images.
 
@@ -15,7 +17,7 @@ We use a tool called **doit** that allows for more complicated actions to be wri
 
 ## main.yml
 
-### CI/CD Pipeline Overview
+### AUTO Build and Test CI/CD Pipeline Overview
 
 Updating Docker images is very similar to updating an open-source library.
 Build, test, and deploy will be building the Docker images, testing images if
@@ -43,8 +45,7 @@ commit to determine which images' source was changed. This information will be u
 what images need to be updated. The list of changed images is kept in
 `artifacts/IMAGES_CHANGED`.
 - **`Clone Wiki`**: clone the `wiki/`, which is a Github backend hidden folder consisting of
-`Home.md` and all individual pages of successful image build. The primary purpose is to update
-`Home.md` if this is a successful build.
+`Home.md` and all manifest pages of successful image build. The primary purpose is to add image manifest pages of the current build if we are currently on main.
 - **`Build stack`**: perform all core tasks of this pipeline which can be broken down into
 the following steps [See scripts.md for a more in-depth look at this step.](./scripts.md):
   - use git API to check what files have changed.
@@ -54,8 +55,7 @@ the following steps [See scripts.md for a more in-depth look at this step.](./sc
   - login to DockerHub
   - do a BFS on the tree. For each tree Node (corresponding to an image), a list of operations is carried out. See [scripts.py](scripts.md/#the-build-process)
   - store logs in .yml format to build_artifacts
-  - update **the local copy** of `Home.md`; see its function doc
-- **`Push Wiki to GitHub`**: (activate ONLY IF **`Build stack`** is successful AND `git.ref`, which is current branch, is main) make the changes to `Home.md` and new image wiki pages permanent and public.
+- **`Push Wiki to GitHub`**: (activate ONLY IF **`Build stack`** is successful AND `git.ref`, which is current branch, is main) make the new image manifest pages permanent and public.
 - **`Archive artifacts and logs`**: zip `artifacts/`, `manifests/`, and `logs/` and make it ready
   for download at Actions summary page.
 
