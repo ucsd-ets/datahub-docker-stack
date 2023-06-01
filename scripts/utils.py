@@ -11,6 +11,7 @@ import datetime
 from pandas import NaT, Series, read_csv, concat
 from collections import deque
 from typing import List, Dict
+import re
 
 __logger_setup = False
 from typing import List, Dict
@@ -262,7 +263,9 @@ def query_images(history, tag_suffix, tag_prefix):
         for line in images_this_quarter
         if tag_suffix in line
     ]
-    assert len(filtered_images) > 0, f"No images have tag suffix {tag_suffix} in Home.md"
+    # assert len(filtered_images) > 0, f"No images have tag suffix {tag_suffix} in Home.md"
+    if len(filtered_images) == 0:
+        return []
     return filtered_images[0]
 
 
@@ -348,3 +351,20 @@ def get_time_duration(last_t):
     seconds = int(duration % 60)
     last_t = datetime.datetime.now()
     return last_t, minutes, seconds
+
+def branch_to_valid_tag(branch_name: str) -> str:
+    pattern = r'[~!@#$%^&*()+`=[\]{}|\\;:\'",<>/?]'
+    return re.sub(pattern, '-', branch_name)
+
+
+def wiki_doc2link(fullname: str) -> str:
+    """ Helper function
+    Given: ucsdets/rstudio-notebook:2023.1-7d75f9f
+    Returns: [Link](https://github.com/ucsd-ets/datahub-docker-stack/wiki/ucsdets-rstudio-notebook-2023.1-7d75f9f)
+    """
+    repo_url = f"https://github.com/ucsd-ets/datahub-docker-stack"
+    assert fullname.count(':') == 1 and fullname.count('/') <= 1, \
+        f"Wrong image full name format: {fullname}"
+    fullname = fullname.replace(':', '-').replace('/', '-')
+    link = url2mdlink(repo_url + '/wiki/' + fullname, 'Link')
+    return link

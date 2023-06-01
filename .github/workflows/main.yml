@@ -1,4 +1,4 @@
-name: Docker
+name: AUTO Build and Test
 
 env:
   DOCKER_CLIENT_TIMEOUT: "300"

@@ -1,7 +1,7 @@
 from scripts import git_helper
 from scripts.tree import build_tree, load_spec
 from scripts.runner import build_and_test_containers
-from scripts.utils import get_logger
+from scripts.utils import get_logger, branch_to_valid_tag
 from scripts import git_helper
 from scripts.tree import build_tree, load_spec
 from scripts.runner import build_and_test_containers
@@ -21,7 +21,8 @@ def main(dockerhub_username: str, dockerhub_password: str):
     
     # git_hash = git_helper.GitHelper.commit_hash_tag_shortened()
     # code for if/when we decide to change tags to branch names instead of hash refs.
-    git_hash = git_helper.GitHelper.get_branch_name().replace("/", "_")
+    branch_name = git_helper.GitHelper.get_branch_name()
+    git_hash = branch_to_valid_tag(branch_name)
 
     if(git_hash == "stable"):
         logger.error("Please don't name your branch name stable.")

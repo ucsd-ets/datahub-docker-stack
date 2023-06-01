@@ -120,7 +120,9 @@ to run the pipeline. For testing, we use pytest.
 └── tests   # Tests of all backend scripts (in scripts/). See tests.md for more details and its difference to other tests
     ├── __init__.py
     ├── cred.json
+    ├── fake_spec.yml
     ├── test.Dockerfile
+    ├── test_resource.zip
     ├── test_docker_adapter.py
     ├── test_runner.py
     ├── test_tree.py

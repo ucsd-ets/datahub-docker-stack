@@ -6,7 +6,7 @@ import pytest
 import requests
 
 from scripts.tagger import tagging_main
-from scripts.wiki import update_Stable
+from scripts.wiki import update_Stable, update_Home
 
 
 DOIT_CONFIG = dict(
@@ -52,8 +52,13 @@ def task_tag():
             },
             {
                 'name': 'dry_run',
-                'short': 's',
                 'long': 'dry_run',
+                'type': bool,
+                'default': False
+            },
+            {
+                'name': 'global_stable',
+                'long': 'global_stable',
                 'type': bool,
                 'default': False
             },
@@ -64,4 +69,10 @@ def task_stable():
     """Build image manifests for all stable tagged images"""
     return {
         'actions': [update_Stable]
+    }
+
+def task_home():
+    """Build image manifests for all stable tagged images"""
+    return {
+        'actions': [update_Home]
     }
