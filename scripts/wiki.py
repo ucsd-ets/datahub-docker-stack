@@ -196,19 +196,6 @@ f"""
     logger.info(f"*** Individual wiki page {manifest_fn}.md successfully written.")
 
 
-def wiki_doc2link(fullname: str) -> str:
-    """ Helper function
-    Given: ucsdets/rstudio-notebook:2023.1-7d75f9f
-    Returns: [Link](https://github.com/ucsd-ets/datahub-docker-stack/wiki/ucsdets-rstudio-notebook-2023.1-7d75f9f)
-    """
-    repo_url = f"https://github.com/ucsd-ets/datahub-docker-stack"
-    assert fullname.count(':') == 1 and fullname.count('/') <= 1, \
-        f"Wrong image full name format: {fullname}"
-    fullname = fullname.replace(':', '-').replace('/', '-')
-    link = url2mdlink(repo_url + '/wiki/' + fullname, 'Link')
-    return link
-
-
 def update_Home() -> bool:
     """update Home.md (the page on https://github.com/ucsd-ets/datahub-docker-stack/wiki)
     It will only update the (local) Home.md in wiki/ in the workflow cache.

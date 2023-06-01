@@ -355,3 +355,16 @@ def get_time_duration(last_t):
 def branch_to_valid_tag(branch_name: str) -> str:
     pattern = r'[~!@#$%^&*()+`=[\]{}|\\;:\'",<>/?]'
     return re.sub(pattern, '-', branch_name)
+
+
+def wiki_doc2link(fullname: str) -> str:
+    """ Helper function
+    Given: ucsdets/rstudio-notebook:2023.1-7d75f9f
+    Returns: [Link](https://github.com/ucsd-ets/datahub-docker-stack/wiki/ucsdets-rstudio-notebook-2023.1-7d75f9f)
+    """
+    repo_url = f"https://github.com/ucsd-ets/datahub-docker-stack"
+    assert fullname.count(':') == 1 and fullname.count('/') <= 1, \
+        f"Wrong image full name format: {fullname}"
+    fullname = fullname.replace(':', '-').replace('/', '-')
+    link = url2mdlink(repo_url + '/wiki/' + fullname, 'Link')
+    return link

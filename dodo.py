@@ -52,7 +52,6 @@ def task_tag():
             },
             {
                 'name': 'dry_run',
-                'short': 's',
                 'long': 'dry_run',
                 'type': bool,
                 'default': False
