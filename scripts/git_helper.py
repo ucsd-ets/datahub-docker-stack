@@ -5,11 +5,7 @@ from pathlib import PurePath
 from os import path,environ
 import json
 
-from scripts.utils import store_var,get_specs
-
-from scripts.utils import get_logger
-logger = get_logger()
-from scripts.utils import get_logger
+from scripts.utils import store_var,get_specs, get_logger
 logger = get_logger()
 
 class GitHelper:
@@ -37,8 +33,14 @@ class GitHelper:
     
     @staticmethod
     def get_branch_name() -> str:
-        print(f"Github ref name: {environ['GITHUB_REF_NAME']}")
-        return environ['GITHUB_REF_NAME']
+        name = environ['GITHUB_REF_NAME']
+        if 'merge' in name:
+            # it will be sth like 71/merge in a PR action run
+            # we use GITHUB_HEAD_REF instead
+            # see https://stackoverflow.com/a/58035262
+            name = environ['GITHUB_HEAD_REF']
+        print(f"Github ref (branch) name: {name}")
+        return name
 
 
 def get_changed_images():
