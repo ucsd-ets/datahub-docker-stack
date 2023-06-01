@@ -11,6 +11,7 @@ import datetime
 from pandas import NaT, Series, read_csv, concat
 from collections import deque
 from typing import List, Dict
+import re
 
 __logger_setup = False
 from typing import List, Dict
@@ -350,3 +351,7 @@ def get_time_duration(last_t):
     seconds = int(duration % 60)
     last_t = datetime.datetime.now()
     return last_t, minutes, seconds
+
+def branch_to_valid_tag(branch_name: str) -> str:
+    pattern = r'[~!@#$%^&*()+`=[\]{}|\\;:\'",<>/?]'
+    return re.sub(pattern, '-', branch_name)
