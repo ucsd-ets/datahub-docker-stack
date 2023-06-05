@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       originalTag: 
-        description: 'Orginal tag; please ensure its appearance on Wiki homepage'
+        description: 'Original tag; please ensure its appearance on Wiki homepage'
         default: '2099.3-<branch_name>'
         required: true
       dryRun:
@@ -93,7 +93,7 @@ jobs:
         env:
           DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-        run: |
+        run: >
           doit home
 
       - name: Push Wiki to GitHub
@@ -103,9 +103,7 @@ jobs:
           !contains(github.base_ref , 'dev') &&
           !contains(github.event.head_commit.message , 'skip push') &&
           (
-            github.ref == 'refs/heads/master' || 
-            github.ref == 'refs/heads/main' ||
-            github.ref == 'refs/heads/refractor_buildtest'
+            github.ref == 'refs/heads/main'
           )
         uses: stefanzweifel/git-auto-commit-action@v3
         with:

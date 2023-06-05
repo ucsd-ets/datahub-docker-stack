@@ -5,7 +5,7 @@ import logging
 import argparse
 import sys
 
-from scripts.utils import get_logger, read_history, query_images, read_var, store_var, get_specs
+from scripts.utils import get_logger, read_Home, query_images, read_var, store_var, get_specs
 from scripts import docker_adapter
 
 logger = get_logger()
@@ -93,7 +93,7 @@ def run_global_stable_tagging(
             Defaults to True.
 
     Note:
-        Here, we only allow images with <year_quater-stable> tag, which we will call 'original_stable',
+        Here, we only allow images with <year_quarter-stable> tag, which we will call 'original_stable',
         like '2023.2-stable', to be tagged global_stable, 'stable'.
 
     Returns:
@@ -108,7 +108,7 @@ def run_global_stable_tagging(
 
     # will only read original_stable image info from Home.md
     try:
-        history = read_history()
+        history = read_Home()
         original_stable_names = query_images(history, 'stable', stablePrefix)  # a list
     except Exception as e:
         logger.error(f"Error when reading original stable image information, {e}")
@@ -144,7 +144,7 @@ def run_global_stable_tagging(
     return docker_adapter.push_stable_images(stable_fullnames=tagged)
 
 
-def tagging_main(original_tag, dry_run=False, global_stable=False):
+def tagging_main(original_tag: str, dry_run: bool=False, global_stable: bool=False):
     dockerhub_username = os.environ.get('DOCKERHUB_USER', None)
     dockerhub_token = os.environ.get('DOCKERHUB_TOKEN', None)
     if not dockerhub_username or not dockerhub_token:

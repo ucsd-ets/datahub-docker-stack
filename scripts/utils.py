@@ -231,7 +231,12 @@ def get_prev_tag(img_name, tag_prefix=None):
         return None
 
 
-def read_history():
+def read_Home():
+    """Read contents from Home.md as a long string
+
+    Returns:
+        str: file contents
+    """
     with open(pjoin('wiki', 'Home.md'), 'r') as f:
         doc_str = f.read()
 
@@ -242,7 +247,7 @@ def query_images(history, tag_suffix, tag_prefix):
     """Do a 2-step filtering to retrieve the correct images to tag
 
     Args:
-        history (str): return value from read_history(), a super long string
+        history (str): return value from read_Home(), a super long string
         tag_suffix (str): <branch_name>
         tag_prefix (str): <quarter_id>, like 2023.2
 
