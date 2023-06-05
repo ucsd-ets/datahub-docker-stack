@@ -201,7 +201,7 @@ def update_Home() -> bool:
     by adding a (Commit, Image, Manifest) cell to the table.
 
     It also creates new manifest pages for the stable images, which are copies of old manifests.
-    
+
     It will only update the (local) Home.md in wiki/ in the workflow cache.
     A separate action (see .github/workflows/main.yml, Push Wiki to Github) will make it 
     public.
@@ -322,7 +322,7 @@ def update_Stable() -> bool:
         return False         
 
     # Reconstruct Stable_Tag.md
-    header = ['| Image | Based On | Manifest |']
+    header = ['| Global-Stable Image | Based On | Manifest |']
     divider = ['| :- | :- | :- |']
     content = ['|'.join([
         "",     # such that we have start and ending '|'
@@ -338,56 +338,3 @@ def update_Stable() -> bool:
     with open(path.join('artifacts', 'Stable_Tag.md'), 'w') as f:
         f.write(doc)
     return True
-
-
-
-
-
-
-
-
-
-
-
-
-
-if __name__ == "__main__":
-    print("wiki.py: Import Success")
-    client = docker.from_env()
-    img_obj = client.images.get('ucsdets/datahub-docker-stacks:pushtest')
-    
-    test_node = Node(
-        image_name='ucsdets/datahub-docker-stacks',
-        image_tag='pushtest',
-        filepath='tests',
-        children=[],
-        rebuild=False,
-        image_built=False,
-        build_args={},
-        integration_tests=False,
-        dockerfile='test.Dockerfile',
-        info_cmds=['PY_VER', 'CONDA_INFO', 'CONDA_LIST']
-    )
-    all_info_cmds = {
-        'PY_VER': {
-            'description': 'Python Version',
-            'command': 'python --version'
-        },
-        'CONDA_INFO': {
-            'description': 'Conda Info',
-            'command': 'conda info'
-        },
-        'CONDA_LIST': {
-            'description': 'Conda Packages',
-            'command': 'conda list'
-        },
-    }
-    
-    """ hist = img_obj.history()
-    print("raw history string: \n", hist)
-    print("converted to DF: \n", pd.DataFrame(hist).convert_dtypes()) """
-    # pd.set_option('display.max_columns', None)
-    # print(get_layers_md_table(test_node, img_obj))
-    # write_report(node=test_node, image=img_obj, all_info_cmds=all_info_cmds)
-    res = run_outputs(test_node, all_info_cmds)
-    print(res)
