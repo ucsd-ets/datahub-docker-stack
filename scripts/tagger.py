@@ -136,9 +136,9 @@ def run_global_stable_tagging(
         tagged.append(img_stable)
         
 
-    store_var('IMAGES_TAGGED', tagged )
-    store_var('IMAGES_ORIGINAL', original_stable_names )
-    logger.info("original_stable images written to IMAGES_ORIGINAL, global_stable images to IMAGES_TAGGED.")
+    store_var('IMAGES_GLOBAL_STABLE', tagged )
+    store_var('IMAGES_ORIGINAL_STABLE', original_stable_names )
+    logger.info("original_stable images written to IMAGES_ORIGINAL_STABLE, global_stable images to IMAGES_GLOBAL_STABLE.")
     
     logger.info("Pushing all global_stable images to Dockerhub.")
     return docker_adapter.push_stable_images(stable_fullnames=tagged)
