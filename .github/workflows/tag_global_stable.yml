@@ -98,7 +98,7 @@ jobs:
           (
             github.ref == 'refs/heads/main'
           )
-        uses: stefanzweifel/git-auto-commit-action@v3
+        uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: '[ci skip] Automated publish for ${{github.sha}}'
           repository: wiki/
