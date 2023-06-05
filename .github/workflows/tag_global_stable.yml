@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       stablePrefix: 
-        description: 'Year-Quater prefix of a stable tag; please ensure its appearance on Wiki homepage'
+        description: 'Year-Quarter prefix of a stable tag; please ensure its appearance on Wiki homepage'
         default: '2099.3'
         required: true
       dryRun:
@@ -96,9 +96,7 @@ jobs:
           !contains(github.base_ref , 'dev') &&
           !contains(github.event.head_commit.message , 'skip push') &&
           (
-            github.ref == 'refs/heads/master' || 
-            github.ref == 'refs/heads/main' ||
-            github.ref == 'refs/heads/refractor_buildtest'
+            github.ref == 'refs/heads/main'
           )
         uses: stefanzweifel/git-auto-commit-action@v3
         with:

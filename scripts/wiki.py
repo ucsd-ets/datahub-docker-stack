@@ -213,6 +213,7 @@ def update_Home() -> bool:
         repo_url = f"https://github.com/ucsd-ets/datahub-docker-stack"
         git_short_hash = GitHelper.commit_hash_tag_shortened()
         cell_commit = url2mdlink(repo_url + '/commit/' + git_short_hash, f"`{git_short_hash}`")
+        logger.info(f"cell commit cell: {cell_commit}")
 
         # 2nd col: Image
         # each cell_img is like ucsdets/datahub-base-notebook:2023.1-c11a915
@@ -220,6 +221,21 @@ def update_Home() -> bool:
         cell_images = list2cell([f"`{image}`" for image in stable_full_names])
         # also read orignal names to copy wiki pages later
         orig_full_names = read_var('IMAGES_ORIGINAL') 
+
+        """
+        # 1st column: link to commits history of that branch [branch name](LINK)
+        assert orig_full_names and orig_full_names[0].count(':') == 1, \
+            "None image tagged or wrong format."
+        original_tag = orig_full_names[0].split(':', 1)[1]
+        # <branch_name> may contain more '-', but there must be one before it.
+        assert original_tag and original_tag.count('-') >= 1, \
+            "Incorrect tag format (should be like '2023.2-<branch_name>')"
+        # split only once from left -> 2 parts
+        branch_name = original_tag.split('-', 1)[1] 
+        branch_name = branch_name.replace("/", "_")
+        repo_url = f"https://github.com/ucsd-ets/datahub-docker-stack"
+        cell_commit = url2mdlink(repo_url + '/commits/' + branch_name, f"`{branch_name}`")
+        """
 
         # 3rd column: image wiki page link ["LINK"](LINK)        
         manifests_links = [wiki_doc2link(fullname=image) for image in stable_full_names]
@@ -246,7 +262,7 @@ def update_Home() -> bool:
 
     # Read old content, Update, Write back
     try:
-        doc_str = read_history()
+        doc_str = read_Home()
 
         # avoid duplicate entry: <year_quarter-stable> tag
         _, stable_tag = stable_full_names[0].split(':', 1)  # stable_tag = 2022.2-stable
