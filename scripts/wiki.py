@@ -31,7 +31,6 @@ def run_outputs(node: Node, all_info_cmds:Dict) -> List[Dict]:
     """
     # Create docker container
     logger.info(f"Creating container for image {node.full_image_name} ...")
-    logger.info(f"Following images exist: {__docker_client.images.list()}")
     outputs = []
 
     try:
@@ -197,21 +196,12 @@ f"""
     logger.info(f"*** Individual wiki page {manifest_fn}.md successfully written.")
 
 
-def wiki_doc2link(fullname: str) -> str:
-    """ Helper function
-    Given: ucsdets/rstudio-notebook:2023.1-7d75f9f
-    Returns: [Link](https://github.com/ucsd-ets/datahub-docker-stack/wiki/ucsdets-rstudio-notebook-2023.1-7d75f9f)
-    """
-    repo_url = f"https://github.com/ucsd-ets/datahub-docker-stack"
-    assert fullname.count(':') == 1 and fullname.count('/') <= 1, \
-        f"Wrong image full name format: {fullname}"
-    fullname = fullname.replace(':', '-').replace('/', '-')
-    link = url2mdlink(repo_url + '/wiki/' + fullname, 'Link')
-    return link
+def update_Home() -> bool:
+    """Update Home.md (the page on https://github.com/ucsd-ets/datahub-docker-stack/wiki)
+    by adding a (Commit, Image, Manifest) cell to the table.
 
+    It also creates new manifest pages for the stable images, which are copies of old manifests.
 
-def update_Home(images_full_names: List[str], git_short_hash: str) -> bool:
-    """update Home.md (the page on https://github.com/ucsd-ets/datahub-docker-stack/wiki)
     It will only update the (local) Home.md in wiki/ in the workflow cache.
     A separate action (see .github/workflows/main.yml, Push Wiki to Github) will make it 
     public.
@@ -221,65 +211,93 @@ def update_Home(images_full_names: List[str], git_short_hash: str) -> bool:
 
     Returns:
         bool: success/failure
-    """
-
-    if not images_full_names:
-        logger.info(f"commit {git_short_hash} has no successful image to update Home.md")
-        return True
-    
-
-    # 1st column: commit link [git_short_hash](LINK)
-    repo_url = f"https://github.com/ucsd-ets/datahub-docker-stack"
-    cell_commit = url2mdlink(repo_url + '/commit/' + git_short_hash, f"`{git_short_hash}`")
-
-    # 2nd column: images full name
-    cell_images = list2cell([f"`{image}`" for image in images_full_names])
-
-    # 3rd column: image wiki page link ["LINK"](LINK)
+    """    
     try:
-        manifests_links = [wiki_doc2link(fullname=image) for image in images_full_names]
-    except AssertionError as e:
-        logger.error(e)
+        # 1st column: commit link [git_short_hash](LINK)
+        repo_url = f"https://github.com/ucsd-ets/datahub-docker-stack"
+        git_short_hash = GitHelper.commit_hash_tag_shortened()
+        cell_commit = url2mdlink(repo_url + '/commit/' + git_short_hash, f"`{git_short_hash}`")
+
+        # 2nd col: Image
+        # each cell_img is like ucsdets/datahub-base-notebook:2023.1-c11a915
+        stable_full_names = read_var('IMAGES_TAGGED')
+        cell_images = list2cell([f"`{image}`" for image in stable_full_names])
+        # also read orignal names to copy wiki pages later
+        orig_full_names = read_var('IMAGES_ORIGINAL') 
+
+        # 3rd column: image wiki page link ["LINK"](LINK)        
+        manifests_links = [wiki_doc2link(fullname=image) for image in stable_full_names]
+        cell_manifests = list2cell(manifests_links)
+    except Exception as e:
+        logger.error(f"Error when loading information to update Home.md, {e}")
         return False
-    
-    cell_manifests = list2cell(manifests_links)
 
     # group 3 columns together
     latest_row = (cell_commit, cell_images, cell_manifests)
 
+    # Create new wiki pages for stable images, but same content
+    try:
+        for stable_name, orig_name in zip(stable_full_names, orig_full_names):
+            stable_fn = fulltag2fn(stable_name)
+            orig_fn = fulltag2fn(orig_name)
+            with open(path.join('wiki', f'{orig_fn}.md'), 'r') as f:
+                doc_str = f.read()
+            with open(path.join('wiki', f'{stable_fn}.md'), 'w') as f:
+                f.write(doc_str) 
+    except AssertionError as e:
+        logger.error(f"Error when copying wiki page of each image: {e}")
+        return False 
+
     # Read old content, Update, Write back
     try:
-        with open(path.join('wiki', 'Home.md'), 'r') as f:
-            doc_str = f.read()
+        doc_str = read_Home()
+
+        # avoid duplicate entry: <year_quarter-stable> tag
+        _, stable_tag = stable_full_names[0].split(':', 1)  # stable_tag = 2022.2-stable
+        stablePrefix, _ = stable_tag.split('-', 1)  # 2022.2
+        original_stable_names = query_images(doc_str, 'stable', stablePrefix)  # a list
+        assert len(original_stable_names) == 0, f"Images with tag {stable_tag} already exist in Home.md"
         
         # 2nd arg of insert_row() takes in List[Tuple], each of which is a new 'latest_row'
         latest_doc = insert_row(doc_str, [latest_row])
 
         with open(path.join('wiki', 'Home.md'), 'w') as f:
             f.write(latest_doc)
+        # such that we can look at new Home page even with dry_run
+        with open(path.join('artifacts', 'Home.md'), 'w') as f:
+            f.write(latest_doc)
     except Exception as e:
-        logger.error(e)
-        print("Error when updating Home.md")
+        logger.error(f"Error when updating Home.md, {e}")
         return False
 
     return True
 
 
 def update_Stable() -> bool:
+    """Read information from IMAGES_TAGGED and IMAGES_ORIGINAL, and update
+    Stable_Tag.md accordingly.
+
+    Note:
+        IMAGES_GLOBAL_STABLE should store images like ucsdets/datahub-base-notebook:stable;
+        IMAGES_ORIGINAL_STABLE should store images like ucsdets/datahub-base-notebook:2022.2-stable;
+
+    Returns:
+        bool: success/failure
+    """
     # Load data
     try:
         # 1st col: Image
-        # each cell_img is like ucsdets/datascience-notebook:2023.1-c11a915
-        stable_full_names = read_var('IMAGES_TAGGED')
+        # each cell_img is like ucsdets/datascience-notebook:2023.1-stable
+        stable_full_names = read_var('IMAGES_GLOBAL_STABLE')
         cell_stable = list2cell([f"`{image}`" for image in stable_full_names])
 
         # 2nd col: Based On
         # each orig_img is like ucsdets/datascience-notebook:2023.1-stable
-        orig_full_names = read_var('IMAGES_ORIGINAL')
+        orig_full_names = read_var('IMAGES_ORIGINAL_STABLE')
         cell_orig = list2cell([f"`{image}`" for image in orig_full_names])
 
         assert len(stable_full_names) == len(orig_full_names), \
-            "IMAGES_TAGGED and IMAGES_ORIGINAL mismatched."
+            "IMAGES_GLOBAL_STABLE and IMAGES_ORIGINAL_STABLE mismatched."
 
         # 3rd col: Manifest
         # NOTE: the actual page will be created later, see the next try-except.
@@ -287,7 +305,7 @@ def update_Stable() -> bool:
         cell_manifests = list2cell(manifests_links)
 
     except AssertionError as e:
-        logger.error(f"Error when loading data for Stable Tag.md: {e}")
+        logger.error(f"Error when loading data for Stable_Tag.md: {e}")
         return False
 
     # Create new wiki pages for stable images, but same content
@@ -303,8 +321,8 @@ def update_Stable() -> bool:
         logger.error(f"Error when copying wiki page of each image: {e}")
         return False         
 
-    # Reconstruct Stable Tag.md
-    header = ['| Image | Based On | Manifest |']
+    # Reconstruct Stable_Tag.md
+    header = ['| Global-Stable Image | Based On | Manifest |']
     divider = ['| :- | :- | :- |']
     content = ['|'.join([
         "",     # such that we have start and ending '|'
@@ -314,62 +332,9 @@ def update_Stable() -> bool:
         ""
     ])]
     doc = '\n'.join(header + divider + content)
-    with open(path.join('wiki', 'Stable Tag.md'), 'w') as f:
+    with open(path.join('wiki', 'Stable_Tag.md'), 'w') as f:
         f.write(doc)
     # such that we can look at new Stable page even with dry_run
-    with open(path.join('artifacts', 'Stable Tag.md'), 'w') as f:
+    with open(path.join('artifacts', 'Stable_Tag.md'), 'w') as f:
         f.write(doc)
     return True
-
-
-
-
-
-
-
-
-
-
-
-
-
-if __name__ == "__main__":
-    print("wiki.py: Import Success")
-    client = docker.from_env()
-    img_obj = client.images.get('ucsdets/datahub-docker-stacks:pushtest')
-    
-    test_node = Node(
-        image_name='ucsdets/datahub-docker-stacks',
-        image_tag='pushtest',
-        filepath='tests',
-        children=[],
-        rebuild=False,
-        image_built=False,
-        build_args={},
-        integration_tests=False,
-        dockerfile='test.Dockerfile',
-        info_cmds=['PY_VER', 'CONDA_INFO', 'CONDA_LIST']
-    )
-    all_info_cmds = {
-        'PY_VER': {
-            'description': 'Python Version',
-            'command': 'python --version'
-        },
-        'CONDA_INFO': {
-            'description': 'Conda Info',
-            'command': 'conda info'
-        },
-        'CONDA_LIST': {
-            'description': 'Conda Packages',
-            'command': 'conda list'
-        },
-    }
-    
-    """ hist = img_obj.history()
-    print("raw history string: \n", hist)
-    print("converted to DF: \n", pd.DataFrame(hist).convert_dtypes()) """
-    # pd.set_option('display.max_columns', None)
-    # print(get_layers_md_table(test_node, img_obj))
-    # write_report(node=test_node, image=img_obj, all_info_cmds=all_info_cmds)
-    res = run_outputs(test_node, all_info_cmds)
-    print(res)

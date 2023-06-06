@@ -7,10 +7,11 @@ from os.path import isfile
 from io import StringIO
 import bitmath
 import logging
-import logging
+import datetime
 from pandas import NaT, Series, read_csv, concat
 from collections import deque
 from typing import List, Dict
+import re
 
 __logger_setup = False
 from typing import List, Dict
@@ -230,33 +231,56 @@ def get_prev_tag(img_name, tag_prefix=None):
         return None
 
 
-def read_history():
+def read_Home():
+    """Read contents from Home.md as a long string
+
+    Returns:
+        str: file contents
+    """
     with open(pjoin('wiki', 'Home.md'), 'r') as f:
         doc_str = f.read()
 
     return doc_str
 
 
-def query_images(history, commit_tag, keyword):
-    images_in_row = [
-        line.split('|')[2].replace('`', '').split('<br>')
+def query_images(history, tag_suffix, tag_prefix):
+    """Do a 2-step filtering to retrieve the correct images to tag
+
+    Args:
+        history (str): return value from read_Home(), a super long string
+        tag_suffix (str): <branch_name>
+        tag_prefix (str): <quarter_id>, like 2023.2
+
+    Returns:
+        List[str]: a flat list of full image names
+    """
+    # 1d List, each element is a long string with image names connected by '<br>'
+    images_this_quarter = [
+        line.split('|')[2].replace('`', '')
         for line in 
         history.split('\n')
-        if commit_tag in line
-    ][0]
-
-    filtered_images = list(filter(lambda img: keyword in img, images_in_row))
-    assert len(filtered_images) != 0
-    return filtered_images
-
-
-def get_images_for_tag(history, commit_tag, keyword, tag_replace):
-    original_names = query_images(history, commit_tag, keyword)
-    new_names = [
-        img[:img.index(':')+1] + tag_replace
-        for img in original_names
+        if tag_prefix in line
     ]
-    return dict(zip(original_names, new_names))
+    assert len(images_this_quarter) > 0, f"No images have tag prefix {tag_prefix} in Home.md"
+
+    filtered_images = [
+        line.split('<br>')
+        for line in images_this_quarter
+        if tag_suffix in line
+    ]
+    # assert len(filtered_images) > 0, f"No images have tag suffix {tag_suffix} in Home.md"
+    if len(filtered_images) == 0:
+        return []
+    return filtered_images[0]
+
+
+# def get_images_for_tag(history, commit_tag, keyword, tag_replace):
+#     original_names = query_images(history, commit_tag, keyword)
+#     new_names = [
+#         img[:img.index(':')+1] + tag_replace
+#         for img in original_names
+#     ]
+#     return dict(zip(original_names, new_names))
 
 def subtree_order(image)->list:
     """pre-order DFS"""
@@ -324,3 +348,28 @@ def convert_size(size_bytes: int) -> str:
     p = math.pow(1024, i)
     s = round(size_bytes / p, 2)        
     return "%s %s" % (s, size_name[i])
+
+# helper: get timestamp and update last_t
+def get_time_duration(last_t):
+    duration = (datetime.datetime.now() - last_t).total_seconds()
+    minutes = int(duration // 60)
+    seconds = int(duration % 60)
+    last_t = datetime.datetime.now()
+    return last_t, minutes, seconds
+
+def branch_to_valid_tag(branch_name: str) -> str:
+    pattern = r'[~!@#$%^&*()+`=[\]{}|\\;:\'",<>/?]'
+    return re.sub(pattern, '-', branch_name)
+
+
+def wiki_doc2link(fullname: str) -> str:
+    """ Helper function
+    Given: ucsdets/rstudio-notebook:2023.1-7d75f9f
+    Returns: [Link](https://github.com/ucsd-ets/datahub-docker-stack/wiki/ucsdets-rstudio-notebook-2023.1-7d75f9f)
+    """
+    repo_url = f"https://github.com/ucsd-ets/datahub-docker-stack"
+    assert fullname.count(':') == 1 and fullname.count('/') <= 1, \
+        f"Wrong image full name format: {fullname}"
+    fullname = fullname.replace(':', '-').replace('/', '-')
+    link = url2mdlink(repo_url + '/wiki/' + fullname, 'Link')
+    return link

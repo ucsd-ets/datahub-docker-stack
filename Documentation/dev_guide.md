@@ -114,6 +114,7 @@ $ pip install -r scripts/requirements.txt
 
 Side Note: For `test_wiki.py` to work, please create 3 folders `logs/`, `manifests/`, and `wiki/` under project root. In addition, please copy this [Home_original.md](/tests/Home_original.md) into `wiki/`.
 
+0. (Only do this once) Unzip the `test_resource.zip` and put the 2 folders `wiki/` and `artifacts/` in the root directory
 1. Activate the virtual environment `$ source bin/activate`
 2. `$ pytest tests/test_<module name>.py` to test a individual module
 3. OR `$ pytest tests` to test all modules

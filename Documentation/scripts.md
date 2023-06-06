@@ -25,12 +25,6 @@ This document describes the underlying scripts that build, test, and push our do
   - A Python wrapper for Docker that helps us run basic Docker commands during our build process.
   - It serves as an interface between Python Docker SDK and our Docker client.
   - `try-except` block has been placed around docker commands. The logger will print more readable and informative information upon an Docker error.
-- wiki.py
-  - Contains the code that updates our Wiki.
-  - By "Wiki", we refer to the hidden `wiki/` folder managed by Github, which renders Wiki pages.
-  - Wiki of this repo contains a `Home.md`, a `Stable_Tag.md`, and individual .md files for each image currently or previously in use.
-  - We will call those individual .md files "(image) manifests".
-  - NOTE: manifests are created locally in Github Actions runtime, stored to build-arfiacts, but will not be found in the Github Wiki pages unless under certain conditions. See **`Push Wiki to GitHub`** step in [actions.md](actions.md)
 
 **The following scripts are specific to our [main.yml](/.github/workflows/main.yml) workflow.**
 
@@ -39,11 +33,17 @@ This document describes the underlying scripts that build, test, and push our do
 - main.py
   - This file is the top-level caller invoked by [main.yml](/.github/workflows/main.yml) during the workflow and launches the entire process.
 
-**This script is specific to our [tag.yml](/.github/workflows/tag.yml) workflow.**
+**These scripts are specific to our [tag.yml](/.github/workflows/tag.yml) workflow.**
 
+- wiki.py
+  - Contains the code that updates our Wiki.
+  - By "Wiki", we refer to the hidden `wiki/` folder managed by Github, which renders Wiki pages.
+  - Wiki of this repo contains a `Home.md`, a `Stable_Tag.md`, and individual .md files for each image currently or previously in use.
+  - We will call those individual .md files "(image) manifests".
+  - NOTE: manifests are created locally in Github Actions runtime, stored to build-arfiacts, but will not be found in the Github Wiki pages unless under certain conditions. See **`Push Wiki to GitHub`** step in [actions.md](actions.md)
 - tagger.py
   - It doesn't build new images but pulls existing images and gives them an extra "stable" tag.
-  - It pushes our stable images for production use and updates [Stable Tag](https://github.com/ucsd-ets/datahub-docker-stack/wiki/Stable-Tag) page.
+  - It pushes our stable images for production use and updates [Stable_Tag.md](https://github.com/ucsd-ets/datahub-docker-stack/wiki/Stable_Tag) or [Home.md](https://github.com/ucsd-ets/datahub-docker-stack/wiki), depending on which tagging action is called. See [action.md](/Documentation/actions.md#tag_global_stableyml)
 
 ## The Build Process
 
@@ -60,20 +60,22 @@ After `python3 main.py` is called from main.yml, it does a few things to ensure 
   - Detection is done on the basis of comparing the current commit pushed and the last commit pushed within the current branch. I.e. if any file was changed in `images/scipy-ml-notebook` in the current commit, but a file wasn't changed in any of the other image subdirs of `images`, the only scipy-ml and the base notebook will be updated. But there are some extra rules:
     - If the action is triggered by a PR, then it will check for ALL files changed in the PR instead of just the latest commit in the PR.
     - If you put "full rebuild" in your commit message, all of this logic is ignored and all images are rebuilt.
+    - If this is the first Github Actions run of the current branch, all images are rebuilt.
     - If the commit was done to main, a full rebuild is done anyway since these images may go to production.
-- It detects the 8-char short-hash of the GitHub commit used to trigger the workflow (i.e. ace12319). This hash is used to suffix the tags of the images to be pushed. [`commit_hash_tag_shortened()`](scripts/git_helper.py#L25)
-- It builds the root node that contains information about all of the images to be built and pushed, which is passed off to the runner. [`build_tree()`](/scripts/tree.py#L59)
+- This current branch name is used to suffix the tags of the images to be pushed. [`get_branch_name()`](/scripts/git_helper.py#L35)
+- It constructs the root node that contains information about all of the images to be built and pushed, which is passed off to the runner. [`build_tree()`](/scripts/tree.py#L59)
 
 ### 2. Core: [`build_and_test_containers()`](/scripts/runner.py#L130)
 
-- It logins to the Docker client with Github secrets **DOCKERHUB_TOKEN** and **DOCKERHUB_USER**. [`login()`](/scripts/docker_adapter.py#L86)
+- It logs into the Docker client of Python SDK with Github secrets **DOCKERHUB_TOKEN** and **DOCKERHUB_USER**. [`login()`](/scripts/docker_adapter.py#L86)
+- It also logs into the Docker daemon directly using `docker login` CLI. This enables the checking of existence of an image with a particular tag on Dockerhub, see [build cache explanation](/Documentation/images.md#image-build-cache) and [its implementation](/scripts/docker_adapter.py#L315) for more details.
 - It performs a BFS on the build-info tree and does the following to each Node if isn't marked skipped:
   - build: The corresponding Dockerfile at `images/<image_name>` is run to build an image. [`build()`](/scripts/docker_adapter.py#L31)
   - basic test: Image-specific tests in `images/<image_name>/tests/` and common tests (apply to all images) in `images/tests_common/` are executed within the Docker container. [`run_basic_test()`](/scripts/runner.py#L94)
   - push: The containers are pushed to DockerHub. [`push()`](/scripts/docker_adapter.py#L104)
   - integration test: More complicated tests in `images/<image_name>/integration_tests/` are exececuted to ensure it works in our production environment. (currently only RStudio Selenium tests) [`run_integration_tests()`](/scripts/runner.py#L111)
   - create manifests: some informative commands (like `pip list`) defined in [spec.yml](/images/spec.yml) are executed, and their console outputs are written to a formatted .md file for each individual image. [`write_report()`](/scripts/wiki.py#L127)
-  - reclaim space: Clean Docker cache of steps above. **ALWAYS EXECUTED**. [`prune()`](/scripts/docker_adapter.py#L190)
+  - reclaim space: Clean Docker cache of steps above. **Executed when .prune is set to true in spec.yml**. [`prune()`](/scripts/docker_adapter.py#L190)
 - If any of the above steps fail, subsequent images will not be checked. We break from the loop and move to the Postwork below.
 - But as long as steps of an image start, a [`Result`](/scripts/runner.py#L22) is created to store the results of each step.
 

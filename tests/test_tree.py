@@ -64,4 +64,3 @@ def test_mark_rebuild_BottomUp():
     got.print_info()
     should_be.print_info()
     assert got == should_be
-

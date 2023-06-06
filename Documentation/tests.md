@@ -35,6 +35,7 @@ tests/
 ├── cred.json  # fake credential for testing docker login
 ├── fake_spec.yml  # works as the spec.yml for test
 ├── test.Dockerfile   # Dockerfile for testing docker build
+├── test_resource.zip  # contains 2 folders that should be put at root dir
 ├── test_docker_adapter.py
 ├── test_runner.py
 ├── test_tree.py

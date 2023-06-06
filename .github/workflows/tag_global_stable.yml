@@ -1,11 +1,11 @@
-name: Tag Images
+name: Tag Global Stable Images
 
 on:
   workflow_dispatch:
     inputs:
-      originalTag: 
-        description: 'Original tag; please ensure its appearance on Wiki homepage'
-        default: '2099.3-<branch_name>'
+      stablePrefix: 
+        description: 'Year-Quarter prefix of a stable tag; please ensure its appearance on Wiki homepage'
+        default: '2099.3'
         required: true
       dryRun:
         type: boolean
@@ -13,18 +13,9 @@ on:
         required: true
       
 
-jobs:
-  gpu_test:
-    uses: ./.github/workflows/test_gpu.yml
-    with:
-      originalTag: ${{ github.event.inputs.originalTag }}
-      dryRun: ${{ github.event.inputs.dryRun == 'true' }}
-    secrets:
-      inherit
-    
-  tagging:
+jobs:    
+  global_stable_tagging:
     runs-on: ubuntu-latest
-    needs: gpu_test
     steps:
       - uses: actions/checkout@v3
 
@@ -77,24 +68,26 @@ jobs:
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: >
           doit tag
-          --original_tag ${{ github.event.inputs.originalTag }}
+          --original_tag ${{ github.event.inputs.stablePrefix }}
           --dry_run
+          --global_stable
         
-      - name: Tag Images
+      - name: Tag Global Stable
         if: ${{ github.event.inputs.dryRun == 'false' }}
         env:
           DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: >
           doit tag
-          --original_tag ${{ github.event.inputs.originalTag }}
+          --original_tag ${{ github.event.inputs.stablePrefix }}
+          --global_stable
 
-      - name: Update Wiki, Home.md
+      - name: Update Wiki, Stable_Tag.md
         env:
           DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-        run: >
-          doit home
+        run: |
+          doit stable
 
       - name: Push Wiki to GitHub
         if: >

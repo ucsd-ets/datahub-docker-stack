@@ -10,12 +10,11 @@ USER root
 # coerce rebuild in only this nteb
 
 ARG LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7 CUDA_VERSION=11.8
-ARG LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7 CUDA_VERSION=11.8
 
 RUN apt-get update && \
-    apt-get install -y \
-    libtinfo5 build-essential && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+	apt-get install -y \
+	libtinfo5 build-essential && \
+	apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Symbolic link for Stata 17 dependency on libncurses5
 RUN ln -s libncurses.so.6 /usr/lib/x86_64-linux-gnu/libncurses.so.5
@@ -23,18 +22,16 @@ RUN ln -s libncurses.so.6 /usr/lib/x86_64-linux-gnu/libncurses.so.5
 COPY run_jupyter.sh /
 RUN chmod +x /run_jupyter.sh
 
-COPY cudatoolkit_env_vars.sh /etc/datahub-profile.d/cudatoolkit_env_vars.sh
-COPY cudnn_env_vars.sh /etc/datahub-profile.d/cudnn_env_vars.sh
+COPY cudatoolkit_env_vars.sh cudnn_env_vars.sh /etc/datahub-profile.d/
 COPY activate.sh /tmp/activate.sh
 COPY workflow_tests /opt/workflow_tests
-
 ADD manual_tests /opt/manual_tests
 
 RUN chmod 777 /etc/datahub-profile.d/*.sh /tmp/activate.sh
 
 USER jovyan
 
-# CUDA 11
+# CUDA 11 
 # tf requirements: https://www.tensorflow.org/install/pip#linux
 RUN mamba install \
 	cudatoolkit=11.8 \
@@ -71,9 +68,9 @@ RUN pip install --no-cache-dir  datascience \
 
 
 # Update these in spec.yml according to https://pytorch.org/get-started/locally/
-ARG TORCH_VER="1.7.1+cu101"
-ARG TORCH_VIS_VER="0.8.2+cu101"
-ARG TORCH_AUD_VER="0.7.2"
+ARG TORCH_VER="1.7.1+cu101" \
+    TORCH_VIS_VER="0.8.2+cu101" \
+    TORCH_AUD_VER="0.7.2"
 
 # torch must be installed separately since it requires a non-pypi repo. See stable version above
 RUN pip install torch==${TORCH_VER} torchvision==${TORCH_VIS_VER} torchaudio==${TORCH_AUD_VER} \
@@ -81,9 +78,11 @@ RUN pip install torch==${TORCH_VER} torchvision==${TORCH_VIS_VER} torchaudio==${
 
 # to use nvidia-smi command to check GPU & driver
 # RUN ln -s /usr/local/nvidia/bin/nvidia-smi /opt/conda/bin/nvidia-smi
-#RUN . /tmp/activate.sh && echo "Activate ran successfully"
-#
-    USER $NB_UID:$NB_GID
+
+# RUN . /tmp/activate.sh && echo "Activate ran successfully"
+
+
+USER $NB_UID:$NB_GID
 ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
 
 #ENV CUDNN_PATH=/opt/conda/lib/python3.9/site-packages/nvidia/cudnn
@@ -93,5 +92,11 @@ ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
 # then the gpu can be detected via CLI.
 #ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/opt/conda/lib/python3.9/site-packages/nvidia/cudnn/lib
 #sad issue with github ref
+
+
+# Do some CONDA/CUDA stuff
+# Copy libdevice file to the required path
+RUN mkdir -p $CONDA_DIR/lib/nvvm/libdevice && \
+	cp $CONDA_DIR/lib/libdevice.10.bc $CONDA_DIR/lib/nvvm/libdevice/
 
 RUN . /tmp/activate.sh

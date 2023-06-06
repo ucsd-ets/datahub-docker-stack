@@ -22,6 +22,7 @@ class TestRunner(unittest.TestCase):
         mock_store = MagicMock(return_value=True)   # multiple
 
         mock_wiki_update_Home = MagicMock()
+        mock_image_tag_exists = MagicMock(return_value=True)
         
 
 
@@ -49,6 +50,7 @@ class TestRunner(unittest.TestCase):
         @patch('scripts.wiki.write_report', mock_wiki_write_report)
         @patch('scripts.wiki.update_Home', mock_wiki_update_Home)
         @patch('scripts.docker_adapter.prune', mock_prune)
+        @patch('scripts.docker_adapter.image_tag_exists', mock_image_tag_exists)
         def run_test():
             return build_and_test_containers(root, 'fake', 'fakepw', 'test', self.all_info_cmds)
 
@@ -116,7 +118,7 @@ class TestRunner(unittest.TestCase):
 
         assert mock_wiki_write_report.call_count == 4, mock_wiki_write_report.call_count
 
-        assert mock_prune.call_count == 4, mock_prune.call_count
+        assert mock_prune.call_count == 0, "UPDATEs: prune() only called if you specify it in YAMLs"
 
         # a build log file, test log file, and a yaml file per image
         assert mock_store.call_count == 12, mock_store.call_count
@@ -165,13 +167,15 @@ class TestRunner(unittest.TestCase):
         assert res, "build_and_test_containers() returns False"
 
         mock_login.assert_called_with('fake', 'fakepw')
-        imgs_looped_through = ['datahub-base-notebook', 'rstudio-notebook']
+        # UPDATE: with <branch_name> as tag suffix, we don't need to unnecessarily
+        # rebuild parent unless it's the first Action run in the branch
+        imgs_looped_through = ['rstudio-notebook']
         
         images_built = [arg.args[0].image_name for arg in mock_build.call_args_list]
         assert images_built == imgs_looped_through, images_built
 
-        # root + 1 child basic test, no integration tests
-        assert mock_tester.call_count == 2, mock_tester.call_count
+        # 1 child basic test, no integration tests
+        assert mock_tester.call_count == 1, mock_tester.call_count
 
         images_pushed = [arg.args[0].image_name for arg in mock_push.call_args_list]
         assert images_pushed == imgs_looped_through, images_pushed
@@ -179,12 +183,12 @@ class TestRunner(unittest.TestCase):
         images_gotten = [arg.args[0].image_name for arg in mock_get.call_args_list]
         assert images_gotten == imgs_looped_through, images_gotten
 
-        assert mock_wiki_write_report.call_count == 2, mock_wiki_write_report.call_count
+        assert mock_wiki_write_report.call_count == 1, mock_wiki_write_report.call_count
 
-        assert mock_prune.call_count == 2, mock_prune.call_count
+        assert mock_prune.call_count == 0, mock_prune.call_count
 
-        # 4 yamls, 2 build log file & 2 test log file for actually built image
-        assert mock_store.call_count == 8, mock_store.call_count
+        # 4 yamls, 1 build log file & 1 test log file for actually built image
+        assert mock_store.call_count == 6, mock_store.call_count
 
         assert mock_wiki_update_Home.call_count == 1, mock_wiki_update_Home.call_count
 
