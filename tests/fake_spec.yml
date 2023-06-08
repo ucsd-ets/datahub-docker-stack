@@ -1,3 +1,5 @@
+root: [root]
+
 images:
   root:
     image_name: ucsdets/root

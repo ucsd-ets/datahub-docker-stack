@@ -52,12 +52,12 @@ This document describes the underlying scripts that build, test, and push our do
 
 After `python3 main.py` is called from main.yml, it does a few things to ensure the entire build process is correct, successful, and its outcomes (images + Wiki) ready for production or debug. See [main.main()](/scripts/main.py#L15)
 
-### 1. Prework: setup the build-info tree
+### 1. Prework: Setup the `build-info` Tree
 
 - It parses and stores static information defined in [spec.yml](/images/spec.yml). For more details, see [images.md](./images.md/#image-stack-details) for what information it contains. [`load_spec()`](/scripts/tree.py#L41)
 - It detects which files have been changed, which dictates which images will be rebuilt. [`get_changed_images()`](scripts/git_helper.py#L44)
-  - Currently, a change to the base image (datahub-base-notebook) will trigger a full rebuild on all children, but a change to one child image will NOT rebuild the parent image.
-  - Detection is done on the basis of comparing the current commit pushed and the last commit pushed within the current branch. I.e. if any file was changed in `images/scipy-ml-notebook` in the current commit, but a file wasn't changed in any of the other image subdirs of `images`, then only scipy-ml will be updated. But there are some extra rules:
+  - Currently, a change to the base image (datascience-notebook) will trigger a full rebuild on all children, and a change to one child image will rebuild the parent image (so the child has something to inherit from in the build process) but not the siblings.
+  - Detection is done on the basis of comparing the current commit pushed and the last commit pushed within the current branch. I.e. if any file was changed in `images/scipy-ml-notebook` in the current commit, but a file wasn't changed in any of the other image subdirs of `images`, the only scipy-ml and the base notebook will be updated. But there are some extra rules:
     - If the action is triggered by a PR, then it will check for ALL files changed in the PR instead of just the latest commit in the PR.
     - If you put "full rebuild" in your commit message, all of this logic is ignored and all images are rebuilt.
     - If this is the first Github Actions run of the current branch, all images are rebuilt.
@@ -79,7 +79,7 @@ After `python3 main.py` is called from main.yml, it does a few things to ensure 
 - If any of the above steps fail, subsequent images will not be checked. We break from the loop and move to the Postwork below.
 - But as long as steps of an image start, a [`Result`](/scripts/runner.py#L22) is created to store the results of each step.
 
-### 3. Postwork: archive build-artifacts
+### 3. Postwork: archive `build-artifacts`
 
 - Useful information of each image from previous section is all stored in [`Result`](/scripts/runner.py#L22). It will be parsed to strings and written to the following directories:
 - `artifacts/`: it contains the [`Result`](/scripts/runner.py#L22) turned into a .yml file for each "started" image.

@@ -157,7 +157,7 @@ def build_and_test_containers(
         But this will not affect other images. 
 
     Args:
-        root (Node): (for now) always datahub-base-notebook
+        root (Node): (for now) always datascience-notebook
         username (str): docker username, passed in as env variable
         password (str): docker token, passed in as env variable
         tag_prefix (str): e.g. '2023.2', defined in and loaded from spec.yml
@@ -344,7 +344,7 @@ if __name__ == '__main__':
     get_logger(logging.DEBUG)
     test_spec = {
         'images': {
-            'datahub-base-notebook': {
+            'datascience-notebook': {
                 'build_args': {
                     'PYTHON_VERSION': 'python-3.9.5'
                 },
@@ -354,10 +354,6 @@ if __name__ == '__main__':
                     'CONDA_LIST'
                 ]
             },
-            # 'datascience-notebook': {
-            #     'depend_on': 'datahub-base-notebook',
-            #     'rebuild': False
-            # }
         }
     }
 
@@ -377,7 +373,7 @@ if __name__ == '__main__':
         }
 
     tree = build_tree(spec_yaml=test_spec, images_changed=[
-                      'datahub-base-notebook'], git_suffix='test')
+                      'datascience-notebook'], git_suffix='test')
 
     dockerhub_username = os.environ.get('DOCKERHUB_USERNAME', None)
     dockerhub_token = os.environ.get('DOCKERHUB_TOKEN', None)

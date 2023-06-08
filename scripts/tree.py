@@ -78,7 +78,7 @@ def build_tree(spec_yaml: dict, images_changed: List[str], git_suffix: str='gitn
         Node: the root node. 
 
     NOTE:
-        Our use case has only 1 single base image: ucsdets/datahub-base-notebook
+        Our use case has only 1 single base image: ucsdets/datascience-notebook
     """
     if 'images' not in spec_yaml:
         raise KeyError("Specification of images should be under root level. \
@@ -86,21 +86,31 @@ def build_tree(spec_yaml: dict, images_changed: List[str], git_suffix: str='gitn
     images = spec_yaml['images']
     dep = defaultdict(list)     # local helper dict to store dependency (parent: [children])
 
-    # find root & store dependencies: single-root solution for now:
-    ROOT_IMAGE = "NULL"
+    # store dependencies
     for key, info in images.items():
         # use key instead of info['image_name'], since we want to use
-        # datahub-base-notebook instead of ucsdets/datahub-base-notebook
+        # datascience-notebook instead of ucsdets/datascience-notebook
         # prefix "ucsdets/" will be appened in Node Constructor
-        if "depend_on" not in info:
-            # root
-            ROOT_IMAGE = key
-        else:
+        if "depend_on" in info:
             dep[info['depend_on']].append(key)
 
-    # single-root check:
-    if ROOT_IMAGE != "datahub-base-notebook":
-        logger.error(f"Expect base image to be datahub-base-notebook but got {ROOT_IMAGE}")
+    # find root: single-root solution for now
+    # That line may look like:
+    ## root: datascience-notebook
+    ## root: [datascience-notebook]
+    ## root: [datascience-notebook, some-other-root] => NOT IMPLEMENTED YET
+    root_image_name = spec_yaml.get('root', "root NOT EXIST IN spec.yml")
+    if isinstance(root_image_name, list):
+        if len(root_image_name) == 1:
+            root_image_name = root_image_name[0]
+        else:
+            # Implementation Idea: create a dummy Node on top of all the roots
+            # and ensure its rebuild = False
+            raise NotImplementedError("Currently we don't support multiple root")
+
+    # single-root check for our own use case:
+    if root_image_name != "datascience-notebook":
+        logger.error(f"Expect base image to be datascience-notebook but got {root_image_name}")
 
     ### Helper function
     def build_node(img_name: str, parent_rebuild: bool, repo: str="ucsdets/") -> Node:
@@ -142,7 +152,7 @@ def build_tree(spec_yaml: dict, images_changed: List[str], git_suffix: str='gitn
         )
     ### ********************************* ###
     
-    return build_node(ROOT_IMAGE, False)
+    return build_node(root_image_name, False)
 
 
 if __name__ == "__main__":

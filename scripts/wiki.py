@@ -287,12 +287,12 @@ def update_Stable() -> bool:
     # Load data
     try:
         # 1st col: Image
-        # each cell_img is like ucsdets/datahub-base-notebook:2023.1-c11a915
+        # each cell_img is like ucsdets/datascience-notebook:2023.1-stable
         stable_full_names = read_var('IMAGES_GLOBAL_STABLE')
         cell_stable = list2cell([f"`{image}`" for image in stable_full_names])
 
         # 2nd col: Based On
-        # each orig_img is like ucsdets/datahub-base-notebook:2023.1-stable
+        # each orig_img is like ucsdets/datascience-notebook:2023.1-stable
         orig_full_names = read_var('IMAGES_ORIGINAL_STABLE')
         cell_orig = list2cell([f"`{image}`" for image in orig_full_names])
 

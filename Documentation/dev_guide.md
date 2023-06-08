@@ -100,17 +100,17 @@ $ pip install -r scripts/requirements.txt
 ## Modifying an Image (fix bugs or add features)
 
 1. Clone the repository and make a new branch: `$ git checkout -b dev_<image name>`.
-2. Under `image/`, find the respective directory for the image you want to change. A manifest of a recent build can be found in the [wiki](https://github.com/ucsd-ets/datahub-docker-stack/wiki) section. An example of a manifest is [here](https://github.com/ucsd-ets/datahub-docker-stack/wiki/ucsdets-datahub-base-notebook-2021.2-ec12f6b).
+2. Under `image/`, find the respective directory for the image you want to change. A manifest of a recent build can be found in the [wiki](https://github.com/ucsd-ets/datahub-docker-stack/wiki) section. An example of a manifest is [here](https://github.com/ucsd-ets/datahub-docker-stack/wiki/ucsdets-datascience-notebook-2021.2-ec12f6b).
 3. Follow the instructions in [images.md](/Documentation/images.md#recommened-steps-to-follow). This time step #1 should be editing the exisiting Dockerfile.
 
-## Running image tests
+## Running Image Tests
 
 1. Activate the virtual environment `$ source bin/activate`
 2. `$ cd images`
 3. `$ export TEST_IMAGE=MYIMAGE` replace `MYIMAGE` with your locally built image name
 4. `$ pytest tests_common` as an example
 
-## Running script tests
+## Running Script Tests
 
 Side Note: For `test_wiki.py` to work, please create 3 folders `logs/`, `manifests/`, and `wiki/` under project root. In addition, please copy this [Home_original.md](/tests/Home_original.md) into `wiki/`.
 

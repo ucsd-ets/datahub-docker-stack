@@ -15,7 +15,7 @@ We have four actions that we use to develop, test, and deploy our Docker Stack.
 
 We use a tool called **doit** that allows for more complicated actions to be written and executed during Actions. See [dodo.py for those functions.](/dodo.py)
 
-## main.yml
+## `main.yml`
 
 ### AUTO Build and Test CI/CD Pipeline Overview
 
@@ -59,7 +59,7 @@ the following steps [See scripts.md for a more in-depth look at this step.](./sc
 - **`Archive artifacts and logs`**: zip `artifacts/`, `manifests/`, and `logs/` and make it ready
   for download at Actions summary page.
 
-## tag.yml
+## `tag.yml`
 
 This action is run manually and requires an existing tag (most likely 202x.x-main). The requirement is that all 4 images had been pushed to Dockerhub AND their manifests (.md files) exist under wiki, like [this](https://github.com/ucsd-ets/datahub-docker-stack/wiki/ucsdets-scipy-ml-notebook-2023.2-main). There is an optional dry-run setting that allows you to verify the output of the action without actually pushing new stable images.
 

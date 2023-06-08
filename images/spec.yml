@@ -1,20 +1,17 @@
-images:
-  datahub-base-notebook:
-    image_name: ucsdets/datahub-base-notebook
-    build_args:
-      PYTHON_VERSION: python-3.9.5
-      PY_VER_SHORT: '3.9'
-      JUPYTERHUB_VERSION: 1.4.1
-    info_cmds: [PY_VER, PIP_LIST, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
+root: datascience-notebook
 
+images:
   datascience-notebook:
     image_name: ucsdets/datascience-notebook
-    depend_on: datahub-base-notebook
+    build_args:
+      PYTHON_VERSION: python-3.9.5
+      PY_VER_SHORT: "3.9"
+      JUPYTERHUB_VERSION: 1.4.1
     info_cmds: [PY_VER, PIP_LIST, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
 
   scipy-ml-notebook:
     image_name: ucsdets/scipy-ml-notebook
-    depend_on: datahub-base-notebook
+    depend_on: datascience-notebook
     integration_tests: false
     build_args:
       TORCH_VER: '1.9.0+cu111'
@@ -25,12 +22,12 @@ images:
 
   rstudio-notebook:
     image_name: ucsdets/rstudio-notebook
-    depend_on: datahub-base-notebook
+    depend_on: datascience-notebook
     integration_tests: true
     info_cmds: [PY_VER, PIP_LIST, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
 
 tag:
-  prefix: '2023.2'
+  prefix: "2023.2"
 
 all_info_cmds:
   PY_VER:
@@ -51,4 +48,3 @@ all_info_cmds:
   CUDA_VERSION:
     description: CUDA Version
     command: bash -c 'conda list | grep "cuda\|cudnn\|nccl"'
-
