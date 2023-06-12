@@ -133,7 +133,7 @@ class TestDocker(unittest.TestCase):
         result, mock_pull, mock_close = self._prepull_images()
         assert result == True, "prepull_images() failed somewhere"
         assert mock_pull.call_count == 4, mock_pull.call_count
-        assert mock_close.call_count == 1, mock_close.call_count
+        assert mock_close.call_count == 0, mock_close.call_count
 
     def test_tag_stable(self):
         stable_name, result, mock_get, mock_tag, mock_close = self._tag_stable()
@@ -141,6 +141,9 @@ class TestDocker(unittest.TestCase):
         assert stable_name == self.stable_fullnames[0], f"Stable name is wrong: {stable_name}"
         assert mock_get.call_count == 1, mock_get.call_count
         assert mock_tag.call_count == 1, mock_tag.call_count
+        # .args gives argument; .kwargs gives keyword arguments
+        arg_list = [arg.kwargs for arg in mock_tag.call_args_list]
+        assert arg_list == [{'repository': 'image_1', 'tag': '2099.1-stable'}], arg_list
         assert mock_close.call_count == 1, mock_close.call_count
 
     def test_push_stable_image(self):
