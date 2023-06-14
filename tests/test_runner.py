@@ -8,8 +8,10 @@ import pytest
 
 
 class TestRunner(unittest.TestCase):
-    def run_build_and_test_containers(self, root: Node):
+    def run_build_and_test_containers(self, root: Node, has_cache: bool):
         mock_login = MagicMock()
+        mock_cache = MagicMock(return_value=True)
+        mock_nocache = MagicMock(return_value=False)
 
         # for each node
         mock_build = MagicMock(return_value=(True, 'myreport'))
@@ -21,7 +23,6 @@ class TestRunner(unittest.TestCase):
         mock_prune = MagicMock(resp=100)
         mock_store = MagicMock(return_value=True)   # multiple
 
-        mock_wiki_update_Home = MagicMock()
         mock_image_tag_exists = MagicMock(return_value=True)
         
 
@@ -48,9 +49,9 @@ class TestRunner(unittest.TestCase):
         @patch('scripts.fs.store', mock_store)
         @patch('scripts.docker_adapter.get_image_obj', mock_get)
         @patch('scripts.wiki.write_report', mock_wiki_write_report)
-        @patch('scripts.wiki.update_Home', mock_wiki_update_Home)
         @patch('scripts.docker_adapter.prune', mock_prune)
         @patch('scripts.docker_adapter.image_tag_exists', mock_image_tag_exists)
+        @patch('scripts.docker_adapter.pull_build_cache', mock_cache if has_cache else mock_nocache)
         def run_test():
             return build_and_test_containers(root, 'fake', 'fakepw', 'test', self.all_info_cmds)
 
@@ -59,7 +60,7 @@ class TestRunner(unittest.TestCase):
         return (
             mock_login, mock_build, mock_tester, mock_push, 
             mock_get, mock_wiki_write_report, 
-            mock_prune, mock_store, mock_wiki_update_Home,
+            mock_prune, mock_store, 
             res
         )
     
@@ -93,9 +94,9 @@ class TestRunner(unittest.TestCase):
         (
             mock_login, mock_build, mock_tester, mock_push, 
             mock_get, mock_wiki_write_report, 
-            mock_prune, mock_store, mock_wiki_update_Home,
+            mock_prune, mock_store, 
             res
-        ) = self.run_build_and_test_containers(root)
+        ) = self.run_build_and_test_containers(root, False)
         
         assert res, "build_and_test_containers() returns False"
 
@@ -122,8 +123,6 @@ class TestRunner(unittest.TestCase):
 
         # a build log file, test log file, and a yaml file per image
         assert mock_store.call_count == 12, mock_store.call_count
-
-        assert mock_wiki_update_Home.call_count == 1, mock_wiki_update_Home.call_count
 
     def test_build_some(self):
         c1 = Node(
@@ -160,9 +159,9 @@ class TestRunner(unittest.TestCase):
         (
             mock_login, mock_build, mock_tester, mock_push, 
             mock_get, mock_wiki_write_report, 
-            mock_prune, mock_store, mock_wiki_update_Home,
+            mock_prune, mock_store, 
             res
-        ) = self.run_build_and_test_containers(root)
+        ) = self.run_build_and_test_containers(root, True)
 
         assert res, "build_and_test_containers() returns False"
 
@@ -189,8 +188,6 @@ class TestRunner(unittest.TestCase):
 
         # 4 yamls, 1 build log file & 1 test log file for actually built image
         assert mock_store.call_count == 6, mock_store.call_count
-
-        assert mock_wiki_update_Home.call_count == 1, mock_wiki_update_Home.call_count
 
     
     def test_build_none(self):
@@ -222,12 +219,14 @@ class TestRunner(unittest.TestCase):
             ],
             rebuild=False
         )
+
+        # first: test when there are cache
         (
             mock_login, mock_build, mock_tester, mock_push, 
             mock_get, mock_wiki_write_report, 
-            mock_prune, mock_store, mock_wiki_update_Home,
+            mock_prune, mock_store, 
             res
-        ) = self.run_build_and_test_containers(root)
+        ) = self.run_build_and_test_containers(root, True)
 
         assert res, "build_and_test_containers() returns False"
         mock_login.assert_called_with('fake', 'fakepw')
@@ -238,8 +237,6 @@ class TestRunner(unittest.TestCase):
         assert mock_wiki_write_report.call_count == 0
         # no rebuild, thus no prune()
         assert mock_prune.call_count == 0
-        # update_Home() check whether any update is needed and will always be called. 
-        assert mock_wiki_update_Home.call_count == 1
 
         should_be = [
             Result(success=True, full_image_name='datahub-base-notebook:test-test', container_details={'image_built': False}),
@@ -248,6 +245,36 @@ class TestRunner(unittest.TestCase):
             Result(success=True, full_image_name='rstudio-notebook:test-test', container_details={'image_built': False})
         ]
         should_be_filepaths = [r.safe_full_image_name + '.yaml' for r in should_be]
+        got_filepaths = [arg.args[0] for arg in mock_store.call_args_list]
+
+        assert got_filepaths == should_be_filepaths, got_filepaths
+
+        # second: test when there are no
+        (
+            mock_login, mock_build, mock_tester, mock_push, 
+            mock_get, mock_wiki_write_report, 
+            mock_prune, mock_store,
+            res
+        ) = self.run_build_and_test_containers(root, False)
+
+        assert res, "build_and_test_containers() returns False"
+        mock_login.assert_called_with('fake', 'fakepw')
+        assert mock_build.call_count == 4
+        assert mock_tester.call_count == 5
+        assert mock_push.call_count == 4
+        assert mock_get.call_count == 4
+        assert mock_wiki_write_report.call_count == 4
+        assert mock_prune.call_count == 0
+
+        should_be = [
+            Result(success=True, full_image_name='datahub-base-notebook:test-test', container_details={'image_built': False}),
+            Result(success=True, full_image_name='datascience-notebook:test-test', container_details={'image_built': False}),
+            Result(success=True, full_image_name='scipy-ml-notebook:test-test', container_details={'image_built': False}),
+            Result(success=True, full_image_name='rstudio-notebook:test-test', container_details={'image_built': False})
+        ]
+        should_be_filepaths = [r.safe_full_image_name + suffix 
+            for r in should_be for suffix in (".build.log", ".basic-tests.log", ".yaml")
+        ]
         got_filepaths = [arg.args[0] for arg in mock_store.call_args_list]
 
         assert got_filepaths == should_be_filepaths, got_filepaths
