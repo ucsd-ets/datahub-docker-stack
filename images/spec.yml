@@ -2,7 +2,7 @@ root: datascience-notebook
 
 images:
   datascience-notebook:
-    image_name: ucsdets/datascience-notebook
+    image_name: ghcr.io/ucsd-ets/datascience-notebook
     build_args:
       PYTHON_VERSION: python-3.9.5
       PY_VER_SHORT: "3.9"
@@ -10,7 +10,7 @@ images:
     info_cmds: [PY_VER, PIP_LIST, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
 
   scipy-ml-notebook:
-    image_name: ucsdets/scipy-ml-notebook
+    image_name: ghcr.io/ucsd-ets/scipy-ml-notebook
     depend_on: datascience-notebook
     integration_tests: false
     build_args:
@@ -21,7 +21,7 @@ images:
     prune: true
 
   rstudio-notebook:
-    image_name: ucsdets/rstudio-notebook
+    image_name: ghcr.io/ucsd-ets/rstudio-notebook
     depend_on: datascience-notebook
     integration_tests: true
     info_cmds: [PY_VER, PIP_LIST, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
