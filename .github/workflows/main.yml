@@ -107,6 +107,8 @@ jobs:
         env:
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
           DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_USER: ${{ github.actor }}
           GRPC_CERT: ${{ secrets.GRPC_CERT }}
           PREPUSH_IMAGES: '["ghcr.io/ucsd-ets/scipy-ml-notebook"]'
         run: |
