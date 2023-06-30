@@ -256,7 +256,10 @@ def update_Home() -> bool:
         _, stable_tag = stable_full_names[0].split(':', 1)  # stable_tag = 2022.2-stable
         stablePrefix, _ = stable_tag.split('-', 1)  # 2022.2
         original_stable_names = query_images(doc_str, 'stable', stablePrefix)  # a list
-        assert len(original_stable_names) == 0, f"Images with tag {stable_tag} already exist in Home.md"
+        
+        # we need the ability to overwrite stable tags if we want to
+        # todo: figure out how to delete old MD if duplicate detected
+        #assert len(original_stable_names) == 0, f"Images with tag {stable_tag} already exist in Home.md"
         
         # 2nd arg of insert_row() takes in List[Tuple], each of which is a new 'latest_row'
         latest_doc = insert_row(doc_str, [latest_row])
