@@ -101,7 +101,7 @@ def build(node: Node) -> Tuple[bool, str]:
 
 def login(
     username: str, password: str,
-    registry: Optional[str] = 'https://index.docker.io/v1/'
+    registry: Optional[str] = 'ghcr.io'
 ):
     """
     Log in to a docker registry given username, password and registry (optional)
