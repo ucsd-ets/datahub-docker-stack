@@ -364,7 +364,7 @@ def branch_to_valid_tag(branch_name: str) -> str:
 
 def wiki_doc2link(fullname: str) -> str:
     """ Helper function
-    Given: ucsdets/rstudio-notebook:2023.1-7d75f9f
+    Given: ghcr.io/ucsd-ets/rstudio-notebook:2023.1-7d75f9f
     Returns: [Link](https://github.com/ucsd-ets/datahub-docker-stack/wiki/ucsdets-rstudio-notebook-2023.1-7d75f9f)
     """
     repo_url = f"https://github.com/ucsd-ets/datahub-docker-stack"

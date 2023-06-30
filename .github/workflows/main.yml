@@ -108,7 +108,7 @@ jobs:
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
           DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
           GRPC_CERT: ${{ secrets.GRPC_CERT }}
-          PREPUSH_IMAGES: '["ucsdets/scipy-ml-notebook"]'
+          PREPUSH_IMAGES: '["ghcr.io/ucsd-ets/scipy-ml-notebook"]'
         run: |
           python3 scripts/main.py
 

@@ -16,8 +16,8 @@ def run_tagging(
         username: str,
         password: str,
         dry_run=False) -> bool:
-    """Fetch images like ucsdets/datascience-notebook:2023.2-<branch_name> and tag them into
-    ucsdets/datascience-notebook:2023.2-stable.
+    """Fetch images like ghcr.io/ucsd-ets/datascience-notebook:2023.2-<branch_name> and tag them into
+    ghcr.io/ucsd-ets/datascience-notebook:2023.2-stable.
 
     Args:
         original_tag (str): by user input in workflow, sth like '2023.2-<branch_name>'
@@ -45,7 +45,7 @@ def run_tagging(
     _spec = get_specs('images/spec.yml')  # a dictionary
     # a list of 'datascience-notebook'
     _images = list(_spec['images'].keys())
-    original_names = ['ucsdets/' + name + ':' + original_tag for name in _images]
+    original_names = ['ghcr.io/ucsd-ets/' + name + ':' + original_tag for name in _images]
 
     if dry_run:
         logger.info(f"Doing dry-run to check original_names: {original_names}")
@@ -59,7 +59,7 @@ def run_tagging(
     docker_adapter.prepull_tagging_images(orig_images=original_names)
     logger.info("finished prepull")
 
-    tagged = [] # each element is like 'ucsdets/datascience-notebook:2023.2-stable'
+    tagged = [] # each element is like 'ghcr.io/ucsd-ets/datascience-notebook:2023.2-stable'
     for img_orig in original_names:
         logger.info(f'Tagging {img_orig} with {stable_tag}')
         img_stable, success = docker_adapter.tag_stable(orig_fullname=img_orig, tag_replace=stable_tag)
@@ -82,8 +82,8 @@ def run_global_stable_tagging(
         username: str,
         password: str,
         dry_run=False) -> bool:
-    """Fetch images like ucsdets/datascience-notebook:2023.2-stable and tag them into
-    ucsdets/datascience-notebook:stable
+    """Fetch images like ghcr.io/ucsd-ets/datascience-notebook:2023.2-stable and tag them into
+    ghcr.io/ucsd-ets/datascience-notebook:stable
 
     Args:
         stablePrefix (str): by user input in workflow, sth like '2023.2'
@@ -126,7 +126,7 @@ def run_global_stable_tagging(
     docker_adapter.prepull_tagging_images(orig_images=original_stable_names)
     logger.info("finished prepull")
 
-    tagged = [] # each element is like 'ucsdets/datahub-base-notebook:stable'
+    tagged = [] # each element is like 'ghcr.io/ucsd-ets/datahub-base-notebook:stable'
     for img_orig in original_stable_names:
         logger.info(f"Tagging {img_orig} with 'stable'")
         img_stable, success = docker_adapter.tag_stable(orig_fullname=img_orig, tag_replace='stable')
