@@ -368,7 +368,7 @@ def wiki_doc2link(fullname: str) -> str:
     Returns: [Link](https://github.com/ucsd-ets/datahub-docker-stack/wiki/ucsdets-rstudio-notebook-2023.1-7d75f9f)
     """
     repo_url = f"https://github.com/ucsd-ets/datahub-docker-stack"
-    assert fullname.count(':') == 1 and fullname.count('/') <= 1, \
+    assert fullname.count(':') == 1 and fullname.count('/') <= 2, \
         f"Wrong image full name format: {fullname}"
     fullname = fullname.replace(':', '-').replace('/', '-')
     link = url2mdlink(repo_url + '/wiki/' + fullname, 'Link')
