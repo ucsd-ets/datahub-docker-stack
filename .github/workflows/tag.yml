@@ -30,9 +30,6 @@ jobs:
 
       - name: Docker Cleanup
         run: |
-          echo ${{ env.REGISTRY }}
-          echo ${{ env.IMAGE_NAME }}
-          exit -5
           docker image prune -a -f
           docker container prune -f
 

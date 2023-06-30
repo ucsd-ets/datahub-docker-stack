@@ -40,6 +40,9 @@ jobs:
         run: |
           echo "Free space:"
           df -h
+          echo ${{ env.REGISTRY }}
+          echo ${{ env.IMAGE_NAME }}
+          exit -5
 
       - name: Docker/ENV cleanup Cleanup
         run: |
