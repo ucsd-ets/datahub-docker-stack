@@ -17,7 +17,7 @@ This document introduces the `images/` folder and the Docker images we maintain 
 - File `change_ignore.json` specify the following 2 things about files and folders inside `/images`:
   - Changes to which files & folders will be ignored when determing what images to rebuild.
   - Changes to which files & folders should always trigger full rebuild (that is, rebuild all images).
-- File `spec.yml` contains config information about each image in our stack, including the image names, parent->child relationships, the prefix tag to build the images with (i.e. the '2023.2' in 'ucsdets/scipy-ml-notebook:2023.2-a1230a), and other various info used throughout the build.
+- File `spec.yml` contains config information about each image in our stack, including the image names, parent->child relationships, the prefix tag to build the images with (i.e. the '2023.2' in 'ghcr.io/ucsd-ets/scipy-ml-notebook:2023.2-a1230a), and other various info used throughout the build.
   - When a new image is added, this file should be updated accordingly.
   - The image sub-directories created should be equal to the keys under [`images`](/images/spec.yml#L1)
   - Plans can be enabled to serve two or more tracks/versions of the same image
@@ -56,7 +56,7 @@ Please refer to Docker [Official Docs](https://docs.docker.com/engine/reference/
 
 - The usage of a Docker image tag is very similar to the branch in a Github repo. Some common tag choices
 are "stable", "latest", "beta", "dev", etc.
-- And very naturally, we use the branch name and combine it with the "year.quarter" prefix to form our Docker image tag. A tag in this form gives us developers a clear idea of the time and purpose of a group of images. For example, `ucsdets/datascience-notebook:2021.2-update_pytorch`.
+- And very naturally, we use the branch name and combine it with the "year.quarter" prefix to form our Docker image tag. A tag in this form gives us developers a clear idea of the time and purpose of a group of images. For example, `ghcr.io/ucsd-ets/datascience-notebook:2021.2-update_pytorch`.
 - At the same time, we save the pain from finer-grained tag/identifier aiming to give a unique tag to each image we previously built. 99% of the time, there is a 1-1 correspondence between a branch and a feature/debug update, and we need multiple build attempts before making things work. Thus, it's unnecessary to distinguish between images under the same branch.
 - The `FROM` statement in `Dockerfile` will include `ARG` in the image ref to
 support arbitary tags at run-time. This allows for fixating the Dockerfile
@@ -100,13 +100,13 @@ In Github, there is a Wiki tab that are designed to store documentation of the r
 
 Our Wiki consists of the following 3 parts:
 
-1. A [`Home.md`](https://github.com/ucsd-ets/datahub-docker-stack/wiki): it stores the production images in every quarter. Images whose manifests are in `Home.md` has the form of **<image_name>:<year_quarter>-stable**, like **ucsdets/datascience-notebook:2023.2-stable**
-2. A [`Stable_Tag.md`](https://github.com/ucsd-ets/datahub-docker-stack/wiki/Stable-Tag): it stores the production images currently being used and gets updated each quarter. Images whose manifests are in `Stable_Tag.md` has the form of **<image_name>:stable**, like **ucsdets/datascience-notebook:stable**
+1. A [`Home.md`](https://github.com/ucsd-ets/datahub-docker-stack/wiki): it stores the production images in every quarter. Images whose manifests are in `Home.md` has the form of **<image_name>:<year_quarter>-stable**, like **ghcr.io/ucsd-ets/datascience-notebook:2023.2-stable**
+2. A [`Stable_Tag.md`](https://github.com/ucsd-ets/datahub-docker-stack/wiki/Stable-Tag): it stores the production images currently being used and gets updated each quarter. Images whose manifests are in `Stable_Tag.md` has the form of **<image_name>:stable**, like **ghcr.io/ucsd-ets/datascience-notebook:stable**
 3. Individual manifest for each production image. Their file name has the form of **<image_name>-<year_quarter>-stable.md**, like **ucsdets-datascience-notebook-2023.2-stable.md** Note that all `/`, `:`, etc. are replaced with `-` because this filename will also be part of its [url in the Wiki](https://github.com/ucsd-ets/datahub-docker-stack/wiki/ucsdets-datahub-base-notebook-2023.2-stable).
 
 ***Why do we need separate stable tag?***
 
-Each production image has a "year-quarter-stable" (we will call it 'stable' in short) in the form of **ucsdets/datascience-notebook:2023.2-stable** and a "global-stable" tag in the form of **ucsdets/datascience-notebook:stable**. The content of them is exactly the same, but we want to keep 2 "copies" or "names" of each image for the following reasons:
+Each production image has a "year-quarter-stable" (we will call it 'stable' in short) in the form of **ghcr.io/ucsd-ets/datascience-notebook:2023.2-stable** and a "global-stable" tag in the form of **ghcr.io/ucsd-ets/datascience-notebook:stable**. The content of them is exactly the same, but we want to keep 2 "copies" or "names" of each image for the following reasons:
 
 1. Stable tag images persists and keeps track of our updates & changes in each quarter. Also, if unfortunately the production images of a quarter contain serious bugs that cannot be fixed immediately, we can roll back to those for previous quarters.
 2. Global-stable tag only holds temporary information "what images are in production usage this quarter?" It gives additional convenience because when we use these images (creating a Docker container with some launch script) elsewhere, we don't need to update the command or script (**......2023.2-stable** to **......2023.3-stable**) on a regular basis.

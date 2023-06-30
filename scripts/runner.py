@@ -174,7 +174,6 @@ def build_and_test_containers(
     # try login also via CLI to check image existence on Dockerhub later
     login_cmd = f"docker login ghcr.io -u {username} -p $GITHUB_TOKEN"
     os.system(login_cmd)
-    #os.system("echo ${{ GITHUB_TOKEN }}")
 
     q = [root]
     node_order = []

@@ -30,7 +30,8 @@ def run_tagging(
         bool: success or failure
     """
 
-    docker_adapter.login(username, password)
+    registry = "ghcr.io"
+    docker_adapter.login(username, password, registry=registry)
     
     # <branch_name> may contain more '-', but there must be one before it.
     assert original_tag and original_tag.count('-') >= 1, \
@@ -99,8 +100,8 @@ def run_global_stable_tagging(
     Returns:
         bool: success or failure
     """
-
-    docker_adapter.login(username, password)
+    registry = "ghcr.io"
+    docker_adapter.login(username, password, registry=registry)
     
     # sanity check on '2099.3'
     assert stablePrefix and len(stablePrefix) == 6 and stablePrefix.count('.') == 1, \
@@ -145,9 +146,9 @@ def run_global_stable_tagging(
 
 
 def tagging_main(original_tag: str, dry_run: bool=False, global_stable: bool=False):
-    dockerhub_username = os.environ.get('DOCKERHUB_USER', None)
-    dockerhub_token = os.environ.get('DOCKERHUB_TOKEN', None)
-    if not dockerhub_username or not dockerhub_token:
+    github_username = os.environ.get('GITHUB_USER', None)
+    github_token = os.environ.get('GITHUB_TOKEN', None)
+    if not github_username or not github_token:
         logger.error('dockerhub username or password not set')
         sys.exit(1)
     
@@ -155,15 +156,15 @@ def tagging_main(original_tag: str, dry_run: bool=False, global_stable: bool=Fal
     if global_stable:
         tagging_result = run_global_stable_tagging(
             original_tag, 
-            username=dockerhub_username, 
-            password=dockerhub_token,
+            username=github_username, 
+            password=github_token,
             dry_run=dry_run
         )
     else:
         tagging_result = run_tagging(
             original_tag, 
-            username=dockerhub_username, 
-            password=dockerhub_token,
+            username=github_username, 
+            password=github_token,
             dry_run=dry_run
         )
     if tagging_result is False:
