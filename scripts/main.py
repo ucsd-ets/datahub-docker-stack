@@ -63,8 +63,8 @@ if __name__ == '__main__':
     parsed_args = parser.parse_args()
     # logger = get_logger(LOGLEVEL_MAP[parsed_args.log_level])
 
-    dockerhub_username = os.environ.get('DOCKERHUB_USER', None)
-    dockerhub_token = os.environ.get('DOCKERHUB_TOKEN', None)
+    dockerhub_username = os.environ.get('GITHUB_USER', None)
+    dockerhub_token = os.environ.get('GITHUB_TOKEN', None)
     if not dockerhub_username or not dockerhub_token:
         sys.exit("'dockerhub username or password not set'")
 

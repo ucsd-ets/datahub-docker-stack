@@ -26,7 +26,7 @@ class TestDocker(unittest.TestCase):
         self.docker = docker.from_env()
         internal_docker.set_docker_client(self.docker)
         self.test_node = Node(
-            image_name='ucsdets/datahub-docker-stacks',
+            image_name='ghcr.io/ucsd-ets/datahub-docker-stacks',
             git_suffix="test",
             image_tag='pushtest',
             filepath='tests',
@@ -63,7 +63,7 @@ class TestDocker(unittest.TestCase):
         assert resp, resp
 
     def test_prune(self):
-        resp = internal_docker.prune('ucsdets/datahub-docker-stacks:pushtest')
+        resp = internal_docker.prune('ghcr.io/ucsd-ets/datahub-docker-stacks:pushtest')
         assert resp >= 0, resp
 
     ###### test execution code ######

@@ -63,7 +63,7 @@ the following steps [See scripts.md for a more in-depth look at this step.](./sc
 
 This action is run manually and requires an existing tag (most likely 202x.x-main). The requirement is that all 4 images had been pushed to Dockerhub AND their manifests (.md files) exist under wiki, like [this](https://github.com/ucsd-ets/datahub-docker-stack/wiki/ucsdets-scipy-ml-notebook-2023.2-main). There is an optional dry-run setting that allows you to verify the output of the action without actually pushing new stable images.
 
-After being executed, the action pulls each image in the stack from DockerHub using the ``doit tag`` as defined in [dodo.py](/dodo.py) and then pushes them back up to DockerHub using the format "**ucsdets\<image_name\>:\<year\>.\<quarter\>-stable**". For example: **ucsdets/datascience-notebook:2023.2-stable**.
+After being executed, the action pulls each image in the stack from DockerHub using the ``doit tag`` as defined in [dodo.py](/dodo.py) and then pushes them back up to DockerHub using the format "**ucsdets\<image_name\>:\<year\>.\<quarter\>-stable**". For example: **ghcr.io/ucsd-ets/datascience-notebook:2023.2-stable**.
 
 The tag pulls the images with matching tag to the value the user passes in, regardless of configuration elsewhere. For example, if "2021.2-dev" is supplied to the action, it will always try to look for those <image_name>:2021.2-dev and tag them as stable even if the most recent year-quarter prefix is 2023.2.
 
@@ -75,7 +75,7 @@ This action will not run until the test_gpu.yml has been run and passed.
 
 This is also a manual action and very similar to `tag.yml`. Here are their differences:
 
-- Its purpose is to tag the set of "year-quarter-stable" images (by `tag.yml`) into "global-stable" ones. E.g. **ucsdets/datascience-notebook:2023.2-stable** to **ucsdets/datascience-notebook:stable**.
+- Its purpose is to tag the set of "year-quarter-stable" images (by `tag.yml`) into "global-stable" ones. E.g. **ghcr.io/ucsd-ets/datascience-notebook:2023.2-stable** to **ghcr.io/ucsd-ets/datascience-notebook:stable**.
 - A "year-quarter-stable" answers "what are the production images in that quarter", while a "global-stable" answers "what are the production images being used now, this quarter".
 - `tag.yml` expect an input like "202x.x-main", but branch name is not necessarily "main". I.e. in rare cases, you may enable the `Push Wiki to GitHub` step for a dev-branch build (such that their markdown manifests exist) and tag them as "year-quarter-stable". But `tag_global_stable.yml` enforces that you can only tag "year-quarter-stable" images into "global-stable".
 - The above enforcement is achieved by user input format. `tag.yml` receives **\<year\>.\<quarter\>-<branch_name>**" as input, while `tag_global_stable.yml` only accepts **\<year\>.\<quarter\>**".

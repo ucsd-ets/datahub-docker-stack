@@ -169,9 +169,10 @@ def build_and_test_containers(
             - rebuilt, tested, cmds executed, logs and wiki written.
     """
 
-    docker_adapter.login(username, password)
+    registry = "ghcr.io"
+    docker_adapter.login(username, password, registry=registry)
     # try login also via CLI to check image existence on Dockerhub later
-    login_cmd = f"echo $DOCKERHUB_TOKEN | docker login -u {username} --password-stdin"
+    login_cmd = f"docker login ghcr.io -u {username} -p $GITHUB_TOKEN"
     os.system(login_cmd)
 
     q = [root]

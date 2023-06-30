@@ -12,7 +12,7 @@ class TestWiki(unittest.TestCase):
     @classmethod
     def setUpClass(self):
         self.test_node = Node(
-            image_name='ucsdets/datahub-docker-stacks',
+            image_name='ghcr.io/ucsd-ets/datahub-docker-stacks',
             image_tag='pushtest',
             git_suffix="test",
             filepath='tests',
@@ -80,7 +80,7 @@ class TestWiki(unittest.TestCase):
         except Exception as e:
             raise Exception(
                 f"Docker client cannot found {self.test_node.full_image_name}\n" +
-                f"Please use cd to tests/ and run $ docker build . -f test.Dockerfile -t ucsdets/datahub-docker-stacks:pushtest"
+                f"Please use cd to tests/ and run $ docker build . -f test.Dockerfile -t ghcr.io/ucsd-ets/datahub-docker-stacks:pushtest"
             )
 
         run_test()

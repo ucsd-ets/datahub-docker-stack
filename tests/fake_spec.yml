@@ -2,22 +2,22 @@ root: [root]
 
 images:
   root:
-    image_name: ucsdets/root
+    image_name: ghcr.io/ucsd-ets/root
 
   child1:
-    image_name: ucsdets/child1
+    image_name: ghcr.io/ucsd-ets/child1
     depend_on: root
 
   child2:
-    image_name: ucsdets/child1
+    image_name: ghcr.io/ucsd-ets/child1
     depend_on: root
 
   child3:
-    image_name: ucsdets/child3
+    image_name: ghcr.io/ucsd-ets/child3
     depend_on: root
 
   child4:
-    image_name: ucsdets/child4
+    image_name: ghcr.io/ucsd-ets/child4
     depend_on: root
 
 tag:

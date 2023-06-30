@@ -16,8 +16,8 @@ def run_tagging(
         username: str,
         password: str,
         dry_run=False) -> bool:
-    """Fetch images like ucsdets/datascience-notebook:2023.2-<branch_name> and tag them into
-    ucsdets/datascience-notebook:2023.2-stable.
+    """Fetch images like ghcr.io/ucsd-ets/datascience-notebook:2023.2-<branch_name> and tag them into
+    ghcr.io/ucsd-ets/datascience-notebook:2023.2-stable.
 
     Args:
         original_tag (str): by user input in workflow, sth like '2023.2-<branch_name>'
@@ -30,7 +30,8 @@ def run_tagging(
         bool: success or failure
     """
 
-    docker_adapter.login(username, password)
+    registry = "ghcr.io"
+    docker_adapter.login(username, password, registry=registry)
     
     # <branch_name> may contain more '-', but there must be one before it.
     assert original_tag and original_tag.count('-') >= 1, \
@@ -45,7 +46,7 @@ def run_tagging(
     _spec = get_specs('images/spec.yml')  # a dictionary
     # a list of 'datascience-notebook'
     _images = list(_spec['images'].keys())
-    original_names = ['ucsdets/' + name + ':' + original_tag for name in _images]
+    original_names = ['ghcr.io/ucsd-ets/' + name + ':' + original_tag for name in _images]
 
     if dry_run:
         logger.info(f"Doing dry-run to check original_names: {original_names}")
@@ -59,7 +60,7 @@ def run_tagging(
     docker_adapter.prepull_tagging_images(orig_images=original_names)
     logger.info("finished prepull")
 
-    tagged = [] # each element is like 'ucsdets/datascience-notebook:2023.2-stable'
+    tagged = [] # each element is like 'ghcr.io/ucsd-ets/datascience-notebook:2023.2-stable'
     for img_orig in original_names:
         logger.info(f'Tagging {img_orig} with {stable_tag}')
         img_stable, success = docker_adapter.tag_stable(orig_fullname=img_orig, tag_replace=stable_tag)
@@ -82,8 +83,8 @@ def run_global_stable_tagging(
         username: str,
         password: str,
         dry_run=False) -> bool:
-    """Fetch images like ucsdets/datascience-notebook:2023.2-stable and tag them into
-    ucsdets/datascience-notebook:stable
+    """Fetch images like ghcr.io/ucsd-ets/datascience-notebook:2023.2-stable and tag them into
+    ghcr.io/ucsd-ets/datascience-notebook:stable
 
     Args:
         stablePrefix (str): by user input in workflow, sth like '2023.2'
@@ -99,8 +100,8 @@ def run_global_stable_tagging(
     Returns:
         bool: success or failure
     """
-
-    docker_adapter.login(username, password)
+    registry = "ghcr.io"
+    docker_adapter.login(username, password, registry=registry)
     
     # sanity check on '2099.3'
     assert stablePrefix and len(stablePrefix) == 6 and stablePrefix.count('.') == 1, \
@@ -126,7 +127,7 @@ def run_global_stable_tagging(
     docker_adapter.prepull_tagging_images(orig_images=original_stable_names)
     logger.info("finished prepull")
 
-    tagged = [] # each element is like 'ucsdets/datahub-base-notebook:stable'
+    tagged = [] # each element is like 'ghcr.io/ucsd-ets/datahub-base-notebook:stable'
     for img_orig in original_stable_names:
         logger.info(f"Tagging {img_orig} with 'stable'")
         img_stable, success = docker_adapter.tag_stable(orig_fullname=img_orig, tag_replace='stable')
@@ -145,9 +146,9 @@ def run_global_stable_tagging(
 
 
 def tagging_main(original_tag: str, dry_run: bool=False, global_stable: bool=False):
-    dockerhub_username = os.environ.get('DOCKERHUB_USER', None)
-    dockerhub_token = os.environ.get('DOCKERHUB_TOKEN', None)
-    if not dockerhub_username or not dockerhub_token:
+    github_username = os.environ.get('GITHUB_USER', None)
+    github_token = os.environ.get('GITHUB_TOKEN', None)
+    if not github_username or not github_token:
         logger.error('dockerhub username or password not set')
         sys.exit(1)
     
@@ -155,15 +156,15 @@ def tagging_main(original_tag: str, dry_run: bool=False, global_stable: bool=Fal
     if global_stable:
         tagging_result = run_global_stable_tagging(
             original_tag, 
-            username=dockerhub_username, 
-            password=dockerhub_token,
+            username=github_username, 
+            password=github_token,
             dry_run=dry_run
         )
     else:
         tagging_result = run_tagging(
             original_tag, 
-            username=dockerhub_username, 
-            password=dockerhub_token,
+            username=github_username, 
+            password=github_token,
             dry_run=dry_run
         )
     if tagging_result is False:

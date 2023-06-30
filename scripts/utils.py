@@ -208,7 +208,7 @@ def url2mdlink(url, text):
 
 
 def fulltag2fn(tag):
-    return tag.replace('/', '-').replace(':', '-')
+    return tag.replace('/', '-').replace(':', '-').replace("ghcr.io", "ghcr-io")
 
 
 def get_prev_tag(img_name, tag_prefix=None):
@@ -364,11 +364,11 @@ def branch_to_valid_tag(branch_name: str) -> str:
 
 def wiki_doc2link(fullname: str) -> str:
     """ Helper function
-    Given: ucsdets/rstudio-notebook:2023.1-7d75f9f
+    Given: ghcr.io/ucsd-ets/rstudio-notebook:2023.1-7d75f9f
     Returns: [Link](https://github.com/ucsd-ets/datahub-docker-stack/wiki/ucsdets-rstudio-notebook-2023.1-7d75f9f)
     """
     repo_url = f"https://github.com/ucsd-ets/datahub-docker-stack"
-    assert fullname.count(':') == 1 and fullname.count('/') <= 1, \
+    assert fullname.count(':') == 1 and fullname.count('/') <= 2, \
         f"Wrong image full name format: {fullname}"
     fullname = fullname.replace(':', '-').replace('/', '-')
     link = url2mdlink(repo_url + '/wiki/' + fullname, 'Link')

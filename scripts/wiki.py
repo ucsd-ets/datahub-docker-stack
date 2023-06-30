@@ -219,7 +219,7 @@ def update_Home() -> bool:
         cell_commit = url2mdlink(repo_url + '/commit/' + git_short_hash, f"`{git_short_hash}`")
 
         # 2nd col: Image
-        # each cell_img is like ucsdets/datahub-base-notebook:2023.1-c11a915
+        # each cell_img is like ghcr.io/ucsd-ets/datahub-base-notebook:2023.1-c11a915
         stable_full_names = read_var('IMAGES_TAGGED')
         cell_images = list2cell([f"`{image}`" for image in stable_full_names])
         # also read orignal names to copy wiki pages later
@@ -278,8 +278,8 @@ def update_Stable() -> bool:
     Stable_Tag.md accordingly.
 
     Note:
-        IMAGES_GLOBAL_STABLE should store images like ucsdets/datahub-base-notebook:stable;
-        IMAGES_ORIGINAL_STABLE should store images like ucsdets/datahub-base-notebook:2022.2-stable;
+        IMAGES_GLOBAL_STABLE should store images like ghcr.io/ucsd-ets/datahub-base-notebook:stable;
+        IMAGES_ORIGINAL_STABLE should store images like ghcr.io/ucsd-ets/datahub-base-notebook:2022.2-stable;
 
     Returns:
         bool: success/failure
@@ -287,12 +287,12 @@ def update_Stable() -> bool:
     # Load data
     try:
         # 1st col: Image
-        # each cell_img is like ucsdets/datascience-notebook:2023.1-stable
+        # each cell_img is like ghcr.io/ucsd-ets/datascience-notebook:2023.1-stable
         stable_full_names = read_var('IMAGES_GLOBAL_STABLE')
         cell_stable = list2cell([f"`{image}`" for image in stable_full_names])
 
         # 2nd col: Based On
-        # each orig_img is like ucsdets/datascience-notebook:2023.1-stable
+        # each orig_img is like ghcr.io/ucsd-ets/datascience-notebook:2023.1-stable
         orig_full_names = read_var('IMAGES_ORIGINAL_STABLE')
         cell_orig = list2cell([f"`{image}`" for image in orig_full_names])
 

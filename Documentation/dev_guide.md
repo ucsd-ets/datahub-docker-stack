@@ -26,11 +26,11 @@ $ docker images
 
 # Pull an image from Dockerhub
 $ docker pull <image_name>:<tag>
-$ docker pull ucsdets/rstudio-notebook:2023.2-d3e5619
+$ docker pull ghcr.io/ucsd-ets/rstudio-notebook:2023.2-d3e5619
 
 # Push an local image to Dockerhub
 $ docker push <image_name>:<tag>
-$ docker push ucsdets/rstudio-notebook:2023.2-d3e5619
+$ docker push ghcr.io/ucsd-ets/rstudio-notebook:2023.2-d3e5619
 ```
 
 - container-related
@@ -92,7 +92,7 @@ $ pip install -r scripts/requirements.txt
 ## Adding a New Image
 
 1. Clone the repository and make a new branch: `git checkout -b dev_***_notebook`.
-2. Make a new directory under `./images` with the name being the base-name of the new image. For example, for `ucsdets/scipy-ml-notebook`, make a new directory `./images/scipy-ml-notebook`.
+2. Make a new directory under `./images` with the name being the base-name of the new image. For example, for `ghcr.io/ucsd-ets/scipy-ml-notebook`, make a new directory `./images/scipy-ml-notebook`.
 3. Modify `./images/spec.yml`. Add a new key under `/images` with the new base-name. Fill in the full `image_name`, its upstream image base-name `depend_on`. To understand what other fields do, please refer to our [images.md](/Documentation/images.md#L20)
 4. Under the new directory, add the Dockerfile and the necessary bits for building the container. For how to write a Dockerfile, please refer to the [official doc](https://docs.docker.com/engine/reference/builder/) or other tutorials.
 5. Follow the instructions in [images.md](/Documentation/images.md#recommened-steps-to-follow)

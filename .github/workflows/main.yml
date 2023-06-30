@@ -88,6 +88,8 @@ jobs:
         env:
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
           DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_USER: ${{ github.actor }}
         run: |
           doit prep
           mkdir -p logs
@@ -107,8 +109,10 @@ jobs:
         env:
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
           DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_USER: ${{ github.actor }}
           GRPC_CERT: ${{ secrets.GRPC_CERT }}
-          PREPUSH_IMAGES: '["ucsdets/scipy-ml-notebook"]'
+          PREPUSH_IMAGES: '["ghcr.io/ucsd-ets/scipy-ml-notebook"]'
         run: |
           python3 scripts/main.py
 
