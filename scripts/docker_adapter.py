@@ -119,7 +119,7 @@ def login(
 
 def image_tag_exists(node: Node) -> bool:
     """Given a node with full tag (node.image_tag),
-    return whether the node with this tag exists in Dockerhub
+    return whether the node with this tag exists in GHCR
 
     Args:
         node (Node): _description_
@@ -127,19 +127,19 @@ def image_tag_exists(node: Node) -> bool:
     Returns:
         bool: exists/not
     """
-    logger.info(f"***** Dockerhub: Checking image {node.image_name}")
+    logger.info(f"***** GHCR: Checking image {node.image_name}")
     image_tag_list =  __docker_client.images.list(
         name=node.image_name, 
         filters={'reference': f"{node.image_name}:{node.image_tag}"}
     )
-    logger.info(f"***** Dockerhub: image.list is {image_tag_list}")
+    logger.info(f"***** GHCR: image.list is {image_tag_list}")
     return len(image_tag_list) > 0
 
 
 def push(node: Node) -> Tuple[bool, str]:
 
     try:
-        # login to dockerhub
+        # login to GHCR
         # push
 
         stream = __docker_client.images.push(
@@ -313,8 +313,8 @@ def on_Dockerhub(img: str, tag: str) -> bool:
     return exit_code == 0
 
 def pull_build_cache(node: Node) -> bool:
-    """Go to Dockerhub and attempt the following 2 things:
-    1. see if self (same image:tag) exists on Dockerhub
+    """Go to GHCR and attempt the following 2 things:
+    1. see if self (same image:tag) exists on GHCR
     2. Act accordingly, see inline comment below
 
     Note:
@@ -331,7 +331,7 @@ def pull_build_cache(node: Node) -> bool:
         img, tag = full_name.split(':')
         img = img.lstrip()
         tag = tag.rstrip()
-        # check existence on Dockerhub before pull
+        # check existence on GHCR before pull
         found = on_Dockerhub(img, tag)
         if found:
             if not node.rebuild:
@@ -342,7 +342,7 @@ def pull_build_cache(node: Node) -> bool:
             return True
         else:
             # no cache: pull stable cache and let caller change .rebuild to True
-            logger.info(f"{full_name} not on Dockerhub yet, will try {node.stable_image_name}")
+            logger.info(f"{full_name} not on GHCR yet, will try {node.stable_image_name}")
             # TODO: change stable_tag from "<prefix>-stable" to "stable" after we implement global stable tag
             prefix, suffix = tag.split('-', 1)
             stable_tag = f"{prefix}-stable"
@@ -382,7 +382,7 @@ def tag_stable(orig_fullname: str, tag_replace: str) -> Tuple[str, bool]:
 
 
 def push_stable_images(stable_fullnames: List[str]) -> bool:
-    """given a list of stable image names, push them to dockerhub.
+    """given a list of stable image names, push them to GHCR.
     If success, these strings will be written to IMAGES_PUSHED in build-artifacts
 
     Args:

@@ -28,7 +28,7 @@ team for putting together this project.
 
 The project utilizes several technologies and libraries that are either publicly
 available or open-sourced. We use Github Actions for running the whole pipeline
-and building the Docker images. DockerHub is where the images are hosted.
+and building the Docker images. GHCR (packages within this repo) is where the images are hosted.
 [Doit](https://github.com/pydoit/doit) is the command-line interface that is
 used to execute tasks. And we use [Docker SDK for Python](https://docker-py.readthedocs.io/en/stable/) for interfacing with the local Docker engine and Python 3.8
 to run the pipeline. For testing, we use pytest.

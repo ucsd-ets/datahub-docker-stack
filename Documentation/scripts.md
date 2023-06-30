@@ -29,7 +29,7 @@ This document describes the underlying scripts that build, test, and push our do
 **The following scripts are specific to our [main.yml](/.github/workflows/main.yml) workflow.**
 
 - runner.py
-  - This is the main script that performs the image builds along with testing and pushing them to DockerHub by using the rest of the helper scripts in this directory. It also updates our **local** Wiki before it gets pushed by **`Push Wiki to GitHub`**. If you're curious about any one part of the build process and don't know where to start, this file is not a bad place to look.
+  - This is the main script that performs the image builds along with testing and pushing them to GHCR by using the rest of the helper scripts in this directory. It also updates our **local** Wiki before it gets pushed by **`Push Wiki to GitHub`**. If you're curious about any one part of the build process and don't know where to start, this file is not a bad place to look.
 - main.py
   - This file is the top-level caller invoked by [main.yml](/.github/workflows/main.yml) during the workflow and launches the entire process.
 
@@ -67,12 +67,12 @@ After `python3 main.py` is called from main.yml, it does a few things to ensure 
 
 ### 2. Core: [`build_and_test_containers()`](/scripts/runner.py#L130)
 
-- It logs into the Docker client of Python SDK with Github secrets **DOCKERHUB_TOKEN** and **DOCKERHUB_USER**. [`login()`](/scripts/docker_adapter.py#L86)
-- It also logs into the Docker daemon directly using `docker login` CLI. This enables the checking of existence of an image with a particular tag on Dockerhub, see [build cache explanation](/Documentation/images.md#image-build-cache) and [its implementation](/scripts/docker_adapter.py#L315) for more details.
+- It logs into the Docker client of Python SDK with Github secrets **GHCR_TOKEN** and **GHCR_USER**. [`login()`](/scripts/docker_adapter.py#L86)
+- It also logs into the Docker daemon directly using `docker login` CLI. This enables the checking of existence of an image with a particular tag on GHCR, see [build cache explanation](/Documentation/images.md#image-build-cache) and [its implementation](/scripts/docker_adapter.py#L315) for more details.
 - It performs a BFS on the build-info tree and does the following to each Node if isn't marked skipped:
   - build: The corresponding Dockerfile at `images/<image_name>` is run to build an image. [`build()`](/scripts/docker_adapter.py#L31)
   - basic test: Image-specific tests in `images/<image_name>/tests/` and common tests (apply to all images) in `images/tests_common/` are executed within the Docker container. [`run_basic_test()`](/scripts/runner.py#L94)
-  - push: The containers are pushed to DockerHub. [`push()`](/scripts/docker_adapter.py#L104)
+  - push: The containers are pushed to GHCR. [`push()`](/scripts/docker_adapter.py#L104)
   - integration test: More complicated tests in `images/<image_name>/integration_tests/` are exececuted to ensure it works in our production environment. (currently only RStudio Selenium tests) [`run_integration_tests()`](/scripts/runner.py#L111)
   - create manifests: some informative commands (like `pip list`) defined in [spec.yml](/images/spec.yml) are executed, and their console outputs are written to a formatted .md file for each individual image. [`write_report()`](/scripts/wiki.py#L127)
   - reclaim space: Clean Docker cache of steps above. **Executed when .prune is set to true in spec.yml**. [`prune()`](/scripts/docker_adapter.py#L190)

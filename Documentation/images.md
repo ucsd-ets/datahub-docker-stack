@@ -88,7 +88,7 @@ Another choice, or a workaround, is to use "remote" cache. This means we `docker
 
 **Logic: what to do in different cache scenarios of an image?**
 
-In each action run, for each image, we always perform a [Dockerhub-existence check](/scripts/docker_adapter.py#L299). This is a very cheap `$docker manifest inspect` command. It will check whether the same image with the same tag (the branch name) is presented on Dockerhub. This is the best-choice cache.
+In each action run, for each image, we always perform a [GHCR-existence check](/scripts/docker_adapter.py#L299). This is a very cheap `$docker manifest inspect` command. It will check whether the same image with the same tag (the branch name) is presented on GHCR. This is the best-choice cache.
 
 1. If it's there, but `node.rebuild` is false, we won't bother pulling the image.
 2. If it's there, and `node.rebuild` is true, we pull the image and use it as cache later.

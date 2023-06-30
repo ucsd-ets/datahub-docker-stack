@@ -7,7 +7,7 @@ Before listing the commands we use, we'd like to give a brief introduction of Do
 - **Docker**: Docker is a set of platform as a service (PaaS) products that use OS-level virtualization to deliver software in packages called containers. In short, it's a platform that provide you with containerized/isolated software/system.
 - **Docker Image**: Image is a static, immutable template that defines the behavior of your software/system. Most of the time, we 'build' an image.
 - **Docker Container**: Container is a runtime instance. Most of the time, we 'run' or 'start' a container.
-- **Dockerhub**: Dockerhub is a place to store your Docker images just like Github stores your code.
+- **Dockerhub/GHCR**: Dockerhub/GitHub Container repository is a place to store your Docker images just like Github stores your code.
 
 ## Docker Commands
 
@@ -24,11 +24,11 @@ $ docker build -t rstudio-notebook:myTest ./images/rstudio-notebook
 # List images
 $ docker images
 
-# Pull an image from Dockerhub
+# Pull an image from GHCR
 $ docker pull <image_name>:<tag>
 $ docker pull ghcr.io/ucsd-ets/rstudio-notebook:2023.2-d3e5619
 
-# Push an local image to Dockerhub
+# Push an local image to GHCR
 $ docker push <image_name>:<tag>
 $ docker push ghcr.io/ucsd-ets/rstudio-notebook:2023.2-d3e5619
 ```

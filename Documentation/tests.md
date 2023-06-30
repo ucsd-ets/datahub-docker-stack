@@ -68,7 +68,7 @@ Depending on the test scenario and complexity, they are further divided into the
 
 Location: `/images/<image_name>/test` folder.
 
-Basic tests are automated tests that will be executed during the workflow pipeline, **before** the newly-built image is pushed to Dockerhub.
+Basic tests are automated tests that will be executed during the workflow pipeline, **before** the newly-built image is pushed to GHCR.
 
 Relatively simple tests should be put here, and the features they test against should be **internal** to the container. i.e. If something works on your local Docker environment, you are sure it will also work in the production environment (DSMLP).
 
