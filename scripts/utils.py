@@ -208,7 +208,7 @@ def url2mdlink(url, text):
 
 
 def fulltag2fn(tag):
-    return tag.replace('/', '-').replace(':', '-')
+    return tag.replace('/', '-').replace(':', '-').replace("ghcr.io", "ghcr-io")
 
 
 def get_prev_tag(img_name, tag_prefix=None):
