@@ -9,7 +9,7 @@ USER root
 
 # coerce rebuild in only this nteb
 
-ARG LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7 CUDA_VERSION=11.8
+ARG LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7 CUDA_VERSION=11.2
 
 RUN apt-get update && \
 	apt-get install -y \
@@ -34,13 +34,13 @@ USER jovyan
 # CUDA 11 
 # tf requirements: https://www.tensorflow.org/install/pip#linux
 RUN mamba install \
-	cudatoolkit=11.8 \
+	cudatoolkit=11.2 \
 	nccl \
 	-y && \
 	fix-permissions $CONDA_DIR && \
 	fix-permissions /home/$NB_USER
 
-RUN mamba install -c "nvidia/label/cuda-11.8.0" cuda-nvcc -y && \
+RUN mamba install -c "nvidia/label/cuda-11.2.0" cuda-nvcc -y && \
 	fix-permissions $CONDA_DIR && \
 	fix-permissions /home/$NB_USER
 
@@ -61,7 +61,7 @@ RUN pip install --no-cache-dir  datascience \
 	pycocotools \
 	pillow \
 	nvidia-cudnn-cu11==8.6.0.163 \
-	tensorflow==2.12.* && \
+	tensorflow==2.11.* && \
 	fix-permissions $CONDA_DIR && \
 	fix-permissions /home/$NB_USER
 
