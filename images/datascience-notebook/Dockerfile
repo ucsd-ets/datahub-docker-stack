@@ -79,7 +79,6 @@ RUN pip install jupyterlab-github jupyterlab-latex jupyterlab-git \
     jupyterlab-fasta jupyterlab-pullrequests jupyterlab-geojson && \
     pip cache purge
 
-ENV ENV 
 # Datascience packages
 RUN pip install dpkt \
     nose \
