@@ -38,11 +38,13 @@ RUN mamba install \
 	nccl \
 	-y && \
 	fix-permissions $CONDA_DIR && \
-	fix-permissions /home/$NB_USER
+	fix-permissions /home/$NB_USER && \
+    mamba clean -a -y
 
 RUN mamba install -c "nvidia/label/cuda-11.8.0" cuda-nvcc -y && \
 	fix-permissions $CONDA_DIR && \
-	fix-permissions /home/$NB_USER
+	fix-permissions /home/$NB_USER && \
+    mamba clean -a -y
 
 # install protobuf to avoid weird base type error. seems like if we don't then it'll be installed twice.
 # https://github.com/spesmilo/electrum/issues/7825
@@ -61,10 +63,11 @@ RUN pip install --no-cache-dir  datascience \
 	pycocotools \
 	pillow \
 	nvidia-cudnn-cu11==8.6.0.163 \
-	tensorflow==2.12.* && \
+    tensorflow==2.12.0 \
+    keras==2.12.0 && \
 	fix-permissions $CONDA_DIR && \
-	fix-permissions /home/$NB_USER
-
+	fix-permissions /home/$NB_USER && \
+    pip cache purge
 
 
 # Update these in spec.yml according to https://pytorch.org/get-started/locally/
@@ -74,7 +77,8 @@ ARG TORCH_VER="1.7.1+cu101" \
 
 # torch must be installed separately since it requires a non-pypi repo. See stable version above
 RUN pip install torch==${TORCH_VER} torchvision==${TORCH_VIS_VER} torchaudio==${TORCH_AUD_VER} \
-	-f https://download.pytorch.org/whl/torch_stable.html
+	-f https://download.pytorch.org/whl/torch_stable.html && \
+    pip cache purge
 
 # to use nvidia-smi command to check GPU & driver
 # RUN ln -s /usr/local/nvidia/bin/nvidia-smi /opt/conda/bin/nvidia-smi

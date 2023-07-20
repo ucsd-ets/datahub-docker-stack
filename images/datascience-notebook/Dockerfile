@@ -76,15 +76,18 @@ ENV JUPYTERHUB_USER=${NB_USER}
 
 # Install jupyterlab extensions
 RUN pip install jupyterlab-github jupyterlab-latex jupyterlab-git \
-    jupyterlab-fasta jupyterlab-pullrequests jupyterlab-geojson
+    jupyterlab-fasta jupyterlab-pullrequests jupyterlab-geojson && \
+    pip cache purge
 
+ENV ENV 
 # Datascience packages
 RUN pip install dpkt \
     nose \
     datascience && \
     python -c 'import matplotlib.pyplot' && \
     fix-permissions $CONDA_DIR && \
-    fix-permissions /home/$NB_USER
+    fix-permissions /home/$NB_USER && \
+    pip cache purge
 
 RUN conda clean -tipsy
 
