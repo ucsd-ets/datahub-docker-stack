@@ -22,6 +22,7 @@ RUN apt-get update -y && \
     gnupg \
     htop \
     wget \
+    stress \
     openssh-client \
     openssh-server \
     p7zip \
