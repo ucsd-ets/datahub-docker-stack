@@ -73,8 +73,7 @@ EXCLUDED_PACKAGES = [
     "ca-certificates",
     "cudnn",
     "nccl",
-    "cudatoolkit",
-    "cuda-nvcc"
+    "cudatoolkit"
 ]
 
 
