@@ -27,6 +27,7 @@ RUN apt-get update -y && \
     p7zip \
     apt-utils \
     jq \
+    build-essential \
     p7zip-full && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
     chmod g-s /usr/bin/screen && \
