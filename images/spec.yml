@@ -8,6 +8,7 @@ images:
       PY_VER_SHORT: "3.9"
       JUPYTERHUB_VERSION: 1.4.1
     info_cmds: [PY_VER, PIP_LIST, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
+    prune: true
 
   scipy-ml-notebook:
     image_name: ghcr.io/ucsd-ets/scipy-ml-notebook
@@ -25,6 +26,7 @@ images:
     depend_on: datascience-notebook
     integration_tests: true
     info_cmds: [PY_VER, PIP_LIST, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
+    prune: true
 
 tag:
   prefix: "2023.2"
