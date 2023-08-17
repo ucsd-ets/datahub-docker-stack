@@ -54,7 +54,7 @@ USER jovyan
 COPY start-code-server.sh /usr/local/bin/start-notebook.d/
 
 ARG PY_VER_SHORT=3.9
-ARG JUPYTERHUB_VERSION=1.5.0
+ARG JUPYTERHUB_VERSION=3.0.0
 
 # mistune added for nbgrader issues
 
