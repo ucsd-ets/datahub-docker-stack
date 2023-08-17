@@ -24,6 +24,7 @@ class Node:
     image_tag: str = ""  # determined during runtime
     info_cmds: List = field(default_factory=list)
     prune: bool = False
+    prepull: bool = True
 
     @property
     def full_image_name(self):
@@ -126,6 +127,7 @@ def build_tree(spec_yaml: dict, images_changed: List[str], git_suffix: str='gitn
         
         should_rebuild = parent_rebuild or (img_name in images_changed)
         should_prune = images[img_name].get("prune", False)
+        should_prepull = images[img_name].get("prepull", True)
         should_integration = images[img_name].get("integration_tests", False)
         children_nodes = [] # leaf node has empty by default
         if img_name in dep:
@@ -148,7 +150,8 @@ def build_tree(spec_yaml: dict, images_changed: List[str], git_suffix: str='gitn
             filepath='images/' + img_name,
             integration_tests=should_integration,
             info_cmds=cmd_list,
-            prune=should_prune
+            prune=should_prune,
+            prepull=should_prepull
         )
     ### ********************************* ###
     
