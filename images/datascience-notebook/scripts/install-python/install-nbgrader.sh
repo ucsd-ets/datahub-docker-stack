@@ -1,6 +1,6 @@
 #!/bin/bash
 
-pip install nbgrader==0.8.2
+pip install nbgrader==0.8.1
 
 jupyter nbextension install --symlink --sys-prefix --py nbgrader
 jupyter nbextension enable --sys-prefix --py nbgrader
