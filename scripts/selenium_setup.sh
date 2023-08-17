@@ -1,7 +1,9 @@
 #!/bin/bash
 
 # File google-chrome.list allows `apt update` to fetch the latest stable of Chrome
-sudo bash -c "echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' >> /etc/apt/sources.list.d/google-chrome.list"
+#sudo bash -c "echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' >> /etc/apt/sources.list.d/google-chrome.list"
+sudo bash -c "echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_114.0.5735.90-1_amd64.deb' >> /etc/apt/sources.list.d/google-chrome.list"
+
 sudo apt -y update
 # Install latest Chrome
 sudo apt -y install google-chrome-stable 
