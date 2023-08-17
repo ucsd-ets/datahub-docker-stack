@@ -10,7 +10,7 @@ echo "The stable Chrome version is: ${chrome_version}"
 
 # ISSUE: Chrome driver may not have the same latest version for download
 # Workaround: fetch the LATEST_RELEASE version available for download
-driver_version=$(curl -s -L https://chromedriver.storage.googleapis.com/LATEST_RELEASE)
+driver_version=$(curl -s -L https://chromedriver.storage.googleapis.com/LATEST_RELEASE_114)
 echo "Latest Chrome driver version is: ${driver_version}"
 wget https://chromedriver.storage.googleapis.com/${driver_version}/chromedriver_linux64.zip
 
