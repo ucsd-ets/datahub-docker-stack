@@ -63,6 +63,7 @@ RUN /usr/share/datahub/scripts/install-python-all.sh && \
     pip install pandas==1.5.3 'mistune>=2' --upgrade && \
     pip install nltk \
     nbconvert==7.2.1 \
+    jupyter-client==7.4.9 \
     jupyterlab==3.0.16 \
     jupyterhub==$JUPYTERHUB_VERSION && \
     mamba install -c conda-forge rise -y && \
