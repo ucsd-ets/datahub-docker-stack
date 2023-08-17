@@ -77,9 +77,6 @@ RUN /usr/share/datahub/scripts/install-python-all.sh && \
 ENV NBGRADER_COURSEID="NA"
 ENV JUPYTERHUB_USER=${NB_USER}
 
-# Install jupyterlab extensions
-RUN pip install jupyterlab==3.0.16 jupyterlab-github jupyterlab-latex jupyterlab-git \
-    jupyterlab-fasta jupyterlab-pullrequests jupyterlab-geojson
 
 # Datascience packages
 RUN pip install dpkt \
