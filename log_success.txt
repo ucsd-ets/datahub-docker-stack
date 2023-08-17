@@ -1,0 +1,1556 @@
+Step 0 took [0 min 0 sec] 
+Step 1/25 : ARG PYTHON_VERSION=python-3.9.5
+Step 1 took [0 min 0 sec] 
+Step 2/25 : FROM jupyter/datascience-notebook:$PYTHON_VERSION
+---> 8fb7f2b41ea5
+Step 2 took [1 min 38 sec] 
+Step 3/25 : USER root
+---> Running in 0413c319521e
+---> 41079401d6bd
+Step 3 took [0 min 8 sec] 
+Step 4/25 : ENV DEBIAN_FRONTEND noninteractive
+---> Running in 4a2e3e6ba4e2
+---> 1930ec021fa5
+Step 4 took [0 min 7 sec] 
+Step 5/25 : ENV DEBCONF_NOWARNINGS="yes"
+---> Running in b1e2a024ed63
+---> 66c2bc7f1cdd
+Step 5 took [0 min 7 sec] 
+Step 6/25 : RUN apt-get update -y &&     apt-get -qq install -y --no-install-recommends     git     curl     rsync     unzip     less     nano     vim     cmake     tmux     screen     gnupg     htop     wget     openssh-client     openssh-server     p7zip     apt-utils     jq     p7zip-full &&     apt-get clean && rm -rf /var/lib/apt/lists/* &&     chmod g-s /usr/bin/screen &&     chmod 1777 /var/run/screen
+---> Running in 74f41c9b9679
+Get:1 http://security.ubuntu.com/ubuntu focal-security InRelease [114 kB]
+Get:2 http://archive.ubuntu.com/ubuntu focal InRelease [265 kB]
+Get:3 http://archive.ubuntu.com/ubuntu focal-updates InRelease [114 kB]
+Get:4 http://archive.ubuntu.com/ubuntu focal-backports InRelease [108 kB]
+Get:5 http://archive.ubuntu.com/ubuntu focal/universe amd64 Packages [11.3 MB]
+Get:6 http://security.ubuntu.com/ubuntu focal-security/restricted amd64 Packages [2,479 kB]
+Get:7 http://archive.ubuntu.com/ubuntu focal/restricted amd64 Packages [33.4 kB]
+Get:8 http://archive.ubuntu.com/ubuntu focal/main amd64 Packages [1,275 kB]
+Get:9 http://archive.ubuntu.com/ubuntu focal/multiverse amd64 Packages [177 kB]
+Get:10 http://archive.ubuntu.com/ubuntu focal-updates/universe amd64 Packages [1,366 kB]
+Get:11 http://archive.ubuntu.com/ubuntu focal-updates/multiverse amd64 Packages [39.5 kB]
+Get:12 http://archive.ubuntu.com/ubuntu focal-updates/restricted amd64 Packages [2,636 kB]
+Get:13 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 Packages [3,336 kB]
+Get:14 http://security.ubuntu.com/ubuntu focal-security/main amd64 Packages [2,856 kB]
+Get:15 http://archive.ubuntu.com/ubuntu focal-backports/universe amd64 Packages [28.6 kB]
+Get:16 http://security.ubuntu.com/ubuntu focal-security/universe amd64 Packages [1,066 kB]
+Get:17 http://security.ubuntu.com/ubuntu focal-security/multiverse amd64 Packages [28.5 kB]
+Get:18 http://archive.ubuntu.com/ubuntu focal-backports/main amd64 Packages [55.2 kB]
+Fetched 27.3 MB in 3s (8,438 kB/s)
+Reading package lists...
+(Reading database ...
+(Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+(Reading database ... 75%
+(Reading database ... 80%
+(Reading database ... 85%
+(Reading database ... 90%
+(Reading database ... 95%
+(Reading database ... 100%
+(Reading database ... 60637 files and directories currently installed.)
+Preparing to unpack .../libapt-pkg6.0_2.0.9_amd64.deb ...
+Unpacking libapt-pkg6.0:amd64 (2.0.9) over (2.0.5) ...
+Setting up libapt-pkg6.0:amd64 (2.0.9) ...
+(Reading database ...
+(Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+(Reading database ... 75%
+(Reading database ... 80%
+(Reading database ... 85%
+(Reading database ... 90%
+(Reading database ... 95%
+(Reading database ... 100%
+(Reading database ... 60637 files and directories currently installed.)
+Preparing to unpack .../gpgv_2.2.19-3ubuntu2.2_amd64.deb ...
+Unpacking gpgv (2.2.19-3ubuntu2.2) over (2.2.19-3ubuntu2.1) ...
+Setting up gpgv (2.2.19-3ubuntu2.2) ...
+(Reading database ...
+(Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+(Reading database ... 75%
+(Reading database ... 80%
+(Reading database ... 85%
+(Reading database ... 90%
+(Reading database ... 95%
+(Reading database ... 100%
+(Reading database ... 60637 files and directories currently installed.)
+Preparing to unpack .../archives/apt_2.0.9_amd64.deb ...
+Unpacking apt (2.0.9) over (2.0.5) ...
+Setting up apt (2.0.9) ...
+Removing obsolete conffile /etc/kernel/postinst.d/apt-auto-removal ...
+(Reading database ...
+(Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+(Reading database ... 75%
+(Reading database ... 80%
+(Reading database ... 85%
+(Reading database ... 90%
+(Reading database ... 95%
+(Reading database ... 100%
+(Reading database ... 60636 files and directories currently installed.)
+Preparing to unpack .../00-python3.8_3.8.10-0ubuntu1~20.04.8_amd64.deb ...
+Unpacking python3.8 (3.8.10-0ubuntu1~20.04.8) over (3.8.10-0ubuntu1~20.04) ...
+Preparing to unpack .../01-libpython3.8-stdlib_3.8.10-0ubuntu1~20.04.8_amd64.deb ...
+Unpacking libpython3.8-stdlib:amd64 (3.8.10-0ubuntu1~20.04.8) over (3.8.10-0ubuntu1~20.04) ...
+Preparing to unpack .../02-python3.8-minimal_3.8.10-0ubuntu1~20.04.8_amd64.deb ...
+Unpacking python3.8-minimal (3.8.10-0ubuntu1~20.04.8) over (3.8.10-0ubuntu1~20.04) ...
+Preparing to unpack .../03-libpython3.8-minimal_3.8.10-0ubuntu1~20.04.8_amd64.deb ...
+Unpacking libpython3.8-minimal:amd64 (3.8.10-0ubuntu1~20.04.8) over (3.8.10-0ubuntu1~20.04) ...
+Selecting previously unselected package rsync.
+Preparing to unpack .../04-rsync_3.1.3-8ubuntu0.5_amd64.deb ...
+Unpacking rsync (3.1.3-8ubuntu0.5) ...
+Selecting previously unselected package apt-utils.
+Preparing to unpack .../05-apt-utils_2.0.9_amd64.deb ...
+Unpacking apt-utils (2.0.9) ...
+Selecting previously unselected package less.
+Preparing to unpack .../06-less_551-1ubuntu0.1_amd64.deb ...
+Unpacking less (551-1ubuntu0.1) ...
+Preparing to unpack .../07-vim-tiny_2%3a8.1.2269-1ubuntu5.15_amd64.deb ...
+Unpacking vim-tiny (2:8.1.2269-1ubuntu5.15) over (2:8.1.2269-1ubuntu5) ...
+Preparing to unpack .../08-vim-common_2%3a8.1.2269-1ubuntu5.15_all.deb ...
+Unpacking vim-common (2:8.1.2269-1ubuntu5.15) over (2:8.1.2269-1ubuntu5) ...
+Selecting previously unselected package libuv1:amd64.
+Preparing to unpack .../09-libuv1_1.34.2-1ubuntu1.3_amd64.deb ...
+Unpacking libuv1:amd64 (1.34.2-1ubuntu1.3) ...
+Selecting previously unselected package nano.
+Preparing to unpack .../10-nano_4.8-1ubuntu1_amd64.deb ...
+Unpacking nano (4.8-1ubuntu1) ...
+Preparing to unpack .../11-git_1%3a2.25.1-1ubuntu3.11_amd64.deb ...
+Unpacking git (1:2.25.1-1ubuntu3.11) over (1:2.25.1-1ubuntu3.1) ...
+Preparing to unpack .../12-openssh-client_1%3a8.2p1-4ubuntu0.7_amd64.deb ...
+Unpacking openssh-client (1:8.2p1-4ubuntu0.7) over (1:8.2p1-4ubuntu0.2) ...
+Preparing to unpack .../13-wget_1.20.3-1ubuntu2_amd64.deb ...
+Unpacking wget (1.20.3-1ubuntu2) over (1.20.3-1ubuntu1) ...
+Selecting previously unselected package cmake-data.
+Preparing to unpack .../14-cmake-data_3.16.3-1ubuntu1.20.04.1_all.deb ...
+Unpacking cmake-data (3.16.3-1ubuntu1.20.04.1) ...
+Selecting previously unselected package libarchive13:amd64.
+Preparing to unpack .../15-libarchive13_3.4.0-2ubuntu1.2_amd64.deb ...
+Unpacking libarchive13:amd64 (3.4.0-2ubuntu1.2) ...
+Selecting previously unselected package libcurl4:amd64.
+Preparing to unpack .../16-libcurl4_7.68.0-1ubuntu2.18_amd64.deb ...
+Unpacking libcurl4:amd64 (7.68.0-1ubuntu2.18) ...
+Selecting previously unselected package libjsoncpp1:amd64.
+Preparing to unpack .../17-libjsoncpp1_1.7.4-3.1ubuntu2_amd64.deb ...
+Unpacking libjsoncpp1:amd64 (1.7.4-3.1ubuntu2) ...
+Selecting previously unselected package librhash0:amd64.
+Preparing to unpack .../18-librhash0_1.3.9-1_amd64.deb ...
+Unpacking librhash0:amd64 (1.3.9-1) ...
+Selecting previously unselected package cmake.
+Preparing to unpack .../19-cmake_3.16.3-1ubuntu1.20.04.1_amd64.deb ...
+Unpacking cmake (3.16.3-1ubuntu1.20.04.1) ...
+Selecting previously unselected package curl.
+Preparing to unpack .../20-curl_7.68.0-1ubuntu2.18_amd64.deb ...
+Unpacking curl (7.68.0-1ubuntu2.18) ...
+Selecting previously unselected package libassuan0:amd64.
+Preparing to unpack .../21-libassuan0_2.5.3-7ubuntu2_amd64.deb ...
+Unpacking libassuan0:amd64 (2.5.3-7ubuntu2) ...
+Selecting previously unselected package gpgconf.
+Preparing to unpack .../22-gpgconf_2.2.19-3ubuntu2.2_amd64.deb ...
+Unpacking gpgconf (2.2.19-3ubuntu2.2) ...
+Selecting previously unselected package libksba8:amd64.
+Preparing to unpack .../23-libksba8_1.3.5-2ubuntu0.20.04.2_amd64.deb ...
+Unpacking libksba8:amd64 (1.3.5-2ubuntu0.20.04.2) ...
+Selecting previously unselected package libnpth0:amd64.
+Preparing to unpack .../24-libnpth0_1.6-1_amd64.deb ...
+Unpacking libnpth0:amd64 (1.6-1) ...
+Selecting previously unselected package dirmngr.
+Preparing to unpack .../25-dirmngr_2.2.19-3ubuntu2.2_amd64.deb ...
+Unpacking dirmngr (2.2.19-3ubuntu2.2) ...
+Selecting previously unselected package gnupg-l10n.
+Preparing to unpack .../26-gnupg-l10n_2.2.19-3ubuntu2.2_all.deb ...
+Unpacking gnupg-l10n (2.2.19-3ubuntu2.2) ...
+Selecting previously unselected package gnupg-utils.
+Preparing to unpack .../27-gnupg-utils_2.2.19-3ubuntu2.2_amd64.deb ...
+Unpacking gnupg-utils (2.2.19-3ubuntu2.2) ...
+Selecting previously unselected package gpg.
+Preparing to unpack .../28-gpg_2.2.19-3ubuntu2.2_amd64.deb ...
+Unpacking gpg (2.2.19-3ubuntu2.2) ...
+Selecting previously unselected package pinentry-curses.
+Preparing to unpack .../29-pinentry-curses_1.1.0-3build1_amd64.deb ...
+Unpacking pinentry-curses (1.1.0-3build1) ...
+Selecting previously unselected package gpg-agent.
+Preparing to unpack .../30-gpg-agent_2.2.19-3ubuntu2.2_amd64.deb ...
+Unpacking gpg-agent (2.2.19-3ubuntu2.2) ...
+Selecting previously unselected package gpg-wks-client.
+Preparing to unpack .../31-gpg-wks-client_2.2.19-3ubuntu2.2_amd64.deb ...
+Unpacking gpg-wks-client (2.2.19-3ubuntu2.2) ...
+Selecting previously unselected package gpg-wks-server.
+Preparing to unpack .../32-gpg-wks-server_2.2.19-3ubuntu2.2_amd64.deb ...
+Unpacking gpg-wks-server (2.2.19-3ubuntu2.2) ...
+Selecting previously unselected package gpgsm.
+Preparing to unpack .../33-gpgsm_2.2.19-3ubuntu2.2_amd64.deb ...
+Unpacking gpgsm (2.2.19-3ubuntu2.2) ...
+Selecting previously unselected package gnupg.
+Preparing to unpack .../34-gnupg_2.2.19-3ubuntu2.2_all.deb ...
+Unpacking gnupg (2.2.19-3ubuntu2.2) ...
+Selecting previously unselected package htop.
+Preparing to unpack .../35-htop_2.2.0-2build1_amd64.deb ...
+Unpacking htop (2.2.0-2build1) ...
+Selecting previously unselected package libonig5:amd64.
+Preparing to unpack .../36-libonig5_6.9.4-1_amd64.deb ...
+Unpacking libonig5:amd64 (6.9.4-1) ...
+Selecting previously unselected package libjq1:amd64.
+Preparing to unpack .../37-libjq1_1.6-1ubuntu0.20.04.1_amd64.deb ...
+Unpacking libjq1:amd64 (1.6-1ubuntu0.20.04.1) ...
+Selecting previously unselected package jq.
+Preparing to unpack .../38-jq_1.6-1ubuntu0.20.04.1_amd64.deb ...
+Unpacking jq (1.6-1ubuntu0.20.04.1) ...
+Selecting previously unselected package libtdb1:amd64.
+Preparing to unpack .../39-libtdb1_1.4.5-0ubuntu0.20.04.1_amd64.deb ...
+Unpacking libtdb1:amd64 (1.4.5-0ubuntu0.20.04.1) ...
+Selecting previously unselected package sound-theme-freedesktop.
+Preparing to unpack .../40-sound-theme-freedesktop_0.8-2ubuntu1_all.deb ...
+Unpacking sound-theme-freedesktop (0.8-2ubuntu1) ...
+Selecting previously unselected package libcanberra0:amd64.
+Preparing to unpack .../41-libcanberra0_0.30-7ubuntu1_amd64.deb ...
+Unpacking libcanberra0:amd64 (0.30-7ubuntu1) ...
+Selecting previously unselected package libevent-2.1-7:amd64.
+Preparing to unpack .../42-libevent-2.1-7_2.1.11-stable-1_amd64.deb ...
+Unpacking libevent-2.1-7:amd64 (2.1.11-stable-1) ...
+Selecting previously unselected package libgpm2:amd64.
+Preparing to unpack .../43-libgpm2_1.20.7-5_amd64.deb ...
+Unpacking libgpm2:amd64 (1.20.7-5) ...
+Selecting previously unselected package libpython3.8:amd64.
+Preparing to unpack .../44-libpython3.8_3.8.10-0ubuntu1~20.04.8_amd64.deb ...
+Unpacking libpython3.8:amd64 (3.8.10-0ubuntu1~20.04.8) ...
+Selecting previously unselected package libutempter0:amd64.
+Preparing to unpack .../45-libutempter0_1.1.6-4_amd64.deb ...
+Unpacking libutempter0:amd64 (1.1.6-4) ...
+Selecting previously unselected package openssh-sftp-server.
+Preparing to unpack .../46-openssh-sftp-server_1%3a8.2p1-4ubuntu0.7_amd64.deb ...
+Unpacking openssh-sftp-server (1:8.2p1-4ubuntu0.7) ...
+Selecting previously unselected package openssh-server.
+Preparing to unpack .../47-openssh-server_1%3a8.2p1-4ubuntu0.7_amd64.deb ...
+Unpacking openssh-server (1:8.2p1-4ubuntu0.7) ...
+Selecting previously unselected package p7zip.
+Preparing to unpack .../48-p7zip_16.02+dfsg-7build1_amd64.deb ...
+Unpacking p7zip (16.02+dfsg-7build1) ...
+Selecting previously unselected package p7zip-full.
+Preparing to unpack .../49-p7zip-full_16.02+dfsg-7build1_amd64.deb ...
+Unpacking p7zip-full (16.02+dfsg-7build1) ...
+Selecting previously unselected package screen.
+Preparing to unpack .../50-screen_4.8.0-1ubuntu0.1_amd64.deb ...
+Unpacking screen (4.8.0-1ubuntu0.1) ...
+Selecting previously unselected package tmux.
+Preparing to unpack .../51-tmux_3.0a-2ubuntu0.4_amd64.deb ...
+Unpacking tmux (3.0a-2ubuntu0.4) ...
+Preparing to unpack .../52-unzip_6.0-25ubuntu1.1_amd64.deb ...
+Unpacking unzip (6.0-25ubuntu1.1) over (6.0-25ubuntu1) ...
+Selecting previously unselected package vim-runtime.
+Preparing to unpack .../53-vim-runtime_2%3a8.1.2269-1ubuntu5.15_all.deb ...
+Adding 'diversion of /usr/share/vim/vim81/doc/help.txt to /usr/share/vim/vim81/doc/help.txt.vim-tiny by vim-runtime'
+Adding 'diversion of /usr/share/vim/vim81/doc/tags to /usr/share/vim/vim81/doc/tags.vim-tiny by vim-runtime'
+Unpacking vim-runtime (2:8.1.2269-1ubuntu5.15) ...
+Selecting previously unselected package vim.
+Preparing to unpack .../54-vim_2%3a8.1.2269-1ubuntu5.15_amd64.deb ...
+Unpacking vim (2:8.1.2269-1ubuntu5.15) ...
+Setting up libksba8:amd64 (1.3.5-2ubuntu0.20.04.2) ...
+Setting up libpython3.8-minimal:amd64 (3.8.10-0ubuntu1~20.04.8) ...
+Setting up apt-utils (2.0.9) ...
+Setting up libgpm2:amd64 (1.20.7-5) ...
+Setting up wget (1.20.3-1ubuntu2) ...
+Setting up libarchive13:amd64 (3.4.0-2ubuntu1.2) ...
+Setting up htop (2.2.0-2build1) ...
+Setting up openssh-client (1:8.2p1-4ubuntu0.7) ...
+Setting up libtdb1:amd64 (1.4.5-0ubuntu0.20.04.1) ...
+Setting up unzip (6.0-25ubuntu1.1) ...
+Setting up less (551-1ubuntu0.1) ...
+Setting up libnpth0:amd64 (1.6-1) ...
+Setting up libassuan0:amd64 (2.5.3-7ubuntu2) ...
+Setting up libuv1:amd64 (1.34.2-1ubuntu1.3) ...
+Setting up vim-common (2:8.1.2269-1ubuntu5.15) ...
+Setting up gnupg-l10n (2.2.19-3ubuntu2.2) ...
+Setting up libevent-2.1-7:amd64 (2.1.11-stable-1) ...
+Setting up git (1:2.25.1-1ubuntu3.11) ...
+Setting up libutempter0:amd64 (1.1.6-4) ...
+Setting up nano (4.8-1ubuntu1) ...
+update-alternatives: using /bin/nano to provide /usr/bin/editor (editor) in auto mode
+update-alternatives: warning:
+skip creation of /usr/share/man/man1/editor.1.gz because associated file /usr/share/man/man1/nano.1.gz (of link group editor) doesn't exist
+update-alternatives: using /bin/nano to provide /usr/bin/pico (pico) in auto mode
+update-alternatives: warning: skip creation of /usr/share/man/man1/pico.1.gz because associated file /usr/share/man/man1/nano.1.gz (of link group pico) doesn't exist
+Setting up python3.8-minimal (3.8.10-0ubuntu1~20.04.8) ...
+Setting up sound-theme-freedesktop (0.8-2ubuntu1) ...
+Setting up librhash0:amd64 (1.3.9-1) ...
+Setting up gpgconf (2.2.19-3ubuntu2.2) ...
+Setting up libcurl4:amd64 (7.68.0-1ubuntu2.18) ...
+Setting up cmake-data (3.16.3-1ubuntu1.20.04.1) ...
+Setting up curl (7.68.0-1ubuntu2.18) ...
+Setting up vim-runtime (2:8.1.2269-1ubuntu5.15) ...
+Setting up libpython3.8-stdlib:amd64 (3.8.10-0ubuntu1~20.04.8) ...
+Setting up python3.8 (3.8.10-0ubuntu1~20.04.8) ...
+Setting up tmux (3.0a-2ubuntu0.4) ...
+Setting up libonig5:amd64 (6.9.4-1) ...
+Setting up gpg (2.2.19-3ubuntu2.2) ...
+Setting up p7zip (16.02+dfsg-7build1) ...
+Setting up rsync (3.1.3-8ubuntu0.5) ...
+invoke-rc.d: could not determine current runlevel
+invoke-rc.d: policy-rc.d denied execution of start.
+Setting up libjsoncpp1:amd64 (1.7.4-3.1ubuntu2) ...
+Setting up gnupg-utils (2.2.19-3ubuntu2.2) ...
+Setting up pinentry-curses (1.1.0-3build1) ...
+Setting up libcanberra0:amd64 (0.30-7ubuntu1) ...
+Setting up openssh-sftp-server (1:8.2p1-4ubuntu0.7) ...
+Setting up gpg-agent (2.2.19-3ubuntu2.2) ...
+Setting up openssh-server (1:8.2p1-4ubuntu0.7) ...
+Creating config file /etc/ssh/sshd_config with new version
+Creating SSH2 RSA key; this may take some time ...
+3072 SHA256:3hKhSIyaOh53EXJBODcpyZlnfpi5+wyImCeuBBnHw2Y root@74f41c9b9679 (RSA)
+Creating SSH2 ECDSA key; this may take some time ...
+256 SHA256:xKXMNX9Qo+ZYsYUGRPTVin/OMX7I6BOJjlTChOo0JDQ root@74f41c9b9679 (ECDSA)
+Creating SSH2 ED25519 key; this may take some time ...
+256 SHA256:JdlJCnK+XjI77lG57tyfT+EE1Y86TcH+gGb9430I6LE root@74f41c9b9679 (ED25519)
+invoke-rc.d: could not determine current runlevel
+invoke-rc.d: policy-rc.d denied execution of start.
+Setting up libjq1:amd64 (1.6-1ubuntu0.20.04.1) ...
+Setting up gpgsm (2.2.19-3ubuntu2.2) ...
+Setting up screen (4.8.0-1ubuntu0.1) ...
+Setting up p7zip-full (16.02+dfsg-7build1) ...
+Setting up vim-tiny (2:8.1.2269-1ubuntu5.15) ...
+Setting up dirmngr (2.2.19-3ubuntu2.2) ...
+Setting up libpython3.8:amd64 (3.8.10-0ubuntu1~20.04.8) ...
+Setting up gpg-wks-server (2.2.19-3ubuntu2.2) ...
+Setting up jq (1.6-1ubuntu0.20.04.1) ...
+Setting up cmake (3.16.3-1ubuntu1.20.04.1) ...
+Setting up vim (2:8.1.2269-1ubuntu5.15) ...
+update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/vim (vim) in auto mode
+update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/vimdiff (vimdiff) in auto mode
+update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/rvim (rvim) in auto mode
+update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/rview (rview) in auto mode
+update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/vi (vi) in auto mode
+update-alternatives: warning: skip creation of /usr/share/man/man1/vi.1.gz because associated file /usr/share/man/man1/vim.1.gz (of link group vi) doesn't exist
+update-alternatives: warning: skip creation of /usr/share/man/da/man1/vi.1.gz because associated file /usr/share/man/da/man1/vim.1.gz (of link group vi) doesn't exist
+update-alternatives: warning: skip creation of /usr/share/man/de/man1/vi.1.gz because associated file /usr/share/man/de/man1/vim.1.gz (of link group vi) doesn't exist
+update-alternatives: warning: skip creation of /usr/share/man/fr/man1/vi.1.gz because associated file /usr/share/man/fr/man1/vim.1.gz (of link group vi) doesn't exist
+update-alternatives: warning: skip creation of /usr/share/man/it/man1/vi.1.gz because associated file /usr/share/man/it/man1/vim.1.gz (of link group vi) doesn't exist
+update-alternatives: warning: skip creation of /usr/share/man/ja/man1/vi.1.gz because associated file /usr/share/man/ja/man1/vim.1.gz (of link group vi) doesn't exist
+update-alternatives: warning: skip creation of /usr/share/man/pl/man1/vi.1.gz because associated file /usr/share/man/pl/man1/vim.1.gz (of link group vi) doesn't exist
+update-alternatives: warning: skip creation of /usr/share/man/ru/man1/vi.1.gz because associated file /usr/share/man/ru/man1/vim.1.gz (of link group vi) doesn't exist
+update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/view (view) in auto mode
+update-alternatives: warning: skip creation of /usr/share/man/man1/view.1.gz because associated file /usr/share/man/man1/vim.1.gz (of link group view) doesn't exist
+update-alternatives: warning: skip creation of /usr/share/man/da/man1/view.1.gz because associated file /usr/share/man/da/man1/vim.1.gz (of link group view) doesn't exist
+update-alternatives: warning: skip creation of /usr/share/man/de/man1/view.1.gz because associated file /usr/share/man/de/man1/vim.1.gz (of link group view) doesn't exist
+update-alternatives: warning:
+skip creation of /usr/share/man/fr/man1/view.1.gz because associated file /usr/share/man/fr/man1/vim.1.gz (of link group view) doesn't exist
+update-alternatives: warning: skip creation of /usr/share/man/it/man1/view.1.gz because associated file /usr/share/man/it/man1/vim.1.gz (of link group view) doesn't exist
+update-alternatives: warning: skip creation of /usr/share/man/ja/man1/view.1.gz because associated file /usr/share/man/ja/man1/vim.1.gz (of link group view) doesn't exist
+update-alternatives: warning: skip creation of /usr/share/man/pl/man1/view.1.gz because associated file /usr/share/man/pl/man1/vim.1.gz (of link group view) doesn't exist
+update-alternatives: warning: skip creation of /usr/share/man/ru/man1/view.1.gz because associated file /usr/share/man/ru/man1/vim.1.gz (of link group view) doesn't exist
+update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/ex (ex) in auto mode
+update-alternatives: warning: skip creation of /usr/share/man/man1/ex.1.gz because associated file /usr/share/man/man1/vim.1.gz (of link group ex) doesn't exist
+update-alternatives: warning: skip creation of /usr/share/man/da/man1/ex.1.gz because associated file /usr/share/man/da/man1/vim.1.gz (of link group ex) doesn't exist
+update-alternatives: warning: skip creation of /usr/share/man/de/man1/ex.1.gz because associated file /usr/share/man/de/man1/vim.1.gz (of link group ex) doesn't exist
+update-alternatives: warning: skip creation of /usr/share/man/fr/man1/ex.1.gz because associated file /usr/share/man/fr/man1/vim.1.gz (of link group ex) doesn't exist
+update-alternatives: warning: skip creation of /usr/share/man/it/man1/ex.1.gz because associated file /usr/share/man/it/man1/vim.1.gz (of link group ex) doesn't exist
+update-alternatives: warning: skip creation of /usr/share/man/ja/man1/ex.1.gz because associated file /usr/share/man/ja/man1/vim.1.gz (of link group ex) doesn't exist
+update-alternatives: warning: skip creation of /usr/share/man/pl/man1/ex.1.gz because associated file /usr/share/man/pl/man1/vim.1.gz (of link group ex) doesn't exist
+update-alternatives: warning: skip creation of /usr/share/man/ru/man1/ex.1.gz because associated file /usr/share/man/ru/man1/vim.1.gz (of link group ex) doesn't exist
+Setting up gpg-wks-client (2.2.19-3ubuntu2.2) ...
+Setting up gnupg (2.2.19-3ubuntu2.2) ...
+Processing triggers for hicolor-icon-theme (0.17-2) ...
+Processing triggers for libc-bin (2.31-0ubuntu9.2) ...
+Processing triggers for mime-support (3.64ubuntu1) ...
+---> 33c0c6028b3e
+Step 6 took [0 min 40 sec] 
+Step 7/25 : COPY /scripts /usr/share/datahub/scripts/
+---> 29bfc8b3821f
+Step 7 took [0 min 8 sec] 
+Step 8/25 : COPY /scripts/jupyter_notebook_config.py /tmp/jupyter_notebook_config_extra.py
+---> eed81eb7d03f
+Step 8 took [0 min 8 sec] 
+Step 9/25 : COPY /scripts/nbgrader_config.py /etc/jupyter/nbgrader_config.py
+---> 81f6424223ae
+Step 9 took [0 min 8 sec] 
+Step 10/25 : RUN cat /tmp/jupyter_notebook_config_extra.py >> /etc/jupyter/jupyter_notebook_config.py &&     chmod -R uga+x /usr/share/datahub/scripts/ &&     chmod -R uga+x /etc/jupyter/jupyter_notebook_config.py &&     chmod -R uga+x /etc/jupyter/nbgrader_config.py
+---> Running in f61ab018720b
+---> 71e8960020ab
+Step 10 took [0 min 8 sec] 
+Step 11/25 : RUN curl -fsSL https://code-server.dev/install.sh | sh -s -- --prefix=/usr/local
+---> Running in 70f03fc5b079
+Ubuntu 20.04.2 LTS
+Installing v4.14.1 of the amd64 deb package from GitHub.
++ mkdir -p ~/.cache//code-server
++ curl -#fL -o ~/.cache//code-server/code-server_4.14.1_amd64.deb.incomplete -C - https://github.com/coder/code-server/releases/download/v4.14.1/code-server_4.14.1_amd64.deb
+[91m#=#=#                                                                         
+[0m
+[91m##O#-#                                                                        
+[0m
+[91m
+                                                                           0.0%[0m
+[91m
+####                                                                       5.7%[0m
+[91m
+########                                                                  12.4%[0m
+[91m
+############                                                              18.0%[0m
+[91m
+#################                                                         2[0m
+[91m4.5%[0m
+[91m
+#####################                                                     30.5%[0m
+[91m
+#########################                                                 36.0%[0m
+[91m
+################################                                          44.6%[0m
+[91m
+####################################                                      50.2%[0m
+[91m
+#########################################                                 57.0%[0m
+[91m
+#############################################                             62.9%[0m
+[91m
+#################################################                         68.6%[0m
+[91m
+######################################################                    75.6%[0m
+[91m
+###########################################################               82.2%[0m
+[91m
+###############################################################           88.3%[0m
+[91m
+####################################################################      95.4%[0m
+[91m
+######################################################################## 100.0%
+[0m
++ mv ~/.cache//code-server/code-server_4.14.1_amd64.deb.incomplete ~/.cache//code-server/code-server_4.14.1_amd64.deb
++ dpkg -i ~/.cache//code-server/code-server_4.14.1_amd64.deb
+Selecting previously unselected package code-server.
+(Reading database ... 65955 files and directories currently installed.)
+Preparing to unpack .../code-server_4.14.1_amd64.deb ...
+Unpacking code-server (4.14.1) ...
+Setting up code-server (4.14.1) ...
+deb package has been installed.
+
+To have systemd start code-server now and restart on boot:
+  sudo systemctl enable --now code-server@$USER
+Or, if you don't want/need a background service you can run:
+  code-server
+Deploy code-server for your team with Coder: https://github.com/coder/coder
+---> d322455cb88d
+Step 11 took [0 min 24 sec] 
+Step 12/25 : RUN mkdir /opt/manual_tests
+---> Running in ccd84b12b9fa
+---> 5fea6cc9c976
+Step 12 took [0 min 9 sec] 
+Step 13/25 : COPY /test/test_r_dump_packages.R /opt/manual_tests
+---> 4c4e9cefaee0
+Step 13 took [0 min 8 sec] 
+Step 14/25 : COPY /test/test_r_func.R /opt/manual_tests
+---> e110f778812a
+Step 14 took [0 min 8 sec] 
+Step 15/25 : USER jovyan
+---> Running in c4e6812fd6e0
+---> c19068f77136
+Step 15 took [0 min 8 sec] 
+Step 16/25 : COPY start-code-server.sh /usr/local/bin/start-notebook.d/
+---> e0a31e0c5c5e
+Step 16 took [0 min 8 sec] 
+Step 17/25 : ARG PY_VER_SHORT=3.9
+---> Running in 22a4f704c582
+---> 2c60a1d0f348
+Step 17 took [0 min 8 sec] 
+Step 18/25 : ARG JUPYTERHUB_VERSION=1.5.0
+---> Running in 23ae4d341c52
+---> 139183d8e21a
+Step 18 took [0 min 8 sec] 
+Step 19/25 : RUN /usr/share/datahub/scripts/install-python-all.sh &&     pip install pandas==1.5.3 'mistune>=2' --upgrade &&     pip install nltk     nbconvert==7.2.1     jupyterhub==$JUPYTERHUB_VERSION &&     mamba install -c conda-forge rise -y &&     fix-permissions $CONDA_DIR &&     fix-permissions /home/$NB_USER &&     conda clean --all &&     chown -R jovyan:users /opt/conda/etc/jupyter/nbconfig &&     chmod -R +r /opt/conda/etc/jupyter/nbconfig
+---> Running in 0b89a04e5acd
+[91m+ for f in /usr/share/datahub/scripts/install-python/*.sh
++ bash /usr/share/datahub/scripts/install-python/install-ipykernel_clean.sh -H
+[0m
+Installed kernelspec python3_clean in /opt/conda/share/jupyter/kernels/python3_clean
+[91m+ for f in /usr/share/datahub/scripts/install-python/*.sh
++ bash /usr/share/datahub/scripts/install-python/install-ipywidgets.sh -H
+[0m
+Requirement already satisfied: ipywidgets in /opt/conda/lib/python3.9/site-packages (7.6.3)
+Requirement already satisfied: ipython>=4.0.0 in /opt/conda/lib/python3.9/site-packages (from ipywidgets) (7.25.0)
+Requirement already satisfied: widgetsnbextension~=3.5.0 in /opt/conda/lib/python3.9/site-packages (from ipywidgets) (3.5.1)
+Requirement already satisfied: traitlets>=4.3.1 in /opt/conda/lib/python3.9/site-packages (from ipywidgets) (5.0.5)
+Requirement already satisfied: jupyterlab-widgets>=1.0.0 in /opt/conda/lib/python3.9/site-packages (from ipywidgets) (1.0.0)
+Requirement already satisfied: nbformat>=4.2.0 in /opt/conda/lib/python3.9/site-packages (from ipywidgets) (5.1.3)
+Requirement already satisfied: ipykernel>=4.5.1 in /opt/conda/lib/python3.9/site-packages (from ipywidgets) (6.0.2)
+Requirement already satisfied: debugpy<2.0,>=1.0.0 in /opt/conda/lib/python3.9/site-packages (from ipykernel>=4.5.1->ipywidgets) (1.3.0)
+Requirement already satisfied: tornado<7.0,>=4.2 in /opt/conda/lib/python3.9/site-packages (from ipykernel>=4.5.1->ipywidgets) (6.1)
+Requirement already satisfied: jupyter-client<7.0 in /opt/conda/lib/python3.9/site-packages (from ipykernel>=4.5.1->ipywidgets) (6.1.12)
+Requirement already satisfied: matplotlib-inline<0.2.0,>=0.1.0 in /opt/conda/lib/python3.9/site-packages (from ipykernel>=4.5.1->ipywidgets) (0.1.2)
+Requirement already satisfied: pickleshare in /opt/conda/lib/python3.9/site-packages (from ipython>=4.0.0->ipywidgets) (0.7.5)
+Requirement already satisfied: prompt-toolkit!=3.0.0,!=3.0.1,<3.1.0,>=2.0.0 in /opt/conda/lib/python3.9/site-packages (from ipython>=4.0.0->ipywidgets) (3.0.19)
+Requirement already satisfied: backcall in /opt/conda/lib/python3.9/site-packages (from ipython>=4.0.0->ipywidgets) (0.2.0)
+Requirement already satisfied: jedi>=0.16 in /opt/conda/lib/python3.9/site-packages (from ipython>=4.0.0->ipywidgets) (0.18.0)
+Requirement already satisfied: setuptools>=18.5 in /opt/conda/lib/python3.9/site-packages (from ipython>=4.0.0->ipywidgets) (49.6.0.post20210108)
+Requirement already satisfied: decorator in /opt/conda/lib/python3.9/site-packages (from ipython>=4.0.0->ipywidgets) (5.0.9)
+Requirement already satisfied: pexpect>4.3 in /opt/conda/lib/python3.9/site-packages (from ipython>=4.0.0->ipywidgets) (4.8.0)
+Requirement already satisfied: pygments in /opt/conda/lib/python3.9/site-packages (from ipython>=4.0.0->ipywidgets) (2.9.0)
+Requirement already satisfied: parso<0.9.0,>=0.8.0 in /opt/conda/lib/python3.9/site-packages (from jedi>=0.16->ipython>=4.0.0->ipywidgets) (0.8.2)
+Requirement already satisfied: jupyter-core>=4.6.0 in /opt/conda/lib/python3.9/site-packages (from jupyter-client<7.0->ipykernel>=4.5.1->ipywidgets) (4.7.1)
+Requirement already satisfied: python-dateutil>=2.1 in /opt/conda/lib/python3.9/site-packages (from jupyter-client<7.0->ipykernel>=4.5.1->ipywidgets) (2.8.2)
+Requirement already satisfied: pyzmq>=13 in /opt/conda/lib/python3.9/site-packages (from jupyter-client<7.0->ipykernel>=4.5.1->ipywidgets) (22.1.0)
+Requirement already satisfied: ipython-genutils in /opt/conda/lib/python3.9/site-packages (from nbformat>=4.2.0->ipywidgets) (0.2.0)
+Requirement already satisfied: jsonschema!=2.5.0,>=2.4 in /opt/conda/lib/python3.9/site-packages (from nbformat>=4.2.0->ipywidgets) (3.2.0)
+Requirement already satisfied: six>=1.11.0 in /opt/conda/lib/python3.9/site-packages (from jsonschema!=2.5.0,>=2.4->nbformat>=4.2.0->ipywidgets) (1.16.0)
+Requirement already satisfied: pyrsistent>=0.14.0 in /opt/conda/lib/python3.9/site-packages (from jsonschema!=2.5.0,>=2.4->nbformat>=4.2.0->ipywidgets) (0.17.3)
+Requirement already satisfied: attrs>=17.4.0 in /opt/conda/lib/python3.9/site-packages (from jsonschema!=2.5.0,>=2.4->nbformat>=4.2.0->ipywidgets) (21.2.0)
+Requirement already satisfied: ptyprocess>=0.5 in /opt/conda/lib/python3.9/site-packages (from pexpect>4.3->ipython>=4.0.0->ipywidgets) (0.7.0)
+Requirement already satisfied: wcwidth in /opt/conda/lib/python3.9/site-packages (from prompt-toolkit!=3.0.0,!=3.0.1,<3.1.0,>=2.0.0->ipython>=4.0.0->ipywidgets) (0.2.5)
+Requirement already satisfied: notebook>=4.4.1 in /opt/conda/lib/python3.9/site-packages (from widgetsnbextension~=3.5.0->ipywidgets) (6.4.0)
+Requirement already satisfied: argon2-cffi in /opt/conda/lib/python3.9/site-packages (from notebook>=4.4.1->widgetsnbextension~=3.5.0->ipywidgets) (20.1.0)
+Requirement already satisfied: nbconvert in /opt/conda/lib/python3.9/site-packages (from notebook>=4.4.1->widgetsnbextension~=3.5.0->ipywidgets) (6.1.0)
+Requirement already satisfied: jinja2 in /opt/conda/lib/python3.9/site-packages (from notebook>=4.4.1->widgetsnbextension~=3.5.0->ipywidgets) (3.0.1)
+Requirement already satisfied: terminado>=0.8.3 in /opt/conda/lib/python3.9/site-packages (from notebook>=4.4.1->widgetsnbextension~=3.5.0->ipywidgets) (0.10.1)
+Requirement already satisfied: Send2Trash>=1.5.0 in /opt/conda/lib/python3.9/site-packages (from notebook>=4.4.1->widgetsnbextension~=3.5.0->ipywidgets) (1.7.1)
+Requirement already satisfied: prometheus-client in /opt/conda/lib/python3.9/site-packages (from notebook>=4.4.1->widgetsnbextension~=3.5.0->ipywidgets) (0.11.0)
+Requirement already satisfied: cffi>=1.0.0 in /opt/conda/lib/python3.9/site-packages (from argon2-cffi->notebook>=4.4.1->widgetsnbextension~=3.5.0->ipywidgets) (1.14.6)
+Requirement already satisfied: pycparser in /opt/conda/lib/python3.9/site-packages (from cffi>=1.0.0->argon2-cffi->notebook>=4.4.1->widgetsnbextension~=3.5.0->ipywidgets) (2.20)
+Requirement already satisfied: MarkupSafe>=2.0 in /opt/conda/lib/python3.9/site-packages (from jinja2->notebook>=4.4.1->widgetsnbextension~=3.5.0->ipywidgets) (2.0.1)
+Requirement already satisfied: bleach in /opt/conda/lib/python3.9/site-packages (from nbconvert->notebook>=4.4.1->widgetsnbextension~=3.5.0->ipywidgets) (3.3.1)
+Requirement already satisfied: testpath in /opt/conda/lib/python3.9/site-packages (from nbconvert->notebook>=4.4.1->widgetsnbextension~=3.5.0->ipywidgets) (0.5.0)
+Requirement already satisfied: jupyterlab-pygments in /opt/conda/lib/python3.9/site-packages (from nbconvert->notebook>=4.4.1->widgetsnbextension~=3.5.0->ipywidgets) (0.1.2)
+Requirement already satisfied: entrypoints>=0.2.2 in /opt/conda/lib/python3.9/site-packages (from nbconvert->notebook>=4.4.1->widgetsnbextension~=3.5.0->ipywidgets) (0.3)
+Requirement already satisfied: defusedxml in /opt/conda/lib/python3.9/site-packages (from nbconvert->notebook>=4.4.1->widgetsnbextension~=3.5.0->ipywidgets) (0.7.1)
+Requirement already satisfied: nbclient<0.6.0,>=0.5.0 in /opt/conda/lib/python3.9/site-packages (from nbconvert->notebook>=4.4.1->widgetsnbextension~=3.5.0->ipywidgets) (0.5.3)
+Requirement already satisfied: pandocfilters>=1.4.1 in /opt/conda/lib/python3.9/site-packages (from nbconvert->notebook>=4.4.1->widgetsnbextension~=3.5.0->ipywidgets) (1.4.2)
+Requirement already satisfied: mistune<2,>=0.8.1 in /opt/conda/lib/python3.9/site-packages (from nbconvert->notebook>=4.4.1->widgetsnbextension~=3.5.0->ipywidgets) (0.8.4)
+Requirement already satisfied: nest-asyncio in /opt/conda/lib/python3.9/site-packages (from nbclient<0.6.0,>=0.5.0->nbconvert->notebook>=4.4.1->widgetsnbextension~=3.5.0->ipywidgets) (1.5.1)
+Requirement already satisfied: async-generator in /opt/conda/lib/python3.9/site-packages (from nbclient<0.6.0,>=0.5.0->nbconvert->notebook>=4.4.1->widgetsnbextension~=3.5.0->ipywidgets) (1.10)
+Requirement already satisfied: webencodings in /opt/conda/lib/python3.9/site-packages (from bleach->nbconvert->notebook>=4.4.1->widgetsnbextension~=3.5.0->ipywidgets) (0.5.1)
+Requirement already satisfied: packaging in /opt/conda/lib/python3.9/site-packages (from bleach->nbconvert->notebook>=4.4.1->widgetsnbextension~=3.5.0->ipywidgets) (21.0)
+Requirement already satisfied: pyparsing>=2.0.2 in /opt/conda/lib/python3.9/site-packages (from packaging->bleach->nbconvert->notebook>=4.4.1->widgetsnbextension~=3.5.0->ipywidgets) (2.4.7)
+[91mEnabling notebook extension jupyter-js-widgets/extension...
+[0m
+[91m      - Validating: [32mOK[0m
+[0m
+[91m+ for f in /usr/share/datahub/scripts/install-python/*.sh
++ bash /usr/share/datahub/scripts/install-python/install-local-env-backup.sh -H
+[0m
+[91mCloning into '/tmp/local-env-backup'...
+[0m
+Processing /tmp/local-env-backup
+[91m  DEPRECATION: A future pip version will change local packages to be built in-place without first copying to a temporary directory. We recommend you use --use-feature=in-tree-build to test your packages with this new behavior before it becomes the default.
+   pip 21.3 will remove support for this functionality. You can find discussion regarding this at https://github.com/pypa/pip/issues/7555.
+[0m
+Collecting pytest
+Downloading pytest-7.4.0-py3-none-any.whl (323 kB)
+Collecting timeout_decorator
+Downloading timeout-decorator-0.5.0.tar.gz (4.8 kB)
+Collecting exceptiongroup>=1.0.0rc8
+Downloading exceptiongroup-1.1.1-py3-none-any.whl (14 kB)
+Collecting pluggy<2.0,>=0.12
+Downloading pluggy-1.2.0-py3-none-any.whl (17 kB)
+Requirement already satisfied: packaging in /opt/conda/lib/python3.9/site-packages (from pytest->env-backup==0.0.3) (21.0)
+Collecting iniconfig
+Downloading iniconfig-2.0.0-py3-none-any.whl (5.9 kB)
+Collecting tomli>=1.0.0
+Downloading tomli-2.0.1-py3-none-any.whl (12 kB)
+Requirement already satisfied: pyparsing>=2.0.2 in /opt/conda/lib/python3.9/site-packages (from packaging->pytest->env-backup==0.0.3) (2.4.7)
+Building wheels for collected packages: env-backup, timeout-decorator
+Building wheel for env-backup (setup.py): started
+Building wheel for env-backup (setup.py): finished with status 'done'
+Created wheel for env-backup: filename=env_backup-0.0.3-py3-none-any.whl size=6851 sha256=04f068b079aa5cf6741a54ad48bb3ec3df4a5b66eabde756f7dac6ed505b18ae
+Stored in directory: /tmp/pip-ephem-wheel-cache-gksyv1e4/wheels/e7/89/03/78ffd387ab7af9defd4d05e5fb44391e6ca4e3ea698d2c651c
+Building wheel for timeout-decorator (setup.py): started
+Building wheel for timeout-decorator (setup.py): finished with status 'done'
+Created wheel for timeout-decorator: filename=timeout_decorator-0.5.0-py3-none-any.whl size=5028 sha256=4a8f0ee40e72ebfa968caa364db46e5a8cafae99f6eb5c2344d919964bc3938c
+Stored in directory: /tmp/pip-ephem-wheel-cache-gksyv1e4/wheels/5d/45/1d/a7d2bf8dfbdecd78983a3d422f2fe860316cfbae3f3b001ea5
+Successfully built env-backup timeout-decorator
+Installing collected packages: tomli, pluggy, iniconfig, exceptiongroup, timeout-decorator, pytest, env-backup
+Successfully installed env-backup-0.0.3 exceptiongroup-1.1.1 iniconfig-2.0.0 pluggy-1.2.0 pytest-7.4.0 timeout-decorator-0.5.0 tomli-2.0.1
+[91m+ for f in /usr/share/datahub/scripts/install-python/*.sh
++ bash /usr/share/datahub/scripts/install-python/install-nbgitpuller.sh -H
+[0m
+Collecting git+https://github.com/data-8/gitautosync
+Cloning https://github.com/data-8/gitautosync to /tmp/pip-req-build-fo7x8agd
+[91m  Running command git clone -q https://github.com/data-8/gitautosync /tmp/pip-req-build-fo7x8agd
+[0m
+Installing build dependencies: started
+Installing build dependencies: finished with status 'done'
+Getting requirements to build wheel: started
+Getting requirements to build wheel: finished with status 'done'
+Preparing wheel metadata: started
+Preparing wheel metadata: finished with status 'done'
+Collecting jupyter-server>=1.10.1
+Downloading jupyter_server-2.7.0-py3-none-any.whl (375 kB)
+Requirement already satisfied: notebook>=5.5.0 in /opt/conda/lib/python3.9/site-packages (from nbgitpuller==1.1.2.dev0) (6.4.0)
+Requirement already satisfied: tornado in /opt/conda/lib/python3.9/site-packages (from nbgitpuller==1.1.2.dev0) (6.1)
+Requirement already satisfied: send2trash in /opt/conda/lib/python3.9/site-packages (from jupyter-server>=1.10.1->nbgitpuller==1.1.2.dev0) (1.7.1)
+Requirement already satisfied: anyio>=3.1.0 in /opt/conda/lib/python3.9/site-packages (from jupyter-server>=1.10.1->nbgitpuller==1.1.2.dev0) (3.2.1)
+Collecting pyzmq>=24
+Downloading pyzmq-25.1.0-cp39-cp39-manylinux_2_12_x86_64.manylinux2010_x86_64.whl (1.1 MB)
+Requirement already satisfied: argon2-cffi in /opt/conda/lib/python3.9/site-packages (from jupyter-server>=1.10.1->nbgitpuller==1.1.2.dev0) (20.1.0)
+Collecting jupyter-core!=5.0.*,>=4.12
+Downloading jupyter_core-5.3.1-py3-none-any.whl (93 kB)
+Collecting traitlets>=5.6.0
+Downloading traitlets-5.9.0-py3-none-any.whl (117 kB)
+Requirement already satisfied: websocket-client in /opt/conda/lib/python3.9/site-packages (from jupyter-server>=1.10.1->nbgitpuller==1.1.2.dev0) (0.57.0)
+Collecting overrides
+Downloading overrides-7.3.1-py3-none-any.whl (17 kB)
+Collecting nbconvert>=6.4.4
+Downloading nbconvert-7.6.0-py3-none-any.whl (290 kB)
+Requirement already satisfied: jinja2 in /opt/conda/lib/python3.9/site-packages (from jupyter-server>=1.10.1->nbgitpuller==1.1.2.dev0) (3.0.1)
+Collecting jupyter-events>=0.6.0
+Downloading jupyter_events-0.6.3-py3-none-any.whl (18 kB)
+Requirement already satisfied: packaging in /opt/conda/lib/python3.9/site-packages (from jupyter-server>=1.10.1->nbgitpuller==1.1.2.dev0) (21.0)
+Collecting tornado
+Downloading tornado-6.3.2-cp38-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl (426 kB)
+Requirement already satisfied: prometheus-client in /opt/conda/lib/python3.9/site-packages (from jupyter-server>=1.10.1->nbgitpuller==1.1.2.dev0) (0.11.0)
+Collecting jupyter-client>=7.4.4
+Downloading jupyter_client-8.3.0-py3-none-any.whl (103 kB)
+Collecting jupyter-server-terminals
+Downloading jupyter_server_terminals-0.4.4-py3-none-any.whl (13 kB)
+Requirement already satisfied: terminado>=0.8.3 in /opt/conda/lib/python3.9/site-packages (from jupyter-server>=1.10.1->nbgitpuller==1.1.2.dev0) (0.10.1)
+Collecting nbformat>=5.3.0
+Downloading nbformat-5.9.0-py3-none-any.whl (77 kB)
+Requirement already satisfied: idna>=2.8 in /opt/conda/lib/python3.9/site-packages (from anyio>=3.1.0->jupyter-server>=1.10.1->nbgitpuller==1.1.2.dev0) (3.1)
+Requirement already satisfied: sniffio>=1.1 in /opt/conda/lib/python3.9/site-packages (from anyio>=3.1.0->jupyter-server>=1.10.1->nbgitpuller==1.1.2.dev0) (1.2.0)
+Collecting importlib-metadata>=4.8.3
+Downloading importlib_metadata-6.7.0-py3-none-any.whl (22 kB)
+Requirement already satisfied: python-dateutil>=2.8.2 in /opt/conda/lib/python3.9/site-packages (from jupyter-client>=7.4.4->jupyter-server>=1.10.1->nbgitpuller==1.1.2.dev0) (2.8.2)
+Requirement already satisfied: zipp>=0.5 in /opt/conda/lib/python3.9/site-packages (from importlib-metadata>=4.8.3->jupyter-client>=7.4.4->jupyter-server>=1.10.1->nbgitpuller==1.1.2.dev0) (3.5.0)
+Collecting platformdirs>=2.5
+Downloading platformdirs-3.8.0-py3-none-any.whl (16 kB)
+Collecting python-json-logger>=2.0.4
+Downloading python_json_logger-2.0.7-py3-none-any.whl (8.1 kB)
+Collecting rfc3339-validator
+Downloading rfc3339_validator-0.1.4-py2.py3-none-any.whl (3.5 kB)
+Requirement already satisfied: pyyaml>=5.3 in /opt/conda/lib/python3.9/site-packages (from jupyter-events>=0.6.0->jupyter-server>=1.10.1->nbgitpuller==1.1.2.dev0) (5.4.1)
+Requirement already satisfied: jsonschema[format-nongpl]>=3.2.0 in /opt/conda/lib/python3.9/site-packages (from jupyter-events>=0.6.0->jupyter-server>=1.10.1->nbgitpuller==1.1.2.dev0) (3.2.0)
+Collecting rfc3986-validator>=0.1.1
+Downloading rfc3986_validator-0.1.1-py2.py3-none-any.whl (4.2 kB)
+[91mWARNING: jsonschema 3.2.0 does not provide the extra 'format-nongpl'
+[0m
+Requirement already satisfied: setuptools in /opt/conda/lib/python3.9/site-packages (from jsonschema[format-nongpl]>=3.2.0->jupyter-events>=0.6.0->jupyter-server>=1.10.1->nbgitpuller==1.1.2.dev0) (49.6.0.post20210108)
+Requirement already satisfied: six>=1.11.0 in /opt/conda/lib/python3.9/site-packages (from jsonschema[format-nongpl]>=3.2.0->jupyter-events>=0.6.0->jupyter-server>=1.10.1->nbgitpuller==1.1.2.dev0) (1.16.0)
+Requirement already satisfied: attrs>=17.4.0 in /opt/conda/lib/python3.9/site-packages (from jsonschema[format-nongpl]>=3.2.0->jupyter-events>=0.6.0->jupyter-server>=1.10.1->nbgitpuller==1.1.2.dev0) (21.2.0)
+Requirement already satisfied: pyrsistent>=0.14.0 in /opt/conda/lib/python3.9/site-packages (from jsonschema[format-nongpl]>=3.2.0->jupyter-events>=0.6.0->jupyter-server>=1.10.1->nbgitpuller==1.1.2.dev0) (0.17.3)
+Requirement already satisfied: beautifulsoup4 in /opt/conda/lib/python3.9/site-packages (from nbconvert>=6.4.4->jupyter-server>=1.10.1->nbgitpuller==1.1.2.dev0) (4.9.3)
+Requirement already satisfied: bleach!=5.0.0 in /opt/conda/lib/python3.9/site-packages (from nbconvert>=6.4.4->jupyter-server>=1.10.1->nbgitpuller==1.1.2.dev0) (3.3.1)
+Collecting tinycss2
+Downloading tinycss2-1.2.1-py3-none-any.whl (21 kB)
+Requirement already satisfied: jupyterlab-pygments in /opt/conda/lib/python3.9/site-packages (from nbconvert>=6.4.4->jupyter-server>=1.10.1->nbgitpuller==1.1.2.dev0) (0.1.2)
+Requirement already satisfied: defusedxml in /opt/conda/lib/python3.9/site-packages (from nbconvert>=6.4.4->jupyter-server>=1.10.1->nbgitpuller==1.1.2.dev0) (0.7.1)
+Requirement already satisfied: markupsafe>=2.0 in /opt/conda/lib/python3.9/site-packages (from nbconvert>=6.4.4->jupyter-server>=1.10.1->nbgitpuller==1.1.2.dev0) (2.0.1)
+Requirement already satisfied: pygments>=2.4.1 in /opt/conda/lib/python3.9/site-packages (from nbconvert>=6.4.4->jupyter-server>=1.10.1->nbgitpuller==1.1.2.dev0) (2.9.0)
+Requirement already satisfied: nbclient>=0.5.0 in /opt/conda/lib/python3.9/site-packages (from nbconvert>=6.4.4->jupyter-server>=1.10.1->nbgitpuller==1.1.2.dev0) (0.5.3)
+Requirement already satisfied: pandocfilters>=1.4.1 in /opt/conda/lib/python3.9/site-packages (from nbconvert>=6.4.4->jupyter-server>=1.10.1->nbgitpuller==1.1.2.dev0) (1.4.2)
+Collecting mistune<4,>=2.0.3
+Downloading mistune-3.0.1-py3-none-any.whl (47 kB)
+Requirement already satisfied: webencodings in /opt/conda/lib/python3.9/site-packages (from bleach!=5.0.0->nbconvert>=6.4.4->jupyter-server>=1.10.1->nbgitpuller==1.1.2.dev0) (0.5.1)
+Requirement already satisfied: nest-asyncio in /opt/conda/lib/python3.9/site-packages (from nbclient>=0.5.0->nbconvert>=6.4.4->jupyter-server>=1.10.1->nbgitpuller==1.1.2.dev0) (1.5.1)
+Requirement already satisfied: async-generator in /opt/conda/lib/python3.9/site-packages (from nbclient>=0.5.0->nbconvert>=6.4.4->jupyter-server>=1.10.1->nbgitpuller==1.1.2.dev0) (1.10)
+Collecting fastjsonschema
+Downloading fastjsonschema-2.17.1-py3-none-any.whl (23 kB)
+Requirement already satisfied: ipykernel in /opt/conda/lib/python3.9/site-packages (from notebook>=5.5.0->nbgitpuller==1.1.2.dev0) (6.0.2)
+Requirement already satisfied: ipython-genutils in /opt/conda/lib/python3.9/site-packages (from notebook>=5.5.0->nbgitpuller==1.1.2.dev0) (0.2.0)
+Requirement already satisfied: ptyprocess in /opt/conda/lib/python3.9/site-packages (from terminado>=0.8.3->jupyter-server>=1.10.1->nbgitpuller==1.1.2.dev0) (0.7.0)
+Requirement already satisfied: cffi>=1.0.0 in /opt/conda/lib/python3.9/site-packages (from argon2-cffi->jupyter-server>=1.10.1->nbgitpuller==1.1.2.dev0) (1.14.6)
+Requirement already satisfied: pycparser in /opt/conda/lib/python3.9/site-packages (from cffi>=1.0.0->argon2-cffi->jupyter-server>=1.10.1->nbgitpuller==1.1.2.dev0) (2.20)
+Requirement already satisfied: soupsieve>1.2 in /opt/conda/lib/python3.9/site-packages (from beautifulsoup4->nbconvert>=6.4.4->jupyter-server>=1.10.1->nbgitpuller==1.1.2.dev0) (2.0.1)
+Requirement already satisfied: matplotlib-inline<0.2.0,>=0.1.0 in /opt/conda/lib/python3.9/site-packages (from ipykernel->notebook>=5.5.0->nbgitpuller==1.1.2.dev0) (0.1.2)
+Requirement already satisfied: debugpy<2.0,>=1.0.0 in /opt/conda/lib/python3.9/site-packages (from ipykernel->notebook>=5.5.0->nbgitpuller==1.1.2.dev0) (1.3.0)
+Collecting ipykernel
+Downloading ipykernel-6.23.3-py3-none-any.whl (152 kB)
+Collecting debugpy>=1.6.5
+Downloading debugpy-1.6.7-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (3.1 MB)
+Requirement already satisfied: ipython>=7.23.1 in /opt/conda/lib/python3.9/site-packages (from ipykernel->notebook>=5.5.0->nbgitpuller==1.1.2.dev0) (7.25.0)
+Requirement already satisfied: psutil in /opt/conda/lib/python3.9/site-packages (from ipykernel->notebook>=5.5.0->nbgitpuller==1.1.2.dev0) (5.8.0)
+Collecting comm>=0.1.1
+Downloading comm-0.1.3-py3-none-any.whl (6.6 kB)
+Requirement already satisfied: pickleshare in /opt/conda/lib/python3.9/site-packages (from ipython>=7.23.1->ipykernel->notebook>=5.5.0->nbgitpuller==1.1.2.dev0) (0.7.5)
+Requirement already satisfied: decorator in /opt/conda/lib/python3.9/site-packages (from ipython>=7.23.1->ipykernel->notebook>=5.5.0->nbgitpuller==1.1.2.dev0) (5.0.9)
+Requirement already satisfied: pexpect>4.3 in /opt/conda/lib/python3.9/site-packages (from ipython>=7.23.1->ipykernel->notebook>=5.5.0->nbgitpuller==1.1.2.dev0) (4.8.0)
+Requirement already satisfied: backcall in /opt/conda/lib/python3.9/site-packages (from ipython>=7.23.1->ipykernel->notebook>=5.5.0->nbgitpuller==1.1.2.dev0) (0.2.0)
+Requirement already satisfied: jedi>=0.16 in /opt/conda/lib/python3.9/site-packages (from ipython>=7.23.1->ipykernel->notebook>=5.5.0->nbgitpuller==1.1.2.dev0) (0.18.0)
+Requirement already satisfied: prompt-toolkit!=3.0.0,!=3.0.1,<3.1.0,>=2.0.0 in /opt/conda/lib/python3.9/site-packages (from ipython>=7.23.1->ipykernel->notebook>=5.5.0->nbgitpuller==1.1.2.dev0) (3.0.19)
+Requirement already satisfied: parso<0.9.0,>=0.8.0 in /opt/conda/lib/python3.9/site-packages (from jedi>=0.16->ipython>=7.23.1->ipykernel->notebook>=5.5.0->nbgitpuller==1.1.2.dev0) (0.8.2)
+Requirement already satisfied: wcwidth in /opt/conda/lib/python3.9/site-packages (from prompt-toolkit!=3.0.0,!=3.0.1,<3.1.0,>=2.0.0->ipython>=7.23.1->ipykernel->notebook>=5.5.0->nbgitpuller==1.1.2.dev0) (0.2.5)
+Requirement already satisfied: pyparsing>=2.0.2 in /opt/conda/lib/python3.9/site-packages (from packaging->jupyter-server>=1.10.1->nbgitpuller==1.1.2.dev0) (2.4.7)
+Building wheels for collected packages: nbgitpuller
+Building wheel for nbgitpuller (PEP 517): started
+Building wheel for nbgitpuller (PEP 517): finished with status 'done'
+Created wheel for nbgitpuller: filename=nbgitpuller-1.1.2.dev0-py2.py3-none-any.whl size=316007 sha256=76241f8cf933087d04f940f9c3f82e9f6a79075f8caea2571d86e3b71dde63a2
+Stored in directory: /tmp/pip-ephem-wheel-cache-nm5zscw7/wheels/dd/7c/9c/8dcc4c19ec9cdbadd763d60332e3c3a509b22820fd43d89664
+Successfully built nbgitpuller
+Installing collected packages: traitlets, platformdirs, tornado, pyzmq, jupyter-core, importlib-metadata, fastjsonschema, nbformat, jupyter-client, tinycss2, rfc3986-validator, rfc3339-validator, python-json-logger, mistune, debugpy, comm, overrides, nbconvert, jupyter-server-terminals, jupyter-events, ipykernel, jupyter-server, nbgitpuller
+Attempting uninstall: traitlets
+Found existing installation: traitlets 5.0.5
+Uninstalling traitlets-5.0.5:
+Successfully uninstalled traitlets-5.0.5
+Attempting uninstall: tornado
+Found existing installation: tornado 6.1
+Uninstalling tornado-6.1:
+Successfully uninstalled tornado-6.1
+Attempting uninstall: pyzmq
+Found existing installation: pyzmq 22.1.0
+Uninstalling pyzmq-22.1.0:
+Successfully uninstalled pyzmq-22.1.0
+Attempting uninstall: jupyter-core
+Found existing installation: jupyter-core 4.7.1
+Uninstalling jupyter-core-4.7.1:
+Successfully uninstalled jupyter-core-4.7.1
+Attempting uninstall: importlib-metadata
+Found existing installation: importlib-metadata 4.6.1
+Uninstalling importlib-metadata-4.6.1:
+Successfully uninstalled importlib-metadata-4.6.1
+Attempting uninstall: nbformat
+Found existing installation: nbformat 5.1.3
+Uninstalling nbformat-5.1.3:
+Successfully uninstalled nbformat-5.1.3
+Attempting uninstall: jupyter-client
+Found existing installation: jupyter-client 6.1.12
+Uninstalling jupyter-client-6.1.12:
+Successfully uninstalled jupyter-client-6.1.12
+Attempting uninstall: python-json-logger
+Found existing installation: python-json-logger 2.0.1
+Uninstalling python-json-logger-2.0.1:
+Successfully uninstalled python-json-logger-2.0.1
+Attempting uninstall: mistune
+Found existing installation: mistune 0.8.4
+Uninstalling mistune-0.8.4:
+Successfully uninstalled mistune-0.8.4
+Attempting uninstall: debugpy
+Found existing installation: debugpy 1.3.0
+Uninstalling debugpy-1.3.0:
+Successfully uninstalled debugpy-1.3.0
+Attempting uninstall: nbconvert
+Found existing installation: nbconvert 6.1.0
+Uninstalling nbconvert-6.1.0:
+Successfully uninstalled nbconvert-6.1.0
+Attempting uninstall: ipykernel
+Found existing installation: ipykernel 6.0.2
+Uninstalling ipykernel-6.0.2:
+Successfully uninstalled ipykernel-6.0.2
+Attempting uninstall: jupyter-server
+Found existing installation: jupyter-server 1.9.0
+Uninstalling jupyter-server-1.9.0:
+Successfully uninstalled jupyter-server-1.9.0
+Successfully installed comm-0.1.3 debugpy-1.6.7 fastjsonschema-2.17.1 importlib-metadata-6.7.0 ipykernel-6.23.3 jupyter-client-8.3.0 jupyter-core-5.3.1 jupyter-events-0.6.3 jupyter-server-2.7.0 jupyter-server-terminals-0.4.4 mistune-3.0.1 nbconvert-7.6.0 nbformat-5.9.0 nbgitpuller-1.1.2.dev0 overrides-7.3.1 platformdirs-3.8.0 python-json-logger-2.0.7 pyzmq-25.1.0 rfc3339-validator-0.1.4 rfc3986-validator-0.1.1 tinycss2-1.2.1 tornado-6.3.2 traitlets-5.9.0
+[91mERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+nbclassic 0.3.1 requires jupyter-server~=1.8, but you have jupyter-server 2.7.0 which is incompatible.
+jupyterlab 3.0.16 requires jupyter-server~=1.4, but you have jupyter-server 2.7.0 which is incompatible.
+jupyterlab-server 2.6.1 requires jupyter-server~=1.4, but you have jupyter-server 2.7.0 which is incompatible.
+[0m
+[91mEnabling: nbgitpuller
+- Writing config: /opt/conda/etc/jupyter
+[0m
+[91m    - Validating...
+      nbgitpuller 1.1.2dev [32mOK[0m
+[0m
+[91m+ for f in /usr/share/datahub/scripts/install-python/*.sh
++ bash /usr/share/datahub/scripts/install-python/install-nbgrader.sh -H
+[0m
+Collecting nbgrader==0.8.1
+Downloading nbgrader-0.8.1-py3-none-any.whl (10.8 MB)
+Requirement already satisfied: jupyterlab-server in /opt/conda/lib/python3.9/site-packages (from nbgrader==0.8.1) (2.6.1)
+Requirement already satisfied: requests>=2.26 in /opt/conda/lib/python3.9/site-packages (from nbgrader==0.8.1) (2.26.0)
+Collecting alembic>=1.7
+Downloading alembic-1.11.1-py3-none-any.whl (224 kB)
+Requirement already satisfied: jsonschema>=3 in /opt/conda/lib/python3.9/site-packages (from nbgrader==0.8.1) (3.2.0)
+Requirement already satisfied: jupyter-server>=1.12 in /opt/conda/lib/python3.9/site-packages (from nbgrader==0.8.1) (2.7.0)
+Requirement already satisfied: jupyterlab<4 in /opt/conda/lib/python3.9/site-packages (from nbgrader==0.8.1) (3.0.16)
+Collecting nbclient>=0.6.1
+Downloading nbclient-0.8.0-py3-none-any.whl (73 kB)
+Collecting traitlets<5.2.0
+Downloading traitlets-5.1.1-py3-none-any.whl (102 kB)
+Requirement already satisfied: markupsafe<2.2.0 in /opt/conda/lib/python3.9/site-packages (from nbgrader==0.8.1) (2.0.1)
+Requirement already satisfied: jinja2>=3 in /opt/conda/lib/python3.9/site-packages (from nbgrader==0.8.1) (3.0.1)
+Collecting rapidfuzz>=1.8
+Downloading rapidfuzz-3.1.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (3.1 MB)
+Requirement already satisfied: nbconvert>=6 in /opt/conda/lib/python3.9/site-packages (from nbgrader==0.8.1) (7.6.0)
+Requirement already satisfied: notebook<7,>=6.4 in /opt/conda/lib/python3.9/site-packages (from nbgrader==0.8.1) (6.4.0)
+Requirement already satisfied: sqlalchemy<2,>=1.4 in /opt/conda/lib/python3.9/site-packages (from nbgrader==0.8.1) (1.4.22)
+Requirement already satisfied: python-dateutil>=2.8 in /opt/conda/lib/python3.9/site-packages (from nbgrader==0.8.1) (2.8.2)
+Requirement already satisfied: ipywidgets>=7.6 in /opt/conda/lib/python3.9/site-packages (from nbgrader==0.8.1) (7.6.3)
+Requirement already satisfied: nbclassic<0.4.0 in /opt/conda/lib/python3.9/site-packages (from nbgrader==0.8.1) (0.3.1)
+Collecting jupyter-client<8
+Downloading jupyter_client-7.4.9-py3-none-any.whl (133 kB)
+Requirement already satisfied: Mako in /opt/conda/lib/python3.9/site-packages (from alembic>=1.7->nbgrader==0.8.1) (1.1.4)
+Collecting typing-extensions>=4
+Downloading typing_extensions-4.7.0-py3-none-any.whl (33 kB)
+Requirement already satisfied: nbformat>=4.2.0 in /opt/conda/lib/python3.9/site-packages (from ipywidgets>=7.6->nbgrader==0.8.1) (5.9.0)
+Requirement already satisfied: ipykernel>=4.5.1 in /opt/conda/lib/python3.9/site-packages (from ipywidgets>=7.6->nbgrader==0.8.1) (6.23.3)
+Requirement already satisfied: jupyterlab-widgets>=1.0.0 in /opt/conda/lib/python3.9/site-packages (from ipywidgets>=7.6->nbgrader==0.8.1) (1.0.0)
+Requirement already satisfied: widgetsnbextension~=3.5.0 in /opt/conda/lib/python3.9/site-packages (from ipywidgets>=7.6->nbgrader==0.8.1) (3.5.1)
+Requirement already satisfied: ipython>=4.0.0 in /opt/conda/lib/python3.9/site-packages (from ipywidgets>=7.6->nbgrader==0.8.1) (7.25.0)
+Requirement already satisfied: pyzmq>=20 in /opt/conda/lib/python3.9/site-packages (from ipykernel>=4.5.1->ipywidgets>=7.6->nbgrader==0.8.1) (25.1.0)
+Requirement already satisfied: psutil in /opt/conda/lib/python3.9/site-packages (from ipykernel>=4.5.1->ipywidgets>=7.6->nbgrader==0.8.1) (5.8.0)
+Requirement already satisfied: jupyter-core!=5.0.*,>=4.12 in /opt/conda/lib/python3.9/site-packages (from ipykernel>=4.5.1->ipywidgets>=7.6->nbgrader==0.8.1) (5.3.1)
+Requirement already satisfied: tornado>=6.1 in /opt/conda/lib/python3.9/site-packages (from ipykernel>=4.5.1->ipywidgets>=7.6->nbgrader==0.8.1) (6.3.2)
+Requirement already satisfied: nest-asyncio in /opt/conda/lib/python3.9/site-packages (from ipykernel>=4.5.1->ipywidgets>=7.6->nbgrader==0.8.1) (1.5.1)
+Collecting ipykernel>=4.5.1
+Downloading ipykernel-6.23.2-py3-none-any.whl (152 kB)
+Downloading ipykernel-6.23.1-py3-none-any.whl (152 kB)
+Downloading ipykernel-6.23.0-py3-none-any.whl (150 kB)
+Downloading ipykernel-6.22.0-py3-none-any.whl (149 kB)
+Downloading ipykernel-6.21.3-py3-none-any.whl (149 kB)
+Downloading ipykernel-6.21.2-py3-none-any.whl (149 kB)
+Downloading ipykernel-6.21.1-py3-none-any.whl (149 kB)
+Downloading ipykernel-6.20.2-py3-none-any.whl (149 kB)
+Downloading ipykernel-6.20.1-py3-none-any.whl (149 kB)
+Downloading ipykernel-6.19.4-py3-none-any.whl (145 kB)
+Downloading ipykernel-6.19.3-py3-none-any.whl (145 kB)
+Downloading ipykernel-6.19.2-py3-none-any.whl (145 kB)
+Downloading ipykernel-6.19.1-py3-none-any.whl (145 kB)
+Downloading ipykernel-6.17.1-py3-none-any.whl (138 kB)
+Requirement already satisfied: debugpy>=1.0 in /opt/conda/lib/python3.9/site-packages (from ipykernel>=4.5.1->ipywidgets>=7.6->nbgrader==0.8.1) (1.6.7)
+Requirement already satisfied: matplotlib-inline>=0.1 in /opt/conda/lib/python3.9/site-packages (from ipykernel>=4.5.1->ipywidgets>=7.6->nbgrader==0.8.1) (0.1.2)
+Requirement already satisfied: packaging in /opt/conda/lib/python3.9/site-packages (from ipykernel>=4.5.1->ipywidgets>=7.6->nbgrader==0.8.1) (21.0)
+Requirement already satisfied: pygments in /opt/conda/lib/python3.9/site-packages (from ipython>=4.0.0->ipywidgets>=7.6->nbgrader==0.8.1) (2.9.0)
+Requirement already satisfied: decorator in /opt/conda/lib/python3.9/site-packages (from ipython>=4.0.0->ipywidgets>=7.6->nbgrader==0.8.1) (5.0.9)
+Requirement already satisfied: pickleshare in /opt/conda/lib/python3.9/site-packages (from ipython>=4.0.0->ipywidgets>=7.6->nbgrader==0.8.1) (0.7.5)
+Requirement already satisfied: prompt-toolkit!=3.0.0,!=3.0.1,<3.1.0,>=2.0.0 in /opt/conda/lib/python3.9/site-packages (from ipython>=4.0.0->ipywidgets>=7.6->nbgrader==0.8.1) (3.0.19)
+Requirement already satisfied: pexpect>4.3 in /opt/conda/lib/python3.9/site-packages (from ipython>=4.0.0->ipywidgets>=7.6->nbgrader==0.8.1) (4.8.0)
+Requirement already satisfied: backcall in /opt/conda/lib/python3.9/site-packages (from ipython>=4.0.0->ipywidgets>=7.6->nbgrader==0.8.1) (0.2.0)
+Requirement already satisfied: jedi>=0.16 in /opt/conda/lib/python3.9/site-packages (from ipython>=4.0.0->ipywidgets>=7.6->nbgrader==0.8.1) (0.18.0)
+Requirement already satisfied: setuptools>=18.5 in /opt/conda/lib/python3.9/site-packages (from ipython>=4.0.0->ipywidgets>=7.6->nbgrader==0.8.1) (49.6.0.post20210108)
+Requirement already satisfied: parso<0.9.0,>=0.8.0 in /opt/conda/lib/python3.9/site-packages (from jedi>=0.16->ipython>=4.0.0->ipywidgets>=7.6->nbgrader==0.8.1) (0.8.2)
+Requirement already satisfied: pyrsistent>=0.14.0 in /opt/conda/lib/python3.9/site-packages (from jsonschema>=3->nbgrader==0.8.1) (0.17.3)
+Requirement already satisfied: attrs>=17.4.0 in /opt/conda/lib/python3.9/site-packages (from jsonschema>=3->nbgrader==0.8.1) (21.2.0)
+Requirement already satisfied: six>=1.11.0 in /opt/conda/lib/python3.9/site-packages (from jsonschema>=3->nbgrader==0.8.1) (1.16.0)
+Requirement already satisfied: entrypoints in /opt/conda/lib/python3.9/site-packages (from jupyter-client<8->nbgrader==0.8.1) (0.3)
+Collecting nest-asyncio
+Downloading nest_asyncio-1.5.6-py3-none-any.whl (5.2 kB)
+Requirement already satisfied: platformdirs>=2.5 in /opt/conda/lib/python3.9/site-packages (from jupyter-core!=5.0.*,>=4.12->ipykernel>=4.5.1->ipywidgets>=7.6->nbgrader==0.8.1) (3.8.0)
+Collecting jupyter-core>=4.9.2
+Downloading jupyter_core-5.3.0-py3-none-any.whl (93 kB)
+Downloading jupyter_core-5.2.0-py3-none-any.whl (94 kB)
+Downloading jupyter_core-5.1.5-py3-none-any.whl (93 kB)
+Downloading jupyter_core-5.1.4-py3-none-any.whl (93 kB)
+Downloading jupyter_core-5.1.3-py3-none-any.whl (93 kB)
+Downloading jupyter_core-5.1.2-py3-none-any.whl (93 kB)
+Downloading jupyter_core-5.1.1-py3-none-any.whl (93 kB)
+Downloading jupyter_core-5.1.0-py3-none-any.whl (92 kB)
+Downloading jupyter_core-5.0.0-py3-none-any.whl (91 kB)
+Requirement already satisfied: terminado>=0.8.3 in /opt/conda/lib/python3.9/site-packages (from jupyter-server>=1.12->nbgrader==0.8.1) (0.10.1)
+Collecting jupyter-server>=1.12
+Downloading jupyter_server-2.6.0-py3-none-any.whl (375 kB)
+Downloading jupyter_server-2.5.0-py3-none-any.whl (366 kB)
+Downloading jupyter_server-2.4.0-py3-none-any.whl (366 kB)
+Downloading jupyter_server-2.3.0-py3-none-any.whl (365 kB)
+Downloading jupyter_server-2.2.1-py3-none-any.whl (365 kB)
+Downloading jupyter_server-2.2.0-py3-none-any.whl (365 kB)
+Downloading jupyter_server-2.1.0-py3-none-any.whl (365 kB)
+Downloading jupyter_server-2.0.6-py3-none-any.whl (363 kB)
+Downloading jupyter_server-2.0.5-py3-none-any.whl (361 kB)
+Downloading jupyter_server-2.0.4-py3-none-any.whl (361 kB)
+Downloading jupyter_server-2.0.3-py3-none-any.whl (361 kB)
+Downloading jupyter_server-2.0.2-py3-none-any.whl (360 kB)
+Downloading jupyter_server-2.0.1-py3-none-any.whl (360 kB)
+Downloading jupyter_server-1.24.0-py3-none-any.whl (347 kB)
+Requirement already satisfied: Send2Trash in /opt/conda/lib/python3.9/site-packages (from jupyter-server>=1.12->nbgrader==0.8.1) (1.7.1)
+Requirement already satisfied: websocket-client in /opt/conda/lib/python3.9/site-packages (from jupyter-server>=1.12->nbgrader==0.8.1) (0.57.0)
+Requirement already satisfied: argon2-cffi in /opt/conda/lib/python3.9/site-packages (from jupyter-server>=1.12->nbgrader==0.8.1) (20.1.0)
+Requirement already satisfied: anyio<4,>=3.1.0 in /opt/conda/lib/python3.9/site-packages (from jupyter-server>=1.12->nbgrader==0.8.1) (3.2.1)
+Requirement already satisfied: prometheus-client in /opt/conda/lib/python3.9/site-packages (from jupyter-server>=1.12->nbgrader==0.8.1) (0.11.0)
+Requirement already satisfied: idna>=2.8 in /opt/conda/lib/python3.9/site-packages (from anyio<4,>=3.1.0->jupyter-server>=1.12->nbgrader==0.8.1) (3.1)
+Requirement already satisfied: sniffio>=1.1 in /opt/conda/lib/python3.9/site-packages (from anyio<4,>=3.1.0->jupyter-server>=1.12->nbgrader==0.8.1) (1.2.0)
+Collecting jupyter-core>=4.9.2
+Downloading jupyter_core-4.12.0-py3-none-any.whl (89 kB)
+Requirement already satisfied: json5 in /opt/conda/lib/python3.9/site-packages (from jupyterlab-server->nbgrader==0.8.1) (0.9.5)
+Requirement already satisfied: babel in /opt/conda/lib/python3.9/site-packages (from jupyterlab-server->nbgrader==0.8.1) (2.9.1)
+Collecting nbclient>=0.6.1
+Downloading nbclient-0.7.4-py3-none-any.whl (73 kB)
+Downloading nbclient-0.7.3-py3-none-any.whl (72 kB)
+Downloading nbclient-0.7.2-py3-none-any.whl (71 kB)
+Downloading nbclient-0.7.1-py3-none-any.whl (71 kB)
+Downloading nbclient-0.7.0-py3-none-any.whl (71 kB)
+Downloading nbclient-0.6.8-py3-none-any.whl (71 kB)
+Downloading nbclient-0.6.7-py3-none-any.whl (71 kB)
+Downloading nbclient-0.6.6-py3-none-any.whl (71 kB)
+Downloading nbclient-0.6.5-py3-none-any.whl (71 kB)
+Downloading nbclient-0.6.4-py3-none-any.whl (71 kB)
+Downloading nbclient-0.6.3-py3-none-any.whl (71 kB)
+Requirement already satisfied: jupyterlab-pygments in /opt/conda/lib/python3.9/site-packages (from nbconvert>=6->nbgrader==0.8.1) (0.1.2)
+Requirement already satisfied: bleach!=5.0.0 in /opt/conda/lib/python3.9/site-packages (from nbconvert>=6->nbgrader==0.8.1) (3.3.1)
+Requirement already satisfied: defusedxml in /opt/conda/lib/python3.9/site-packages (from nbconvert>=6->nbgrader==0.8.1) (0.7.1)
+Requirement already satisfied: pandocfilters>=1.4.1 in /opt/conda/lib/python3.9/site-packages (from nbconvert>=6->nbgrader==0.8.1) (1.4.2)
+Requirement already satisfied: mistune<4,>=2.0.3 in /opt/conda/lib/python3.9/site-packages (from nbconvert>=6->nbgrader==0.8.1) (3.0.1)
+Requirement already satisfied: tinycss2 in /opt/conda/lib/python3.9/site-packages (from nbconvert>=6->nbgrader==0.8.1) (1.2.1)
+Requirement already satisfied: beautifulsoup4 in /opt/conda/lib/python3.9/site-packages (from nbconvert>=6->nbgrader==0.8.1) (4.9.3)
+Requirement already satisfied: importlib-metadata>=3.6 in /opt/conda/lib/python3.9/site-packages (from nbconvert>=6->nbgrader==0.8.1) (6.7.0)
+Requirement already satisfied: webencodings in /opt/conda/lib/python3.9/site-packages (from bleach!=5.0.0->nbconvert>=6->nbgrader==0.8.1) (0.5.1)
+Requirement already satisfied: zipp>=0.5 in /opt/conda/lib/python3.9/site-packages (from importlib-metadata>=3.6->nbconvert>=6->nbgrader==0.8.1) (3.5.0)
+Requirement already satisfied: fastjsonschema in /opt/conda/lib/python3.9/site-packages (from nbformat>=4.2.0->ipywidgets>=7.6->nbgrader==0.8.1) (2.17.1)
+Requirement already satisfied: ipython-genutils in /opt/conda/lib/python3.9/site-packages (from notebook<7,>=6.4->nbgrader==0.8.1) (0.2.0)
+Requirement already satisfied: ptyprocess>=0.5 in /opt/conda/lib/python3.9/site-packages (from pexpect>4.3->ipython>=4.0.0->ipywidgets>=7.6->nbgrader==0.8.1) (0.7.0)
+Requirement already satisfied: wcwidth in /opt/conda/lib/python3.9/site-packages (from prompt-toolkit!=3.0.0,!=3.0.1,<3.1.0,>=2.0.0->ipython>=4.0.0->ipywidgets>=7.6->nbgrader==0.8.1) (0.2.5)
+Requirement already satisfied: charset-normalizer~=2.0.0 in /opt/conda/lib/python3.9/site-packages (from requests>=2.26->nbgrader==0.8.1) (2.0.0)
+Requirement already satisfied: urllib3<1.27,>=1.21.1 in /opt/conda/lib/python3.9/site-packages (from requests>=2.26->nbgrader==0.8.1) (1.26.6)
+Requirement already satisfied: certifi>=2017.4.17 in /opt/conda/lib/python3.9/site-packages (from requests>=2.26->nbgrader==0.8.1) (2021.5.30)
+Requirement already satisfied: greenlet!=0.4.17 in /opt/conda/lib/python3.9/site-packages (from sqlalchemy<2,>=1.4->nbgrader==0.8.1) (1.1.0)
+Requirement already satisfied: cffi>=1.0.0 in /opt/conda/lib/python3.9/site-packages (from argon2-cffi->jupyter-server>=1.12->nbgrader==0.8.1) (1.14.6)
+Requirement already satisfied: pycparser in /opt/conda/lib/python3.9/site-packages (from cffi>=1.0.0->argon2-cffi->jupyter-server>=1.12->nbgrader==0.8.1) (2.20)
+Requirement already satisfied: pytz>=2015.7 in /opt/conda/lib/python3.9/site-packages (from babel->jupyterlab-server->nbgrader==0.8.1) (2021.1)
+Requirement already satisfied: soupsieve>1.2 in /opt/conda/lib/python3.9/site-packages (from beautifulsoup4->nbconvert>=6->nbgrader==0.8.1) (2.0.1)
+Requirement already satisfied: pyparsing>=2.0.2 in /opt/conda/lib/python3.9/site-packages (from packaging->ipykernel>=4.5.1->ipywidgets>=7.6->nbgrader==0.8.1) (2.4.7)
+Installing collected packages: traitlets, nest-asyncio, jupyter-core, jupyter-client, nbclient, ipykernel, jupyter-server, typing-extensions, rapidfuzz, alembic, nbgrader
+  Attempting uninstall: traitlets
+Found existing installation: traitlets 5.9.0
+Uninstalling traitlets-5.9.0:
+Successfully uninstalled traitlets-5.9.0
+Attempting uninstall: nest-asyncio
+Found existing installation: nest-asyncio 1.5.1
+Uninstalling nest-asyncio-1.5.1:
+Successfully uninstalled nest-asyncio-1.5.1
+Attempting uninstall: jupyter-core
+Found existing installation: jupyter-core 5.3.1
+Uninstalling jupyter-core-5.3.1:
+Successfully uninstalled jupyter-core-5.3.1
+Attempting uninstall: jupyter-client
+Found existing installation: jupyter-client 8.3.0
+Uninstalling jupyter-client-8.3.0:
+Successfully uninstalled jupyter-client-8.3.0
+Attempting uninstall: nbclient
+Found existing installation: nbclient 0.5.3
+Uninstalling nbclient-0.5.3:
+Successfully uninstalled nbclient-0.5.3
+Attempting uninstall: ipykernel
+Found existing installation: ipykernel 6.23.3
+Uninstalling ipykernel-6.23.3:
+Successfully uninstalled ipykernel-6.23.3
+Attempting uninstall: jupyter-server
+Found existing installation: jupyter-server 2.7.0
+Uninstalling jupyter-server-2.7.0:
+Successfully uninstalled jupyter-server-2.7.0
+Attempting uninstall: typing-extensions
+Found existing installation: typing-extensions 3.10.0.0
+Uninstalling typing-extensions-3.10.0.0:
+Successfully uninstalled typing-extensions-3.10.0.0
+Attempting uninstall: alembic
+Found existing installation: alembic 1.6.5
+Uninstalling alembic-1.6.5:
+Successfully uninstalled alembic-1.6.5
+Successfully installed alembic-1.11.1 ipykernel-6.17.1 jupyter-client-7.4.9 jupyter-core-4.12.0 jupyter-server-1.24.0 nbclient-0.6.3 nbgrader-0.8.1 nest-asyncio-1.5.6 rapidfuzz-3.1.1 traitlets-5.1.1 typing-extensions-4.7.0
+[91mERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+jupyter-events 0.6.3 requires traitlets>=5.3, but you have traitlets 5.1.1 which is incompatible.
+comm 0.1.3 requires traitlets>=5.3, but you have traitlets 5.1.1 which is incompatible.
+[0m
+[91mInstalling /opt/conda/lib/python3.9/site-packages/nbgrader/nbextensions/create_assignment -> create_assignment
+[0m
+[91mSymlinking: /opt/conda/share/jupyter/nbextensions/create_assignment -> /opt/conda/lib/python3.9/site-packages/nbgrader/nbextensions/create_assignment
+[0m
+[91m- Validating: [32mOK[0m
+Installing /opt/conda/lib/python3.9/site-packages/nbgrader/nbextensions/formgrader -> formgrader
+[0m
+[91mSymlinking: /opt/conda/share/jupyter/nbextensions/formgrader -> /opt/conda/lib/python3.9/site-packages/nbgrader/nbextensions/formgrader
+[0m
+[91m- Validating: [32mOK[0m
+Installing /opt/conda/lib/python3.9/site-packages/nbgrader/nbextensions/validate_assignment -> validate_assignment
+[0m
+[91mSymlinking: /opt/conda/share/jupyter/nbextensions/validate_assignment -> /opt/conda/lib/python3.9/site-packages/nbgrader/nbextensions/validate_assignment
+[0m
+[91m- Validating: [32mOK[0m
+Installing /opt/conda/lib/python3.9/site-packages/nbgrader/nbextensions/assignment_list -> assignment_list
+[0m
+[91mSymlinking: /opt/conda/share/jupyter/nbextensions/assignment_list -> /opt/conda/lib/python3.9/site-packages/nbgrader/nbextensions/assignment_list
+[0m
+[91m- Validating: [32mOK[0m
+Installing /opt/conda/lib/python3.9/site-packages/nbgrader/nbextensions/course_list -> course_list
+[0m
+[91mSymlinking: /opt/conda/share/jupyter/nbextensions/course_list -> /opt/conda/lib/python3.9/site-packages/nbgrader/nbextensions/course_list
+- Validating: [32mOK[0m
+[0m
+[91m
+    To initialize this nbextension in the browser every time the notebook (or other app) loads:
+    
+          jupyter nbextension enable nbgrader --py --sys-prefix
+    
+[0m
+[91mEnabling notebook extension create_assignment/main...
+[0m
+[91m      - Validating: [32mOK[0m
+[0m
+[91mEnabling tree extension formgrader/main...
+[0m
+[91m      - Validating: [32mOK[0m
+[0m
+[91mEnabling notebook extension validate_assignment/main...
+[0m
+[91m      - Validating: [32mOK[0m
+[0m
+[91mEnabling tree extension assignment_list/main...
+[0m
+[91m      - Validating: [32mOK[0m
+[0m
+[91mEnabling tree extension course_list/main...
+[0m
+[91m      - Validating: [32mOK[0m
+[0m
+[91mEnabling: nbgrader.server_extensions.formgrader
+- Writing config: /opt/conda/etc/jupyter
+[0m
+[91m    - Validating...
+[0m
+[91m      nbgrader.server_extensions.formgrader  [32mOK[0m
+[0m
+[91mEnabling: nbgrader.server_extensions.validate_assignment
+[0m
+[91m- Writing config: /opt/conda/etc/jupyter
+[0m
+[91m    - Validating...
+[0m
+[91m      nbgrader.server_extensions.validate_assignment  [32mOK[0m
+[0m
+[91mEnabling: nbgrader.server_extensions.assignment_list
+- Writing config: /opt/conda/etc/jupyter
+[0m
+[91m    - Validating...
+      nbgrader.server_extensions.assignment_list  [32mOK[0m
+[0m
+[91mEnabling: nbgrader.server_extensions.course_list
+- Writing config: /opt/conda/etc/jupyter
+[0m
+[91m    - Validating...
+      nbgrader.server_extensions.course_list  [32mOK[0m
+[0m
+[91mEnabling: nbgrader
+- Writing config: /usr/local/etc/jupyter
+[0m
+[91m    - Validating nbgrader...
+[0m
+[91m      nbgrader 0.8.1 [32mOK[0m
+[0m
+[91m     [31m X[0m Validation failed: [Errno 13] Permission denied: '/usr/local/etc/jupyter'
+[0m
+[91m+ for f in /usr/share/datahub/scripts/install-python/*.sh
++ bash /usr/share/datahub/scripts/install-python/install-nbresuse.sh -H
+[0m
+Collecting git+https://github.com/ucsd-ets/nbresuse.git
+Cloning https://github.com/ucsd-ets/nbresuse.git to /tmp/pip-req-build-1zzilvaz
+[91m  Running command git clone -q https://github.com/ucsd-ets/nbresuse.git /tmp/pip-req-build-1zzilvaz
+[0m
+Requirement already satisfied: psutil in /opt/conda/lib/python3.9/site-packages (from nbresuse==0.2.0) (5.8.0)
+Requirement already satisfied: notebook in /opt/conda/lib/python3.9/site-packages (from nbresuse==0.2.0) (6.4.0)
+Collecting gputil
+Downloading GPUtil-1.4.0.tar.gz (5.5 kB)
+Requirement already satisfied: terminado>=0.8.3 in /opt/conda/lib/python3.9/site-packages (from notebook->nbresuse==0.2.0) (0.10.1)
+Requirement already satisfied: jupyter-core>=4.6.1 in /opt/conda/lib/python3.9/site-packages (from notebook->nbresuse==0.2.0) (4.12.0)
+Requirement already satisfied: argon2-cffi in /opt/conda/lib/python3.9/site-packages (from notebook->nbresuse==0.2.0) (20.1.0)
+Requirement already satisfied: ipython-genutils in /opt/conda/lib/python3.9/site-packages (from notebook->nbresuse==0.2.0) (0.2.0)
+Requirement already satisfied: pyzmq>=17 in /opt/conda/lib/python3.9/site-packages (from notebook->nbresuse==0.2.0) (25.1.0)
+Requirement already satisfied: Send2Trash>=1.5.0 in /opt/conda/lib/python3.9/site-packages (from notebook->nbresuse==0.2.0) (1.7.1)
+Requirement already satisfied: jinja2 in /opt/conda/lib/python3.9/site-packages (from notebook->nbresuse==0.2.0) (3.0.1)
+Requirement already satisfied: jupyter-client>=5.3.4 in /opt/conda/lib/python3.9/site-packages (from notebook->nbresuse==0.2.0) (7.4.9)
+Requirement already satisfied: ipykernel in /opt/conda/lib/python3.9/site-packages (from notebook->nbresuse==0.2.0) (6.17.1)
+Requirement already satisfied: nbconvert in /opt/conda/lib/python3.9/site-packages (from notebook->nbresuse==0.2.0) (7.6.0)
+Requirement already satisfied: nbformat in /opt/conda/lib/python3.9/site-packages (from notebook->nbresuse==0.2.0) (5.9.0)
+Requirement already satisfied: prometheus-client in /opt/conda/lib/python3.9/site-packages (from notebook->nbresuse==0.2.0) (0.11.0)
+Requirement already satisfied: traitlets>=4.2.1 in /opt/conda/lib/python3.9/site-packages (from notebook->nbresuse==0.2.0) (5.1.1)
+Requirement already satisfied: tornado>=6.1 in /opt/conda/lib/python3.9/site-packages (from notebook->nbresuse==0.2.0) (6.3.2)
+Requirement already satisfied: entrypoints in /opt/conda/lib/python3.9/site-packages (from jupyter-client>=5.3.4->notebook->nbresuse==0.2.0) (0.3)
+Requirement already satisfied: nest-asyncio>=1.5.4 in /opt/conda/lib/python3.9/site-packages (from jupyter-client>=5.3.4->notebook->nbresuse==0.2.0) (1.5.6)
+Requirement already satisfied: python-dateutil>=2.8.2 in /opt/conda/lib/python3.9/site-packages (from jupyter-client>=5.3.4->notebook->nbresuse==0.2.0) (2.8.2)
+Requirement already satisfied: six>=1.5 in /opt/conda/lib/python3.9/site-packages (from python-dateutil>=2.8.2->jupyter-client>=5.3.4->notebook->nbresuse==0.2.0) (1.16.0)
+Requirement already satisfied: ptyprocess in /opt/conda/lib/python3.9/site-packages (from terminado>=0.8.3->notebook->nbresuse==0.2.0) (0.7.0)
+Requirement already satisfied: cffi>=1.0.0 in /opt/conda/lib/python3.9/site-packages (from argon2-cffi->notebook->nbresuse==0.2.0) (1.14.6)
+Requirement already satisfied: pycparser in /opt/conda/lib/python3.9/site-packages (from cffi>=1.0.0->argon2-cffi->notebook->nbresuse==0.2.0) (2.20)
+Requirement already satisfied: matplotlib-inline>=0.1 in /opt/conda/lib/python3.9/site-packages (from ipykernel->notebook->nbresuse==0.2.0) (0.1.2)
+Requirement already satisfied: debugpy>=1.0 in /opt/conda/lib/python3.9/site-packages (from ipykernel->notebook->nbresuse==0.2.0) (1.6.7)
+Requirement already satisfied: ipython>=7.23.1 in /opt/conda/lib/python3.9/site-packages (from ipykernel->notebook->nbresuse==0.2.0) (7.25.0)
+Requirement already satisfied: packaging in /opt/conda/lib/python3.9/site-packages (from ipykernel->notebook->nbresuse==0.2.0) (21.0)
+Requirement already satisfied: jedi>=0.16 in /opt/conda/lib/python3.9/site-packages (from ipython>=7.23.1->ipykernel->notebook->nbresuse==0.2.0) (0.18.0)
+Requirement already satisfied: pygments in /opt/conda/lib/python3.9/site-packages (from ipython>=7.23.1->ipykernel->notebook->nbresuse==0.2.0) (2.9.0)
+Requirement already satisfied: prompt-toolkit!=3.0.0,!=3.0.1,<3.1.0,>=2.0.0 in /opt/conda/lib/python3.9/site-packages (from ipython>=7.23.1->ipykernel->notebook->nbresuse==0.2.0) (3.0.19)
+Requirement already satisfied: decorator in /opt/conda/lib/python3.9/site-packages (from ipython>=7.23.1->ipykernel->notebook->nbresuse==0.2.0) (5.0.9)
+Requirement already satisfied: setuptools>=18.5 in /opt/conda/lib/python3.9/site-packages (from ipython>=7.23.1->ipykernel->notebook->nbresuse==0.2.0) (49.6.0.post20210108)
+Requirement already satisfied: pickleshare in /opt/conda/lib/python3.9/site-packages (from ipython>=7.23.1->ipykernel->notebook->nbresuse==0.2.0) (0.7.5)
+Requirement already satisfied: backcall in /opt/conda/lib/python3.9/site-packages (from ipython>=7.23.1->ipykernel->notebook->nbresuse==0.2.0) (0.2.0)
+Requirement already satisfied: pexpect>4.3 in /opt/conda/lib/python3.9/site-packages (from ipython>=7.23.1->ipykernel->notebook->nbresuse==0.2.0) (4.8.0)
+Requirement already satisfied: parso<0.9.0,>=0.8.0 in /opt/conda/lib/python3.9/site-packages (from jedi>=0.16->ipython>=7.23.1->ipykernel->notebook->nbresuse==0.2.0) (0.8.2)
+Requirement already satisfied: wcwidth in /opt/conda/lib/python3.9/site-packages (from prompt-toolkit!=3.0.0,!=3.0.1,<3.1.0,>=2.0.0->ipython>=7.23.1->ipykernel->notebook->nbresuse==0.2.0) (0.2.5)
+Requirement already satisfied: MarkupSafe>=2.0 in /opt/conda/lib/python3.9/site-packages (from jinja2->notebook->nbresuse==0.2.0) (2.0.1)
+Requirement already satisfied: pandocfilters>=1.4.1 in /opt/conda/lib/python3.9/site-packages (from nbconvert->notebook->nbresuse==0.2.0) (1.4.2)
+Requirement already satisfied: nbclient>=0.5.0 in /opt/conda/lib/python3.9/site-packages (from nbconvert->notebook->nbresuse==0.2.0) (0.6.3)
+Requirement already satisfied: mistune<4,>=2.0.3 in /opt/conda/lib/python3.9/site-packages (from nbconvert->notebook->nbresuse==0.2.0) (3.0.1)
+Requirement already satisfied: importlib-metadata>=3.6 in /opt/conda/lib/python3.9/site-packages (from nbconvert->notebook->nbresuse==0.2.0) (6.7.0)
+Requirement already satisfied: bleach!=5.0.0 in /opt/conda/lib/python3.9/site-packages (from nbconvert->notebook->nbresuse==0.2.0) (3.3.1)
+Requirement already satisfied: beautifulsoup4 in /opt/conda/lib/python3.9/site-packages (from nbconvert->notebook->nbresuse==0.2.0) (4.9.3)
+Requirement already satisfied: jupyterlab-pygments in /opt/conda/lib/python3.9/site-packages (from nbconvert->notebook->nbresuse==0.2.0) (0.1.2)
+Requirement already satisfied: defusedxml in /opt/conda/lib/python3.9/site-packages (from nbconvert->notebook->nbresuse==0.2.0) (0.7.1)
+Requirement already satisfied: tinycss2 in /opt/conda/lib/python3.9/site-packages (from nbconvert->notebook->nbresuse==0.2.0) (1.2.1)
+Requirement already satisfied: webencodings in /opt/conda/lib/python3.9/site-packages (from bleach!=5.0.0->nbconvert->notebook->nbresuse==0.2.0) (0.5.1)
+Requirement already satisfied: zipp>=0.5 in /opt/conda/lib/python3.9/site-packages (from importlib-metadata>=3.6->nbconvert->notebook->nbresuse==0.2.0) (3.5.0)
+Requirement already satisfied: fastjsonschema in /opt/conda/lib/python3.9/site-packages (from nbformat->notebook->nbresuse==0.2.0) (2.17.1)
+Requirement already satisfied: jsonschema>=2.6 in /opt/conda/lib/python3.9/site-packages (from nbformat->notebook->nbresuse==0.2.0) (3.2.0)
+Requirement already satisfied: attrs>=17.4.0 in /opt/conda/lib/python3.9/site-packages (from jsonschema>=2.6->nbformat->notebook->nbresuse==0.2.0) (21.2.0)
+Requirement already satisfied: pyrsistent>=0.14.0 in /opt/conda/lib/python3.9/site-packages (from jsonschema>=2.6->nbformat->notebook->nbresuse==0.2.0) (0.17.3)
+Requirement already satisfied: soupsieve>1.2 in /opt/conda/lib/python3.9/site-packages (from beautifulsoup4->nbconvert->notebook->nbresuse==0.2.0) (2.0.1)
+Requirement already satisfied: pyparsing>=2.0.2 in /opt/conda/lib/python3.9/site-packages (from packaging->ipykernel->notebook->nbresuse==0.2.0) (2.4.7)
+Building wheels for collected packages: nbresuse, gputil
+Building wheel for nbresuse (setup.py): started
+Building wheel for nbresuse (setup.py): finished with status 'done'
+Created wheel for nbresuse: filename=nbresuse-0.2.0-py3-none-any.whl size=7369 sha256=6e49342e4a32db01f828a057d7d854c9a034f1f1a6a8f0bde258b8358567f2ad
+Stored in directory: /tmp/pip-ephem-wheel-cache-xl4ajy44/wheels/36/6f/37/7d15593780235b88a8c26dab80b9cbd8092875e53b61f8a75a
+Building wheel for gputil (setup.py): started
+Building wheel for gputil (setup.py): finished with status 'done'
+Created wheel for gputil: filename=GPUtil-1.4.0-py3-none-any.whl size=7410 sha256=333a610cbcd28dbea40fb91309e78e1c7d042500f336bec86ba3fbf198d1cd18
+Stored in directory: /tmp/pip-ephem-wheel-cache-xl4ajy44/wheels/2b/b5/24/fbb56595c286984f7315ee31821d6121e1b9828436021a88b3
+Successfully built nbresuse gputil
+Installing collected packages: gputil, nbresuse
+Successfully installed gputil-1.4.0 nbresuse-0.2.0
+[91mEnabling: nbresuse
+- Writing config: /opt/conda/etc/jupyter
+[0m
+[91m    - Validating...
+[0m
+[91m      nbresuse  [32mOK[0m
+[0m
+[91mInstalling /opt/conda/lib/python3.9/site-packages/nbresuse/static -> nbresuse
+[0m
+[91mMaking directory: /opt/conda/share/jupyter/nbextensions/nbresuse/
+[0m
+[91mCopying: /opt/conda/lib/python3.9/site-packages/nbresuse/static/main.js -> /opt/conda/share/jupyter/nbextensions/nbresuse/main.js
+[0m
+[91m- Validating: [32mOK[0m
+[0m
+[91m
+    To initialize this nbextension in the browser every time the notebook (or other app) loads:
+    
+          jupyter nbextension enable nbresuse --py --sys-prefix
+    
+[0m
+[91mEnabling notebook extension nbresuse/main...
+[0m
+[91m      - Validating: [32mOK[0m
+[0m
+Collecting pandas==1.5.3
+Downloading pandas-1.5.3-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (12.2 MB)
+Requirement already satisfied: mistune>=2 in /opt/conda/lib/python3.9/site-packages (3.0.1)
+Requirement already satisfied: pytz>=2020.1 in /opt/conda/lib/python3.9/site-packages (from pandas==1.5.3) (2021.1)
+Requirement already satisfied: numpy>=1.20.3 in /opt/conda/lib/python3.9/site-packages (from pandas==1.5.3) (1.21.1)
+Requirement already satisfied: python-dateutil>=2.8.1 in /opt/conda/lib/python3.9/site-packages (from pandas==1.5.3) (2.8.2)
+Requirement already satisfied: six>=1.5 in /opt/conda/lib/python3.9/site-packages (from python-dateutil>=2.8.1->pandas==1.5.3) (1.16.0)
+Installing collected packages: pandas
+Attempting uninstall: pandas
+Found existing installation: pandas 1.3.1
+Uninstalling pandas-1.3.1:
+Successfully uninstalled pandas-1.3.1
+Successfully installed pandas-1.5.3
+Collecting nltk
+Downloading nltk-3.8.1-py3-none-any.whl (1.5 MB)
+Collecting nbconvert==7.2.1
+Downloading nbconvert-7.2.1-py3-none-any.whl (271 kB)
+Requirement already satisfied: jupyterhub==1.4.1 in /opt/conda/lib/python3.9/site-packages (1.4.1)
+Requirement already satisfied: jinja2>=3.0 in /opt/conda/lib/python3.9/site-packages (from nbconvert==7.2.1) (3.0.1)
+Requirement already satisfied: importlib-metadata>=3.6 in /opt/conda/lib/python3.9/site-packages (from nbconvert==7.2.1) (6.7.0)
+Requirement already satisfied: jupyter-core>=4.7 in /opt/conda/lib/python3.9/site-packages (from nbconvert==7.2.1) (4.12.0)
+Requirement already satisfied: beautifulsoup4 in /opt/conda/lib/python3.9/site-packages (from nbconvert==7.2.1) (4.9.3)
+Requirement already satisfied: defusedxml in /opt/conda/lib/python3.9/site-packages (from nbconvert==7.2.1) (0.7.1)
+Requirement already satisfied: bleach in /opt/conda/lib/python3.9/site-packages (from nbconvert==7.2.1) (3.3.1)
+Requirement already satisfied: nbformat>=5.1 in /opt/conda/lib/python3.9/site-packages (from nbconvert==7.2.1) (5.9.0)
+Requirement already satisfied: nbclient>=0.5.0 in /opt/conda/lib/python3.9/site-packages (from nbconvert==7.2.1) (0.6.3)
+Requirement already satisfied: markupsafe>=2.0 in /opt/conda/lib/python3.9/site-packages (from nbconvert==7.2.1) (2.0.1)
+Requirement already satisfied: pygments>=2.4.1 in /opt/conda/lib/python3.9/site-packages (from nbconvert==7.2.1) (2.9.0)
+Requirement already satisfied: packaging in /opt/conda/lib/python3.9/site-packages (from nbconvert==7.2.1) (21.0)
+Requirement already satisfied: traitlets>=5.0 in /opt/conda/lib/python3.9/site-packages (from nbconvert==7.2.1) (5.1.1)
+Requirement already satisfied: tinycss2 in /opt/conda/lib/python3.9/site-packages (from nbconvert==7.2.1) (1.2.1)
+Requirement already satisfied: jupyterlab-pygments in /opt/conda/lib/python3.9/site-packages (from nbconvert==7.2.1) (0.1.2)
+Requirement already satisfied: pandocfilters>=1.4.1 in /opt/conda/lib/python3.9/site-packages (from nbconvert==7.2.1) (1.4.2)
+Collecting mistune<3,>=2.0.3
+Downloading mistune-2.0.5-py2.py3-none-any.whl (24 kB)
+Requirement already satisfied: jupyter-telemetry>=0.1.0 in /opt/conda/lib/python3.9/site-packages (from jupyterhub==1.4.1) (0.1.0)
+Requirement already satisfied: pamela in /opt/conda/lib/python3.9/site-packages (from jupyterhub==1.4.1) (1.0.0)
+Requirement already satisfied: certipy>=0.1.2 in /opt/conda/lib/python3.9/site-packages (from jupyterhub==1.4.1) (0.1.3)
+Requirement already satisfied: SQLAlchemy>=1.1 in /opt/conda/lib/python3.9/site-packages (from jupyterhub==1.4.1) (1.4.22)
+Requirement already satisfied: tornado>=5.1 in /opt/conda/lib/python3.9/site-packages (from jupyterhub==1.4.1) (6.3.2)
+Requirement already satisfied: prometheus-client>=0.4.0 in /opt/conda/lib/python3.9/site-packages (from jupyterhub==1.4.1) (0.11.0)
+Requirement already satisfied: python-dateutil in /opt/conda/lib/python3.9/site-packages (from jupyterhub==1.4.1) (2.8.2)
+Requirement already satisfied: oauthlib>=3.0 in /opt/conda/lib/python3.9/site-packages (from jupyterhub==1.4.1) (3.1.1)
+Requirement already satisfied: entrypoints in /opt/conda/lib/python3.9/site-packages (from jupyterhub==1.4.1) (0.3)
+Requirement already satisfied: async-generator>=1.9 in /opt/conda/lib/python3.9/site-packages (from jupyterhub==1.4.1) (1.10)
+Requirement already satisfied: requests in /opt/conda/lib/python3.9/site-packages (from jupyterhub==1.4.1) (2.26.0)
+Requirement already satisfied: alembic>=1.4 in /opt/conda/lib/python3.9/site-packages (from jupyterhub==1.4.1) (1.11.1)
+Requirement already satisfied: Mako in /opt/conda/lib/python3.9/site-packages (from alembic>=1.4->jupyterhub==1.4.1) (1.1.4)
+Requirement already satisfied: typing-extensions>=4 in /opt/conda/lib/python3.9/site-packages (from alembic>=1.4->jupyterhub==1.4.1) (4.7.0)
+Requirement already satisfied: pyopenssl in /opt/conda/lib/python3.9/site-packages (from certipy>=0.1.2->jupyterhub==1.4.1) (20.0.1)
+Requirement already satisfied: zipp>=0.5 in /opt/conda/lib/python3.9/site-packages (from importlib-metadata>=3.6->nbconvert==7.2.1) (3.5.0)
+Requirement already satisfied: jsonschema in /opt/conda/lib/python3.9/site-packages (from jupyter-telemetry>=0.1.0->jupyterhub==1.4.1) (3.2.0)
+Requirement already satisfied: python-json-logger in /opt/conda/lib/python3.9/site-packages (from jupyter-telemetry>=0.1.0->jupyterhub==1.4.1) (2.0.7)
+Requirement already satisfied: ruamel.yaml in /opt/conda/lib/python3.9/site-packages (from jupyter-telemetry>=0.1.0->jupyterhub==1.4.1) (0.17.10)
+Requirement already satisfied: jupyter-client>=6.1.5 in /opt/conda/lib/python3.9/site-packages (from nbclient>=0.5.0->nbconvert==7.2.1) (7.4.9)
+Requirement already satisfied: nest-asyncio in /opt/conda/lib/python3.9/site-packages (from nbclient>=0.5.0->nbconvert==7.2.1) (1.5.6)
+Requirement already satisfied: pyzmq>=23.0 in /opt/conda/lib/python3.9/site-packages (from jupyter-client>=6.1.5->nbclient>=0.5.0->nbconvert==7.2.1) (25.1.0)
+Requirement already satisfied: fastjsonschema in /opt/conda/lib/python3.9/site-packages (from nbformat>=5.1->nbconvert==7.2.1) (2.17.1)
+Requirement already satisfied: attrs>=17.4.0 in /opt/conda/lib/python3.9/site-packages (from jsonschema->jupyter-telemetry>=0.1.0->jupyterhub==1.4.1) (21.2.0)
+Requirement already satisfied: pyrsistent>=0.14.0 in /opt/conda/lib/python3.9/site-packages (from jsonschema->jupyter-telemetry>=0.1.0->jupyterhub==1.4.1) (0.17.3)
+Requirement already satisfied: six>=1.11.0 in /opt/conda/lib/python3.9/site-packages (from jsonschema->jupyter-telemetry>=0.1.0->jupyterhub==1.4.1) (1.16.0)
+Requirement already satisfied: setuptools in /opt/conda/lib/python3.9/site-packages (from jsonschema->jupyter-telemetry>=0.1.0->jupyterhub==1.4.1) (49.6.0.post20210108)
+Requirement already satisfied: greenlet!=0.4.17 in /opt/conda/lib/python3.9/site-packages (from SQLAlchemy>=1.1->jupyterhub==1.4.1) (1.1.0)
+Requirement already satisfied: tqdm in /opt/conda/lib/python3.9/site-packages (from nltk) (4.61.2)
+Requirement already satisfied: joblib in /opt/conda/lib/python3.9/site-packages (from nltk) (1.0.1)
+Requirement already satisfied: click in /opt/conda/lib/python3.9/site-packages (from nltk) (8.0.1)
+Collecting regex>=2021.8.3
+Downloading regex-2023.6.3-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (769 kB)
+Requirement already satisfied: soupsieve>1.2 in /opt/conda/lib/python3.9/site-packages (from beautifulsoup4->nbconvert==7.2.1) (2.0.1)
+Requirement already satisfied: webencodings in /opt/conda/lib/python3.9/site-packages (from bleach->nbconvert==7.2.1) (0.5.1)
+Requirement already satisfied: pyparsing>=2.0.2 in /opt/conda/lib/python3.9/site-packages (from packaging->nbconvert==7.2.1) (2.4.7)
+Requirement already satisfied: cryptography>=3.2 in /opt/conda/lib/python3.9/site-packages (from pyopenssl->certipy>=0.1.2->jupyterhub==1.4.1) (3.4.7)
+Requirement already satisfied: cffi>=1.12 in /opt/conda/lib/python3.9/site-packages (from cryptography>=3.2->pyopenssl->certipy>=0.1.2->jupyterhub==1.4.1) (1.14.6)
+Requirement already satisfied: pycparser in /opt/conda/lib/python3.9/site-packages (from cffi>=1.12->cryptography>=3.2->pyopenssl->certipy>=0.1.2->jupyterhub==1.4.1) (2.20)
+Requirement already satisfied: idna<4,>=2.5 in /opt/conda/lib/python3.9/site-packages (from requests->jupyterhub==1.4.1) (3.1)
+Requirement already satisfied: charset-normalizer~=2.0.0 in /opt/conda/lib/python3.9/site-packages (from requests->jupyterhub==1.4.1) (2.0.0)
+Requirement already satisfied: urllib3<1.27,>=1.21.1 in /opt/conda/lib/python3.9/site-packages (from requests->jupyterhub==1.4.1) (1.26.6)
+Requirement already satisfied: certifi>=2017.4.17 in /opt/conda/lib/python3.9/site-packages (from requests->jupyterhub==1.4.1) (2021.5.30)
+Requirement already satisfied: ruamel.yaml.clib>=0.1.2 in /opt/conda/lib/python3.9/site-packages (from ruamel.yaml->jupyter-telemetry>=0.1.0->jupyterhub==1.4.1) (0.2.2)
+Installing collected packages: regex, mistune, nltk, nbconvert
+Attempting uninstall: mistune
+Found existing installation: mistune 3.0.1
+Uninstalling mistune-3.0.1:
+Successfully uninstalled mistune-3.0.1
+Attempting uninstall: nbconvert
+Found existing installation: nbconvert 7.6.0
+Uninstalling nbconvert-7.6.0:
+Successfully uninstalled nbconvert-7.6.0
+Successfully installed mistune-2.0.5 nbconvert-7.2.1 nltk-3.8.1 regex-2023.6.3
+conda-forge/noarch        
+conda-forge/linux-64      
+Transaction
+
+  Prefix: /opt/conda
+
+  Updating specs:
+
+   - rise
+   - ca-certificates
+   - certifi
+   - openssl
+Package              Version  Build           Channel                    Size
+─────────────────────────────────────────────────────────────────────────────────
+  Install:
+─────────────────────────────────────────────────────────────────────────────────
+
+  + rise                 5.7.1  py39hf3d152e_2  conda-forge/linux-64       3 MB
+
+  Upgrade:
+─────────────────────────────────────────────────────────────────────────────────
+
+  - ca-certificates  2021.5.30  ha878542_0      installed                      
+  + ca-certificates   2023.5.7  hbcca054_0      conda-forge/linux-64     145 KB
+  - certifi          2021.5.30  py39hf3d152e_0  installed                      
+  + certifi           2023.5.7  pyhd8ed1ab_0    conda-forge/noarch       149 KB
+  - libgcc-ng            9.3.0  h2828fa1_19     installed                      
+  + libgcc-ng           13.1.0  he5830b7_0      conda-forge/linux-64     758 KB
+  - libgomp              9.3.0  h2828fa1_19     installed                      
+  + libgomp             13.1.0  he5830b7_0      conda-forge/linux-64     409 KB
+  - openssl             1.1.1k  h7f98852_0      installed                      
+  + openssl             1.1.1u  hd590300_0      conda-forge/linux-64       2 MB
+
+  Summary:
+
+  Install: 1 packages
+  Upgrade: 5 packages
+
+  Total download: 6 MB
+
+─────────────────────────────────────────────────────────────────────────────────
+__    __    __    __
+                 /  \  /  \  /  \  /  \
+                /    \/    \/    \/    \
+███████████████/  /██/  /██/  /██/  /████████████████████████
+              /  / \   / \   / \   / \  \____
+             /  /   \_/   \_/   \_/   \    o \__,
+            / _/                       \_____/  `
+            |/
+        ███╗   ███╗ █████╗ ███╗   ███╗██████╗  █████╗
+        ████╗ ████║██╔══██╗████╗ ████║██╔══██╗██╔══██╗
+        ██╔████╔██║███████║██╔████╔██║██████╔╝███████║
+        ██║╚██╔╝██║██╔══██║██║╚██╔╝██║██╔══██╗██╔══██║
+        ██║ ╚═╝ ██║██║  ██║██║ ╚═╝ ██║██████╔╝██║  ██║
+        ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝╚═════╝ ╚═╝  ╚═╝
+
+        mamba (0.15.2) supported by @QuantStack
+
+        GitHub:  https://github.com/mamba-org/mamba
+        Twitter: https://twitter.com/QuantStack
+
+█████████████████████████████████████████████████████████████
+
+
+Looking for: ['rise']
+
+
+Pinned packages:
+  - python 3.9.5
+  - conda 4.10.2
+  - python 3.9.5
+
+
+Preparing transaction: ...working...
+done
+Verifying transaction: ...working...
+done
+Executing transaction: ...working...
+done
+Finished ca-certificates                      (00m:00s)             145 KB      2 MB/s
+Finished libgcc-ng                            (00m:00s)             758 KB      9 MB/s
+Finished libgomp                              (00m:00s)             409 KB      4 MB/s
+Finished certifi                              (00m:00s)             149 KB      1 MB/s
+Finished openssl                              (00m:00s)               2 MB     19 MB/s
+Finished rise                                 (00m:00s)               3 MB      9 MB/s
+[91mchgrp: changing group of '/home/jovyan/.cache/code-server': Operation not permitted
+[0m
+[91mchgrp: changing group of '/home/jovyan/.cache/code-server/code-server_4.14.1_amd64.deb': Operation not permitted
+[0m
+[91mchmod: changing permissions of '/home/jovyan/.cache/code-server': Operation not permitted
+[0m
+Cache location: /opt/conda/pkgs
+Will remove the following tarballs:
+
+/opt/conda/pkgs
+---------------
+ca-certificates-2023.5.7-hbcca054_0.conda     145 KB
+certifi-2023.5.7-pyhd8ed1ab_0.conda          149 KB
+libgcc-ng-13.1.0-he5830b7_0.conda            758 KB
+rise-5.7.1-py39hf3d152e_2.tar.bz2            2.6 MB
+libgomp-13.1.0-he5830b7_0.conda              409 KB
+openssl-1.1.1u-hd590300_0.conda              1.9 MB
+
+---------------------------------------------------
+Total:                                       5.9 MB
+
+Proceed ([y]/n)?
+Removed ca-certificates-2023.5.7-hbcca054_0.conda
+Removed certifi-2023.5.7-pyhd8ed1ab_0.conda
+Removed libgcc-ng-13.1.0-he5830b7_0.conda
+Removed rise-5.7.1-py39hf3d152e_2.tar.bz2
+Removed libgomp-13.1.0-he5830b7_0.conda
+Removed openssl-1.1.1u-hd590300_0.conda
+WARNING: /home/jovyan/.conda/pkgs does not exist
+Cache location: 
+There are no unused packages to remove
+---> 94b1f89a556f
+Step 19 took [3 min 1 sec] 
+Step 20/25 : ENV NBGRADER_COURSEID="NA"
+---> Running in a9899bf48fec
+---> 5828ee4618cc
+Step 20 took [0 min 9 sec] 
+Step 21/25 : ENV JUPYTERHUB_USER=${NB_USER}
+---> Running in e612de1f7bcb
+---> 6bb2f18d5883
+Step 21 took [0 min 9 sec] 
+Step 22/25 : RUN pip install jupyterlab-github jupyterlab-latex jupyterlab-git     jupyterlab-fasta jupyterlab-pullrequests jupyterlab-geojson
+---> Running in f8fa83c01786
+Collecting jupyterlab-github
+Downloading jupyterlab_github-3.0.1-py3-none-any.whl (113 kB)
+Collecting jupyterlab-latex
+Downloading jupyterlab_latex-3.1.0-py3-none-any.whl (900 kB)
+Collecting jupyterlab-git
+Downloading jupyterlab_git-0.41.0-py3-none-any.whl (1.3 MB)
+Collecting jupyterlab-fasta
+Downloading jupyterlab_fasta-3.3.0-py3-none-any.whl (157 kB)
+Collecting jupyterlab-pullrequests
+Downloading jupyterlab_pullrequests-3.0.2-py3-none-any.whl (453 kB)
+Collecting jupyterlab-geojson
+Downloading jupyterlab_geojson-3.4.0-py3-none-any.whl (83 kB)
+Requirement already satisfied: jupyterlab~=3.0 in /opt/conda/lib/python3.9/site-packages (from jupyterlab-github) (3.0.16)
+Requirement already satisfied: jupyter-core in /opt/conda/lib/python3.9/site-packages (from jupyterlab~=3.0->jupyterlab-github) (4.12.0)
+Requirement already satisfied: nbclassic~=0.2 in /opt/conda/lib/python3.9/site-packages (from jupyterlab~=3.0->jupyterlab-github) (0.3.1)
+Requirement already satisfied: jupyter-server~=1.4 in /opt/conda/lib/python3.9/site-packages (from jupyterlab~=3.0->jupyterlab-github) (1.24.0)
+Requirement already satisfied: jinja2>=2.1 in /opt/conda/lib/python3.9/site-packages (from jupyterlab~=3.0->jupyterlab-github) (3.0.1)
+Requirement already satisfied: tornado>=6.1.0 in /opt/conda/lib/python3.9/site-packages (from jupyterlab~=3.0->jupyterlab-github) (6.3.2)
+Requirement already satisfied: ipython in /opt/conda/lib/python3.9/site-packages (from jupyterlab~=3.0->jupyterlab-github) (7.25.0)
+Requirement already satisfied: jupyterlab-server~=2.3 in /opt/conda/lib/python3.9/site-packages (from jupyterlab~=3.0->jupyterlab-github) (2.6.1)
+Requirement already satisfied: packaging in /opt/conda/lib/python3.9/site-packages (from jupyterlab~=3.0->jupyterlab-github) (21.0)
+Requirement already satisfied: MarkupSafe>=2.0 in /opt/conda/lib/python3.9/site-packages (from jinja2>=2.1->jupyterlab~=3.0->jupyterlab-github) (2.0.1)
+Requirement already satisfied: websocket-client in /opt/conda/lib/python3.9/site-packages (from jupyter-server~=1.4->jupyterlab~=3.0->jupyterlab-github) (0.57.0)
+Requirement already satisfied: Send2Trash in /opt/conda/lib/python3.9/site-packages (from jupyter-server~=1.4->jupyterlab~=3.0->jupyterlab-github) (1.7.1)
+Requirement already satisfied: pyzmq>=17 in /opt/conda/lib/python3.9/site-packages (from jupyter-server~=1.4->jupyterlab~=3.0->jupyterlab-github) (25.1.0)
+Requirement already satisfied: terminado>=0.8.3 in /opt/conda/lib/python3.9/site-packages (from jupyter-server~=1.4->jupyterlab~=3.0->jupyterlab-github) (0.10.1)
+Requirement already satisfied: argon2-cffi in /opt/conda/lib/python3.9/site-packages (from jupyter-server~=1.4->jupyterlab~=3.0->jupyterlab-github) (20.1.0)
+Requirement already satisfied: traitlets>=5.1 in /opt/conda/lib/python3.9/site-packages (from jupyter-server~=1.4->jupyterlab~=3.0->jupyterlab-github) (5.1.1)
+Requirement already satisfied: jupyter-client>=6.1.12 in /opt/conda/lib/python3.9/site-packages (from jupyter-server~=1.4->jupyterlab~=3.0->jupyterlab-github) (7.4.9)
+Requirement already satisfied: nbconvert>=6.4.4 in /opt/conda/lib/python3.9/site-packages (from jupyter-server~=1.4->jupyterlab~=3.0->jupyterlab-github) (7.2.1)
+Requirement already satisfied: anyio<4,>=3.1.0 in /opt/conda/lib/python3.9/site-packages (from jupyter-server~=1.4->jupyterlab~=3.0->jupyterlab-github) (3.2.1)
+Requirement already satisfied: prometheus-client in /opt/conda/lib/python3.9/site-packages (from jupyter-server~=1.4->jupyterlab~=3.0->jupyterlab-github) (0.11.0)
+Requirement already satisfied: nbformat>=5.2.0 in /opt/conda/lib/python3.9/site-packages (from jupyter-server~=1.4->jupyterlab~=3.0->jupyterlab-github) (5.9.0)
+Requirement already satisfied: idna>=2.8 in /opt/conda/lib/python3.9/site-packages (from anyio<4,>=3.1.0->jupyter-server~=1.4->jupyterlab~=3.0->jupyterlab-github) (3.1)
+Requirement already satisfied: sniffio>=1.1 in /opt/conda/lib/python3.9/site-packages (from anyio<4,>=3.1.0->jupyter-server~=1.4->jupyterlab~=3.0->jupyterlab-github) (1.2.0)
+Requirement already satisfied: entrypoints in /opt/conda/lib/python3.9/site-packages (from jupyter-client>=6.1.12->jupyter-server~=1.4->jupyterlab~=3.0->jupyterlab-github) (0.3)
+Requirement already satisfied: python-dateutil>=2.8.2 in /opt/conda/lib/python3.9/site-packages (from jupyter-client>=6.1.12->jupyter-server~=1.4->jupyterlab~=3.0->jupyterlab-github) (2.8.2)
+Requirement already satisfied: nest-asyncio>=1.5.4 in /opt/conda/lib/python3.9/site-packages (from jupyter-client>=6.1.12->jupyter-server~=1.4->jupyterlab~=3.0->jupyterlab-github) (1.5.6)
+Requirement already satisfied: babel in /opt/conda/lib/python3.9/site-packages (from jupyterlab-server~=2.3->jupyterlab~=3.0->jupyterlab-github) (2.9.1)
+Requirement already satisfied: requests in /opt/conda/lib/python3.9/site-packages (from jupyterlab-server~=2.3->jupyterlab~=3.0->jupyterlab-github) (2.26.0)
+Requirement already satisfied: jsonschema>=3.0.1 in /opt/conda/lib/python3.9/site-packages (from jupyterlab-server~=2.3->jupyterlab~=3.0->jupyterlab-github) (3.2.0)
+Requirement already satisfied: json5 in /opt/conda/lib/python3.9/site-packages (from jupyterlab-server~=2.3->jupyterlab~=3.0->jupyterlab-github) (0.9.5)
+Requirement already satisfied: setuptools in /opt/conda/lib/python3.9/site-packages (from jsonschema>=3.0.1->jupyterlab-server~=2.3->jupyterlab~=3.0->jupyterlab-github) (49.6.0.post20210108)
+Requirement already satisfied: six>=1.11.0 in /opt/conda/lib/python3.9/site-packages (from jsonschema>=3.0.1->jupyterlab-server~=2.3->jupyterlab~=3.0->jupyterlab-github) (1.16.0)
+Requirement already satisfied: attrs>=17.4.0 in /opt/conda/lib/python3.9/site-packages (from jsonschema>=3.0.1->jupyterlab-server~=2.3->jupyterlab~=3.0->jupyterlab-github) (21.2.0)
+Requirement already satisfied: pyrsistent>=0.14.0 in /opt/conda/lib/python3.9/site-packages (from jsonschema>=3.0.1->jupyterlab-server~=2.3->jupyterlab~=3.0->jupyterlab-github) (0.17.3)
+Requirement already satisfied: notebook<7 in /opt/conda/lib/python3.9/site-packages (from nbclassic~=0.2->jupyterlab~=3.0->jupyterlab-github) (6.4.0)
+Requirement already satisfied: pygments>=2.4.1 in /opt/conda/lib/python3.9/site-packages (from nbconvert>=6.4.4->jupyter-server~=1.4->jupyterlab~=3.0->jupyterlab-github) (2.9.0)
+Requirement already satisfied: beautifulsoup4 in /opt/conda/lib/python3.9/site-packages (from nbconvert>=6.4.4->jupyter-server~=1.4->jupyterlab~=3.0->jupyterlab-github) (4.9.3)
+Requirement already satisfied: tinycss2 in /opt/conda/lib/python3.9/site-packages (from nbconvert>=6.4.4->jupyter-server~=1.4->jupyterlab~=3.0->jupyterlab-github) (1.2.1)
+Requirement already satisfied: bleach in /opt/conda/lib/python3.9/site-packages (from nbconvert>=6.4.4->jupyter-server~=1.4->jupyterlab~=3.0->jupyterlab-github) (3.3.1)
+Requirement already satisfied: defusedxml in /opt/conda/lib/python3.9/site-packages (from nbconvert>=6.4.4->jupyter-server~=1.4->jupyterlab~=3.0->jupyterlab-github) (0.7.1)
+Requirement already satisfied: mistune<3,>=2.0.3 in /opt/conda/lib/python3.9/site-packages (from nbconvert>=6.4.4->jupyter-server~=1.4->jupyterlab~=3.0->jupyterlab-github) (2.0.5)
+Requirement already satisfied: nbclient>=0.5.0 in /opt/conda/lib/python3.9/site-packages (from nbconvert>=6.4.4->jupyter-server~=1.4->jupyterlab~=3.0->jupyterlab-github) (0.6.3)
+Requirement already satisfied: importlib-metadata>=3.6 in /opt/conda/lib/python3.9/site-packages (from nbconvert>=6.4.4->jupyter-server~=1.4->jupyterlab~=3.0->jupyterlab-github) (6.7.0)
+Requirement already satisfied: pandocfilters>=1.4.1 in /opt/conda/lib/python3.9/site-packages (from nbconvert>=6.4.4->jupyter-server~=1.4->jupyterlab~=3.0->jupyterlab-github) (1.4.2)
+Requirement already satisfied: jupyterlab-pygments in /opt/conda/lib/python3.9/site-packages (from nbconvert>=6.4.4->jupyter-server~=1.4->jupyterlab~=3.0->jupyterlab-github) (0.1.2)
+Requirement already satisfied: zipp>=0.5 in /opt/conda/lib/python3.9/site-packages (from importlib-metadata>=3.6->nbconvert>=6.4.4->jupyter-server~=1.4->jupyterlab~=3.0->jupyterlab-github) (3.5.0)
+Requirement already satisfied: fastjsonschema in /opt/conda/lib/python3.9/site-packages (from nbformat>=5.2.0->jupyter-server~=1.4->jupyterlab~=3.0->jupyterlab-github) (2.17.1)
+Requirement already satisfied: ipython-genutils in /opt/conda/lib/python3.9/site-packages (from notebook<7->nbclassic~=0.2->jupyterlab~=3.0->jupyterlab-github) (0.2.0)
+Requirement already satisfied: ipykernel in /opt/conda/lib/python3.9/site-packages (from notebook<7->nbclassic~=0.2->jupyterlab~=3.0->jupyterlab-github) (6.17.1)
+Requirement already satisfied: ptyprocess in /opt/conda/lib/python3.9/site-packages (from terminado>=0.8.3->jupyter-server~=1.4->jupyterlab~=3.0->jupyterlab-github) (0.7.0)
+Collecting nbdime~=3.1
+Downloading nbdime-3.2.1-py2.py3-none-any.whl (5.3 MB)
+Requirement already satisfied: pexpect in /opt/conda/lib/python3.9/site-packages (from jupyterlab-git) (4.8.0)
+Collecting GitPython!=2.1.4,!=2.1.5,!=2.1.6
+Downloading GitPython-3.1.31-py3-none-any.whl (184 kB)
+Collecting jupyter-server-mathjax>=0.2.2
+Downloading jupyter_server_mathjax-0.2.6-py3-none-any.whl (3.1 MB)
+Collecting colorama
+Downloading colorama-0.4.6-py2.py3-none-any.whl (25 kB)
+Collecting gitdb<5,>=4.0.1
+Downloading gitdb-4.0.10-py3-none-any.whl (62 kB)
+Collecting smmap<6,>=3.0.1
+Downloading smmap-5.0.0-py3-none-any.whl (24 kB)
+Collecting jupyterlab-git
+Downloading jupyterlab_git-0.39.3-py3-none-any.whl (1.2 MB)
+Requirement already satisfied: cffi>=1.0.0 in /opt/conda/lib/python3.9/site-packages (from argon2-cffi->jupyter-server~=1.4->jupyterlab~=3.0->jupyterlab-github) (1.14.6)
+Requirement already satisfied: pycparser in /opt/conda/lib/python3.9/site-packages (from cffi>=1.0.0->argon2-cffi->jupyter-server~=1.4->jupyterlab~=3.0->jupyterlab-github) (2.20)
+Requirement already satisfied: pytz>=2015.7 in /opt/conda/lib/python3.9/site-packages (from babel->jupyterlab-server~=2.3->jupyterlab~=3.0->jupyterlab-github) (2021.1)
+Requirement already satisfied: soupsieve>1.2 in /opt/conda/lib/python3.9/site-packages (from beautifulsoup4->nbconvert>=6.4.4->jupyter-server~=1.4->jupyterlab~=3.0->jupyterlab-github) (2.0.1)
+Requirement already satisfied: webencodings in /opt/conda/lib/python3.9/site-packages (from bleach->nbconvert>=6.4.4->jupyter-server~=1.4->jupyterlab~=3.0->jupyterlab-github) (0.5.1)
+Requirement already satisfied: debugpy>=1.0 in /opt/conda/lib/python3.9/site-packages (from ipykernel->notebook<7->nbclassic~=0.2->jupyterlab~=3.0->jupyterlab-github) (1.6.7)
+Requirement already satisfied: matplotlib-inline>=0.1 in /opt/conda/lib/python3.9/site-packages (from ipykernel->notebook<7->nbclassic~=0.2->jupyterlab~=3.0->jupyterlab-github) (0.1.2)
+Requirement already satisfied: psutil in /opt/conda/lib/python3.9/site-packages (from ipykernel->notebook<7->nbclassic~=0.2->jupyterlab~=3.0->jupyterlab-github) (5.8.0)
+Requirement already satisfied: prompt-toolkit!=3.0.0,!=3.0.1,<3.1.0,>=2.0.0 in /opt/conda/lib/python3.9/site-packages (from ipython->jupyterlab~=3.0->jupyterlab-github) (3.0.19)
+Requirement already satisfied: pickleshare in /opt/conda/lib/python3.9/site-packages (from ipython->jupyterlab~=3.0->jupyterlab-github) (0.7.5)
+Requirement already satisfied: decorator in /opt/conda/lib/python3.9/site-packages (from ipython->jupyterlab~=3.0->jupyterlab-github) (5.0.9)
+Requirement already satisfied: backcall in /opt/conda/lib/python3.9/site-packages (from ipython->jupyterlab~=3.0->jupyterlab-github) (0.2.0)
+Requirement already satisfied: jedi>=0.16 in /opt/conda/lib/python3.9/site-packages (from ipython->jupyterlab~=3.0->jupyterlab-github) (0.18.0)
+Requirement already satisfied: parso<0.9.0,>=0.8.0 in /opt/conda/lib/python3.9/site-packages (from jedi>=0.16->ipython->jupyterlab~=3.0->jupyterlab-github) (0.8.2)
+Requirement already satisfied: wcwidth in /opt/conda/lib/python3.9/site-packages (from prompt-toolkit!=3.0.0,!=3.0.1,<3.1.0,>=2.0.0->ipython->jupyterlab~=3.0->jupyterlab-github) (0.2.5)
+Requirement already satisfied: pyparsing>=2.0.2 in /opt/conda/lib/python3.9/site-packages (from packaging->jupyterlab~=3.0->jupyterlab-github) (2.4.7)
+Requirement already satisfied: certifi>=2017.4.17 in /opt/conda/lib/python3.9/site-packages (from requests->jupyterlab-server~=2.3->jupyterlab~=3.0->jupyterlab-github) (2023.5.7)
+Requirement already satisfied: charset-normalizer~=2.0.0 in /opt/conda/lib/python3.9/site-packages (from requests->jupyterlab-server~=2.3->jupyterlab~=3.0->jupyterlab-github) (2.0.0)
+Requirement already satisfied: urllib3<1.27,>=1.21.1 in /opt/conda/lib/python3.9/site-packages (from requests->jupyterlab-server~=2.3->jupyterlab~=3.0->jupyterlab-github) (1.26.6)
+Installing collected packages: smmap, gitdb, jupyter-server-mathjax, GitPython, colorama, nbdime, jupyterlab-git, jupyterlab-pullrequests, jupyterlab-latex, jupyterlab-github, jupyterlab-geojson, jupyterlab-fasta
+Successfully installed GitPython-3.1.31 colorama-0.4.6 gitdb-4.0.10 jupyter-server-mathjax-0.2.6 jupyterlab-fasta-3.3.0 jupyterlab-geojson-3.4.0 jupyterlab-git-0.39.3 jupyterlab-github-3.0.1 jupyterlab-latex-3.1.0 jupyterlab-pullrequests-3.0.2 nbdime-3.2.1 smmap-5.0.0
+---> 7acb067c15b8
+Step 22 took [0 min 16 sec] 
+Step 23/25 : RUN pip install dpkt     nose     datascience &&     python -c 'import matplotlib.pyplot' &&     fix-permissions $CONDA_DIR &&     fix-permissions /home/$NB_USER
+---> Running in f0f05b0a644b
+Collecting dpkt
+Downloading dpkt-1.9.8-py3-none-any.whl (194 kB)
+Collecting nose
+Downloading nose-1.3.7-py3-none-any.whl (154 kB)
+Collecting datascience
+Downloading datascience-0.17.6-py3-none-any.whl (732 kB)
+Requirement already satisfied: scipy in /opt/conda/lib/python3.9/site-packages (from datascience) (1.7.0)
+Requirement already satisfied: ipython in /opt/conda/lib/python3.9/site-packages (from datascience) (7.25.0)
+Requirement already satisfied: matplotlib>=3.0.0 in /opt/conda/lib/python3.9/site-packages (from datascience) (3.4.2)
+Requirement already satisfied: setuptools in /opt/conda/lib/python3.9/site-packages (from datascience) (49.6.0.post20210108)
+Requirement already satisfied: numpy in /opt/conda/lib/python3.9/site-packages (from datascience) (1.21.1)
+Collecting folium>=0.9.1
+Downloading folium-0.14.0-py2.py3-none-any.whl (102 kB)
+Collecting branca
+Downloading branca-0.6.0-py3-none-any.whl (24 kB)
+Collecting plotly
+Downloading plotly-5.15.0-py2.py3-none-any.whl (15.5 MB)
+Requirement already satisfied: pandas in /opt/conda/lib/python3.9/site-packages (from datascience) (1.5.3)
+Requirement already satisfied: requests in /opt/conda/lib/python3.9/site-packages (from folium>=0.9.1->datascience) (2.26.0)
+Requirement already satisfied: jinja2>=2.9 in /opt/conda/lib/python3.9/site-packages (from folium>=0.9.1->datascience) (3.0.1)
+Requirement already satisfied: MarkupSafe>=2.0 in /opt/conda/lib/python3.9/site-packages (from jinja2>=2.9->folium>=0.9.1->datascience) (2.0.1)
+Requirement already satisfied: cycler>=0.10 in /opt/conda/lib/python3.9/site-packages (from matplotlib>=3.0.0->datascience) (0.10.0)
+Requirement already satisfied: pillow>=6.2.0 in /opt/conda/lib/python3.9/site-packages (from matplotlib>=3.0.0->datascience) (8.3.1)
+Requirement already satisfied: python-dateutil>=2.7 in /opt/conda/lib/python3.9/site-packages (from matplotlib>=3.0.0->datascience) (2.8.2)
+Requirement already satisfied: kiwisolver>=1.0.1 in /opt/conda/lib/python3.9/site-packages (from matplotlib>=3.0.0->datascience) (1.3.1)
+Requirement already satisfied: pyparsing>=2.2.1 in /opt/conda/lib/python3.9/site-packages (from matplotlib>=3.0.0->datascience) (2.4.7)
+Requirement already satisfied: six in /opt/conda/lib/python3.9/site-packages (from cycler>=0.10->matplotlib>=3.0.0->datascience) (1.16.0)
+Requirement already satisfied: traitlets>=4.2 in /opt/conda/lib/python3.9/site-packages (from ipython->datascience) (5.1.1)
+Requirement already satisfied: pygments in /opt/conda/lib/python3.9/site-packages (from ipython->datascience) (2.9.0)
+Requirement already satisfied: pexpect>4.3 in /opt/conda/lib/python3.9/site-packages (from ipython->datascience) (4.8.0)
+Requirement already satisfied: decorator in /opt/conda/lib/python3.9/site-packages (from ipython->datascience) (5.0.9)
+Requirement already satisfied: matplotlib-inline in /opt/conda/lib/python3.9/site-packages (from ipython->datascience) (0.1.2)
+Requirement already satisfied: backcall in /opt/conda/lib/python3.9/site-packages (from ipython->datascience) (0.2.0)
+Requirement already satisfied: pickleshare in /opt/conda/lib/python3.9/site-packages (from ipython->datascience) (0.7.5)
+Requirement already satisfied: jedi>=0.16 in /opt/conda/lib/python3.9/site-packages (from ipython->datascience) (0.18.0)
+Requirement already satisfied: prompt-toolkit!=3.0.0,!=3.0.1,<3.1.0,>=2.0.0 in /opt/conda/lib/python3.9/site-packages (from ipython->datascience) (3.0.19)
+Requirement already satisfied: parso<0.9.0,>=0.8.0 in /opt/conda/lib/python3.9/site-packages (from jedi>=0.16->ipython->datascience) (0.8.2)
+Requirement already satisfied: ptyprocess>=0.5 in /opt/conda/lib/python3.9/site-packages (from pexpect>4.3->ipython->datascience) (0.7.0)
+Requirement already satisfied: wcwidth in /opt/conda/lib/python3.9/site-packages (from prompt-toolkit!=3.0.0,!=3.0.1,<3.1.0,>=2.0.0->ipython->datascience) (0.2.5)
+Requirement already satisfied: pytz>=2020.1 in /opt/conda/lib/python3.9/site-packages (from pandas->datascience) (2021.1)
+Collecting tenacity>=6.2.0
+Downloading tenacity-8.2.2-py3-none-any.whl (24 kB)
+Requirement already satisfied: packaging in /opt/conda/lib/python3.9/site-packages (from plotly->datascience) (21.0)
+Requirement already satisfied: charset-normalizer~=2.0.0 in /opt/conda/lib/python3.9/site-packages (from requests->folium>=0.9.1->datascience) (2.0.0)
+Requirement already satisfied: idna<4,>=2.5 in /opt/conda/lib/python3.9/site-packages (from requests->folium>=0.9.1->datascience) (3.1)
+Requirement already satisfied: urllib3<1.27,>=1.21.1 in /opt/conda/lib/python3.9/site-packages (from requests->folium>=0.9.1->datascience) (1.26.6)
+Requirement already satisfied: certifi>=2017.4.17 in /opt/conda/lib/python3.9/site-packages (from requests->folium>=0.9.1->datascience) (2023.5.7)
+Installing collected packages: tenacity, branca, plotly, folium, nose, dpkt, datascience
+Successfully installed branca-0.6.0 datascience-0.17.6 dpkt-1.9.8 folium-0.14.0 nose-1.3.7 plotly-5.15.0 tenacity-8.2.2
+[91mchgrp: changing group of '/home/jovyan/.cache/code-server': Operation not permitted
+[0m
+[91mchgrp: changing group of '/home/jovyan/.cache/code-server/code-server_4.14.1_amd64.deb'[0m
+[91m: Operation not permitted
+[0m
+[91mchmod: changing permissions of '/home/jovyan/.cache/code-server': Operation not permitted
+[0m
+---> 86c75a3dac98
+Step 23 took [1 min 52 sec] 
+Step 24/25 : RUN conda clean -tipsy
+---> Running in 9038ea716c0f
+[91mWARNING: 'conda clean --source-cache' is deprecated.
+    Use 'conda build purge-all' to remove source cache files.
+[0m
+Cache location: 
+There are no tarballs to remove
+WARNING: /home/jovyan/.conda/pkgs does not exist
+Cache location: 
+There are no unused packages to remove
+---> d63493d09405
+Step 24 took [0 min 11 sec] 
+Step 25/25 : WORKDIR /home/jovyan
+---> Running in 3cfa8493c870
+---> d6b745a93e49
+Successfully built d6b745a93e49
+Successfully tagged ghcr.io/ucsd-ets/datascience-notebook:2023.2-ghcr
+Step 25 took [0 min 10 sec] 
