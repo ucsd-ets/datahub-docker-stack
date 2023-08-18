@@ -65,7 +65,7 @@ RUN pip install --no-cache-dir  datascience \
 	pillow \
 	nvidia-cudnn-cu11==8.6.0.163 \
 	tensorflow==2.13.* \
-	tensorrt \
+	#tensorrt \
 	keras==2.13.1 && \
 	fix-permissions $CONDA_DIR && \
 	fix-permissions /home/$NB_USER && \
