@@ -48,6 +48,7 @@ RUN mamba install -c "nvidia/label/cuda-11.8.0" cuda-nvcc -y && \
 
 # install protobuf to avoid weird base type error. seems like if we don't then it'll be installed twice.
 # https://github.com/spesmilo/electrum/issues/7825
+# pip cache purge didnt work here for some reason.
 RUN pip install --no-cache-dir protobuf==3.20.3
 
 # cuda-python installed to have parity with tensorflow and cudnn
