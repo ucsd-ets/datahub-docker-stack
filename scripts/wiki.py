@@ -255,7 +255,7 @@ def update_Home() -> bool:
         # avoid duplicate entry: <year_quarter-stable> tag
         _, stable_tag = stable_full_names[0].split(':', 1)  # stable_tag = 2022.2-stable
         stablePrefix, _ = stable_tag.split('-', 1)  # 2022.2
-        original_stable_names = query_images(doc_str, 'stable', stablePrefix)  # a list
+        #original_stable_names = query_images(doc_str, 'stable', stablePrefix)  # a list
         
         # we need the ability to overwrite stable tags if we want to
         # todo: figure out how to delete old MD if duplicate detected
