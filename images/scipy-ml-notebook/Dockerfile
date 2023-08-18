@@ -77,8 +77,7 @@ ARG TORCH_VER="1.7.1+cu101" \
     TORCH_AUD_VER="0.7.2"
 
 # torch must be installed separately since it requires a non-pypi repo. See stable version above
-RUN pip install torch==${TORCH_VER} torchvision==${TORCH_VIS_VER} torchaudio==${TORCH_AUD_VER} \
-	-f https://download.pytorch.org/whl/torch_stable.html && \
+RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 && \
 	pip cache purge
 
 ### UNCOMMENT WHEN WE HAVE NVIDIA 11.8 ON NODES
