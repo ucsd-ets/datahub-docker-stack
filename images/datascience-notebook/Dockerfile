@@ -65,7 +65,9 @@ RUN /usr/share/datahub/scripts/install-python-all.sh && \
     fix-permissions /home/$NB_USER && \
     conda clean --all && \
     chown -R jovyan:users /opt/conda/etc/jupyter/nbconfig && \
-    chmod -R +r /opt/conda/etc/jupyter/nbconfig
+    chmod -R +r /opt/conda/etc/jupyter/nbconfig && \
+    pip cache purge && \
+    mamba clean -a -y
 
 # nbgrader requires some variables set to just run the notebook server
 ENV NBGRADER_COURSEID="NA"
@@ -73,7 +75,8 @@ ENV JUPYTERHUB_USER=${NB_USER}
 
 # Install jupyterlab extensions
 RUN pip install jupyterlab==3.0.16 jupyterlab-github jupyterlab-latex jupyterlab-git \
-    jupyterlab-fasta jupyterlab-pullrequests jupyterlab-geojson
+    jupyterlab-fasta jupyterlab-pullrequests jupyterlab-geojson && \
+    pip cache purge
 
 # Datascience packages
 RUN pip install dpkt \
@@ -81,7 +84,8 @@ RUN pip install dpkt \
     datascience && \
     python -c 'import matplotlib.pyplot' && \
     fix-permissions $CONDA_DIR && \
-    fix-permissions /home/$NB_USER
+    fix-permissions /home/$NB_USER && \
+    pip cache purge
 
 RUN conda clean -tipsy
 
