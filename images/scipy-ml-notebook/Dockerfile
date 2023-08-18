@@ -22,7 +22,7 @@ RUN ln -s libncurses.so.6 /usr/lib/x86_64-linux-gnu/libncurses.so.5
 COPY run_jupyter.sh /
 RUN chmod +x /run_jupyter.sh
 
-COPY cudatoolkit_env_vars.sh cudnn_env_vars.sh /etc/datahub-profile.d/
+COPY cudatoolkit_env_vars.sh cudnn_env_vars.sh tensorrt_env_vars.sh /etc/datahub-profile.d/
 COPY activate.sh /tmp/activate.sh
 COPY workflow_tests /opt/workflow_tests
 ADD manual_tests /opt/manual_tests
@@ -100,8 +100,6 @@ ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
 # need to have the end result of running 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/conda/lib/python3.9/site-packages/nvidia/cudnn/lib'
 # then the gpu can be detected via CLI.
 #ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/opt/conda/lib/python3.9/site-packages/nvidia/cudnn/lib
-#sad issue with github ref
-
 
 # Do some CONDA/CUDA stuff
 # Copy libdevice file to the required path
