@@ -8,14 +8,7 @@ images:
       PY_VER_SHORT: "3.9"
       JUPYTERHUB_VERSION: 1.4.1
     info_cmds: [PY_VER, PIP_LIST, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
-
-  rstudio-notebook:
-    image_name: ghcr.io/ucsd-ets/rstudio-notebook
-    depend_on: datascience-notebook
-    integration_tests: true
-    info_cmds: [PY_VER, PIP_LIST, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
-    prune: true
-
+  
   scipy-ml-notebook:
     image_name: ghcr.io/ucsd-ets/scipy-ml-notebook
     depend_on: datascience-notebook
@@ -27,6 +20,13 @@ images:
     info_cmds: [PY_VER, PIP_LIST, CUDA_VERSION, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
     prune: true
     prepull: false
+
+  rstudio-notebook:
+    image_name: ghcr.io/ucsd-ets/rstudio-notebook
+    depend_on: datascience-notebook
+    integration_tests: true
+    info_cmds: [PY_VER, PIP_LIST, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
+    prune: true
 
 tag:
   prefix: "2023.2"
