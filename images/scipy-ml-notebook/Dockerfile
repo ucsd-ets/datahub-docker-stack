@@ -72,12 +72,10 @@ RUN pip install --no-cache-dir  datascience \
 	pip cache purge
 
 # Update these in spec.yml according to https://pytorch.org/get-started/locally/
-ARG TORCH_VER="1.7.1+cu101" \
-    TORCH_VIS_VER="0.8.2+cu101" \
-    TORCH_AUD_VER="0.7.2"
+ARG TORCH_VER="cu188"
 
 # torch must be installed separately since it requires a non-pypi repo. See stable version above
-RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 && \
+RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/${TORCH_VIS_VER} && \
 	pip cache purge
 
 ### UNCOMMENT WHEN WE HAVE NVIDIA 11.8 ON NODES
