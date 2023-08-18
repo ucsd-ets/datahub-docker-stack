@@ -26,6 +26,7 @@ images:
       TORCH_AUD_VER: '0.9.0'
     info_cmds: [PY_VER, PIP_LIST, CUDA_VERSION, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
     prune: true
+    prepull: false
 
 tag:
   prefix: "2023.2"
