@@ -226,7 +226,7 @@ def update_Home() -> bool:
         orig_full_names = read_var('IMAGES_ORIGINAL') 
 
         # 3rd column: image wiki page link ["LINK"](LINK)        
-        manifests_links = [wiki_doc2link(fullname=image) for image in stable_full_names]
+        manifests_links = [wiki_doc2link(fullname=image.replace("ghcr.io", "ghcr-io")) for image in stable_full_names]
         cell_manifests = list2cell(manifests_links)
     except Exception as e:
         logger.error(f"Error when loading information to update Home.md, {e}")
