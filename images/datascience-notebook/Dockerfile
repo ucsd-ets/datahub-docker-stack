@@ -27,6 +27,7 @@ RUN apt-get update -y && \
     p7zip \
     apt-utils \
     jq \
+    build-essential \
     p7zip-full && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
     chmod g-s /usr/bin/screen && \
@@ -40,9 +41,6 @@ RUN cat /tmp/jupyter_notebook_config_extra.py >> /etc/jupyter/jupyter_notebook_c
     chmod -R uga+x /etc/jupyter/jupyter_notebook_config.py && \
     chmod -R uga+x /etc/jupyter/nbgrader_config.py
 
-# VSCode code-server
-RUN curl -fsSL https://code-server.dev/install.sh | sh -s -- --prefix=/usr/local
-
 # Copy over R tests to /opt/manual_tests
 RUN mkdir /opt/manual_tests
 COPY /test/test_r_dump_packages.R /opt/manual_tests
@@ -50,17 +48,16 @@ COPY /test/test_r_func.R /opt/manual_tests
 
 USER jovyan
 
-COPY start-code-server.sh /usr/local/bin/start-notebook.d/
-
 ARG PY_VER_SHORT=3.9
-ARG JUPYTERHUB_VERSION=1.5.0
+ARG JUPYTERHUB_VERSION=3.0.0
 
 # mistune added for nbgrader issues
 
 # coerce pandas to 1.5.3. 2.0 released april 3rd and currently breaks tests.
 RUN /usr/share/datahub/scripts/install-python-all.sh && \
-    pip install pandas==1.5.3 'mistune>=2' --upgrade && \
+    pip install pandas==2.0.3 'mistune>=2' --upgrade && \
     pip install nltk \
+    pip install statsmodels==0.14.0 \
     nbconvert==7.2.1 \
     jupyterhub==$JUPYTERHUB_VERSION && \
     mamba install -c conda-forge rise -y && \
@@ -68,15 +65,18 @@ RUN /usr/share/datahub/scripts/install-python-all.sh && \
     fix-permissions /home/$NB_USER && \
     conda clean --all && \
     chown -R jovyan:users /opt/conda/etc/jupyter/nbconfig && \
-    chmod -R +r /opt/conda/etc/jupyter/nbconfig
+    chmod -R +r /opt/conda/etc/jupyter/nbconfig && \
+    pip cache purge && \
+    mamba clean -a -y
 
 # nbgrader requires some variables set to just run the notebook server
 ENV NBGRADER_COURSEID="NA"
 ENV JUPYTERHUB_USER=${NB_USER}
 
 # Install jupyterlab extensions
-RUN pip install jupyterlab-github jupyterlab-latex jupyterlab-git \
-    jupyterlab-fasta jupyterlab-pullrequests jupyterlab-geojson
+RUN pip install jupyterlab==3.0.16 jupyterlab-github jupyterlab-latex jupyterlab-git \
+    jupyterlab-fasta jupyterlab-pullrequests jupyterlab-geojson && \
+    pip cache purge
 
 # Datascience packages
 RUN pip install dpkt \
@@ -84,7 +84,8 @@ RUN pip install dpkt \
     datascience && \
     python -c 'import matplotlib.pyplot' && \
     fix-permissions $CONDA_DIR && \
-    fix-permissions /home/$NB_USER
+    fix-permissions /home/$NB_USER && \
+    pip cache purge
 
 RUN conda clean -tipsy
 

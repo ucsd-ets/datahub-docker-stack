@@ -22,7 +22,7 @@ RUN ln -s libncurses.so.6 /usr/lib/x86_64-linux-gnu/libncurses.so.5
 COPY run_jupyter.sh /
 RUN chmod +x /run_jupyter.sh
 
-COPY cudatoolkit_env_vars.sh cudnn_env_vars.sh /etc/datahub-profile.d/
+COPY cudatoolkit_env_vars.sh cudnn_env_vars.sh tensorrt_env_vars.sh /etc/datahub-profile.d/
 COPY activate.sh /tmp/activate.sh
 COPY workflow_tests /opt/workflow_tests
 ADD manual_tests /opt/manual_tests
@@ -38,11 +38,13 @@ RUN mamba install \
 	nccl \
 	-y && \
 	fix-permissions $CONDA_DIR && \
-	fix-permissions /home/$NB_USER
+	fix-permissions /home/$NB_USER && \
+	mamba clean -a -y
 
 RUN mamba install -c "nvidia/label/cuda-11.8.0" cuda-nvcc -y && \
 	fix-permissions $CONDA_DIR && \
-	fix-permissions /home/$NB_USER
+	fix-permissions /home/$NB_USER && \
+	mamba clean -a -y
 
 # install protobuf to avoid weird base type error. seems like if we don't then it'll be installed twice.
 # https://github.com/spesmilo/electrum/issues/7825
@@ -61,11 +63,12 @@ RUN pip install --no-cache-dir  datascience \
 	pycocotools \
 	pillow \
 	nvidia-cudnn-cu11==8.6.0.163 \
-	tensorflow==2.12.* && \
+	tensorflow==2.13.* \
+	tensorrt \
+	keras==2.13.1 && \
 	fix-permissions $CONDA_DIR && \
-	fix-permissions /home/$NB_USER
-
-
+	fix-permissions /home/$NB_USER && \
+	pip cache purge
 
 # Update these in spec.yml according to https://pytorch.org/get-started/locally/
 ARG TORCH_VER="1.7.1+cu101" \
@@ -74,7 +77,15 @@ ARG TORCH_VER="1.7.1+cu101" \
 
 # torch must be installed separately since it requires a non-pypi repo. See stable version above
 RUN pip install torch==${TORCH_VER} torchvision==${TORCH_VIS_VER} torchaudio==${TORCH_AUD_VER} \
-	-f https://download.pytorch.org/whl/torch_stable.html
+	-f https://download.pytorch.org/whl/torch_stable.html && \
+	pip cache purge
+
+### UNCOMMENT WHEN WE HAVE NVIDIA 11.8 ON NODES
+# Update these in spec.yml according to https://pytorch.org/get-started/locally/
+#ARG TORCH_VER="cu118"
+
+# torch must be installed separately since it requires a non-pypi repo. See stable version above
+#RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/${TORCH_VIS_VER} 
 
 # to use nvidia-smi command to check GPU & driver
 # RUN ln -s /usr/local/nvidia/bin/nvidia-smi /opt/conda/bin/nvidia-smi
@@ -91,8 +102,6 @@ ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
 # need to have the end result of running 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/conda/lib/python3.9/site-packages/nvidia/cudnn/lib'
 # then the gpu can be detected via CLI.
 #ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/opt/conda/lib/python3.9/site-packages/nvidia/cudnn/lib
-#sad issue with github ref
-
 
 # Do some CONDA/CUDA stuff
 # Copy libdevice file to the required path

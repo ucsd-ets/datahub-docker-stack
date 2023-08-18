@@ -56,7 +56,6 @@ to run the pipeline. For testing, we use pytest.
 │   │   ├── Dockerfile  # image definition for docker
 │   │   ├── scripts     # .sh & .py scripts used for container setup
 │   │   │   └── ...
-│   │   ├── start-code-server.sh
 │   │   └── test    # image acceptance tests
 │   │       ├── data
 │   │       │   └── test-notebook.ipynb
