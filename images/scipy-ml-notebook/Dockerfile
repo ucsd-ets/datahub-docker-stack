@@ -72,6 +72,8 @@ RUN pip install datascience \
     pip cache purge
     # no purge required but no-cache-dir is used. pip purge will actually break the build here!
 
+# torch must be installed separately since it requires a non-pypi repo. See stable version above
+#RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/${TORCH_VIS_VER} 
 RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 && \
   pip cache purge
 
