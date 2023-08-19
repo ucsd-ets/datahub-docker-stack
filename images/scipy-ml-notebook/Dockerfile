@@ -12,9 +12,9 @@ USER root
 ARG LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7 CUDA_VERSION=11.8
 
 RUN apt-get update && \
-	apt-get install -y \
-	libtinfo5 build-essential && \
-	apt-get clean && rm -rf /var/lib/apt/lists/*
+  apt-get install -y \
+  libtinfo5 build-essential && \
+  apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Symbolic link for Stata 17 dependency on libncurses5
 RUN ln -s libncurses.so.6 /usr/lib/x86_64-linux-gnu/libncurses.so.5
@@ -34,17 +34,17 @@ USER jovyan
 # CUDA 11 
 # tf requirements: https://www.tensorflow.org/install/pip#linux
 RUN mamba install \
-	cudatoolkit=11.8 \
-	nccl \
-	-y && \
-	fix-permissions $CONDA_DIR && \
-	fix-permissions /home/$NB_USER && \
-	mamba clean -a -y
+  cudatoolkit=11.8 \
+  nccl \
+  -y && \
+  fix-permissions $CONDA_DIR && \
+  fix-permissions /home/$NB_USER && \
+  mamba clean -a -y
 
 RUN mamba install -c "nvidia/label/cuda-11.8.0" cuda-nvcc -y && \
-	fix-permissions $CONDA_DIR && \
-	fix-permissions /home/$NB_USER && \
-	mamba clean -a -y
+  fix-permissions $CONDA_DIR && \
+  fix-permissions /home/$NB_USER && \
+  mamba clean -a -y
 
 # install protobuf to avoid weird base type error. seems like if we don't then it'll be installed twice.
 # https://github.com/spesmilo/electrum/issues/7825
@@ -56,22 +56,27 @@ RUN pip install --no-cache-dir protobuf==3.20.3
 # tensorrt installed to fix not having libnvinfer that has caused tensorflow issues.
 # tensorrt installed to fix not having libnvinfer that has caused tensorflow issues.
 RUN pip install --no-cache-dir datascience \
-	PyQt5 \
-	scapy \
-	nltk \
-	opencv-contrib-python-headless \
-	opencv-python \
-	pycocotools \
-	pillow \
-	nvidia-cudnn-cu11==8.6.0.163 \
-	tensorflow==2.13.* \ 
-  tensorrt \
-	keras==2.13.1 && pip cache purge && \
-	fix-permissions $CONDA_DIR && \
-	fix-permissions /home/$NB_USER
+    PyQt5 \
+    scapy \
+    nltk \
+    opencv-contrib-python-headless \
+    opencv-python \
+    pycocotools \
+    pillow \
+    nvidia-cudnn-cu11==8.6.0.163 && \
+    fix-permissions $CONDA_DIR && \
+    fix-permissions /home/$NB_USER && \
+    pip cache purge
+
+RUN pip install tensorflow==2.13.* \ 
+    tensorrt \
+    keras==2.13.1 && \
+    fix-permissions $CONDA_DIR && \
+    fix-permissions /home/$NB_USER && \
+    pip cache purge
 
 RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 && \
-	pip cache purge
+  pip cache purge
 
 USER $NB_UID:$NB_GID
 ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
@@ -86,6 +91,6 @@ ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
 # Do some CONDA/CUDA stuff
 # Copy libdevice file to the required path
 RUN mkdir -p $CONDA_DIR/lib/nvvm/libdevice && \
-	cp $CONDA_DIR/lib/libdevice.10.bc $CONDA_DIR/lib/nvvm/libdevice/
+  cp $CONDA_DIR/lib/libdevice.10.bc $CONDA_DIR/lib/nvvm/libdevice/
 
 RUN . /tmp/activate.sh
