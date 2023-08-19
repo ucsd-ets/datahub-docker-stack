@@ -67,7 +67,7 @@ RUN pip install --no-cache-dir datascience \
 	tensorflow==2.13.* \
 	keras==2.13.1 && \
 	fix-permissions $CONDA_DIR && \
-	fix-permissions /home/$NB_USER && \
+	fix-permissions /home/$NB_USER
 
 # Update these in spec.yml according to https://pytorch.org/get-started/locally/
 #ARG TORCH_VER="2.0.1+cu118"
