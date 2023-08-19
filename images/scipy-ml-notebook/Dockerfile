@@ -64,21 +64,12 @@ RUN pip install --no-cache-dir datascience \
 	pycocotools \
 	pillow \
 	nvidia-cudnn-cu11==8.6.0.163 \
-	tensorflow==2.13.* \
+	tensorflow==2.13.0 \
 	keras==2.13.1 && \
 	fix-permissions $CONDA_DIR && \
 	fix-permissions /home/$NB_USER
 
-# Update these in spec.yml according to https://pytorch.org/get-started/locally/
-#ARG TORCH_VER="2.0.1+cu118"
-
-ARG TORCH_VER="1.7.1+cu101" \
-    TORCH_VIS_VER="0.8.2+cu101" \
-    TORCH_AUD_VER="0.7.2"
-
-# torch must be installed separately since it requires a non-pypi repo. See stable version above
-RUN pip install torch==${TORCH_VER} torchvision==${TORCH_VIS_VER} torchaudio==${TORCH_AUD_VER} \
-	-f https://download.pytorch.org/whl/torch_stable.html && \
+RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 && \
 	pip cache purge
 
 USER $NB_UID:$NB_GID
