@@ -66,9 +66,7 @@ RUN pip install --no-cache-dir datascience \
 	nvidia-cudnn-cu11==8.6.0.163 \
 	tensorflow==2.13.* \
 	keras==2.13.1 \
-	tensorrt && \
-	pip uninstall nvidia-cublas-cu12 nvidia-cuda-nvrtc-cu12 nvidia-cuda-runtime-cu12 nvidia-cudnn-cu12 -y && \
-	pip cache purge && \
+	tensorrt && pip cache purge && \
 	fix-permissions $CONDA_DIR && \
 	fix-permissions /home/$NB_USER
 
