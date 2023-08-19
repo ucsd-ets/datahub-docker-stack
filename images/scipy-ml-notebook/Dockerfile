@@ -65,7 +65,8 @@ RUN pip install --no-cache-dir datascience \
     pillow \
     nvidia-cudnn-cu11==8.6.0.163 \
     tensorflow==2.13.* \ 
-    keras==2.13.1 && \
+    keras==2.13.1 \
+    tensorrt==8.5.3.1 && \
     fix-permissions $CONDA_DIR && \ 
     fix-permissions /home/$NB_USER
     # no purge required but no-cache-dir is used. pip purge will actually break the build here!
