@@ -55,7 +55,7 @@ RUN pip install --no-cache-dir protobuf==3.20.3
 # Install pillow<7 due to dependency issue https://github.com/pytorch/vision/issues/1712
 # tensorrt installed to fix not having libnvinfer that has caused tensorflow issues.
 # tensorrt installed to fix not having libnvinfer that has caused tensorflow issues.
-RUN pip install --no-cache-dir datascience \
+RUN pip install datascience \
     PyQt5 \
     scapy \
     nltk \
@@ -68,7 +68,8 @@ RUN pip install --no-cache-dir datascience \
     keras==2.13.1 \
     tensorrt==8.5.3.1 && \
     fix-permissions $CONDA_DIR && \ 
-    fix-permissions /home/$NB_USER
+    fix-permissions /home/$NB_USER && \
+    pip cache purge
     # no purge required but no-cache-dir is used. pip purge will actually break the build here!
 
 RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 && \
