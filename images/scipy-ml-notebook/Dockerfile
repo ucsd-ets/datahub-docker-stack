@@ -68,7 +68,6 @@ RUN pip install --no-cache-dir datascience \
 	keras==2.13.1 && \
 	fix-permissions $CONDA_DIR && \
 	fix-permissions /home/$NB_USER && \
-	pip cache purge
 
 # Update these in spec.yml according to https://pytorch.org/get-started/locally/
 #ARG TORCH_VER="2.0.1+cu118"
@@ -76,24 +75,11 @@ RUN pip install --no-cache-dir datascience \
 ARG TORCH_VER="1.7.1+cu101" \
     TORCH_VIS_VER="0.8.2+cu101" \
     TORCH_AUD_VER="0.7.2"
-#ARG TORCH_VER="2.0.1+cu118"
 
 # torch must be installed separately since it requires a non-pypi repo. See stable version above
 RUN pip install torch==${TORCH_VER} torchvision==${TORCH_VIS_VER} torchaudio==${TORCH_AUD_VER} \
 	-f https://download.pytorch.org/whl/torch_stable.html && \
-
-### UNCOMMENT WHEN WE HAVE NVIDIA 11.8 ON NODES
-# Update these in spec.yml according to https://pytorch.org/get-started/locally/
-#ARG TORCH_VER="cu118"
-
-# torch must be installed separately since it requires a non-pypi repo. See stable version above
-#RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/${TORCH_VIS_VER} 
-
-# to use nvidia-smi command to check GPU & driver
-# RUN ln -s /usr/local/nvidia/bin/nvidia-smi /opt/conda/bin/nvidia-smi
-
-# RUN . /tmp/activate.sh && echo "Activate ran successfully"
-
+	pip cache purge
 
 USER $NB_UID:$NB_GID
 ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
