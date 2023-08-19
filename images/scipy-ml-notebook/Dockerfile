@@ -63,12 +63,8 @@ RUN pip install --no-cache-dir datascience \
     opencv-python \
     pycocotools \
     pillow \
-    nvidia-cudnn-cu11==8.6.0.163 && \
-    fix-permissions $CONDA_DIR && \
-    fix-permissions /home/$NB_USER && \
-    pip cache purge
-
-RUN pip install tensorflow==2.13.* \ 
+    nvidia-cudnn-cu11==8.6.0.163 \
+    tensorflow==2.13.* \ 
     tensorrt \
     keras==2.13.1 && \
     fix-permissions $CONDA_DIR && \
