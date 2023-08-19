@@ -82,7 +82,7 @@ ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
 #ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/opt/conda/lib/python3.9/site-packages/nvidia/cudnn/lib
 
 # only need to fix perms once?
-RUN fix-permissions "$CONDA_DIR" && fix-permissions /home/"$NB_USER"
+RUN fix-permissions $CONDA_DIR && fix-permissions /home/$NB_USER
 
 # Do some CONDA/CUDA stuff
 # Copy libdevice file to the required path
