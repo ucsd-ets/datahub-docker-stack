@@ -66,9 +66,10 @@ RUN pip install --no-cache-dir datascience \
     nvidia-cudnn-cu11==8.6.0.163 \
     tensorflow==2.13.* \ 
     keras==2.13.1 && \
-    RUN fix-permissions $CONDA_DIR && \ 
+    fix-permissions $CONDA_DIR && \ 
     fix-permissions /home/$NB_USER && \
     # i have no clue why but pip cache pure doesnt work here!
+    # it only works -if- tensorrt is a part of this installation command.
     rm -rf /tmp/xdg-cache/pip
 
 RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 && \
