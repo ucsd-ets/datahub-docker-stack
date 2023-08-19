@@ -66,8 +66,8 @@ RUN pip install --no-cache-dir datascience \
     nvidia-cudnn-cu11==8.6.0.163 \
     tensorflow==2.13.* \ 
     keras==2.13.1 && \
-    fix-permissions $CONDA_DIR && \
-    fix-permissions /home/$NB_USER && \
+    fix-permissions "$CONDA_DIR" && \
+    fix-permissions /home/"$NB_USER" && \
     pip cache purge
 
 RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 && \
