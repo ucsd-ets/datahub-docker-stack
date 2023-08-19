@@ -66,6 +66,9 @@ RUN pip install --no-cache-dir datascience \
     nvidia-cudnn-cu11==8.6.0.163 \
     tensorflow==2.13.* \ 
     keras==2.13.1 && \
+    RUN fix-permissions $CONDA_DIR && \ 
+    fix-permissions /home/$NB_USER && \
+    # i have no clue why but pip cache pure doesnt work here!
     rm -rf /tmp/xdg-cache/pip
 
 RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 && \
@@ -80,9 +83,6 @@ ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
 # need to have the end result of running 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/conda/lib/python3.9/site-packages/nvidia/cudnn/lib'
 # then the gpu can be detected via CLI.
 #ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/opt/conda/lib/python3.9/site-packages/nvidia/cudnn/lib
-
-# only need to fix perms once?
-RUN fix-permissions $CONDA_DIR && fix-permissions /home/$NB_USER
 
 # Do some CONDA/CUDA stuff
 # Copy libdevice file to the required path
