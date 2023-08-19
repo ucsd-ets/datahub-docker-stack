@@ -67,10 +67,8 @@ RUN pip install --no-cache-dir datascience \
     tensorflow==2.13.* \ 
     keras==2.13.1 && \
     fix-permissions $CONDA_DIR && \ 
-    fix-permissions /home/$NB_USER && \
-    # i have no clue why but pip cache pure doesnt work here!
-    # it only works -if- tensorrt is a part of this installation command.
-    rm -rf /tmp/xdg-cache/pip
+    fix-permissions /home/$NB_USER
+    # no purge required but no-cache-dir is used. pip purge will actually break the build here!
 
 RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 && \
   pip cache purge
