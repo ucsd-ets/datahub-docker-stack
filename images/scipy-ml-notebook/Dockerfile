@@ -66,7 +66,7 @@ RUN pip install --no-cache-dir datascience \
     nvidia-cudnn-cu11==8.6.0.163 \
     tensorflow==2.13.* \ 
     keras==2.13.1 && \
-    pip cache purge
+  pip cache purge
 
 RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 && \
   pip cache purge
