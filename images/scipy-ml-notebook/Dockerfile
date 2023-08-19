@@ -68,7 +68,8 @@ RUN pip install --no-cache-dir datascience \
 	tensorrt_lean \
 	keras==2.13.1 && \
 	fix-permissions $CONDA_DIR && \
-	fix-permissions /home/$NB_USER
+	fix-permissions /home/$NB_USER && \
+	pip cache clean
 
 RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 && \
 	pip cache purge
