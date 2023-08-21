@@ -87,7 +87,9 @@ RUN pip install torch torchvision torchaudio --index-url https://download.pytorc
   rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_cnn_train.so.8 && \
   rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_ops_infer.so.8 && \
   rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_ops_train.so.8 && \
-  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcublas.so.11
+  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcublas.so.11 && \
+  rm /opt/conda/lib/libcublasLt.so.11.11.3.6 && \
+  rm /opt/conda/lib/python3.9/site-packages/nvidia/cublas/lib/libcublasLt.so.11
 
 USER $NB_UID:$NB_GID
 ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
