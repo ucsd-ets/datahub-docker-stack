@@ -73,10 +73,21 @@ RUN pip install datascience \
     # no purge required but no-cache-dir is used. pip purge will actually break the build here!
 
 # torch must be installed separately since it requires a non-pypi repo. See stable version above
-#RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/${TORCH_VIS_VER} 
+#RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/${TORCH_VIS_VER}
+
+
+# We already have the lib files imported into LD_LIBRARY_PATH by CUDDN and the cudatoolkit. let's remove these and save some image space.
+# Beware of potentially needing to update these if we update the drivers.
 RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 && \
   pip cache purge && \
-  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_cnn_infer.so.8
+  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_cnn_infer.so.8 && \
+  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcublasLt.so.11 && \
+  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_adv_infer.so.8 && \
+  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_adv_train.so.8 && \
+  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_cnn_train.so.8 && \
+  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_ops_infer.so.8 && \
+  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_ops_train.so.8 && \
+  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcublas.so.11
 
 USER $NB_UID:$NB_GID
 ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
