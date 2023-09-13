@@ -33,6 +33,13 @@ RUN apt-get update -y && \
     chmod g-s /usr/bin/screen && \
     chmod 1777 /var/run/screen
 
+# try new notebook
+RUN Run pip install notebook==7.0.3 && \
+    fix-permissions $CONDA_DIR && \
+    fix-permissions /home/$NB_USER && \
+    pip cache purge
+
+
 COPY /scripts /usr/share/datahub/scripts/
 COPY /scripts/jupyter_notebook_config.py /tmp/jupyter_notebook_config_extra.py
 COPY /scripts/nbgrader_config.py /etc/jupyter/nbgrader_config.py
@@ -58,7 +65,6 @@ RUN /usr/share/datahub/scripts/install-python-all.sh && \
     pip install pandas==2.0.3 'mistune>=2' --upgrade && \
     pip install nltk \
     pip install statsmodels==0.14.0 \
-    notebook==7.0.3 \
     nbconvert==7.2.1 \
     jupyterhub==$JUPYTERHUB_VERSION && \
     mamba install -c conda-forge rise -y && \
