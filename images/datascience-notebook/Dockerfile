@@ -34,7 +34,7 @@ RUN apt-get update -y && \
     chmod 1777 /var/run/screen
 
 # try new notebook
-RUN Run pip install notebook==7.0.3 && \
+RUN pip install notebook==7.0.3 && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
     pip cache purge
