@@ -77,14 +77,11 @@ ENV JUPYTERHUB_USER=${NB_USER}
 RUN pip install jupyterlab==3.0.16 jupyterlab-github jupyterlab-latex jupyterlab-git \
     jupyterlab-fasta jupyterlab-pullrequests jupyterlab-geojson && \
     pip cache purge
-
-RUN pip uninstall jupyterhub -y
-
+    
 # Datascience packages
 RUN pip install dpkt \
     nose \
     datascience && \
-    jupyterhub==3.0.0 && \
     python -c 'import matplotlib.pyplot' && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
