@@ -78,6 +78,8 @@ RUN pip install jupyterlab==3.0.16 jupyterlab-github jupyterlab-latex jupyterlab
     jupyterlab-fasta jupyterlab-pullrequests jupyterlab-geojson && \
     pip cache purge
 
+RUN pip uninstall jupyterhub -y
+
 # Datascience packages
 RUN pip install dpkt \
     nose \
