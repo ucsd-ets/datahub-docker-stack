@@ -4,9 +4,13 @@
 
 This Github repository builds and maintains the [standard suite of Docker containers](https://support.ucsd.edu/services?id=kb_article_view&sysparm_article=KB0032173&sys_kb_id=e61b198e1b74781048e9cae5604bcbe0) supported by UC San Diego Educational Technology Services.
 
+### Featureset
+
 Currently, we support 3 images:
 
-- datascience-notebook (base notebook from which all others inherit w/ dpkt + nose + datascience libs)
+- datascience-notebook (has dpkt + nose + datascience libs)
+    - This image comes with Kernels that support Python3, R, and Julia.
+    - This is also our base image, so everything installed on this image is also installed on all other standard images.
 - scipy-ml-notebook (has PyTorch/Tensorflow + GPU Support)
 - rstudio-notebook (installs the RStudio IDE)
 
