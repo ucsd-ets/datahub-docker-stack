@@ -5,6 +5,7 @@
 This Github repository builds and maintains the [standard suite of Docker containers](https://support.ucsd.edu/services?id=kb_article_view&sysparm_article=KB0032173&sys_kb_id=e61b198e1b74781048e9cae5604bcbe0) supported by UC San Diego Educational Technology Services.
 
 ### Featureset
+You can see the stable image manifests (their support libraries) on the [repository's wiki.](https://github.com/ucsd-ets/datahub-docker-stack/wiki)
 
 Currently, we support 3 images:
 
