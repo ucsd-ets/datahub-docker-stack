@@ -11,7 +11,7 @@ ENV RSTUDIO_URL=https://download2.rstudio.org/server/focal/amd64/${RSTUDIO_PKG}
 
 # rstudio installation expects R to live under /usr/bin, /bin/, etc.
 RUN ln -s /opt/conda/bin/R /usr/bin/R && \
-    gpg --keyserver keyserver.ubuntu.com --recv-key E331692F && \
+    gpg --keyserver keyserver.ubuntu.com --recv-key 8d275962 && \
     apt-get update && \
     apt-get -qq install -y apt-utils gdebi-core dpkg-sig && \
     curl -L ${RSTUDIO_URL} > ${RSTUDIO_PKG} && \
