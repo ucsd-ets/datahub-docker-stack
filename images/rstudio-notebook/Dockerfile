@@ -6,19 +6,16 @@ FROM ghcr.io/ucsd-ets/datascience-notebook:${BASE_TAG}
 USER root
 
 # Follow instructions atL https://www.rstudio.com/products/rstudio/download-server/
-ENV RSTUDIO_PKG=rstudio-server-1.4.1717-amd64.deb \
-    RSESSION_PROXY_RSTUDIO_1_4=true
+ENV RSTUDIO_PKG=rstudio-server-1.4.1717-amd64.deb 
 ENV RSTUDIO_URL=https://download2.rstudio.org/server/bionic/amd64/${RSTUDIO_PKG}
 
 # rstudio installation expects R to live under /usr/bin, /bin/, etc.
 RUN ln -s /opt/conda/bin/R /usr/bin/R && \
-    gpg --keyserver keyserver.ubuntu.com --recv-key E331692F && \
     apt-get update && \
     apt-get -qq install -y apt-utils gdebi-core dpkg-sig && \
-    curl -L ${RSTUDIO_URL} > ${RSTUDIO_PKG} && \
-    dpkg-sig --verify ${RSTUDIO_PKG} && \
-    gdebi -n ${RSTUDIO_PKG} && \
-    rm -f ${RSTUDIO_PKG} && \
+    wget https://download2.rstudio.org/server/focal/amd64/rstudio-server-2023.09.0-463-amd64.deb && \
+    gdebi rstudio-server-2023.09.0-463-amd64.deb && \
+    rm -f rstudio-server-2023.09.0-463-amd64.deb && \
     echo '/opt/conda/lib/R/lib' > /etc/ld.so.conf.d/r.conf && /sbin/ldconfig -v && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
     rm -f /usr/bin/R && \
