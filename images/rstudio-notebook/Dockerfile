@@ -14,7 +14,7 @@ RUN ln -s /opt/conda/bin/R /usr/bin/R && \
     apt-get update && \
     apt-get -qq install -y apt-utils gdebi-core dpkg-sig && \
     wget https://download2.rstudio.org/server/focal/amd64/rstudio-server-2023.09.0-463-amd64.deb && \
-    gdebi rstudio-server-2023.09.0-463-amd64.deb && \
+    gdebi -n rstudio-server-2023.09.0-463-amd64.deb && \
     rm -f rstudio-server-2023.09.0-463-amd64.deb && \
     echo '/opt/conda/lib/R/lib' > /etc/ld.so.conf.d/r.conf && /sbin/ldconfig -v && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
@@ -23,7 +23,7 @@ RUN ln -s /opt/conda/bin/R /usr/bin/R && \
     chmod -R g=u /var/lib/rstudio-server
 
 # Revert to 1.0b6 to correct terminal bug (see https://github.com/jupyterhub/jupyter-rsession-proxy/issues/71)
-RUN pip install jupyter-rsession-proxy nbconvert==5.6.1 jupyter-server-proxy==3.2.2 jupyter-rsession-proxy==2.1.0
+RUN pip install jupyter-rsession-proxy nbconvert==5.6.1
 
 RUN mkdir -p /etc/rstudio && echo 'auth-minimum-user-id=100' >> /etc/rstudio/rserver.conf
 
