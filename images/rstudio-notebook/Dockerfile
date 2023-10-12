@@ -6,16 +6,16 @@ FROM ghcr.io/ucsd-ets/datascience-notebook:${BASE_TAG}
 USER root
 
 # Follow instructions atL https://www.rstudio.com/products/rstudio/download-server/
-ENV RSTUDIO_PKG=rstudio-server-1.4.1717-amd64.deb 
-ENV RSTUDIO_URL=https://download2.rstudio.org/server/bionic/amd64/${RSTUDIO_PKG}
+ENV RSTUDIO_PKG=rstudio-server-2023.09.0-463-amd64.deb
+ENV RSTUDIO_URL=https://download2.rstudio.org/server/focal/amd64/${RSTUDIO_PKG}
 
 # rstudio installation expects R to live under /usr/bin, /bin/, etc.
 RUN ln -s /opt/conda/bin/R /usr/bin/R && \
     apt-get update && \
     apt-get -qq install -y apt-utils gdebi-core dpkg-sig && \
-    wget https://download2.rstudio.org/server/focal/amd64/rstudio-server-2023.09.0-463-amd64.deb && \
-    gdebi -n rstudio-server-2023.09.0-463-amd64.deb && \
-    rm -f rstudio-server-2023.09.0-463-amd64.deb && \
+    wget ${RSTUDIO_URL} && \
+    gdebi -n ${RSTUDIO_PKG} && \
+    rm -f ${RSTUDIO_PKG} && \
     echo '/opt/conda/lib/R/lib' > /etc/ld.so.conf.d/r.conf && /sbin/ldconfig -v && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
     rm -f /usr/bin/R && \
