@@ -19,7 +19,6 @@ RUN ln -s /opt/conda/bin/R /usr/bin/R && \
     echo '/opt/conda/lib/R/lib' > /etc/ld.so.conf.d/r.conf && /sbin/ldconfig -v && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
     rm -f /usr/bin/R && \
-    rm /var/lib/rstudio-server/rstudio.sqlite && \
     chmod -R g=u /var/lib/rstudio-server
 
 # Revert to 1.0b6 to correct terminal bug (see https://github.com/jupyterhub/jupyter-rsession-proxy/issues/71)

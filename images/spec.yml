@@ -15,6 +15,7 @@ images:
     integration_tests: true
     info_cmds: [PY_VER, PIP_LIST, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
     prune: true
+    prepull: false
 
 tag:
   prefix: "2023.4"
