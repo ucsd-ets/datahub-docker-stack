@@ -41,7 +41,8 @@ ENV PATH="${PATH}:/usr/lib/rstudio-server/bin" \
 COPY ./lib /opt/k8s-support/lib
 
 RUN R -e "install.packages('rjson', repos='http://cran.rstudio.com/')" && \
-    R -e "install.packages('session', repos='http://cran.rstudio.com/')"
+    R -e "install.packages('session', repos='http://cran.rstudio.com/')" && \
+    R -e "install.packages('rmarkdown', repos='http://cran.rstudio.com/')"
 
 COPY ./test ./integration_tests /home/jovyan/
 #/usr/share/datahub/tests/datascience-rstudio-docker
