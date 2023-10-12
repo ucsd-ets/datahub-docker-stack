@@ -23,7 +23,7 @@ RUN ln -s /opt/conda/bin/R /usr/bin/R && \
     chmod -R g=u /var/lib/rstudio-server
 
 # Revert to 1.0b6 to correct terminal bug (see https://github.com/jupyterhub/jupyter-rsession-proxy/issues/71)
-RUN pip install jupyter-rsession-proxy nbconvert==5.6.1 jupyter-server-proxy==3.2.2
+RUN pip install jupyter-rsession-proxy nbconvert==5.6.1 jupyter-server-proxy==3.2.2 jupyter-rsession-proxy==2.1.0
 
 RUN mkdir -p /etc/rstudio && echo 'auth-minimum-user-id=100' >> /etc/rstudio/rserver.conf
 
