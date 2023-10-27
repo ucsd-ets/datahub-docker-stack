@@ -89,7 +89,7 @@ RUN pip install dpkt \
     fix-permissions /home/$NB_USER && \
     pip cache purge
 
-RUN conda clean -tipsy
+RUN conda clean --all -y
 
 # ENV SHELL=/bin/bash Weird, this line is in the datascience and rstudio notebooks but not scipyml
 
