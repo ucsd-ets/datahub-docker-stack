@@ -1,4 +1,4 @@
-ARG PYTHON_VERSION=python-3.9.5
+ARG PYTHON_VERSION=python-3.11
 FROM jupyter/datascience-notebook:$PYTHON_VERSION
 # coerce change in all notebook
 USER root
@@ -48,7 +48,7 @@ COPY /test/test_r_func.R /opt/manual_tests
 
 USER jovyan
 
-ARG PY_VER_SHORT=3.9
+ARG PY_VER_SHORT=3.11
 ARG JUPYTERHUB_VERSION=3.0.0
 
 # mistune added for nbgrader issues

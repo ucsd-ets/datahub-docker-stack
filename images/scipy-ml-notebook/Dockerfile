@@ -81,24 +81,24 @@ RUN pip install datascience \
 # Beware of potentially needing to update these if we update the drivers.
 RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 && \
   pip cache purge && \
-  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_cnn_infer.so.8 && \
-  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcublasLt.so.11 && \
-  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_adv_infer.so.8 && \
-  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_adv_train.so.8 && \
-  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_cnn_train.so.8 && \
-  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_ops_infer.so.8 && \
-  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_ops_train.so.8 && \
-  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcublas.so.11
+  rm /opt/conda/lib/python3.11/site-packages/torch/lib/libcudnn_cnn_infer.so.8 && \
+  rm /opt/conda/lib/python3.11/site-packages/torch/lib/libcublasLt.so.11 && \
+  rm /opt/conda/lib/python3.11/site-packages/torch/lib/libcudnn_adv_infer.so.8 && \
+  rm /opt/conda/lib/python3.11/site-packages/torch/lib/libcudnn_adv_train.so.8 && \
+  rm /opt/conda/lib/python3.11/site-packages/torch/lib/libcudnn_cnn_train.so.8 && \
+  rm /opt/conda/lib/python3.11/site-packages/torch/lib/libcudnn_ops_infer.so.8 && \
+  rm /opt/conda/lib/python3.11/site-packages/torch/lib/libcudnn_ops_train.so.8 && \
+  rm /opt/conda/lib/python3.11/site-packages/torch/lib/libcublas.so.11
 
 USER $NB_UID:$NB_GID
 ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
 
-#ENV CUDNN_PATH=/opt/conda/lib/python3.9/site-packages/nvidia/cudnn
+#ENV CUDNN_PATH=/opt/conda/lib/python3.11/site-packages/nvidia/cudnn
 
 # starts like this: /opt/conda/pkgs/cudnn-8.6.0.163-pypi_0 8.8.1.3-pypi_0/lib/:/opt/conda/pkgs/cudatoolkit-11.8.0-h37601d7_11/lib:/usr/local/nvidia/lib:/usr/local/nvidia/lib64
-# need to have the end result of running 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/conda/lib/python3.9/site-packages/nvidia/cudnn/lib'
+# need to have the end result of running 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/conda/lib/python3.11/site-packages/nvidia/cudnn/lib'
 # then the gpu can be detected via CLI.
-#ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/opt/conda/lib/python3.9/site-packages/nvidia/cudnn/lib
+#ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/opt/conda/lib/python3.11/site-packages/nvidia/cudnn/lib
 
 # Do some CONDA/CUDA stuff
 # Copy libdevice file to the required path

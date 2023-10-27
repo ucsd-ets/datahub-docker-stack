@@ -69,7 +69,7 @@ def build(node: Node) -> Tuple[bool, str]:
             cache_from=[node.full_image_name, node.stable_image_name]
         ):
             # line is of type dict
-            content_str = line.get('stream', '').strip()    # sth like 'Step 1/20 : ARG PYTHON_VERSION=python-3.9.5'
+            content_str = line.get('stream', '').strip()    # sth like 'Step 1/20 : ARG PYTHON_VERSION=python-3.11'
             if content_str:     # if not empty string
                 # time each major step (Step 1/23 : xxx)
                 if content_str[:4] == "Step":
