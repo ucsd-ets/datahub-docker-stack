@@ -46,6 +46,8 @@ RUN mkdir /opt/manual_tests
 COPY /test/test_r_dump_packages.R /opt/manual_tests
 COPY /test/test_r_func.R /opt/manual_tests
 
+RUN chmod 777 /etc/datahub-profile.d/
+
 USER jovyan
 
 ARG PY_VER_SHORT=3.9
@@ -88,7 +90,5 @@ RUN pip install dpkt \
     pip cache purge
 
 RUN conda clean -tipsy
-
-# ENV SHELL=/bin/bash Weird, this line is in the datascience and rstudio notebooks but not scipyml
 
 WORKDIR /home/jovyan
