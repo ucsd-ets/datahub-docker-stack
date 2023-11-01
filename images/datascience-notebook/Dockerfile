@@ -47,7 +47,7 @@ COPY /test/test_r_dump_packages.R /opt/manual_tests
 COPY /test/test_r_func.R /opt/manual_tests
 
 RUN mkdir /etc/datahub-profile.d/ && chmod 777 /etc/datahub-profile.d/
-RUN mkdir /etc/profile.d/ && chmod 777 /etc/profile.d/
+RUN chmod 777 /etc/profile.d/
 
 USER jovyan
 
