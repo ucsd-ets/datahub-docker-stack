@@ -62,6 +62,7 @@ RUN mamba install \
   nltk_data \
   opencv \
   pycocotools \
+  tabulate \
   #tensorflow=2.13.1 \
   #tensorflow-datasets \
   keras=2.13.1 \
