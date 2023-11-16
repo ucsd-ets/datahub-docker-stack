@@ -60,9 +60,9 @@ RUN pip install datascience \
     PyQt5 \
     scapy \
     nltk \
-    opencv-contrib-python-headless \
-    opencv-python \
-    pycocotools \
+    #opencv-contrib-python-headless \
+    #opencv-python \
+    #pycocotools \
     pillow \
     nvidia-cudnn-cu11==8.6.0.163 \
     tensorflow==2.13.* \ 
@@ -78,8 +78,8 @@ RUN mamba install \
   #pyqt \
   #scapy \
   #nltk_data \
-  #opencv \
-  #pycocotools \
+  opencv \
+  pycocotools \
   #tabulate \
   #tensorflow=2.13.1 \
   #tensorflow-datasets \
