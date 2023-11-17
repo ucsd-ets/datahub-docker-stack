@@ -57,8 +57,8 @@ RUN pip install --no-cache-dir protobuf==3.20.3
 # tensorrt installed to fix not having libnvinfer that has caused tensorflow issues.
 # tensorrt installed to fix not having libnvinfer that has caused tensorflow issues.
 RUN pip install datascience \
-    #PyQt5 \
-    #scapy \
+    PyQt5 \
+    scapy \
     nltk \
     opencv-contrib-python-headless \
     opencv-python \
@@ -75,8 +75,8 @@ RUN pip install datascience \
 
 RUN mamba install \
   #datascience \
-  pyqt \
-  scapy \
+  #pyqt \
+  #scapy \
   #nltk_data \
   #opencv \
   pycocotools \
