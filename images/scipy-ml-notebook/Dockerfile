@@ -82,6 +82,7 @@ RUN mamba install \
   #nltk_data \
   #opencv \
   pycocotools \
+  pillow \
   #tabulate \
   #tensorflow=2.13.1 \
   #tensorflow-datasets \
@@ -91,12 +92,12 @@ RUN mamba install \
   fix-permissions /home/$NB_USER && \
   mamba clean -a -y
 
-RUN mamba install \
-  pillow \
-  -c anaconda && \
-  fix-permissions $CONDA_DIR && \
-  fix-permissions /home/$NB_USER && \
-  mamba clean -a -y
+#RUN mamba install \
+#  pillow \
+#  -c anaconda && \
+#  fix-permissions $CONDA_DIR && \
+#  fix-permissions /home/$NB_USER && \
+#  mamba clean -a -y
 
 RUN pip install nvidia-cudnn-cu11==8.6.0.163 tensorrt==8.5.3.1 && \
   fix-permissions $CONDA_DIR && \

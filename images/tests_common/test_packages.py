@@ -57,6 +57,8 @@ PACKAGE_MAPPING = {
     "rsqlite": "DBI",
     "rcurl": "RCurl",
     "rodbc": "RODBC",
+    "pyqt": "PyQt5",
+    "Pillow": "PIL" 
 }
 
 # List of packages that cannot be tested in a standard way
