@@ -52,16 +52,16 @@ RUN mamba install -c "nvidia/label/cuda-11.8.0" cuda-nvcc -y && \
 #RUN mamba install protobuf=3.20.3
 RUN pip install --no-cache-dir protobuf==3.20.3
 
-# Currently, opencv is problematic with mamba...
+# Currently, opencv+ntlk is problematic with mamba...
 
 # cuda-python installed to have parity with tensorflow and cudnn
 # Install pillow<7 due to dependency issue https://github.com/pytorch/vision/issues/1712
 # tensorrt installed to fix not having libnvinfer that has caused tensorflow issues.
 # tensorrt installed to fix not having libnvinfer that has caused tensorflow issues.
 RUN pip install datascience \
-    PyQt5 \
+    #PyQt5 \
     #scapy \
-    #nltk \
+    nltk \
     opencv-contrib-python-headless \
     opencv-python \
     #pycocotools \
@@ -77,9 +77,9 @@ RUN pip install datascience \
 
 RUN mamba install \
   #datascience \
-  #pyqt \
+  pyqt \
   scapy \
-  nltk_data \
+  #nltk_data \
   #opencv \
   pycocotools \
   #tabulate \
@@ -91,12 +91,12 @@ RUN mamba install \
   fix-permissions /home/$NB_USER && \
   mamba clean -a -y
 
-#RUN mamba install \
-#  pillow \
-#  -c anaconda && \
-#  fix-permissions $CONDA_DIR && \
-#  fix-permissions /home/$NB_USER && \
-#  mamba clean -a -y
+RUN mamba install \
+  pillow \
+  -c anaconda && \
+  fix-permissions $CONDA_DIR && \
+  fix-permissions /home/$NB_USER && \
+  mamba clean -a -y
 
 RUN pip install nvidia-cudnn-cu11==8.6.0.163 tensorrt==8.5.3.1 && \
   fix-permissions $CONDA_DIR && \
