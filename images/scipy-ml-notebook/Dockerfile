@@ -63,7 +63,7 @@ RUN pip install opencv-contrib-python-headless \
     # datascience \
     #PyQt5 \
     #scapy \
-    #nltk \
+    nltk \
     #pycocotools \
     #pillow \
     nvidia-cudnn-cu11==8.6.0.163 \
@@ -75,10 +75,17 @@ RUN pip install opencv-contrib-python-headless \
     fix-permissions /home/$NB_USER && \
     pip cache purge
 
+# ntlk_data cannot currently be installed with mamba (while we have python 3.8).
+# The latest version of pytables, a dependency, only supports python 3.9 and up.
+# The latest compatible version (3.6.1) seems to be broken.
+# pytables is necessary, otherwise nltk will install out-of-date package
+# pytables on conda == tables on pip (???)
+# without pytables explicitly defined, version 3.6 will be installed (which seems to be broken when testing the import)
+
 RUN mamba install datascience \
   pyqt \
   scapy \
-  nltk_data \
+  #nltk_data \
   #opencv \
   pycocotools \
   pillow \
@@ -89,13 +96,6 @@ RUN mamba install datascience \
   fix-permissions $CONDA_DIR && \
   fix-permissions /home/$NB_USER && \
   mamba clean -a -y
-
-#RUN mamba install \
-#  pillow \
-#  -c anaconda && \
-#  fix-permissions $CONDA_DIR && \
-#  fix-permissions /home/$NB_USER && \
-#  mamba clean -a -y
 
 RUN pip install nvidia-cudnn-cu11==8.6.0.163 tensorrt==8.5.3.1 && \
   fix-permissions $CONDA_DIR && \
