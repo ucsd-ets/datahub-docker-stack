@@ -52,13 +52,14 @@ PACKAGE_MAPPING = {
     "scikit-image": "skimage",
     "spylon-kernel": "spylon_kernel",
     "pytables": "tables",
+    "pyqt": "PyQt5",
+    "pillow": "PIL",
+    "nltk_data": "nltk",
     # R
     "randomforest": "randomForest",
     "rsqlite": "DBI",
     "rcurl": "RCurl",
     "rodbc": "RODBC",
-    "pyqt": "PyQt5",
-    "pillow": "PIL" 
 }
 
 # List of packages that cannot be tested in a standard way
