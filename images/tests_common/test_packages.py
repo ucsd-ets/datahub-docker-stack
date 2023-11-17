@@ -58,7 +58,7 @@ PACKAGE_MAPPING = {
     "rcurl": "RCurl",
     "rodbc": "RODBC",
     "pyqt": "PyQt5",
-    "Pillow": "PIL" 
+    "pillow": "PIL" 
 }
 
 # List of packages that cannot be tested in a standard way
