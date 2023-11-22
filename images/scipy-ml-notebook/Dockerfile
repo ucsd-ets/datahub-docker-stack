@@ -9,7 +9,7 @@ USER root
 
 # coerce rebuild in only this nteb
 
-ARG LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7 CUDA_VERSION=11.8
+ARG LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7 CUDA_VERSION=12.2
 
 RUN apt-get update && \
   apt-get install -y \
@@ -22,6 +22,7 @@ RUN ln -s libncurses.so.6 /usr/lib/x86_64-linux-gnu/libncurses.so.5
 COPY run_jupyter.sh /
 RUN chmod +x /run_jupyter.sh
 
+# TODO: Investigate which of these are needed
 COPY cudatoolkit_env_vars.sh cudnn_env_vars.sh tensorrt_env_vars.sh /etc/datahub-profile.d/
 COPY activate.sh /tmp/activate.sh
 COPY workflow_tests /opt/workflow_tests
@@ -29,19 +30,25 @@ ADD manual_tests /opt/manual_tests
 
 RUN chmod 777 /etc/datahub-profile.d/*.sh /tmp/activate.sh
 
+RUN apt update && apt install -y wget && \
+    wget https://developer.download.nvidia.com/compute/cuda/repos/debian11/x86_64/libcudnn8_8.9.6.50-1+cuda12.2_amd64.deb && \
+    dpkg -i libcudnn8_8.9.6.50-1+cuda12.2_amd64.deb && \
+    rm libcudnn8_8.9.6.50-1+cuda12.2_amd64.deb && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
 USER jovyan
 
-# CUDA 11 
+# CUDA 12
 # tf requirements: https://www.tensorflow.org/install/pip#linux
-RUN mamba install \
-  cudatoolkit=11.8 \
-  nccl \
-  -y && \
+RUN mamba install -c "nvidia/label/cuda-12.2" cuda-nvcc -y && \
   fix-permissions $CONDA_DIR && \
   fix-permissions /home/$NB_USER && \
-  mamba clean -a -y
+ mamba clean -a -y
 
-RUN mamba install -c "nvidia/label/cuda-11.8.0" cuda-nvcc -y && \
+#RUN mamba list | egrep '(cuda-version|nvidia/label/cuda)' | awk '{ print $1"=="$2;}' > public/envs/test3/conda-meta/pinned
+
+RUN mamba install nccl -c conda-forge -y && \
   fix-permissions $CONDA_DIR && \
   fix-permissions /home/$NB_USER && \
   mamba clean -a -y
@@ -60,16 +67,10 @@ RUN pip install --no-cache-dir protobuf==3.20.3
 RUN pip install opencv-contrib-python-headless \
     opencv-python \
     datascience \
-    #PyQt5 \
-    #scapy \
-    #nltk \
-    #pycocotools \
-    #pillow \
-    nvidia-cudnn-cu11==8.6.0.163 \
-    tensorflow==2.13.* \ 
-    #keras==2.13.1 \
+    nvidia-cudnn-cu12==8.9.6.50 \
+    tensorflow==2.14.0 \ 
     tensorflow-datasets \
-    tensorrt==8.5.3.1 && \
+    tensorrt==8.6.1 && \
     fix-permissions $CONDA_DIR && \ 
     fix-permissions /home/$NB_USER && \
     pip cache purge
@@ -96,12 +97,6 @@ RUN mamba install pyqt \
   fix-permissions $CONDA_DIR && \
   fix-permissions /home/$NB_USER && \
   mamba clean -a -y
-
-RUN pip install nvidia-cudnn-cu11==8.6.0.163 tensorrt==8.5.3.1 && \
-  fix-permissions $CONDA_DIR && \
-  fix-permissions /home/$NB_USER && \
-  mamba clean -a -y
-
 
     # no purge required but no-cache-dir is used. pip purge will actually break the build here!
 
@@ -136,7 +131,7 @@ ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
 
 # Do some CONDA/CUDA stuff
 # Copy libdevice file to the required path
-RUN mkdir -p $CONDA_DIR/lib/nvvm/libdevice && \
-  cp $CONDA_DIR/lib/libdevice.10.bc $CONDA_DIR/lib/nvvm/libdevice/
+#RUN mkdir -p $CONDA_DIR/lib/nvvm/libdevice && \
+#  cp $CONDA_DIR/lib/libdevice.10.bc $CONDA_DIR/lib/nvvm/libdevice/
 
 RUN . /tmp/activate.sh
