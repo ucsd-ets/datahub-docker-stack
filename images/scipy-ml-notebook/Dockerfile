@@ -57,13 +57,12 @@ RUN pip install --no-cache-dir protobuf==3.20.3
 # cuda-python installed to have parity with tensorflow and cudnn
 # Install pillow<7 due to dependency issue https://github.com/pytorch/vision/issues/1712
 # tensorrt installed to fix not having libnvinfer that has caused tensorflow issues.
-# tensorrt installed to fix not having libnvinfer that has caused tensorflow issues.
 RUN pip install opencv-contrib-python-headless \
     opencv-python \
-    # datascience \
+    datascience \
     #PyQt5 \
     #scapy \
-    nltk \
+    #nltk \
     #pycocotools \
     #pillow \
     nvidia-cudnn-cu11==8.6.0.163 \
@@ -76,16 +75,17 @@ RUN pip install opencv-contrib-python-headless \
     pip cache purge
 
 # ntlk_data cannot currently be installed with mamba (while we have python 3.8).
+# datascience cannot be installed with mamba
 # The latest version of pytables, a dependency, only supports python 3.9 and up.
 # The latest compatible version (3.6.1) seems to be broken.
 # pytables is necessary, otherwise nltk will install out-of-date package
 # pytables on conda == tables on pip (???)
 # without pytables explicitly defined, version 3.6 will be installed (which seems to be broken when testing the import)
 
-RUN mamba install datascience \
-  pyqt \
+RUN mamba install pyqt \
+  # datascience \
   scapy \
-  #nltk_data \
+  nltk_data \
   #opencv \
   pycocotools \
   pillow \
