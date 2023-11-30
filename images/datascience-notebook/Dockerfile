@@ -60,6 +60,7 @@ RUN /usr/share/datahub/scripts/install-python-all.sh && \
     pip install statsmodels==0.14.0 \
     nbconvert==7.2.1 \
     notebook==7.0.6 \
+    jupyter_contrib_nbextensions \
     jupyterhub==$JUPYTERHUB_VERSION && \
     mamba install -c conda-forge rise -y && \
     fix-permissions $CONDA_DIR && \
