@@ -60,7 +60,7 @@ RUN /usr/share/datahub/scripts/install-python-all.sh && \
     pip install statsmodels==0.14.0 \
     nbconvert==7.2.1 \
     notebook==7.0.6 \
-    jupyter-server==2.0.0 \
+    jupyter-server==2.4.0 \
     jupyterlab-rise \
     jupyterhub==$JUPYTERHUB_VERSION && \
     fix-permissions $CONDA_DIR && \
