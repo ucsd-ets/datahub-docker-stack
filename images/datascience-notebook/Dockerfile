@@ -60,8 +60,6 @@ RUN /usr/share/datahub/scripts/install-python-all.sh && \
     pip install statsmodels==0.14.0 \
     nbconvert==7.2.1 \
     notebook==7.0.4 \
-    nbclassic==1.0.0 \
-    jupyterlab-link-share~=0.3 \
     jupyter-server==2.4.0 \
     jupyterlab-rise \
     jupyterhub==$JUPYTERHUB_VERSION && \
