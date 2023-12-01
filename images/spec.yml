@@ -6,7 +6,7 @@ images:
     build_args:
       PYTHON_VERSION: python-3.9.5
       PY_VER_SHORT: "3.9"
-      JUPYTERHUB_VERSION: 1.4.1
+      JUPYTERHUB_VERSION: 3.0.0
     info_cmds: [PY_VER, PIP_LIST, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
 
 tag:
