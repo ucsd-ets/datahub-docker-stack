@@ -62,7 +62,6 @@ RUN /usr/share/datahub/scripts/install-python-all.sh && \
     notebook==7.0.6 \
     jupyter-server==2.4.0 \
     jupyterlab-rise \
-    nbclassic==0.4.4 \
     jupyterhub==$JUPYTERHUB_VERSION && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
