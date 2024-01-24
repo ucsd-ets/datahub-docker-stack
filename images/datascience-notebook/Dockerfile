@@ -49,7 +49,7 @@ COPY /test/test_r_func.R /opt/manual_tests
 USER jovyan
 
 ARG PY_VER_SHORT=3.9
-ARG JUPYTERHUB_VERSION=4.0.2
+ARG JUPYTERHUB_VERSION=3.0.0
 
 # mistune added for nbgrader issues
 
