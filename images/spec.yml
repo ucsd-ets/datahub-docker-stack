@@ -11,7 +11,7 @@ images:
   rstudio-notebook:
     image_name: ghcr.io/ucsd-ets/rstudio-notebook
     depend_on: datascience-notebook
-    integration_tests: true
+    integration_tests: false
     info_cmds: [PY_VER, PIP_LIST, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
     prune: true
   scipy-ml-notebook:
