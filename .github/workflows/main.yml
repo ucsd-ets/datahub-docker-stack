@@ -104,7 +104,7 @@ jobs:
           GRPC_CERT: ${{ secrets.GRPC_CERT }}
           PREPUSH_IMAGES: '["ghcr.io/ucsd-ets/scipy-ml-notebook"]'
         run: |
-          python3 scripts/main.py
+          sudo python3 scripts/main.py
 
       - name: Check Free Space 3
         run: |
