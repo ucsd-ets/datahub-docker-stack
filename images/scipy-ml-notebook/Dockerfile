@@ -65,6 +65,7 @@ RUN pip install datascience \
     pillow \
     nvidia-cudnn-cu11==8.6.0.163 \
     tensorflow==2.13.* \ 
+    typing-extensions==4.5.0 \
     keras==2.13.1 \
     tensorflow-datasets \
     tensorrt==8.5.3.1 && \
