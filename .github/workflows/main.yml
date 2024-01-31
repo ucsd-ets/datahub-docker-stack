@@ -84,6 +84,7 @@ jobs:
       - name: Install pip dependencies
         run: |
           sudo yum -y install python-pip
+          sudo yum remove python3-requests
           python3 -m pip install -r scripts/requirements.txt
       
       - name: Install selenium dependecies for r studio
