@@ -80,7 +80,7 @@ RUN pip install datascience \
 
 # We already have the lib files imported into LD_LIBRARY_PATH by CUDDN and the cudatoolkit. let's remove these and save some image space.
 # Beware of potentially needing to update these if we update the drivers.
-RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 && \
+RUN pip install torch==2.1.2 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 && \
   pip cache purge && \
   rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_cnn_infer.so.8 && \
   rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcublasLt.so.11 && \
