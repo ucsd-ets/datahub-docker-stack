@@ -74,6 +74,7 @@ def build(node: Node) -> Tuple[bool, str]:
             logger.info(f"Error during build of ###############{content_str}")
             logger.info(f"Error error_str build of ###############{error_str}")
             if content_str and not error_str:     # if not empty string
+                logger.info(f"Here")
                 # time each major step (Step 1/23 : xxx)
                 if content_str[:4] == "Step":
                     last_t, m, s = get_time_duration(last_t)
