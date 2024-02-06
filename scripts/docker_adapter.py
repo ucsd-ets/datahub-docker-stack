@@ -70,7 +70,6 @@ def build(node: Node) -> Tuple[bool, str]:
         ):
             # line is of type dict
             content_str = line.get('stream', '').strip()    # sth like 'Step 1/20 : ARG PYTHON_VERSION=python-3.9.5'
-            logger.info(content_str)
             if content_str:     # if not empty string
                 # time each major step (Step 1/23 : xxx)
                 if content_str[:4] == "Step":
@@ -79,9 +78,7 @@ def build(node: Node) -> Tuple[bool, str]:
                     step += 1
 
                 report += content_str + '\n'
-
         # time for last step
-        logger.info("here")
         last_t, m, s = get_time_duration(last_t)
         report += f'Step {step} took [{m} min {s} sec] \n'
         logger.info(f"Now we have these images: { __docker_client.images.list()}")
@@ -328,6 +325,8 @@ def pull_build_cache(node: Node) -> bool:
     Returns:
         bool: whether self cache exists
     """
+    if(node.prepull is False):
+        return False
     full_name = node.full_image_name
     try:
         assert full_name.count(':') == 1, f"{full_name} should have exactly one :"
