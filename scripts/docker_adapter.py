@@ -69,13 +69,11 @@ def build(node: Node) -> Tuple[bool, str]:
             cache_from=[node.full_image_name, node.stable_image_name]
         ):
             # line is of type dict
-            if 'Error' in line.get('stream', ''):
-                logger.info("Build failed: ", line['stream'])
-
             content_str = line.get('stream', '').strip()    # sth like 'Step 1/20 : ARG PYTHON_VERSION=python-3.9.5'
             error_str = line.get('error', '').strip()
             logger.info(f"Error during build of ###############{content_str}")
-            logger.info(f"Error error_str build of ###############{error_str}")
+            if error_str:
+                raise docker_client.errors.BuildError("error_str, error_str, error_str,error_str")
             if content_str and not error_str:     # if not empty string
                 logger.info(f"Here")
                 # time each major step (Step 1/23 : xxx)
