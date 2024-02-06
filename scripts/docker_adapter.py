@@ -63,7 +63,7 @@ def build(node: Node) -> Tuple[bool, str]:
             dockerfile=node.dockerfile,
             tag=node.image_name + ':' + node.image_tag,
             buildargs=node.build_args,
-            nocache=True,
+            nocache=False,
             decode=True,
             rm=False,
             cache_from=[node.full_image_name, node.stable_image_name]
