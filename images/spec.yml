@@ -6,7 +6,7 @@ images:
     build_args:
       PYTHON_VERSION: python-3.9.5
       PY_VER_SHORT: "3.9"
-      JUPYTERHUB_VERSION: 1.4.1
+      JUPYTERHUB_VERSION: 4.0.6
     info_cmds: [PY_VER, PIP_LIST, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
 
   rstudio-notebook:
@@ -25,7 +25,7 @@ images:
     #prepull: false #-- uncomment to disable prepulling behavior for scipy-ml. gives you space on machine in exchange for build time.
 
 tag:
-  prefix: "2023.4"
+  prefix: "2024.2"
 
 all_info_cmds:
   PY_VER:
