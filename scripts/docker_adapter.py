@@ -78,6 +78,7 @@ def build(node: Node) -> Tuple[bool, str]:
                     step += 1
 
                 report += content_str + '\n'
+                logger.info(f"Now we have these images: ######################################")
         # time for last step
         last_t, m, s = get_time_duration(last_t)
         report += f'Step {step} took [{m} min {s} sec] \n'
