@@ -71,11 +71,10 @@ def build(node: Node) -> Tuple[bool, str]:
             # line is of type dict
             content_str = line.get('stream', '').strip()    # sth like 'Step 1/20 : ARG PYTHON_VERSION=python-3.9.5'
             error_str = line.get('error', '').strip()
-            logger.info(f"Error during build of ###############{content_str}")
+
             if error_str:
                 raise docker_client.errors.BuildError("error_str, error_str, error_str,error_str")
-            if content_str and not error_str:     # if not empty string
-                logger.info(f"Here")
+            if content_str:
                 # time each major step (Step 1/23 : xxx)
                 if content_str[:4] == "Step":
                     last_t, m, s = get_time_duration(last_t)
