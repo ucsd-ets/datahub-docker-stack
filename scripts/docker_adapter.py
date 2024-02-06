@@ -70,7 +70,9 @@ def build(node: Node) -> Tuple[bool, str]:
         ):
             # line is of type dict
             content_str = line.get('stream', '').strip()    # sth like 'Step 1/20 : ARG PYTHON_VERSION=python-3.9.5'
+            error_str = line.get('error', '').strip()
             logger.info(f"Error during build of ###############{content_str}")
+            logger.info(f"Error during build of ###############{error_str}")
             if content_str:     # if not empty string
                 # time each major step (Step 1/23 : xxx)
                 if content_str[:4] == "Step":
