@@ -8,7 +8,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV DEBCONF_NOWARNINGS="yes"
 
 RUN apt-gesadasedt update -y && \
-    apt-gdsafaseet -qq install -y --no-install-recommends \
+    apt-gdsafseet -qq install -y --no-install-recommends \
     git \
     curl \
     rsync \
