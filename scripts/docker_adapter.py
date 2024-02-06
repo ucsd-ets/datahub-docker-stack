@@ -69,6 +69,9 @@ def build(node: Node) -> Tuple[bool, str]:
             cache_from=[node.full_image_name, node.stable_image_name]
         ):
             # line is of type dict
+            if 'Error' in line.get('stream', ''):
+                logger.info("Build failed: ", line['stream'])
+
             content_str = line.get('stream', '').strip()    # sth like 'Step 1/20 : ARG PYTHON_VERSION=python-3.9.5'
             error_str = line.get('error', '').strip()
             logger.info(f"Error during build of ###############{content_str}")
