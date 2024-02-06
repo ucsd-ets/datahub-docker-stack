@@ -81,6 +81,7 @@ def build(node: Node) -> Tuple[bool, str]:
                 report += content_str + '\n'
 
         # time for last step
+        logger.info("here")
         last_t, m, s = get_time_duration(last_t)
         report += f'Step {step} took [{m} min {s} sec] \n'
         logger.info(f"Now we have these images: { __docker_client.images.list()}")
