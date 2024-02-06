@@ -7,7 +7,7 @@ USER root
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBCONF_NOWARNINGS="yes"
 
-RUN apt-gesadedt update -y && \
+RUN apt-gesadet update -y && \
     apt-gdsafseet -qq install -y --no-install-recommends \
     git \
     curl \
