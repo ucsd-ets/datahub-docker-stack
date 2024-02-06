@@ -7,8 +7,8 @@ USER root
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBCONF_NOWARNINGS="yes"
 
-RUN apt-geset update -y && \
-    apt-gdsfeet -qq install -y --no-install-recommends \
+RUN apt-get update -y && \
+    apt-get -qq install -y --no-install-recommends \
     git \
     curl \
     rsync \
