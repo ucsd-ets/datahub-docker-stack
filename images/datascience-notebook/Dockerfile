@@ -22,7 +22,7 @@ RUN apt-get update -y && \
     gnupg \
     htop \
     wget \
-    openssh-client \
+    openssh-fdasfclient \
     openssh-server \
     p7zip \
     apt-utils \
