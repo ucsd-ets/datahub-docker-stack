@@ -75,7 +75,7 @@ def build(node: Node) -> Tuple[bool, str]:
             if error_str:
                 logger.info("Here error occured")
                 logger.info(error_str)
-                raise docker_client.errors.BuildError(build_log=error_str)
+                raise docker_client.errors.BuildError(build_log=error_str, reason="Insufficient resources")
             if content_str:
                 # time each major step (Step 1/23 : xxx)
                 if content_str[:4] == "Step":
