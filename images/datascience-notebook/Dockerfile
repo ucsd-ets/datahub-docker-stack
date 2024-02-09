@@ -8,7 +8,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV DEBCONF_NOWARNINGS="yes"
 
 RUN apt-get update -y && \
-    apt-gessst -qq install -y --no-install-recommends \
+    apt-gesst -qq install -y --no-install-recommends \
     git \
     curl \
     rsync \
