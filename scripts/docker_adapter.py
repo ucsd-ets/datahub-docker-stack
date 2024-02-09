@@ -73,6 +73,7 @@ def build(node: Node) -> Tuple[bool, str]:
             error_str = line.get('error', '').strip()
 
             if error_str:
+                logger.info("Here error occured")
                 raise docker_client.errors.BuildError("error_str, error_str, error_str,error_str")
             if content_str:
                 # time each major step (Step 1/23 : xxx)
