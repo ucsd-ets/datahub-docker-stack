@@ -74,6 +74,7 @@ def build(node: Node) -> Tuple[bool, str]:
 
             if error_str:
                 logger.info("Here error occured")
+                logger.info(error_str)
                 raise docker_client.errors.BuildError(message="Failed to build Docker image", build_log=error_str)
             if content_str:
                 # time each major step (Step 1/23 : xxx)
@@ -91,6 +92,7 @@ def build(node: Node) -> Tuple[bool, str]:
         return True, report
 
     except docker_client.errors.BuildError as build_e:
+        logger.info("In except")
         logger.error(f"Error during build of {node.image_name},\n {build_e}")
         return False, report
     except docker_client.errors.APIError as api_e:
