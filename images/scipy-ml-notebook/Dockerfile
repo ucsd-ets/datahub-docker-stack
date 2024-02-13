@@ -30,18 +30,18 @@ ADD manual_tests /opt/manual_tests
 
 RUN chmod 777 /etc/datahub-profile.d/*.sh /tmp/activate.sh
 
-RUN apt update && apt install -y wget && \
-    wget https://developer.download.nvidia.com/compute/cuda/repos/debian11/x86_64/libcudnn8_8.9.6.50-1+cuda11.8_amd64.deb && \
-    dpkg -i libcudnn8_8.9.6.50-1+cuda11.8_amd64.deb && \
-    rm libcudnn8_8.9.6.50-1+cuda11.8_amd64.deb && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+#RUN apt update && apt install -y wget && \
+#    wget https://developer.download.nvidia.com/compute/cuda/repos/debian11/x86_64/libcudnn8_8.9.6.50-1+cuda11.8_amd64.deb && \
+#    dpkg -i libcudnn8_8.9.6.50-1+cuda11.8_amd64.deb && \
+#    rm libcudnn8_8.9.6.50-1+cuda11.8_amd64.deb && \
+#    apt-get clean && \
+#    rm -rf /var/lib/apt/lists/*
 
 USER jovyan
 
 # CUDA 11.8
 # tf requirements: https://www.tensorflow.org/install/pip#linux
-RUN mamba install -c "nvidia/label/cuda-11.8" cuda-nvcc -y && \
+RUN mamba install -c "nvidia/label/cuda-11.8.0" cuda-nvcc -y && \
   fix-permissions $CONDA_DIR && \
   fix-permissions /home/$NB_USER && \
   mamba clean -a -y
@@ -67,10 +67,10 @@ RUN pip install --no-cache-dir protobuf==3.20.3
 RUN pip install opencv-contrib-python-headless \
     opencv-python \
     datascience \
-    nvidia-cudnn-cu11==8.9.6.50 \
-    tensorflow==2.14.0 \ 
+    nvidia-cudnn-cu11==8.6.0.163 \
+    tensorflow==2.13.* \ 
     tensorflow-datasets \
-    tensorrt==8.6.1 && \
+    tensorrt==8.5.3.1 && \
     fix-permissions $CONDA_DIR && \ 
     fix-permissions /home/$NB_USER && \
     pip cache purge
@@ -106,7 +106,7 @@ RUN mamba install pyqt \
 
 # We already have the lib files imported into LD_LIBRARY_PATH by CUDDN and the cudatoolkit. let's remove these and save some image space.
 # Beware of potentially needing to update these if we update the drivers.
-RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 && \
+RUN pip install torch==2.1.2 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 && \
   fix-permissions $CONDA_DIR && \
   fix-permissions /home/$NB_USER && \
   mamba clean -a -y && \
