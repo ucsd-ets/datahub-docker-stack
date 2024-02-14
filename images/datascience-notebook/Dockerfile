@@ -61,6 +61,7 @@ RUN /usr/share/datahub/scripts/install-python-all.sh && \
     nbconvert==7.2.1 \
     notebook==7.0.4 \
     jupyter-server==2.4.0 \
+    jupyter-collaboration \
     nbclassic==1.0.0 \
     jupyterlab-link-share~=0.3 \
     jupyterlab-rise \
