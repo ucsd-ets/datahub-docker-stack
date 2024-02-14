@@ -49,7 +49,7 @@ COPY /test/test_r_func.R /opt/manual_tests
 USER jovyan
 
 ARG PY_VER_SHORT=3.9
-ARG JUPYTERHUB_VERSION=3.0.0
+ARG JUPYTERHUB_VERSION=4.0.2
 
 # mistune added for nbgrader issues
 
@@ -59,8 +59,13 @@ RUN /usr/share/datahub/scripts/install-python-all.sh && \
     pip install nltk \
     pip install statsmodels==0.14.0 \
     nbconvert==7.2.1 \
+    notebook==7.0.4 \
+    jupyter-server==2.4.0 \
+    jupyter-collaboration \
+    nbclassic==1.0.0 \
+    jupyterlab-link-share~=0.3 \
+    jupyterlab-rise \
     jupyterhub==$JUPYTERHUB_VERSION && \
-    mamba install -c conda-forge rise -y && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
     conda clean --all && \
@@ -74,7 +79,7 @@ ENV NBGRADER_COURSEID="NA"
 ENV JUPYTERHUB_USER=${NB_USER}
 
 # Install jupyterlab extensions
-RUN pip install jupyterlab==3.0.16 jupyterlab-github jupyterlab-latex jupyterlab-git \
+RUN pip install jupyterlab==4.0.6 jupyterlab-github jupyterlab-latex jupyterlab-git \
     jupyterlab-fasta jupyterlab-pullrequests jupyterlab-geojson && \
     pip cache purge
     
