@@ -55,9 +55,9 @@ ARG JUPYTERHUB_VERSION=3.0.0
 
 # coerce pandas to 1.5.3. 2.0 released april 3rd and currently breaks tests.
 RUN /usr/share/datahub/scripts/install-python-all.sh && \
-    pip install pandas==2.0.3 'mistune>=2' --upgrade && \
+    pip install pandas==2.2.0 'mistune>=2' --upgrade && \
     pip install nltk \
-    pip install statsmodels==0.14.0 \
+    pip install statsmodels==0.14.1 \
     nbconvert==7.2.1 \
     jupyterhub==$JUPYTERHUB_VERSION && \
     mamba install -c conda-forge rise -y && \
