@@ -329,6 +329,8 @@ def pull_build_cache(node: Node) -> bool:
     Returns:
         bool: whether self cache exists
     """
+    if(node.prepull is False):
+        return False
     full_name = node.full_image_name
     try:
         assert full_name.count(':') == 1, f"{full_name} should have exactly one :"
