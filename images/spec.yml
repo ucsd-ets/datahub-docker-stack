@@ -8,7 +8,6 @@ images:
       PY_VER_SHORT: "3.9"
       JUPYTERHUB_VERSION: 1.4.1
     info_cmds: [PY_VER, PIP_LIST, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
-    prepull: false
 
   rstudio-notebook:
     image_name: ghcr.io/ucsd-ets/rstudio-notebook
@@ -16,7 +15,6 @@ images:
     integration_tests: true
     info_cmds: [PY_VER, PIP_LIST, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
     prune: true
-    prepull: false
 
   scipy-ml-notebook:
     image_name: ghcr.io/ucsd-ets/scipy-ml-notebook
@@ -24,7 +22,7 @@ images:
     integration_tests: false
     info_cmds: [PY_VER, PIP_LIST, CUDA_VERSION, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
     prune: false # comment if scipy-ml stops being the last container
-    prepull: false #-- uncomment to disable prepulling behavior for scipy-ml. gives you space on machine in exchange for build time.
+    #prepull: false #-- uncomment to disable prepulling behavior for scipy-ml. gives you space on machine in exchange for build time.
 
 tag:
   prefix: "2024.2"
