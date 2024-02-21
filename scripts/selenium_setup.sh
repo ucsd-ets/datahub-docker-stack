@@ -1,5 +1,8 @@
 # Prepare the chrome repo
-sudo wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo rpm --import -
+sudo wget -q -O /tmp/linux_signing_key.pub https://dl.google.com/linux/linux_signing_key.pub
+
+# Import the key
+sudo rpm --import /tmp/linux_signing_key.pub
 
 # Configure it
 echo "[google-chrome]
@@ -23,7 +26,7 @@ echo "The stable Chrome version is: ${chrome_version}"
 # Download the latest Chrome Driver
 driver_version=$(curl -s -L https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_STABLE)
 echo "Latest Chrome driver version is: ${driver_version}"
-wget https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/${driver_version}/linux64/chromedriver-linux64.zip
+wget https://storage.googleapis.com/chrome-for-testing-public/${driver_version}/linux64/chromedriver-linux64.zip
 
 # Install Chrome Driver
 unzip chromedriver-linux64.zip
