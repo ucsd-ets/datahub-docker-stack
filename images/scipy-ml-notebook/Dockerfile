@@ -1,5 +1,5 @@
 ARG BASE_TAG=latest
-FROM ghcr.io/ucsd-ets/datascience-notebook:$BASE_TAG
+FROM ghcr.io/ucsd-ets/datascience-notebook:latest
 
 USER root
 
@@ -61,8 +61,6 @@ RUN mamba install nccl -c conda-forge -y && \
 #RUN mamba install protobuf=3.20.3
 RUN pip install --no-cache-dir protobuf==3.20.3
 
-# Currently, opencv+tensorflow* are problematic with mamba...
-
 # cuda-python installed to have parity with tensorflow and cudnn
 # Install pillow<7 due to dependency issue https://github.com/pytorch/vision/issues/1712
 # tensorrt installed to fix not having libnvinfer that has caused tensorflow issues.
@@ -86,21 +84,17 @@ RUN pip install opencv-contrib-python-headless \
 # without pytables explicitly defined, version 3.6 will be installed (which seems to be broken when testing the import)
 
 RUN mamba install pyqt \
-  # datascience \
   scapy \
   nltk_data \
-  #opencv \
   pycocotools \
   pillow \
-  #tensorflow=2.13.1 \
-  #tensorflow-datasets \
   keras=2.13.1 \
-  -c conda-forge -y && \
+  -c conda-forge && \
   fix-permissions $CONDA_DIR && \
   fix-permissions /home/$NB_USER && \
   mamba clean -a -y
 
-    # no purge required but no-cache-dir is used. pip purge will actually break the build here!
+# no purge required but no-cache-dir is used. pip purge will actually break the build here!
 
 # torch must be installed separately since it requires a non-pypi repo. See stable version above
 #RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/${TORCH_VIS_VER}
@@ -108,18 +102,18 @@ RUN mamba install pyqt \
 
 # We already have the lib files imported into LD_LIBRARY_PATH by CUDDN and the cudatoolkit. let's remove these and save some image space.
 # Beware of potentially needing to update these if we update the drivers.
-RUN mamba install pytorch=2.1.2 pytorch-cuda=11.8 torchvision torchaudio -c pytorch -c nvidia -y && \
+RUN pip install torch==2.1.2 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 && \
   fix-permissions $CONDA_DIR && \
   fix-permissions /home/$NB_USER && \
   mamba clean -a -y && \
-  rm -f /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_cnn_infer.so.8 && \
-  rm -f /opt/conda/lib/python3.9/site-packages/torch/lib/libcublasLt.so.11 && \
-  rm -f /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_adv_infer.so.8 && \
-  rm -f /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_adv_train.so.8 && \
-  rm -f /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_cnn_train.so.8 && \
-  rm -f /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_ops_infer.so.8 && \
-  rm -f /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_ops_train.so.8 && \
-  rm -f /opt/conda/lib/python3.9/site-packages/torch/lib/libcublas.so.11
+  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_cnn_infer.so.8 && \
+  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcublasLt.so.11 && \
+  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_adv_infer.so.8 && \
+  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_adv_train.so.8 && \
+  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_cnn_train.so.8 && \
+  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_ops_infer.so.8 && \
+  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_ops_train.so.8 && \
+  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcublas.so.11
 
 USER $NB_UID:$NB_GID
 ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin

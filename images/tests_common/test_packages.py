@@ -55,6 +55,7 @@ PACKAGE_MAPPING = {
     "pyqt": "PyQt5",
     "pillow": "PIL",
     "nltk_data": "nltk",
+    "pytorch": "torch",
     # R
     "randomforest": "randomForest",
     "rsqlite": "DBI",
@@ -77,7 +78,8 @@ EXCLUDED_PACKAGES = [
     "cudnn",
     "nccl",
     "cudatoolkit",
-    "cuda-nvcc"
+    "cuda-nvcc",
+    "pytorch-cuda",
 ]
 
 
