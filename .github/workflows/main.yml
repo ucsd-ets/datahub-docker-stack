@@ -87,10 +87,11 @@ jobs:
           sudo yum remove python3-requests -y
           python3 -m pip install -r scripts/requirements.txt
       
-      - name: Install selenium dependecies for r studio
-        run: |
-          chmod +x ./scripts/selenium_setup.sh 
-          ./scripts/selenium_setup.sh
+      # TODO: Re-enable and fix for yum instead of apt
+      #- name: Install selenium dependecies for r studio
+      #  run: |
+      #    chmod +x ./scripts/selenium_setup.sh 
+      #    ./scripts/selenium_setup.sh
           
       - name: Install pydoit fixed
         run: |
