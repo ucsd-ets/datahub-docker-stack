@@ -1,5 +1,5 @@
 ARG BASE_TAG=latest
-FROM ghcr.io/ucsd-ets/datascience-notebook:2023.4-fix-rstudio-proxy
+FROM ghcr.io/ucsd-ets/datascience-notebook:$BASE_TAG
 
 USER root
 
@@ -49,7 +49,6 @@ RUN mamba install -c "nvidia/label/cuda-11.8.0" cuda-nvcc \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
     mamba clean -a -y
-
 
 #RUN mamba list | egrep '(cuda-version|nvidia/label/cuda)' | awk '{ print $1"=="$2;}' > public/envs/test3/conda-meta/pinned
 
