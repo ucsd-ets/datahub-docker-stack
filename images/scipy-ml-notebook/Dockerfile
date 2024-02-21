@@ -41,10 +41,15 @@ USER jovyan
 
 # CUDA 11.8
 # tf requirements: https://www.tensorflow.org/install/pip#linux
-RUN mamba install -c "nvidia/label/cuda-11.8.0" cuda-nvcc -y && \
-  fix-permissions $CONDA_DIR && \
-  fix-permissions /home/$NB_USER && \
-  mamba clean -a -y
+
+RUN mamba install -c "nvidia/label/cuda-11.8.0" cuda-nvcc \
+    cudatoolkit=11.8 \
+    nccl \
+    -y && \
+    fix-permissions $CONDA_DIR && \
+    fix-permissions /home/$NB_USER && \
+    mamba clean -a -y
+
 
 #RUN mamba list | egrep '(cuda-version|nvidia/label/cuda)' | awk '{ print $1"=="$2;}' > public/envs/test3/conda-meta/pinned
 
