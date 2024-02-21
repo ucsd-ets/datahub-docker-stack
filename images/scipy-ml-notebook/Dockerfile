@@ -1,5 +1,5 @@
 ARG BASE_TAG=latest
-FROM ghcr.io/ucsd-ets/datascience-notebook:2023.4-fix-rstudio-proxy
+FROM ghcr.io/ucsd-ets/datascience-notebook:$BASE_TAG
 
 USER root
 
