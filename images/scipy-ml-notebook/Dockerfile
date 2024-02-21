@@ -1,5 +1,5 @@
 ARG BASE_TAG=latest
-FROM ghcr.io/ucsd-ets/datascience-notebook:$BASE_TAG
+FROM ghcr.io/ucsd-ets/datascience-notebook:2023.4-fix-rstudio-proxy
 
 USER root
 
@@ -95,7 +95,7 @@ RUN mamba install pyqt \
   #tensorflow=2.13.1 \
   #tensorflow-datasets \
   keras=2.13.1 \
-  -c conda-forge && \
+  -c conda-forge -y && \
   fix-permissions $CONDA_DIR && \
   fix-permissions /home/$NB_USER && \
   mamba clean -a -y
@@ -108,18 +108,18 @@ RUN mamba install pyqt \
 
 # We already have the lib files imported into LD_LIBRARY_PATH by CUDDN and the cudatoolkit. let's remove these and save some image space.
 # Beware of potentially needing to update these if we update the drivers.
-RUN pip install torch==2.1.2 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 && \
+RUN mamba install pytorch=2.1.2 pytorch-cuda=11.8 torchvision torchaudio -c pytorch -c nvidia -y && \
   fix-permissions $CONDA_DIR && \
   fix-permissions /home/$NB_USER && \
   mamba clean -a -y && \
-  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_cnn_infer.so.8 && \
-  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcublasLt.so.11 && \
-  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_adv_infer.so.8 && \
-  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_adv_train.so.8 && \
-  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_cnn_train.so.8 && \
-  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_ops_infer.so.8 && \
-  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_ops_train.so.8 && \
-  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcublas.so.11
+  rm -f /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_cnn_infer.so.8 && \
+  rm -f /opt/conda/lib/python3.9/site-packages/torch/lib/libcublasLt.so.11 && \
+  rm -f /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_adv_infer.so.8 && \
+  rm -f /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_adv_train.so.8 && \
+  rm -f /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_cnn_train.so.8 && \
+  rm -f /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_ops_infer.so.8 && \
+  rm -f /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_ops_train.so.8 && \
+  rm -f /opt/conda/lib/python3.9/site-packages/torch/lib/libcublas.so.11
 
 USER $NB_UID:$NB_GID
 ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
