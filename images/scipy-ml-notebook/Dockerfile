@@ -1,5 +1,5 @@
 ARG BASE_TAG=latest
-FROM ghcr.io/ucsd-ets/datascience-notebook:latest
+FROM ghcr.io/ucsd-ets/datascience-notebook:$BASE_TAG
 
 USER root
 
@@ -7,8 +7,14 @@ USER root
 # https://pytorch.org/get-started/previous-versions/
 # https://www.tensorflow.org/install/source#linux
 
-ARG LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7 CUDA_VERSION=11.8
+ARG LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7
 
+# Python/Mamba deps
+ARG CUDA_VERSION=11.8 CUDNN_VERSION=8.6.0.163 \
+  PROTOBUF_VERSION=4.25.3 TENSORFLOW_VERSION=2.13.1 KERAS_VERSION=2.13.1 TENSORRT_VERSION=8.5.3.1 \
+  TORCH_VERSION=2.1.2
+
+# apt deps
 RUN apt-get update && \
   apt-get install -y \
   libtinfo5 build-essential && \
@@ -17,10 +23,11 @@ RUN apt-get update && \
 # Symbolic link for Stata 17 dependency on libncurses5
 RUN ln -s libncurses.so.6 /usr/lib/x86_64-linux-gnu/libncurses.so.5
 
+# Jupyter setup
 COPY run_jupyter.sh /
 RUN chmod +x /run_jupyter.sh
 
-# TODO: Investigate which of these are needed
+# Scripts setup
 COPY cudatoolkit_env_vars.sh cudnn_env_vars.sh tensorrt_env_vars.sh /etc/datahub-profile.d/
 COPY activate.sh /tmp/activate.sh
 COPY workflow_tests /opt/workflow_tests
@@ -28,6 +35,7 @@ ADD manual_tests /opt/manual_tests
 
 RUN chmod 777 /etc/datahub-profile.d/*.sh /tmp/activate.sh
 
+# cudnn (TBD)
 #RUN apt update && apt install -y wget && \
 #    wget https://developer.download.nvidia.com/compute/cuda/repos/debian11/x86_64/libcudnn8_8.9.6.50-1+cuda11.8_amd64.deb && \
 #    dpkg -i libcudnn8_8.9.6.50-1+cuda11.8_amd64.deb && \
@@ -39,16 +47,13 @@ USER jovyan
 
 # CUDA 11.8
 # tf requirements: https://www.tensorflow.org/install/pip#linux
-
 RUN mamba install -c "nvidia/label/cuda-11.8.0" cuda-nvcc \
-    cudatoolkit=11.8 \
+    cudatoolkit=$CUDA_VERSION \
     nccl \
     -y && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
     mamba clean -a -y
-
-#RUN mamba list | egrep '(cuda-version|nvidia/label/cuda)' | awk '{ print $1"=="$2;}' > public/envs/test3/conda-meta/pinned
 
 RUN mamba install nccl -c conda-forge -y && \
   fix-permissions $CONDA_DIR && \
@@ -58,8 +63,7 @@ RUN mamba install nccl -c conda-forge -y && \
 # install protobuf to avoid weird base type error. seems like if we don't then it'll be installed twice.
 # https://github.com/spesmilo/electrum/issues/7825
 # pip cache purge didnt work here for some reason.
-#RUN mamba install protobuf=3.20.3
-RUN pip install --no-cache-dir protobuf==3.20.3
+RUN pip install --no-cache-dir protobuf==$PROTOBUF_VERSION
 
 # cuda-python installed to have parity with tensorflow and cudnn
 # Install pillow<7 due to dependency issue https://github.com/pytorch/vision/issues/1712
@@ -67,42 +71,37 @@ RUN pip install --no-cache-dir protobuf==3.20.3
 RUN pip install opencv-contrib-python-headless \
     opencv-python \
     datascience \
-    nvidia-cudnn-cu11==8.6.0.163 \
-    tensorflow==2.13.* \ 
+    nvidia-cudnn-cu11==$CUDNN_VERSION \
+    tensorflow==$TENSORFLOW_VERSION \ 
     tensorflow-datasets \
-    tensorrt==8.5.3.1 && \
+    tensorrt==$TENSORRT_VERSION && \
     fix-permissions $CONDA_DIR && \ 
     fix-permissions /home/$NB_USER && \
     pip cache purge
 
-# ntlk_data cannot currently be installed with mamba (while we have python 3.8).
-# datascience cannot be installed with mamba
-# The latest version of pytables, a dependency, only supports python 3.9 and up.
-# The latest compatible version (3.6.1) seems to be broken.
-# pytables is necessary, otherwise nltk will install out-of-date package
-# pytables on conda == tables on pip (???)
-# without pytables explicitly defined, version 3.6 will be installed (which seems to be broken when testing the import)
-
+# Some notes as to why we are using pip AND mamba:
+# - ntlk_data cannot currently be installed with mamba (while we have python 3.8).
+# - datascience cannot be installed with mamba
+# - The latest version of pytables, a dependency, only supports python 3.9 and up.
+# - The latest compatible version (3.6.1) seems to be broken.
+# - pytables is necessary, otherwise nltk will install out-of-date package
+# - pytables on conda == tables on pip (???)
+# - without pytables explicitly defined, version 3.6 will be installed (which seems to be broken when testing the import)
 RUN mamba install pyqt \
   scapy \
   nltk_data \
   pycocotools \
   pillow \
-  keras=2.13.1 \
+  keras=$KERAS_VERSION \
   -c conda-forge && \
   fix-permissions $CONDA_DIR && \
   fix-permissions /home/$NB_USER && \
   mamba clean -a -y
 
 # no purge required but no-cache-dir is used. pip purge will actually break the build here!
-
-# torch must be installed separately since it requires a non-pypi repo. See stable version above
-#RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/${TORCH_VIS_VER}
-
-
 # We already have the lib files imported into LD_LIBRARY_PATH by CUDDN and the cudatoolkit. let's remove these and save some image space.
 # Beware of potentially needing to update these if we update the drivers.
-RUN pip install torch==2.1.2 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 && \
+RUN pip install torch==$TORCH_VERSION torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 && \
   fix-permissions $CONDA_DIR && \
   fix-permissions /home/$NB_USER && \
   mamba clean -a -y && \
