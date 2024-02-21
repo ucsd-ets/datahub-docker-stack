@@ -30,6 +30,6 @@ wget https://storage.googleapis.com/chrome-for-testing-public/${driver_version}/
 
 # Install Chrome Driver
 unzip chromedriver-linux64.zip
-sudo mv chromedriver /usr/local/bin/chromedriver
+sudo mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
 sudo chown root:root /usr/local/bin/chromedriver
 sudo chmod +x /usr/local/bin/chromedriver
