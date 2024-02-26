@@ -1,5 +1,5 @@
 ARG BASE_TAG=latest
-FROM ghcr.io/ucsd-ets/datascience-notebook:main
+FROM ghcr.io/ucsd-ets/datascience-notebook:$BASE_TAG
 
 USER root
 
@@ -54,11 +54,6 @@ RUN mamba install -c "nvidia/label/cuda-11.8.0" cuda-nvcc \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
     mamba clean -a -y
-
-RUN mamba install nccl -c conda-forge -y && \
-  fix-permissions $CONDA_DIR && \
-  fix-permissions /home/$NB_USER && \
-  mamba clean -a -y
 
 # install protobuf to avoid weird base type error. seems like if we don't then it'll be installed twice.
 # https://github.com/spesmilo/electrum/issues/7825
