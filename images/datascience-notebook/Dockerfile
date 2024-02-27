@@ -1,5 +1,5 @@
-ARG PYTHON_VERSION=python-3.9.5
-FROM jupyter/datascience-notebook:$PYTHON_VERSION
+ARG PYTHON_VERSION=python-3.11.8
+FROM quay.io/jupyter/datascience-notebook:$PYTHON_VERSION
 # coerce change in all notebooks
 USER root
 
@@ -48,19 +48,19 @@ COPY /test/test_r_func.R /opt/manual_tests
 
 USER jovyan
 
-ARG PY_VER_SHORT=3.9
+ARG PY_VER_SHORT=3.11
 ARG JUPYTERHUB_VERSION=3.0.0
 
 # mistune added for nbgrader issues
 
-# coerce pandas to 1.5.3. 2.0 released april 3rd and currently breaks tests.
+# jupyterlab_rise must be below 0.40.0 while jupyterlab is not > v4.0.0
 RUN /usr/share/datahub/scripts/install-python-all.sh && \
     pip install pandas==2.0.3 'mistune>=2' --upgrade && \
     pip install nltk \
     pip install statsmodels==0.14.0 \
     nbconvert==7.2.1 \
     jupyterhub==$JUPYTERHUB_VERSION && \
-    mamba install -c conda-forge rise -y && \
+    mamba install -c conda-forge "jupyterlab_rise<0.40.0" -y && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
     conda clean --all && \
@@ -87,7 +87,7 @@ RUN pip install dpkt \
     fix-permissions /home/$NB_USER && \
     pip cache purge
 
-RUN conda clean -tipsy
+RUN conda clean -t -p -i -y
 
 # ENV SHELL=/bin/bash Weird, this line is in the datascience and rstudio notebooks but not scipyml
 

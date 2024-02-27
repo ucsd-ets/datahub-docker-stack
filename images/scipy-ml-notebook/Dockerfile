@@ -10,9 +10,9 @@ USER root
 ARG LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7
 
 # Python/Mamba deps
-ARG CUDA_VERSION=11.8 CUDNN_VERSION=8.6.0.163 \
-  PROTOBUF_VERSION=3.20.3 TENSORFLOW_VERSION=2.13.1 KERAS_VERSION=2.13.1 TENSORRT_VERSION=8.5.3.1 \
-  TORCH_VERSION=2.1.2
+ARG CUDA_VERSION=11.8 CUDNN_VERSION=8.7.0.84 \
+  PROTOBUF_VERSION=3.20.3 TENSORFLOW_VERSION=2.15.0 KERAS_VERSION=2.15.0 TENSORRT_VERSION=8.6.1 \
+  TORCH_VERSION=2.2.1
 
 # apt deps
 RUN apt-get update && \
@@ -65,7 +65,6 @@ RUN pip install --no-cache-dir protobuf==$PROTOBUF_VERSION
 # tensorrt installed to fix not having libnvinfer that has caused tensorflow issues.
 RUN pip install opencv-contrib-python-headless \
     opencv-python \
-    datascience \
     nvidia-cudnn-cu11==$CUDNN_VERSION \
     tensorflow==$TENSORFLOW_VERSION \ 
     tensorflow-datasets \
@@ -74,20 +73,13 @@ RUN pip install opencv-contrib-python-headless \
     fix-permissions /home/$NB_USER && \
     pip cache purge
 
-# Some notes as to why we are using pip AND mamba:
-# - ntlk_data cannot currently be installed with mamba (while we have python 3.8).
-# - datascience cannot be installed with mamba
-# - The latest version of pytables, a dependency, only supports python 3.9 and up.
-# - The latest compatible version (3.6.1) seems to be broken.
-# - pytables is necessary, otherwise nltk will install out-of-date package
-# - pytables on conda == tables on pip (???)
-# - without pytables explicitly defined, version 3.6 will be installed (which seems to be broken when testing the import)
 RUN mamba install pyqt \
   scapy \
+  datascience \
   nltk_data \
   pycocotools \
   pillow \
-  keras=$KERAS_VERSION \
+  keras=$KERAS_VERSION -y \
   -c conda-forge && \
   fix-permissions $CONDA_DIR && \
   fix-permissions /home/$NB_USER && \
@@ -99,15 +91,16 @@ RUN mamba install pyqt \
 RUN pip install torch==$TORCH_VERSION torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 && \
   fix-permissions $CONDA_DIR && \
   fix-permissions /home/$NB_USER && \
-  mamba clean -a -y && \
-  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_cnn_infer.so.8 && \
-  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcublasLt.so.11 && \
-  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_adv_infer.so.8 && \
-  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_adv_train.so.8 && \
-  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_cnn_train.so.8 && \
-  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_ops_infer.so.8 && \
-  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_ops_train.so.8 && \
-  rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcublas.so.11
+  mamba clean -a -y 
+  # && \
+  #rm /opt/conda/lib/python3.11/site-packages/torch/lib/libcudnn_cnn_infer.so.8 && \
+  #rm /opt/conda/lib/python3.11/site-packages/torch/lib/libcublasLt.so.11 && \
+  #rm /opt/conda/lib/python3.11/site-packages/torch/lib/libcudnn_adv_infer.so.8 && \
+  #rm /opt/conda/lib/python3.11/site-packages/torch/lib/libcudnn_adv_train.so.8 && \
+  #rm /opt/conda/lib/python3.11/site-packages/torch/lib/libcudnn_cnn_train.so.8 && \
+  #rm /opt/conda/lib/python3.11/site-packages/torch/lib/libcudnn_ops_infer.so.8 && \
+  #rm /opt/conda/lib/python3.11/site-packages/torch/lib/libcudnn_ops_train.so.8 && \
+  #rm /opt/conda/lib/python3.11/site-packages/torch/lib/libcublas.so.11
 
 USER $NB_UID:$NB_GID
 ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
