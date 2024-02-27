@@ -1,5 +1,5 @@
 ARG PYTHON_VERSION=python-3.11.8
-FROM quay.io/jupyter/datascience-notebook:$PYTHON_VERSION
+FROM quay.io/jupyter/scipy-notebook:$PYTHON_VERSION
 # coerce change in all notebooks
 USER root
 
@@ -50,6 +50,9 @@ USER jovyan
 
 ARG PY_VER_SHORT=3.11
 ARG JUPYTERHUB_VERSION=3.0.0
+
+# Add additional pip packages
+RUN pip install nbgrader nbgitpuller nbresuse pillow typing-extensions tzlocal appdirs GPUtil mock pytest
 
 # mistune added for nbgrader issues
 
