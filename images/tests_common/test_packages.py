@@ -80,6 +80,8 @@ EXCLUDED_PACKAGES = [
     "cudatoolkit",
     "cuda-nvcc",
     "pytorch-cuda",
+    "jupyterlab_rise",
+    "jupyterlab-git",
 ]
 
 
