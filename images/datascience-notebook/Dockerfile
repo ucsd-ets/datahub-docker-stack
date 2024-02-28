@@ -1,5 +1,5 @@
 ARG PYTHON_VERSION=python-3.11.8
-FROM quay.io/jupyter/scipy-notebook:$PYTHON_VERSION
+FROM quay.io/jupyter/datascience-notebook:$PYTHON_VERSION
 # coerce change in all notebooks
 USER root
 
@@ -52,10 +52,10 @@ ARG PY_VER_SHORT=3.11
 ARG JUPYTERHUB_VERSION=3.0.0
 
 # Add additional pip packages
-RUN pip install nbgrader nbgitpuller nbresuse pillow typing-extensions tzlocal appdirs GPUtil mock pytest
+# These are no longer included in datascience image?
+RUN pip install nbgrader nbgitpuller nbresuse pillow typing-extensions tzlocal appdirs GPUtil mock pytest jupyter_server_terminals
 
 # mistune added for nbgrader issues
-
 # jupyterlab_rise must be below 0.40.0 while jupyterlab is not > v4.0.0
 RUN /usr/share/datahub/scripts/install-python-all.sh && \
     pip install pandas==2.0.3 'mistune>=2' --upgrade && \
