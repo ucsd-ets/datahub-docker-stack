@@ -57,7 +57,8 @@ ARG JUPYTERHUB_VERSION=3.0.0 PANDAS_VERSION=2.0.3 STATSMODELS_VERSION=0.14.0 NBC
 # Add essential pip/mamba packages 
 # mistune added for nbgrader issues
 RUN pip install nbgrader nbgitpuller nbresuse pillow typing-extensions tzlocal appdirs gputil mock pytest jupyter_server_terminals \
-    nltk jupyterhub==$JUPYTERHUB_VERSION statsmodels==$STATSMODELS_VERSION nbconvert==$NBCONVERT_VERSION pandas==$PANDAS_VERSION 'mistune>=2' --upgrade 
+    nltk jupyterhub==$JUPYTERHUB_VERSION statsmodels==$STATSMODELS_VERSION nbconvert==$NBCONVERT_VERSION pandas==$PANDAS_VERSION 'mistune>=2' --upgrade && \
+    pip cache purge
 
 # jupyterlab_rise must be below 0.40.0 while jupyterlab is not > v4.0.0
 RUN mamba install -c conda-forge "jupyterlab_rise<0.40.0" -y && \
