@@ -10,7 +10,7 @@ LOGGER = logging.getLogger('datahub_docker_stacks')
 @pytest.mark.parametrize(
     "env,expected_server",
     [
-        # (["JUPYTER_ENABLE_LAB=yes"], "lab"),
+        (["JUPYTER_ENABLE_LAB=no"], "lab"),
         (None, "notebook"),
     ],
 )
