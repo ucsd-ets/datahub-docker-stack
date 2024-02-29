@@ -57,6 +57,9 @@ ARG JUPYTERHUB_VERSION=3.0.0
 RUN /usr/share/datahub/scripts/install-python-all.sh && \
     pip install pandas==2.2.0 'mistune>=2' --upgrade && \
     pip install nltk \
+    pip install pyarrow \
+    pip install bottleneck>=1.3.6 \
+    pip install numexpr>=2.8.4 \
     pip install statsmodels==0.14.1 \
     nbconvert==7.2.1 \
     jupyterhub==$JUPYTERHUB_VERSION && \
