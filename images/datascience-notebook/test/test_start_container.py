@@ -3,6 +3,7 @@
 
 import logging
 import pytest
+import time
 
 LOGGER = logging.getLogger('datahub_docker_stacks')
 
@@ -21,8 +22,9 @@ def test_start_notebook(container, http_client, env, expected_server):
     c = container.run(
         tty=True,
         environment=env,
-        command=["start-notebook.py --ip=\"0.0.0.0\""],
+        command=["start-notebook.py"],
     )
+    time.sleep(5) # DEBUG: Testing a delay
     resp = http_client.get("http://localhost:8888")
     logs = c.logs(stdout=True).decode("utf-8")
     LOGGER.debug(logs)
