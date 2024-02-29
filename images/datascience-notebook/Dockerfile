@@ -49,43 +49,27 @@ COPY /test/test_r_func.R /opt/manual_tests
 USER jovyan
 
 ARG PY_VER_SHORT=3.11
-ARG JUPYTERHUB_VERSION=3.0.0
 
-# Add additional pip packages
-# These are no longer included in datascience image?
-RUN pip install nbgrader nbgitpuller nbresuse pillow typing-extensions tzlocal appdirs gputil mock pytest jupyter_server_terminals
+# Python/Mamba Deps
+## Regular Packages
+ARG JUPYTERHUB_VERSION=3.0.0 PANDAS_VERSION=2.0.3 STATSMODELS_VERSION=0.14.0 NBCONVERT_VERSION=7.2.1
 
-# Add missing R packages
-RUN mamba install -c r r-markdown r-covr r-git2r r-crosstalk r-dt -y && \
-    pip cache purge && \
-    mamba clean -a -y
-
+# Add essential pip/mamba packages 
 # mistune added for nbgrader issues
+RUN pip install nbgrader nbgitpuller nbresuse pillow typing-extensions tzlocal appdirs gputil mock pytest jupyter_server_terminals \
+    nltk jupyterhub==$JUPYTERHUB_VERSION statsmodels==$STATSMODELS_VERSION nbconvert==$NBCONVERT_VERSION pandas==$PANDAS_VERSION 'mistune>=2' --upgrade 
+
 # jupyterlab_rise must be below 0.40.0 while jupyterlab is not > v4.0.0
-RUN /usr/share/datahub/scripts/install-python-all.sh && \
-    pip install pandas==2.0.3 'mistune>=2' --upgrade && \
-    pip install nltk \
-    pip install statsmodels==0.14.0 \
-    nbconvert==7.2.1 \
-    jupyterhub==$JUPYTERHUB_VERSION && \
-    mamba install -c conda-forge "jupyterlab_rise<0.40.0" -y && \
+RUN mamba install -c conda-forge "jupyterlab_rise<0.40.0" -y && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
-    conda clean --all && \
-    chown -R jovyan:users /opt/conda/etc/jupyter/nbconfig && \
-    chmod -R +r /opt/conda/etc/jupyter/nbconfig && \
-    pip cache purge && \
-    mamba clean -a -y
-
-# nbgrader requires some variables set to just run the notebook server
-ENV NBGRADER_COURSEID="NA"
-ENV JUPYTERHUB_USER=${NB_USER}
+    conda clean --all
 
 # Install jupyterlab extensions
 RUN pip install jupyterlab==3.0.16 jupyterlab-github jupyterlab-latex jupyterlab-git \
     jupyterlab-fasta jupyterlab-pullrequests jupyterlab-geojson && \
     pip cache purge
-    
+
 # Datascience packages
 RUN pip install dpkt \
     nose \
@@ -94,6 +78,23 @@ RUN pip install dpkt \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
     pip cache purge
+
+## R packages
+RUN mamba install -c conda-forge r-markdown r-covr r-git2r r-crosstalk r-dt -y && \
+    fix-permissions $CONDA_DIR && \
+    fix-permissions /home/$NB_USER && \
+    mamba clean -a -y
+
+## Run install-python + cleanup
+RUN /usr/share/datahub/scripts/install-python-all.sh && \
+    chown -R jovyan:users /opt/conda/etc/jupyter/nbconfig && \
+    chmod -R +r /opt/conda/etc/jupyter/nbconfig && \
+    pip cache purge && \
+    mamba clean -a -y
+
+# nbgrader requires some variables set to just run the notebook server
+ENV NBGRADER_COURSEID="NA"
+ENV JUPYTERHUB_USER=${NB_USER}
 
 RUN conda clean -t -p -i -y
 
