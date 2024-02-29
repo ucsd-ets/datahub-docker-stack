@@ -82,6 +82,7 @@ EXCLUDED_PACKAGES = [
     "pytorch-cuda",
     "jupyterlab_rise[version='<0.40.0']",
     "jupyterlab-git",
+    "jupyter-pluto-proxy",
 ]
 
 
