@@ -78,6 +78,7 @@ def test_nb_user_change(container):
     LOGGER.info(f"Checking if the user is changed to {nb_user} by the start script ...")
     output = running_container.logs(stdout=True).decode("utf-8")
     assert f"Attempting to copy /home/jovyan to /home/{nb_user}..." in output, f"No attempt made to copy /home/jovyan to /home/{nb_user}"
+    assert f"Success!" in output, f"Failed to switch to {nb_user}"
     assert f"Running as {nb_user}" in output, f"{nb_user} is not running bash -c sleep infinity"
 
     LOGGER.info(f"Checking {nb_user} id ...")
@@ -130,7 +131,7 @@ def test_chown_home(container):
         ],
     )
     c.wait(timeout=120)
-    assert "Changing ownership of /home/jovyan to 1000:100 with options '-R'" in c.logs(
+    assert "Ensuring /home/jovyan is owned by 1000:100 (chown options: -R)" in c.logs(
         stdout=True
     ).decode("utf-8")
 
