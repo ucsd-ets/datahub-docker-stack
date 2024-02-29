@@ -75,7 +75,7 @@ RUN pip install opencv-contrib-python-headless \
 
 RUN mamba install pyqt \
   scapy \
-  datascience \
+  # datascience \
   nltk_data \
   pycocotools \
   pillow \

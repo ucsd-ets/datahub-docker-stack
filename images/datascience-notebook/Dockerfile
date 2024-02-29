@@ -53,7 +53,12 @@ ARG JUPYTERHUB_VERSION=3.0.0
 
 # Add additional pip packages
 # These are no longer included in datascience image?
-RUN pip install nbgrader nbgitpuller nbresuse pillow typing-extensions tzlocal appdirs GPUtil mock pytest jupyter_server_terminals
+RUN pip install nbgrader nbgitpuller nbresuse pillow typing-extensions tzlocal appdirs gputil mock pytest jupyter_server_terminals
+
+# Add missing R packages
+RUN mamba install -c r r-markdown r-covr r-git2r r-crosstalk r-dt -y && \
+    pip cache purge && \
+    mamba clean -a -y
 
 # mistune added for nbgrader issues
 # jupyterlab_rise must be below 0.40.0 while jupyterlab is not > v4.0.0
