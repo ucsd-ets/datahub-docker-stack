@@ -67,6 +67,7 @@ RUN pip install datascience \
     tensorflow==2.13.* \ 
     keras==2.13.1 \
     tensorflow-datasets \
+    typing-extensions==4.5.0 \
     tensorrt==8.5.3.1 && \
     fix-permissions $CONDA_DIR && \ 
     fix-permissions /home/$NB_USER && \
@@ -79,7 +80,10 @@ RUN pip install datascience \
 
 # We already have the lib files imported into LD_LIBRARY_PATH by CUDDN and the cudatoolkit. let's remove these and save some image space.
 # Beware of potentially needing to update these if we update the drivers.
-RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 && \
+
+# torch 2.2.0 requires typing-extensions 4.8+, conflicts with tensorflow 2.13.*. won't be able to upgrade torch until we upgrade tf
+# defer until we have debian nodes
+RUN pip install torch==2.1.2 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 && \
   pip cache purge && \
   rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_cnn_infer.so.8 && \
   rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcublasLt.so.11 && \
@@ -89,6 +93,8 @@ RUN pip install torch torchvision torchaudio --index-url https://download.pytorc
   rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_ops_infer.so.8 && \
   rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_ops_train.so.8 && \
   rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcublas.so.11
+
+RUN pip install transformers && pip cache purge
 
 USER $NB_UID:$NB_GID
 ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
