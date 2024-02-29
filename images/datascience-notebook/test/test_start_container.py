@@ -10,8 +10,7 @@ LOGGER = logging.getLogger('datahub_docker_stacks')
 @pytest.mark.parametrize(
     "env,expected_server",
     [
-        (["JUPYTER_ENABLE_LAB=yes"], "lab"),
-        (None, "notebook"),
+        (["JUPYTER_ENABLE_LAB=no"], "notebook"),
     ],
 )
 def test_start_notebook(container, http_client, env, expected_server):
@@ -66,14 +65,15 @@ def test_jupyter_lab_exists(container, http_client, expected_server):
     LOGGER.info(f"Checking that jupyter lab endpoint exists when using jupyter {expected_server}")
     c = container.run(
         tty=True,
-        command=["start-notebook.sh"],
+        command=["start-notebook.py"],
     )
     resp = http_client.get("http://localhost:8888/lab")
     logs = c.logs(stdout=True).decode("utf-8")
     LOGGER.debug(logs)
     assert resp.status_code == 200, "Jupyter lab is not running"
+    assert(f"Executing the command: start-notebook.py"), "start-notebook.py was not called"
     assert (
-        f"Executing the command: jupyter {expected_server}" in logs
+        f"Executing: jupyter {expected_server}" in logs
     ), f"Not the expected command (jupyter {expected_server}) was launched"
 
 @pytest.mark.parametrize(
@@ -87,14 +87,15 @@ def test_jupyter_notebook_exists(container, http_client, expected_server):
     LOGGER.info(f"Checking that jupyter notebook endpoint exists when using jupyter {expected_server}")
     c = container.run(
         tty=True,
-        command=["start-notebook.sh"],
+        command=["start-notebook.py"],
     )
     resp = http_client.get("http://localhost:8888/tree")
     logs = c.logs(stdout=True).decode("utf-8")
     LOGGER.debug(logs)
     assert resp.status_code == 200, "Jupyter notebook(/tree) is not running "
+    assert(f"Executing the command: start-notebook.py"), "start-notebook.py was not called"
     assert (
-        f"Executing the command: jupyter {expected_server}" in logs
+        f"Executing: jupyter {expected_server}" in logs
     ), f"Not the expected command (jupyter {expected_server}) was launched"
 
 @pytest.mark.parametrize(
