@@ -21,7 +21,7 @@ def test_start_notebook(container, http_client, env, expected_server):
     c = container.run(
         tty=True,
         environment=env,
-        command=["start-notebook.py"],
+        command=["start-notebook.py --ip=\"0.0.0.0\""],
     )
     resp = http_client.get("http://localhost:8888")
     logs = c.logs(stdout=True).decode("utf-8")
