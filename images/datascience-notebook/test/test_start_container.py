@@ -3,7 +3,6 @@
 
 import logging
 import pytest
-import time
 
 LOGGER = logging.getLogger('datahub_docker_stacks')
 
@@ -11,7 +10,8 @@ LOGGER = logging.getLogger('datahub_docker_stacks')
 @pytest.mark.parametrize(
     "env,expected_server",
     [
-        (["DOCKER_STACKS_JUPYTER_CMD=notebook"], "notebook"),
+        #(["DOCKER_STACKS_JUPYTER_CMD=notebook"], "notebook"), DEBUG TEST
+        (["DOCKER_STACKS_JUPYTER_CMD=lab"], "lab"),
     ],
 )
 def test_start_notebook(container, http_client, env, expected_server):
@@ -24,7 +24,6 @@ def test_start_notebook(container, http_client, env, expected_server):
         environment=env,
         command=["start-notebook.py"],
     )
-    time.sleep(5) # DEBUG: Testing a delay
     resp = http_client.get("http://localhost:8888")
     logs = c.logs(stdout=True).decode("utf-8")
     LOGGER.debug(logs)
