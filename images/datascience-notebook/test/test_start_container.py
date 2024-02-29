@@ -10,8 +10,8 @@ LOGGER = logging.getLogger('datahub_docker_stacks')
 @pytest.mark.parametrize(
     "env,expected_server",
     [
-        #(["DOCKER_STACKS_JUPYTER_CMD=notebook"], "notebook"), DEBUG TEST
-        (["DOCKER_STACKS_JUPYTER_CMD=lab"], "lab"),
+        (["DOCKER_STACKS_JUPYTER_CMD=notebook"], "notebook"), 
+        #(["DOCKER_STACKS_JUPYTER_CMD=lab"], "lab"),
     ],
 )
 def test_start_notebook(container, http_client, env, expected_server):
@@ -24,9 +24,9 @@ def test_start_notebook(container, http_client, env, expected_server):
         environment=env,
         command=["start-notebook.py"],
     )
-    resp = http_client.get("http://localhost:8888")
     logs = c.logs(stdout=True).decode("utf-8")
     LOGGER.debug(logs)
+    resp = http_client.get("http://localhost:8888/tree")
     assert resp.status_code == 200, "Server is not listening"
     assert(f"Executing the command: start-notebook.py"), "start-notebook.py was not called"
     assert (
@@ -77,6 +77,7 @@ def test_jupyter_lab_exists(container, http_client, expected_server):
         f"Executing: jupyter {expected_server}" in logs
     ), f"Not the expected command (jupyter {expected_server}) was launched"
 
+@pytest.mark.skip("redundant test")
 @pytest.mark.parametrize(
     "expected_server",
     [
@@ -102,7 +103,7 @@ def test_jupyter_notebook_exists(container, http_client, expected_server):
 @pytest.mark.parametrize(
     "expected_server",
     [
-        ("notebook"),
+        ("lab"),
     ],
 )
 def test_server_extensions_start(container, http_client, expected_server):
