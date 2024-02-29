@@ -10,7 +10,7 @@ LOGGER = logging.getLogger('datahub_docker_stacks')
 @pytest.mark.parametrize(
     "env,expected_server",
     [
-        (["JUPYTER_ENABLE_LAB=no"], "notebook"),
+        (["DOCKER_STACKS_JUPYTER_CMD=notebook"], "notebook"),
     ],
 )
 def test_start_notebook(container, http_client, env, expected_server):
@@ -109,7 +109,7 @@ def test_server_extensions_start(container, http_client, expected_server):
     LOGGER.info(f"Checking that server extensions start when using jupyter {expected_server}")
     c = container.run(
         tty=True,
-        command=["start-notebook.sh"],
+        command=["start-notebook.py"],
     )
     resp = http_client.get("http://localhost:8888")
     logs = c.logs(stdout=True).decode("utf-8")
