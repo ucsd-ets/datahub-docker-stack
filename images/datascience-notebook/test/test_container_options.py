@@ -77,7 +77,8 @@ def test_nb_user_change(container):
     time.sleep(10)
     LOGGER.info(f"Checking if the user is changed to {nb_user} by the start script ...")
     output = running_container.logs(stdout=True).decode("utf-8")
-    assert f"Attempting to copy /home/jovyan to /home/{nb_user}..." in output, f"No attempt made to copy /home/jovyan to /home/{nb_user}"
+    #assert f"Attempting to copy /home/jovyan to /home/{nb_user}..." in output, f"No attempt made to copy /home/jovyan to /home/{nb_user}"
+    assert f"Attempting to copy /home/jovyan to /home/{nb_user}..." in output, output
     assert f"Success!" in output, f"Failed to switch to {nb_user}"
     assert f"Running as {nb_user}" in output, f"{nb_user} is not running bash -c sleep infinity"
 
