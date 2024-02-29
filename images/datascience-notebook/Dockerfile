@@ -82,8 +82,8 @@ RUN pip install jupyterlab==3.0.16 jupyterlab-github jupyterlab-latex jupyterlab
 # Datascience packages
 RUN pip install dpkt \
     nose \
-    bottleneck>=1.3.6 \
-    numexpr>=2.8.4 \
+    bottleneck==1.3.6 \
+    numexpr==2.8.4 \
     datascience && \
     python -c 'import matplotlib.pyplot' && \
     fix-permissions $CONDA_DIR && \
