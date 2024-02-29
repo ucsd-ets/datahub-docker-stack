@@ -61,6 +61,7 @@ PACKAGE_MAPPING = {
     "rsqlite": "DBI",
     "rcurl": "RCurl",
     "rodbc": "RODBC",
+    "dt": "DT",
 }
 
 # List of packages that cannot be tested in a standard way
