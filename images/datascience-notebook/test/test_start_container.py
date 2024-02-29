@@ -10,7 +10,7 @@ LOGGER = logging.getLogger('datahub_docker_stacks')
 @pytest.mark.parametrize(
     "env,expected_server",
     [
-        (["JUPYTER_ENABLE_LAB=no"], "lab"),
+        (["JUPYTER_ENABLE_LAB=yes"], "lab"),
         (None, "notebook"),
     ],
 )
@@ -22,15 +22,17 @@ def test_start_notebook(container, http_client, env, expected_server):
     c = container.run(
         tty=True,
         environment=env,
-        command=["start-notebook.sh"],
+        command=["start-notebook.py"],
     )
     resp = http_client.get("http://localhost:8888")
     logs = c.logs(stdout=True).decode("utf-8")
     LOGGER.debug(logs)
     assert resp.status_code == 200, "Server is not listening"
+    assert(f"Executing the command: start-notebook.py"), "start-notebook.py was not called"
     assert (
-        f"Executing the command: jupyter {expected_server}" in logs
+        f"Executing: jupyter {expected_server}" in logs
     ), f"Not the expected command (jupyter {expected_server}) was launched"
+
     # Checking warning messages
     if not env:
         msg = "WARN: Jupyter Notebook deprecation notice"
