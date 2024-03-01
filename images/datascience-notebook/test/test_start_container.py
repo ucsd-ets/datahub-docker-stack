@@ -25,7 +25,7 @@ def test_start_notebook(container, http_client, env, expected_server):
         command=["start-notebook.py"],
     )
     logs = c.logs(stdout=True).decode("utf-8")
-    LOGGER.debug(logs)
+    LOGGER.error(logs)
     resp = http_client.get("http://localhost:8888/tree")
     assert resp.status_code == 200, "Server is not listening"
     assert(f"Executing the command: start-notebook.py"), "start-notebook.py was not called"
