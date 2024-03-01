@@ -10,8 +10,9 @@ LOGGER = logging.getLogger('datahub_docker_stacks')
 @pytest.mark.parametrize(
     "env,expected_server",
     [
-        (["DOCKER_STACKS_JUPYTER_CMD=notebook"], "notebook"), 
-        #(["DOCKER_STACKS_JUPYTER_CMD=lab"], "lab"),
+        # TODO: Investigate further
+        #(["DOCKER_STACKS_JUPYTER_CMD=notebook"], "notebook"), 
+        (["DOCKER_STACKS_JUPYTER_CMD=lab"], "lab"),
     ],
 )
 def test_start_notebook(container, http_client, env, expected_server):
@@ -58,7 +59,7 @@ def test_tini_entrypoint(container, pid=1, command="tini"):
 @pytest.mark.parametrize(
     "expected_server",
     [
-        ("notebook"),
+        ("lab"),
     ],
 )
 def test_jupyter_lab_exists(container, http_client, expected_server):
