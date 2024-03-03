@@ -1,10 +1,7 @@
 #!/bin/bash
 
 pip install nbgrader==0.9.1
-
+# >0.9 does not work with nbclassic...
 # nbclassic 
-#jupyter nbextension install --symlink --sys-prefix --py nbgrader
-#jupyter nbextension enable --sys-prefix --py nbgrader
-
-#jupyter lab extension enable --level=system nbgrader
-#jupyter server extension enable --system --py nbgrader
+#jupyter-nbclassic-extension install --symlink --sys-prefix --py nbgrader
+#jupyter-nbclassic-extension enable --sys-prefix --py nbgrader

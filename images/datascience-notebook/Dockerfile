@@ -64,7 +64,8 @@ RUN pip install pillow typing-extensions tzlocal appdirs gputil mock pytest \
     pip cache purge
 
 # Install jupyterlab extensions
-RUN pip install jupyterhub==$JUPYTERHUB_VERSION jupyter-server==$JUPYTERSERVER_VERSION jupyterlab==$JUPYTERLAB_VERSION notebook==$NOTEBOOK_VERSION nbclassic==$NBCLASSIC_VERSION jupyterlab_rise \
+# TODO: Change jupyterhub_version
+RUN pip install jupyterhub==4.0.2 jupyter-server==$JUPYTERSERVER_VERSION jupyterlab==$JUPYTERLAB_VERSION notebook==$NOTEBOOK_VERSION nbclassic==$NBCLASSIC_VERSION jupyterlab_rise \
     jupyter_server_terminals jupyter-collaboration jupyterlab-github jupyterlab-latex jupyterlab-git \
     jupyterlab-fasta jupyterlab-pullrequests jupyterlab-geojson jupyterlab-link-share \
     nbconvert==$NBCONVERT_VERSION && \
