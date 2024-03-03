@@ -1,5 +1,5 @@
 ARG BASE_TAG=latest
-FROM ghcr.io/ucsd-ets/datascience-notebook:$BASE_TAG
+FROM ghcr.io/ucsd-ets/datascience-notebook:2023.4-scipy-ml-fixup
 
 USER root
 
@@ -10,7 +10,7 @@ USER root
 ARG LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7
 
 # Python/Mamba deps
-ARG CUDA_VERSION=11.8 CUDNN_VERSION=8.7.0.84 \
+ARG CUDA_VERSION=12.0 CUDNN_VERSION=8.9.2.26 \
   PROTOBUF_VERSION=3.20.3 TENSORFLOW_VERSION=2.15.0 KERAS_VERSION=2.15.0 TENSORRT_VERSION=8.6.1 \
   TORCH_VERSION=2.2.1
 
@@ -45,10 +45,10 @@ RUN chmod 777 /etc/datahub-profile.d/*.sh /tmp/activate.sh
 
 USER jovyan
 
-# CUDA 11.8
+# CUDA 12
 # tf requirements: https://www.tensorflow.org/install/pip#linux
-RUN mamba install -c "nvidia/label/cuda-11.8.0" cuda-nvcc \
-    cudatoolkit=$CUDA_VERSION \
+RUN mamba install -c "nvidia/label/cuda-12.0.0" cuda-nvcc \
+    cuda-toolkit=$CUDA_VERSION \
     nccl \
     -y && \
     fix-permissions $CONDA_DIR && \
@@ -64,11 +64,7 @@ RUN pip install --no-cache-dir protobuf==$PROTOBUF_VERSION
 # Install pillow<7 due to dependency issue https://github.com/pytorch/vision/issues/1712
 # tensorrt installed to fix not having libnvinfer that has caused tensorflow issues.
 RUN pip install opencv-contrib-python-headless \
-    opencv-python \
-    nvidia-cudnn-cu11==$CUDNN_VERSION \
-    tensorflow==$TENSORFLOW_VERSION \ 
-    tensorflow-datasets \
-    tensorrt==$TENSORRT_VERSION && \
+    opencv-python && \
     fix-permissions $CONDA_DIR && \ 
     fix-permissions /home/$NB_USER && \
     pip cache purge
@@ -76,10 +72,8 @@ RUN pip install opencv-contrib-python-headless \
 RUN mamba install pyqt \
   scapy \
   # datascience \
-  nltk_data \
   pycocotools \
-  pillow \
-  keras=$KERAS_VERSION -y \
+  pillow -y \
   -c conda-forge && \
   fix-permissions $CONDA_DIR && \
   fix-permissions /home/$NB_USER && \
@@ -88,19 +82,12 @@ RUN mamba install pyqt \
 # no purge required but no-cache-dir is used. pip purge will actually break the build here!
 # We already have the lib files imported into LD_LIBRARY_PATH by CUDDN and the cudatoolkit. let's remove these and save some image space.
 # Beware of potentially needing to update these if we update the drivers.
-RUN pip install torch==$TORCH_VERSION torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 && \
+RUN pip install nvidia-cudnn-cu12==$CUDNN_VERSION torch==$TORCH_VERSION torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121 && \
+  pip install tensorflow==$TENSORFLOW_VERSION tensorflow-datasets tensorrt==$TENSORRT_VERSION keras==$KERAS_VERSION && \
   fix-permissions $CONDA_DIR && \
   fix-permissions /home/$NB_USER && \
-  mamba clean -a -y 
-  # && \
-  #rm /opt/conda/lib/python3.11/site-packages/torch/lib/libcudnn_cnn_infer.so.8 && \
-  #rm /opt/conda/lib/python3.11/site-packages/torch/lib/libcublasLt.so.11 && \
-  #rm /opt/conda/lib/python3.11/site-packages/torch/lib/libcudnn_adv_infer.so.8 && \
-  #rm /opt/conda/lib/python3.11/site-packages/torch/lib/libcudnn_adv_train.so.8 && \
-  #rm /opt/conda/lib/python3.11/site-packages/torch/lib/libcudnn_cnn_train.so.8 && \
-  #rm /opt/conda/lib/python3.11/site-packages/torch/lib/libcudnn_ops_infer.so.8 && \
-  #rm /opt/conda/lib/python3.11/site-packages/torch/lib/libcudnn_ops_train.so.8 && \
-  #rm /opt/conda/lib/python3.11/site-packages/torch/lib/libcublas.so.11
+  mamba clean -a -y && \
+  pip cache purge
 
 USER $NB_UID:$NB_GID
 ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
@@ -115,6 +102,6 @@ ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
 # Do some CONDA/CUDA stuff
 # Copy libdevice file to the required path
 RUN mkdir -p $CONDA_DIR/lib/nvvm/libdevice && \
-  cp $CONDA_DIR/lib/libdevice.10.bc $CONDA_DIR/lib/nvvm/libdevice/
+    cp $CONDA_DIR/nvvm/libdevice/libdevice.10.bc $CONDA_DIR/lib/nvvm/libdevice/
 
 RUN . /tmp/activate.sh

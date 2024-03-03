@@ -60,7 +60,7 @@ ARG PANDAS_VERSION=2.2.1 STATSMODELS_VERSION=0.14.1
 # mistune added for nbgrader issues
 # todo: convert to mamba
 RUN pip install pillow typing-extensions tzlocal appdirs gputil mock pytest \
-    nltk statsmodels==$STATSMODELS_VERSION pandas==$PANDAS_VERSION 'mistune>=2' --upgrade && \
+    nltk nltk_data statsmodels==$STATSMODELS_VERSION pandas==$PANDAS_VERSION 'mistune>=2' --upgrade && \
     pip cache purge
 
 # Install jupyterlab extensions
