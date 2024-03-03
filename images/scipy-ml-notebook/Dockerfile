@@ -49,6 +49,7 @@ USER jovyan
 # tf requirements: https://www.tensorflow.org/install/pip#linux
 RUN mamba install -c "nvidia/label/cuda-12.0.0" cuda-nvcc \
     cuda-toolkit=$CUDA_VERSION \
+    cuda-version=$CUDA_VERSION \
     nccl \
     -y && \
     fix-permissions $CONDA_DIR && \
@@ -80,7 +81,7 @@ RUN mamba install pyqt \
   mamba clean -a -y
 
 # no purge required but no-cache-dir is used. pip purge will actually break the build here!
-# We already have the lib files imported into LD_LIBRARY_PATH by CUDDN and the cudatoolkit. let's remove these and save some image space.
+# We already have the lib files imported into LD_LIBRARY_PATH by CUDDN and the cuda-toolkit. let's remove these and save some image space.
 # Beware of potentially needing to update these if we update the drivers.
 RUN pip install nvidia-cudnn-cu12==$CUDNN_VERSION torch==$TORCH_VERSION torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121 && \
   pip install tensorflow==$TENSORFLOW_VERSION tensorflow-datasets tensorrt==$TENSORRT_VERSION keras==$KERAS_VERSION && \
