@@ -3,6 +3,7 @@ FROM quay.io/jupyter/datascience-notebook:$PYTHON_VERSION
 # coerce change in all notebooks
 USER root
 
+## Setup
 # see https://github.com/phusion/baseimage-docker/issues/319#issuecomment-1058835363
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBCONF_NOWARNINGS="yes"
@@ -52,23 +53,21 @@ ARG PY_VER_SHORT=3.11
 
 # Python/Mamba Deps
 ## Regular Packages
-ARG JUPYTERHUB_VERSION=3.0.0 PANDAS_VERSION=2.0.3 STATSMODELS_VERSION=0.14.0 NBCONVERT_VERSION=7.2.1
+ARG JUPYTERSERVER_VERSION=2.12.5 JUPYTERHUB_VERSION=4.0.2 JUPYTERLAB_VERSION=4.1.2 NBCONVERT_VERSION=7.16.1 NOTEBOOK_VERSION=7.1.1 NBCLASSIC_VERSION=1.0.0
+ARG PANDAS_VERSION=2.2.1 STATSMODELS_VERSION=0.14.1
 
 # Add essential pip/mamba packages 
 # mistune added for nbgrader issues
-RUN pip install nbgrader nbgitpuller nbresuse pillow typing-extensions tzlocal appdirs gputil mock pytest jupyter_server_terminals \
-    nltk jupyterhub==$JUPYTERHUB_VERSION statsmodels==$STATSMODELS_VERSION nbconvert==$NBCONVERT_VERSION pandas==$PANDAS_VERSION 'mistune>=2' --upgrade && \
+# todo: convert to mamba
+RUN pip install pillow typing-extensions tzlocal appdirs gputil mock pytest \
+    nltk statsmodels==$STATSMODELS_VERSION pandas==$PANDAS_VERSION 'mistune>=2' --upgrade && \
     pip cache purge
 
-# jupyterlab_rise must be below 0.40.0 while jupyterlab is not > v4.0.0
-RUN mamba install -c conda-forge "jupyterlab_rise<0.40.0" -y && \
-    fix-permissions $CONDA_DIR && \
-    fix-permissions /home/$NB_USER && \
-    conda clean --all
-
 # Install jupyterlab extensions
-RUN pip install jupyterlab==3.0.16 jupyterlab-github jupyterlab-latex jupyterlab-git \
-    jupyterlab-fasta jupyterlab-pullrequests jupyterlab-geojson && \
+RUN pip install jupyterhub==$JUPYTERHUB_VERSION jupyter-server==$JUPYTERSERVER_VERSION jupyterlab==$JUPYTERLAB_VERSION notebook==$NOTEBOOK_VERSION nbclassic==$NBCLASSIC_VERSION jupyterlab_rise \
+    jupyter_server_terminals jupyter-collaboration jupyterlab-github jupyterlab-latex jupyterlab-git \
+    jupyterlab-fasta jupyterlab-pullrequests jupyterlab-geojson jupyterlab-link-share \
+    nbconvert==$NBCONVERT_VERSION && \
     pip cache purge
 
 # Datascience packages
@@ -93,12 +92,11 @@ RUN /usr/share/datahub/scripts/install-python-all.sh && \
     pip cache purge && \
     mamba clean -a -y
 
+## Cleanup
 # nbgrader requires some variables set to just run the notebook server
 ENV NBGRADER_COURSEID="NA"
 ENV JUPYTERHUB_USER=${NB_USER}
 
 RUN conda clean -t -p -i -y
-
-# ENV SHELL=/bin/bash Weird, this line is in the datascience and rstudio notebooks but not scipyml
 
 WORKDIR /home/jovyan

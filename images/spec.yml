@@ -6,7 +6,7 @@ images:
     build_args:
       PYTHON_VERSION: python-3.11.8
       PY_VER_SHORT: "3.11"
-      JUPYTERHUB_VERSION: 3.0.0
+      JUPYTERHUB_VERSION: 4.1.2
     info_cmds: [PY_VER, PIP_LIST, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
 
   rstudio-notebook:

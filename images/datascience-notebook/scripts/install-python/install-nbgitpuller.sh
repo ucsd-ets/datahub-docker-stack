@@ -1,3 +1,4 @@
 #!/bin/sh -x
-pip install git+https://github.com/data-8/gitautosync &&
-  jupyter serverextension enable --py nbgitpuller --sys-prefix
+pip install git+https://github.com/jupyterhub/nbgitpuller
+  # nbclassic
+  #&& jupyter server extension enable --py nbgitpuller --sys-prefix 
