@@ -1,5 +1,5 @@
 ARG BASE_TAG=latest
-FROM ghcr.io/ucsd-ets/datascience-notebook:2023.4-scipy-ml-fixup
+FROM ghcr.io/ucsd-ets/datascience-notebook:$BASE_TAG
 
 USER root
 
@@ -10,9 +10,10 @@ USER root
 ARG LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7
 
 # Python/Mamba deps
-#ARG CUDA_VERSION=11.8 CUDNN_VERSION=8.7.0.84 \
+# tf 2.13 does not work with torch 2.2.1. Both require conflicting versions of typing-extensions
+#CUDA 11: ARG CUDA_VERSION=11.8 CUDNN_VERSION=8.7.0.84 \
 ARG CUDA_VERSION=12.0 CUDNN_VERSION=8.9.2.26 \
-  TENSORFLOW_VERSION=2.13.1 KERAS_VERSION=2.13.1 TENSORRT_VERSION=8.6.1 TORCH_VERSION=2.2.1 \
+  TENSORFLOW_VERSION=2.15.0 KERAS_VERSION=2.15.0 TENSORRT_VERSION=8.6.1 TORCH_VERSION=2.2.1 \
   PROTOBUF_VERSION=3.20.3 
 
 # apt deps
@@ -83,8 +84,7 @@ RUN mamba install pyqt \
 # no purge required but no-cache-dir is used. pip purge will actually break the build here!
 # We already have the lib files imported into LD_LIBRARY_PATH by CUDDN and the cudatoolkit. let's remove these and save some image space.
 # Beware of potentially needing to update these if we update the drivers.
-# Tensorflow will attempt to install cuda pip pkgs regardless of what is already installed.
-# 2.13.1 == CUDA 11, 2.14+ == CUDA 12
+# Check tensorrt_env_vars.sh if you have to bump tensorrt!
 RUN pip install nvidia-cudnn-cu12==$CUDNN_VERSION torch==$TORCH_VERSION torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121 && \
   pip install tensorflow==$TENSORFLOW_VERSION tensorflow-datasets tensorrt==$TENSORRT_VERSION keras==$KERAS_VERSION && \
   fix-permissions $CONDA_DIR && \

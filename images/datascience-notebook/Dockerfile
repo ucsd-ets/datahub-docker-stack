@@ -23,6 +23,7 @@ RUN apt-get update -y && \
     gnupg \
     htop \
     wget \
+    strace \
     openssh-client \
     openssh-server \
     p7zip \
@@ -65,7 +66,7 @@ RUN pip install pillow typing-extensions tzlocal appdirs gputil mock pytest \
 
 # Install jupyterlab extensions
 # TODO: Change jupyterhub_version
-RUN pip install jupyterhub==4.0.2 jupyter-server==$JUPYTERSERVER_VERSION jupyterlab==$JUPYTERLAB_VERSION notebook==$NOTEBOOK_VERSION nbclassic==$NBCLASSIC_VERSION jupyterlab_rise \
+RUN pip install jupyterhub==$JUPYTERHUB_VERSION jupyter-server==$JUPYTERSERVER_VERSION jupyterlab==$JUPYTERLAB_VERSION notebook==$NOTEBOOK_VERSION nbclassic==$NBCLASSIC_VERSION jupyterlab_rise \
     jupyter_server_terminals jupyter-collaboration jupyterlab-github jupyterlab-latex jupyterlab-git \
     jupyterlab-fasta jupyterlab-pullrequests jupyterlab-geojson jupyterlab-link-share \
     nbconvert==$NBCONVERT_VERSION && \
