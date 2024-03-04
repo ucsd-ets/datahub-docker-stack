@@ -108,4 +108,10 @@ RUN mkdir -p $CONDA_DIR/lib/nvvm/libdevice && \
     cp $CONDA_DIR/nvvm/libdevice/libdevice.10.bc $CONDA_DIR/lib/nvvm/libdevice/
     #CUDA 11: cp $CONDA_DIR/lib/libdevice.10.bc $CONDA_DIR/lib/nvvm/libdevice/
 
+# TensorRT fix for tensorflow
+# https://github.com/tensorflow/tensorflow/issues/61468 (could not find TensorRT)
+# This will most definitely have to be changed after 8.6.1...
+RUN ln -s /opt/conda/lib/python3.11/site-packages/tensorrt_libs/libnvinfer_plugin.so.8 /opt/conda/lib/python3.11/site-packages/tensorrt_libs/libnvinfer_plugin.so.8.6.1 && \
+    ln -s /opt/conda/lib/python3.11/site-packages/tensorrt_libs/libnvinfer.so.8 /opt/conda/lib/python3.11/site-packages/tensorrt_libs/libnvinfer.so.8.6.1
+
 RUN . /tmp/activate.sh
