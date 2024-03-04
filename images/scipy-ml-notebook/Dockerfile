@@ -10,9 +10,10 @@ USER root
 ARG LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7
 
 # Python/Mamba deps
+#ARG CUDA_VERSION=11.8 CUDNN_VERSION=8.7.0.84 \
 ARG CUDA_VERSION=12.0 CUDNN_VERSION=8.9.2.26 \
-  PROTOBUF_VERSION=3.20.3 TENSORFLOW_VERSION=2.15.0 KERAS_VERSION=2.15.0 TENSORRT_VERSION=8.6.1 \
-  TORCH_VERSION=2.2.1
+  TENSORFLOW_VERSION=2.13.1 KERAS_VERSION=2.13.1 TENSORRT_VERSION=8.6.1 TORCH_VERSION=2.2.1 \
+  PROTOBUF_VERSION=3.20.3 
 
 # apt deps
 RUN apt-get update && \
@@ -45,10 +46,10 @@ RUN chmod 777 /etc/datahub-profile.d/*.sh /tmp/activate.sh
 
 USER jovyan
 
-# CUDA 12
-# tf requirements: https://www.tensorflow.org/install/pip#linux
+# CUDA
 RUN mamba install -c "nvidia/label/cuda-12.0.0" cuda-nvcc \
     cuda-toolkit=$CUDA_VERSION \
+    # For CUDA 11: cudatoolkit=$CUDA_VERSION \
     cuda-version=$CUDA_VERSION \
     nccl \
     -y && \
@@ -72,7 +73,6 @@ RUN pip install opencv-contrib-python-headless \
 
 RUN mamba install pyqt \
   scapy \
-  # datascience \
   pycocotools \
   pillow -y \
   -c conda-forge && \
@@ -81,8 +81,10 @@ RUN mamba install pyqt \
   mamba clean -a -y
 
 # no purge required but no-cache-dir is used. pip purge will actually break the build here!
-# We already have the lib files imported into LD_LIBRARY_PATH by CUDDN and the cuda-toolkit. let's remove these and save some image space.
+# We already have the lib files imported into LD_LIBRARY_PATH by CUDDN and the cudatoolkit. let's remove these and save some image space.
 # Beware of potentially needing to update these if we update the drivers.
+# Tensorflow will attempt to install cuda pip pkgs regardless of what is already installed.
+# 2.13.1 == CUDA 11, 2.14+ == CUDA 12
 RUN pip install nvidia-cudnn-cu12==$CUDNN_VERSION torch==$TORCH_VERSION torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121 && \
   pip install tensorflow==$TENSORFLOW_VERSION tensorflow-datasets tensorrt==$TENSORRT_VERSION keras==$KERAS_VERSION && \
   fix-permissions $CONDA_DIR && \
@@ -104,5 +106,6 @@ ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
 # Copy libdevice file to the required path
 RUN mkdir -p $CONDA_DIR/lib/nvvm/libdevice && \
     cp $CONDA_DIR/nvvm/libdevice/libdevice.10.bc $CONDA_DIR/lib/nvvm/libdevice/
+    #CUDA 11: cp $CONDA_DIR/lib/libdevice.10.bc $CONDA_DIR/lib/nvvm/libdevice/
 
 RUN . /tmp/activate.sh

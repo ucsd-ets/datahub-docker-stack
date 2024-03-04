@@ -79,6 +79,7 @@ EXCLUDED_PACKAGES = [
     "cudnn",
     "nccl",
     "cuda-toolkit",
+    "cudatoolkit",
     "cuda-version",
     "cuda-nvcc",
     "pytorch-cuda",
