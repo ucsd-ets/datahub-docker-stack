@@ -81,6 +81,8 @@ def build(node: Node) -> Tuple[bool, str]:
                 
                 # Error detection. The docker client is not throwing errors if the build fails.
                 # These errors are caught by our tests unless we scan these lines manually.
+                # DEBUG
+                print("TESTESTEST: " + line)
                 if 'errorDetail' in line:
                     logger.error(f"Docker returned build error during build of {node.image_name},\n {build_e}")
                     return False, report
