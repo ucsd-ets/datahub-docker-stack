@@ -33,7 +33,7 @@ RUN apt-get update -y && \
     chmod g-s /usr/bin/screen && \
     chmod 1777 /var/run/screen
 
-# Jupyter/datahub/nbgrader settup
+# Jupyter/datahub/nbgrader setup
 COPY /scripts /usr/share/datahub/scripts/
 COPY /scripts/jupyter_notebook_config.py /tmp/jupyter_notebook_config_extra.py
 COPY /scripts/nbgrader_config.py /etc/jupyter/nbgrader_config.py
@@ -57,7 +57,7 @@ ARG PANDAS_VERSION=2.2.1 STATSMODELS_VERSION=0.14.1
 
 # Install essential+datascience pip packages 
 ## mistune added for nbgrader issues
-RUN pip install AAAAAAAAAAAAAAAAAAAA pillow typing-extensions tzlocal appdirs gputil mock pytest \
+RUN pip install pillow typing-extensions tzlocal appdirs gputil mock pytest \
     nltk statsmodels==$STATSMODELS_VERSION pandas==$PANDAS_VERSION 'mistune>=2' --upgrade && \
     pip install dpkt nose datascience && \
     python -c 'import matplotlib.pyplot' && \
@@ -73,7 +73,7 @@ RUN pip install jupyterhub==$JUPYTERHUB_VERSION jupyter-server==$JUPYTERSERVER_V
     pip cache purge
 
 # Install R packages
-RUN mamba install -c conda-forge r-markdown r-covr r-git2r r-crosstalk r-dt -y && \
+RUN mamba install -c conda-forge YESYESYES r-markdown r-covr r-git2r r-crosstalk r-dt -y && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
     mamba clean -a -y
