@@ -41,4 +41,5 @@ COPY ./test ./integration_tests /home/jovyan/
 
 USER $NB_USER
 
+# Cleanup
 RUN conda init bash

@@ -77,7 +77,6 @@ RUN pip install opencv-contrib-python-headless \
 
 # Install CUDA/Torch/Tensorflow/Keras w/pip
 ## no purge required but no-cache-dir is used. pip purge will actually break the build here!
-## We already have the lib files imported into LD_LIBRARY_PATH by CUDDN and the cudatoolkit. let's remove these and save some image space.
 ## Beware of potentially needing to update these if we update the drivers.
 ## Check tensorrt_env_vars.sh if you have to bump tensorrt!
 RUN pip install nvidia-cudnn-cu12==$CUDNN_VERSION torch==$TORCH_VERSION torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121 && \

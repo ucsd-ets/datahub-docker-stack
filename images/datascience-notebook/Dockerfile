@@ -1,6 +1,5 @@
 ARG PYTHON_VERSION=python-3.11.8
 FROM quay.io/jupyter/datascience-notebook:$PYTHON_VERSION
-# coerce change in all notebooks
 USER root
 
 # Setup datascience apt pkgs + env vars
