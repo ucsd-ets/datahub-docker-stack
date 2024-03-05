@@ -85,7 +85,7 @@ def build(node: Node) -> Tuple[bool, str]:
                 error_patterns = [re.compile(r'\x1b\[91mE:'),] # gross
                 for each_error in error_patterns:
                     if each_error.search(content_str):
-                        logger.error(f"Docker failed to build {node.image_name},\n {build_e}")
+                        logger.error(f"Docker failed to build {node.image_name},\n {content_str}")
                         return False, report
                 
         # time for last step
