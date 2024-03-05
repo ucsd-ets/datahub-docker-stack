@@ -78,6 +78,13 @@ def build(node: Node) -> Tuple[bool, str]:
                     step += 1
 
                 report += content_str + '\n'
+                
+                # Error detection. The docker client is not throwing errors if the build fails.
+                # These errors are caught by our tests unless we scan these lines manually.
+                if 'errorDetail' in line:
+                    logger.error(f"Docker returned build error during build of {node.image_name},\n {build_e}")
+                    return False, report
+                
         # time for last step
         last_t, m, s = get_time_duration(last_t)
         report += f'Step {step} took [{m} min {s} sec] \n'
