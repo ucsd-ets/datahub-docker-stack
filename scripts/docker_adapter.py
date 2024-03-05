@@ -9,6 +9,7 @@ from scripts.tree import Node
 from scripts.utils import get_logger, store_var, get_time_duration
 import os
 import datetime
+import re
 
 
 logger = get_logger()
@@ -80,12 +81,12 @@ def build(node: Node) -> Tuple[bool, str]:
                 report += content_str + '\n'
                 
                 # Error detection. The docker client is not throwing errors if the build fails.
-                # These errors are caught by our tests unless we scan these lines manually.
-                # DEBUG
-                print("TESTESTEST: " + str(line))
-                if 'errorDetail' in line:
-                    logger.error(f"Docker returned build error during build of {node.image_name},\n {build_e}")
-                    return False, report
+                # These errors are caught by our tests unless we scan these lines manually (not a fan of this).
+                error_patterns = [re.compile(r'\x1b\[91mE:'),] # gross
+                for each_error in error_patterns:
+                    if each_error.search(content_str):
+                        logger.error(f"Docker failed to build {node.image_name},\n {build_e}")
+                        return False, report
                 
         # time for last step
         last_t, m, s = get_time_duration(last_t)
@@ -95,7 +96,7 @@ def build(node: Node) -> Tuple[bool, str]:
         return True, report
 
     except docker_client.errors.BuildError as build_e:
-        logger.error(f"Docker returned build error during build of {node.image_name},\n {build_e}")
+        logger.error(f"Docker failed to build {node.image_name},\n {build_e}")
         return False, report
     except docker_client.errors.APIError as api_e:
         logger.error(f"Docker returned API error during build of {node.image_name},\n {api_e}")
