@@ -86,13 +86,16 @@ def build(node: Node) -> Tuple[bool, str]:
         return True, report
 
     except docker_client.errors.BuildError as build_e:
-        logger.error(f"Error during build of {node.image_name},\n {build_e}")
+        logger.error(f"Docker returned build error during build of {node.image_name},\n {build_e}")
         return False, report
     except docker_client.errors.APIError as api_e:
-        logger.error(f"Server returns error during build of {node.image_name},\n {api_e}")
+        logger.error(f"Docker returned API error during build of {node.image_name},\n {api_e}")
+        return False, report
+    except docker_client.errors.DockerException as docker_e:
+        logger.error(f"Docker returned generic error during build of {node.image_name},\n {docker_e}")
         return False, report
     except Exception as e:
-        logger.error("Unrecognized error; \n" + str(e))
+        logger.error("Unrecognized exception; \n" + str(e))
         return False, report
     
     finally:
