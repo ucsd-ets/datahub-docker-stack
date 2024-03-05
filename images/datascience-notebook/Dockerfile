@@ -4,6 +4,7 @@ USER root
 
 # Setup datascience apt pkgs + env vars
 ## see https://github.com/phusion/baseimage-docker/issues/319#issuecomment-1058835363
+# TODO DEBUG remove "YOURMOM" testing docker error
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBCONF_NOWARNINGS="yes"
 RUN apt-get update -y && \
@@ -22,6 +23,7 @@ RUN apt-get update -y && \
     htop \
     wget \
     strace \
+    YOURMOM \
     openssh-client \
     openssh-server \
     p7zip \
@@ -57,9 +59,8 @@ ARG PANDAS_VERSION=2.2.1 STATSMODELS_VERSION=0.14.1
 
 # Install essential+datascience pip packages 
 ## mistune added for nbgrader issues
-# TODO DEBUG: Remove nltk_data, this is to test docker exception handling.
 RUN pip install pillow typing-extensions tzlocal appdirs gputil mock pytest \
-    nltk nltk_data statsmodels==$STATSMODELS_VERSION pandas==$PANDAS_VERSION 'mistune>=2' --upgrade && \
+    nltk statsmodels==$STATSMODELS_VERSION pandas==$PANDAS_VERSION 'mistune>=2' --upgrade && \
     pip install dpkt nose datascience && \
     python -c 'import matplotlib.pyplot' && \
     fix-permissions $CONDA_DIR && \
