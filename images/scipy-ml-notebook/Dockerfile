@@ -46,6 +46,7 @@ RUN chmod 777 /etc/datahub-profile.d/*.sh /tmp/activate.sh
 USER jovyan
 
 # CUDA setup w/mamba
+## TODO: This command seems to duplicate cuda packages for nvidia (pypi + conda-forge). What to do about this? Is this okay?
 RUN mamba install -c "nvidia/label/cuda-12.0.0" cuda-nvcc \
     cuda-toolkit=$CUDA_VERSION \
     # For CUDA 11: cudatoolkit=$CUDA_VERSION \
@@ -66,7 +67,7 @@ RUN pip install --no-cache-dir protobuf==$PROTOBUF_VERSION
 ## tensorrt installed to fix not having libnvinfer that has caused tensorflow issues.
 RUN pip install opencv-contrib-python-headless \
     opencv-python \
-    pyqt \
+    pyqt5 \
     scapy \
     pycocotools \
     pillow && \
@@ -98,8 +99,8 @@ RUN mkdir -p $CONDA_DIR/lib/nvvm/libdevice && \
 # TensorRT fix for tensorflow
 ## https://github.com/tensorflow/tensorflow/issues/61468 (could not find TensorRT)
 ## This will most definitely have to be changed after 8.6.1...
-RUN ln -s /opt/conda/lib/python3.11/site-packages/tensorrt_libs/libnvinfer_plugin.so.8 /opt/conda/lib/python3.11/site-packages/tensorrt_libs/libnvinfer_plugin.so.8.6.1 && \
-    ln -s /opt/conda/lib/python3.11/site-packages/tensorrt_libs/libnvinfer.so.8 /opt/conda/lib/python3.11/site-packages/tensorrt_libs/libnvinfer.so.8.6.1
+RUN ln -s /opt/conda/lib/python3.11/site-packages/tensorrt_libs/libnvinfer_plugin.so.8 /opt/conda/lib/python3.11/site-packages/tensorrt_libs/libnvinfer_plugin.so.$TENSORRT_VERSION && \
+    ln -s /opt/conda/lib/python3.11/site-packages/tensorrt_libs/libnvinfer.so.8 /opt/conda/lib/python3.11/site-packages/tensorrt_libs/libnvinfer.so.$TENSORRT_VERSION
 
 # Run datahub scripts
 RUN . /tmp/activate.sh
