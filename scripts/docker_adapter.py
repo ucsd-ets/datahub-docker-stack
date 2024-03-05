@@ -82,10 +82,13 @@ def build(node: Node) -> Tuple[bool, str]:
                 
                 # Error detection. The docker client is not throwing errors if the build fails.
                 # These errors are caught by our tests unless we scan these lines manually (not a fan of this).
-                error_patterns = [re.compile(r'\x1b\[91mE:'),] # gross
-                for each_error in error_patterns:
-                    if each_error.search(content_str):
-                        logger.error(f"Docker failed to build {node.image_name},\n {content_str}")
+                error_patterns = {
+                    'apt': re.compile(r'\x1b\[91mE:'),
+                    'pip': re.compile(r'\x1b\[91mERROR:'),
+                }
+                for key, val in error_patterns.items():
+                    if val.search(content_str):
+                        logger.error(f"({key}) Docker failed to build {node.image_name},\n {content_str}")
                         return False, report
                 
         # time for last step
