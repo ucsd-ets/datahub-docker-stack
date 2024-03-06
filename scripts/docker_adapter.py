@@ -59,10 +59,12 @@ def build(node: Node) -> Tuple[bool, str]:
         # causing unknown behavior.
         step = 0
         last_t = datetime.datetime.now()
+        image_tag = node.image_name + ':' + node.image_tag
+        build_start_time = datetime.datetime.now()
         for line in __docker_client.api.build(
             path=node.filepath,
             dockerfile=node.dockerfile,
-            tag=node.image_name + ':' + node.image_tag,
+            tag=image_tag,
             buildargs=node.build_args,
             nocache=False,
             decode=True,
@@ -82,6 +84,7 @@ def build(node: Node) -> Tuple[bool, str]:
                 
                 # Error detection. The docker client is not throwing errors if the build fails.
                 # These errors are caught by our tests unless we scan these lines manually (not a big fan of this).
+                '''
                 error_patterns = {
                     'apt': re.compile(r'\x1b\[91mE:'),
                     'pip': re.compile(r'\x1b\[91mERROR:'),
@@ -98,13 +101,33 @@ def build(node: Node) -> Tuple[bool, str]:
                     if val.search(content_str):
                         logger.error(f"({key}) Docker failed to build {node.image_name},\n {content_str}")
                         return False, report
+                '''
                 
         # time for last step
         last_t, m, s = get_time_duration(last_t)
         report += f'Step {step} took [{m} min {s} sec] \n'
-        logger.info(f"Now we have these images: { __docker_client.images.list()}")
+        
+        # check if image was *actually* built
+        images = __docker_client.images.list()
+        image_found = False
+        for image in images:
+            if image_tag in image.tags:
+                image_found = True
+                break
 
-        return True, report
+        if image_found:
+            # Image is found, now check if it's fresh
+            image_info = __docker_client.images.get(image_tag)
+            image_creation_time = datetime.datetime.fromisoformat(image_info.attrs['Created'].rstrip('Z'))
+            if image_creation_time >= build_start_time:
+                logger.info(f"Now we have these images: { images}")
+                return True, report
+            else:
+                logger.error(f"Image {image_tag} was found, but it appears to be cached/not freshly built.")
+                return False, report
+            
+        logger.error(f"Image {image_tag} was not found in the list after the build.")
+        return False, report
 
     except docker_client.errors.BuildError as build_e:
         logger.error(f"Docker failed to build {node.image_name},\n {build_e}")

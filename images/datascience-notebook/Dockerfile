@@ -2,6 +2,8 @@ ARG PYTHON_VERSION=python-3.11.8
 FROM quay.io/jupyter/datascience-notebook:$PYTHON_VERSION
 USER root
 
+FAIL IMMEDIATELY
+
 # Setup datascience apt pkgs + env vars
 ## see https://github.com/phusion/baseimage-docker/issues/319#issuecomment-1058835363
 ENV DEBIAN_FRONTEND noninteractive
@@ -34,8 +36,6 @@ RUN apt-get update -y && \
     chmod 1777 /var/run/screen
 
 # Jupyter/datahub/nbgrader setup
-# DEBUG:
-RUN cp /weoprfepwif/owiefjioewf /w0eiofjioewfj/iowerfgjiowejf
 COPY /scripts /usr/share/datahub/scripts/
 COPY /scripts/jupyter_notebook_config.py /tmp/jupyter_notebook_config_extra.py
 COPY /scripts/nbgrader_config.py /etc/jupyter/nbgrader_config.py
