@@ -87,12 +87,12 @@ def build(node: Node) -> Tuple[bool, str]:
                     'pip': re.compile(r'\x1b\[91mERROR:'),
                     'conda': re.compile(r'Solving environment: failed'),
                     'mamba': re.compile(r'Could not solve for environment specs'),
-                    'cp': re.compile(r'cp: '),
-                    'mv': re.compile(r'mv: '),
-                    'ln': re.compile(r'ln: '),
-                    'mkdir': re.compile(r'mkdir: '),
-                    'chmod': re.compile(r'chmod: '),
-                    'chown': re.compile(r'chown: '),
+                    'cp': re.compile(r'^cp: '),
+                    'mv': re.compile(r'^mv: '),
+                    'ln': re.compile(r'^ln: '),
+                    'mkdir': re.compile(r'^mkdir: '),
+                    'chmod': re.compile(r'^chmod: '),
+                    'chown': re.compile(r'^chown: '),
                 }
                 for key, val in error_patterns.items():
                     if val.search(content_str):
