@@ -46,7 +46,7 @@ RUN chmod 777 /etc/datahub-profile.d/*.sh /tmp/activate.sh
 USER jovyan
 
 # CUDA setup w/mamba
-## TODO: This command seems to duplicate cuda packages for nvidia (pypi + conda-forge). What to do about this? Is this okay?
+## TODO: This command seems to duplicate cuda packages for nvidia (pypi + conda-forge). What to do about this?
 RUN mamba install -c "nvidia/label/cuda-12.0.0" cuda-nvcc \
     cuda-toolkit=$CUDA_VERSION \
     # For CUDA 11: cudatoolkit=$CUDA_VERSION \
