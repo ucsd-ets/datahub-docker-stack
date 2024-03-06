@@ -1,9 +1,11 @@
 ARG BASE_TAG=latest
-FROM ghcr.io/ucsd-ets/datascience-notebook:2024.3-scipy-ml-fixup
+FROM ghcr.io/ucsd-ets/datascience-notebook:${BASE_TAG}
 
 USER root
 
 RUN mamba install r-base=4.1.3 -c conda-forge 
+
+COPY logging.conf /etc/rstudio/logging.conf
 
 # RStudio Setup
 ## Follow instructions at https://www.rstudio.com/products/rstudio/download-server/
