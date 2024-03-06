@@ -118,7 +118,11 @@ def build(node: Node) -> Tuple[bool, str]:
         if image_found:
             # Image is found, now check if it's fresh
             image_info = __docker_client.images.get(image_tag)
-            image_creation_time = datetime.datetime.fromisoformat(image_info.attrs['Created'].rstrip('Z'))
+            
+            # Truncate the timestamp string to remove nanoseconds
+            truncated_timestamp_str = image_info.attrs['Created'][:26] + 'Z'
+            image_creation_time = datetime.datetime.fromisoformat(truncated_timestamp_str.rstrip('Z'))
+            
             if image_creation_time >= build_start_time:
                 logger.info(f"Now we have these images: { images}")
                 return True, report
