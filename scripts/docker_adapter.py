@@ -81,12 +81,18 @@ def build(node: Node) -> Tuple[bool, str]:
                 report += content_str + '\n'
                 
                 # Error detection. The docker client is not throwing errors if the build fails.
-                # These errors are caught by our tests unless we scan these lines manually (not a fan of this).
+                # These errors are caught by our tests unless we scan these lines manually (not a big fan of this).
                 error_patterns = {
                     'apt': re.compile(r'\x1b\[91mE:'),
                     'pip': re.compile(r'\x1b\[91mERROR:'),
                     'conda': re.compile(r'Solving environment: failed'),
                     'mamba': re.compile(r'Could not solve for environment specs'),
+                    'cp': re.compile(r'cp: '),
+                    'mv': re.compile(r'mv: '),
+                    'ln': re.compile(r'ln: '),
+                    'mkdir': re.compile(r'mkdir: '),
+                    'chmod': re.compile(r'chmod: '),
+                    'chown': re.compile(r'chown: '),
                 }
                 for key, val in error_patterns.items():
                     if val.search(content_str):
