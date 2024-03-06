@@ -2,14 +2,13 @@ ARG PYTHON_VERSION=python-3.11.8
 FROM quay.io/jupyter/datascience-notebook:$PYTHON_VERSION
 USER root
 
-FAIL IMMEDIATELY
-
 # Setup datascience apt pkgs + env vars
 ## see https://github.com/phusion/baseimage-docker/issues/319#issuecomment-1058835363
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBCONF_NOWARNINGS="yes"
 RUN apt-get update -y && \
     apt-get -qq install -y --no-install-recommends \
+    BADBADBAD \
     git \
     curl \
     rsync \
