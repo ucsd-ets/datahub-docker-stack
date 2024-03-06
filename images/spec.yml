@@ -25,7 +25,7 @@ images:
     #prepull: false #-- uncomment to disable prepulling behavior for scipy-ml. gives you space on machine in exchange for build time.
 
 tag:
-  prefix: "2024.3"
+  prefix: "2023.4"
 
 all_info_cmds:
   PY_VER:
