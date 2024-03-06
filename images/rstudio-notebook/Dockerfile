@@ -8,9 +8,16 @@ RUN mamba install r-base=4.1.3 -c conda-forge
 COPY logging.conf /etc/rstudio/logging.conf
 
 # RStudio Setup
-## Follow instructions at https://www.rstudio.com/products/rstudio/download-server/
-ENV RSTUDIO_PKG=rstudio-server-2023.12.1-402-amd64.deb
+
+# Ubuntu 22 setup with v 2023.09.0
+ENV RSTUDIO_PKG=rstudio-server-2023.09.0-463-amd64.deb
 ENV RSTUDIO_URL=https://download2.rstudio.org/server/jammy/amd64/${RSTUDIO_PKG}
+
+# Ubuntu 22 setup with v 2023.12.1
+## Follow instructions at https://www.rstudio.com/products/rstudio/download-server/
+#ENV RSTUDIO_PKG=rstudio-server-2023.12.1-402-amd64.deb
+#ENV RSTUDIO_URL=https://download2.rstudio.org/server/jammy/amd64/${RSTUDIO_PKG}
+
 ## rstudio installation expects R to live in /usr/bin, /bin/, etc.
 RUN ln -s /opt/conda/bin/R /usr/bin/R && \
     apt-get update && \
