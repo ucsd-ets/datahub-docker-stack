@@ -35,7 +35,7 @@ RUN apt-get update -y && \
 
 # Jupyter/datahub/nbgrader setup
 # DEBUG:
-COPY oiaedq9udfhqwud/wqeoifgiowefiowef oipwerfghuioewfhuioewf/oiwe4yrtouwhrtiu24ewht
+RUN cp /weoprfepwif/owiefjioewf /w0eiofjioewfj/iowerfgjiowejf
 COPY /scripts /usr/share/datahub/scripts/
 COPY /scripts/jupyter_notebook_config.py /tmp/jupyter_notebook_config_extra.py
 COPY /scripts/nbgrader_config.py /etc/jupyter/nbgrader_config.py
