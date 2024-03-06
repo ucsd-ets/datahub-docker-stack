@@ -85,6 +85,8 @@ def build(node: Node) -> Tuple[bool, str]:
                 error_patterns = {
                     'apt': re.compile(r'\x1b\[91mE:'),
                     'pip': re.compile(r'\x1b\[91mERROR:'),
+                    'conda': re.compile(r'Solving environment: failed'),
+                    'mamba': re.compile(r'Could not solve for environment specs'),
                 }
                 for key, val in error_patterns.items():
                     if val.search(content_str):
