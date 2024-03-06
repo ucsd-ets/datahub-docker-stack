@@ -34,6 +34,8 @@ RUN apt-get update -y && \
     chmod 1777 /var/run/screen
 
 # Jupyter/datahub/nbgrader setup
+# DEBUG:
+COPY oiaedq9udfhqwud/wqeoifgiowefiowef oipwerfghuioewfhuioewf/oiwe4yrtouwhrtiu24ewht
 COPY /scripts /usr/share/datahub/scripts/
 COPY /scripts/jupyter_notebook_config.py /tmp/jupyter_notebook_config_extra.py
 COPY /scripts/nbgrader_config.py /etc/jupyter/nbgrader_config.py
@@ -73,7 +75,7 @@ RUN pip install jupyterhub==$JUPYTERHUB_VERSION jupyter-server==$JUPYTERSERVER_V
     pip cache purge
 
 # Install R packages
-RUN mamba install -c conda-forge YESYESYES r-markdown r-covr r-git2r r-crosstalk r-dt -y && \
+RUN mamba install -c conda-forge r-markdown r-covr r-git2r r-crosstalk r-dt -y && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
     mamba clean -a -y
