@@ -1,7 +1,9 @@
 ARG BASE_TAG=latest
-FROM ghcr.io/ucsd-ets/datascience-notebook:${BASE_TAG}
+FROM ghcr.io/ucsd-ets/datascience-notebook:2024.3-scipy-ml-fixup
 
 USER root
+
+RUN mamba install r-base=4.1.3 -c conda-forge
 
 # RStudio Setup
 ## Follow instructions at https://www.rstudio.com/products/rstudio/download-server/
@@ -17,7 +19,8 @@ RUN ln -s /opt/conda/bin/R /usr/bin/R && \
     echo '/opt/conda/lib/R/lib' > /etc/ld.so.conf.d/r.conf && /sbin/ldconfig -v && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
     rm -f /usr/bin/R && \
-    chmod -R g=u /var/lib/rstudio-server
+    chmod -R g=u /var/lib/rstudio-server && \
+    service rstudio-server restart
 
 RUN pip install jupyter-rsession-proxy
 
