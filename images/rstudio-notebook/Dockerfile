@@ -44,6 +44,8 @@ RUN R -e "install.packages('rjson', repos='http://cran.rstudio.com/')" && \
 
 COPY ./test ./integration_tests /home/jovyan/
 
+RUN chmod 777 /var/ -R
+
 USER $NB_USER
 
 # Cleanup
