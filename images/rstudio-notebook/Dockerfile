@@ -3,7 +3,7 @@ FROM ghcr.io/ucsd-ets/datascience-notebook:2024.3-scipy-ml-fixup
 
 USER root
 
-RUN mamba install r-base=4.1.3 -c conda-forge
+RUN mamba install r-base=4.1.3 -c conda-forge 
 
 # RStudio Setup
 ## Follow instructions at https://www.rstudio.com/products/rstudio/download-server/
