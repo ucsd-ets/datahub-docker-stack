@@ -83,6 +83,7 @@ RUN pip install jupyterlab==3.0.16 jupyterlab-github jupyterlab-latex jupyterlab
 RUN pip install dpkt \
     nose \
     bottleneck==1.3.6 \
+    umap-learn \
     numexpr==2.8.4 \
     datascience && \
     python -c 'import matplotlib.pyplot' && \
