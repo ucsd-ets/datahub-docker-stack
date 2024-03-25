@@ -57,15 +57,8 @@ ARG PANDAS_VERSION=2.2.1 STATSMODELS_VERSION=0.14.1
 
 # Install essential+datascience pip packages 
 ## mistune added for nbgrader issues
-#RUN pip install pillow typing-extensions tzlocal appdirs gputil mock pytest umap-learn \
-#    nltk statsmodels==$STATSMODELS_VERSION pandas==$PANDAS_VERSION 'mistune>=2' --upgrade && \
-#    pip install dpkt nose datascience && \
-#    python -c 'import matplotlib.pyplot' && \
-#    fix-permissions $CONDA_DIR && \
-#    fix-permissions /home/$NB_USER && \
-#    pip cache purge
 RUN mamba install -c conda-forge pillow typing-extensions tzlocal appdirs gputil mock pytest umap-learn && \
-    mamba install -c conda-forge nltk statsmodels=$STATSMODELS_VERSION pandas=$PANDAS_VERSION 'mistune>=2' && \
+    mamba install -c conda-forge nltk statsmodels=$STATSMODELS_VERSION pandas=$PANDAS_VERSION mistune && \
     mamba install -c conda-forge dpkt nose datascience && \
     python -c 'import matplotlib.pyplot' && \
     fix-permissions $CONDA_DIR && \
