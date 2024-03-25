@@ -53,6 +53,7 @@ PACKAGE_MAPPING = {
     "jupyterlab-latex": "jupyterlab_latex",
     "jupyterlab-fasta": "jupyterlab_fasta",
     "jupyterlab-geojson": "jupyterlab_geojson",
+    "jupyter-collaboration": "jupyter_collaboration",
     "scikit-learn": "sklearn",
     "scikit-image": "skimage",
     "spylon-kernel": "spylon_kernel",
