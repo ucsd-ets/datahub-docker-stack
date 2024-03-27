@@ -66,14 +66,15 @@ RUN pip install --no-cache-dir protobuf==$PROTOBUF_VERSION
 ## Install pillow<7 due to dependency issue https://github.com/pytorch/vision/issues/1712
 ## tensorrt installed to fix not having libnvinfer that has caused tensorflow issues.
 RUN pip install opencv-contrib-python-headless \
-    opencv-python \
-    pyqt5 \
-    scapy \
-    pycocotools \
-    pillow && \
+    opencv-python && \
     fix-permissions $CONDA_DIR && \ 
     fix-permissions /home/$NB_USER && \
     pip cache purge
+
+RUN mamba install -c conda-forge pyqt pycocotools pillow scapy && \
+    fix-permissions $CONDA_DIR && \
+    fix-permissions /home/$NB_USER && \
+    mamba clean --all
 
 # Install CUDA/Torch/Tensorflow/Keras w/pip
 ## no purge required but no-cache-dir is used. pip purge will actually break the build here!

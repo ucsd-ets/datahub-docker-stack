@@ -52,25 +52,30 @@ USER jovyan
 # Python/Mamba Deps
 ARG PY_VER_SHORT=3.11
 ## Package versions
-ARG JUPYTERSERVER_VERSION=2.12.5 JUPYTERHUB_VERSION=4.0.2 JUPYTERLAB_VERSION=4.1.2 NBCONVERT_VERSION=7.16.1 NOTEBOOK_VERSION=7.1.1 NBCLASSIC_VERSION=1.0.0
+ARG JUPYTERSERVER_VERSION=2.13.0 JUPYTERHUB_VERSION=4.1.1 JUPYTERLAB_VERSION=4.1.5 NBCONVERT_VERSION=7.16.3 NOTEBOOK_VERSION=7.1.2 NBCLASSIC_VERSION=1.0.0
 ARG PANDAS_VERSION=2.2.1 STATSMODELS_VERSION=0.14.1
 
 # Install essential+datascience pip packages 
 ## mistune added for nbgrader issues
-RUN pip install pillow typing-extensions tzlocal appdirs gputil mock pytest umap-learn \
-    nltk statsmodels==$STATSMODELS_VERSION pandas==$PANDAS_VERSION 'mistune>=2' --upgrade && \
-    pip install dpkt nose datascience && \
+RUN mamba install -c conda-forge pillow typing-extensions tzlocal appdirs gputil mock pytest umap-learn && \
+    mamba install -c conda-forge nltk statsmodels=$STATSMODELS_VERSION pandas=$PANDAS_VERSION mistune && \
+    mamba install -c conda-forge dpkt nose datascience && \
     python -c 'import matplotlib.pyplot' && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
-    pip cache purge
+    mamba clean --all
 
 # Install jupyterlab+extensions
-RUN pip install jupyterhub==$JUPYTERHUB_VERSION jupyter-server==$JUPYTERSERVER_VERSION jupyterlab==$JUPYTERLAB_VERSION notebook==$NOTEBOOK_VERSION nbclassic==$NBCLASSIC_VERSION jupyterlab_rise \
-    jupyter_server_terminals jupyter-collaboration jupyterlab-github jupyterlab-latex jupyterlab-git \
-    jupyterlab-fasta jupyterlab-pullrequests jupyterlab-geojson jupyterlab-link-share \
-    nbconvert==$NBCONVERT_VERSION && \
-    pip cache purge
+RUN mamba install -c conda-forge jupyterhub=$JUPYTERHUB_VERSION jupyter_server=$JUPYTERSERVER_VERSION && \
+    mamba install -c conda-forge jupyterlab=$JUPYTERLAB_VERSION notebook=$NOTEBOOK_VERSION nbclassic=$NBCLASSIC_VERSION && \
+    mamba install -c conda-forge jupyterlab_rise jupyter_server_terminals jupyter-collaboration && \
+    mamba install -c conda-forge jupyterlab-github jupyterlab-latex jupyterlab-git jupyterlab-fasta jupyterlab-geojson && \
+    mamba install -c conda-forge nbconvert=$NBCONVERT_VERSION && \
+    fix-permissions $CONDA_DIR && \
+    fix-permissions /home/$NB_USER && \
+    mamba clean --all
+# TODO: Deprecated pkgs? Cause a massive downgrade
+### mamba install -c conda-forge jupyterlab-pullrequests jupyterlab-link-share
 
 # Install R packages
 RUN mamba install -c conda-forge r-markdown r-covr r-git2r r-crosstalk r-dt -y && \
