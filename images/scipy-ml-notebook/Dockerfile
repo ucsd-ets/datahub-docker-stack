@@ -94,7 +94,7 @@ RUN pip install torch==2.1.2 torchvision torchaudio --index-url https://download
   rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcudnn_ops_train.so.8 && \
   rm /opt/conda/lib/python3.9/site-packages/torch/lib/libcublas.so.11
 
-RUN pip install transformers datasets accelerate huggingface-cli && pip cache purge
+RUN pip install transformers datasets accelerate huggingface-cli timm && pip cache purge
 
 USER $NB_UID:$NB_GID
 ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
