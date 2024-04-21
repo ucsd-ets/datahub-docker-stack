@@ -61,11 +61,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Check Free Space 0
-        run: |
-          echo "Free space:"
-          df -h
-
       - name: Docker/ENV cleanup Cleanup
         run: |
           docker image prune -a -f
@@ -75,11 +70,6 @@ jobs:
           sudo rm -rf /opt/ghc
           sudo rm -rf "/usr/local/share/boost"
           sudo rm -rf "$AGENT_TOOLSDIRECTORY"
-
-      - name: Check Free Space 1
-        run: |
-          echo "Free space:"
-          df -h
 
       - name: Install pip dependencies
         run: |
@@ -120,11 +110,6 @@ jobs:
         with:
           repository: ${{github.repository}}.wiki
           path: wiki
-
-      - name: Check Free Space 2
-        run: |
-          echo "Free space:"
-          df -h
       
       - name: Build stack
         env:
@@ -137,7 +122,7 @@ jobs:
         run: |
           python3 scripts/main.py
 
-      - name: Check Free Space 3
+      - name: Check Free Space
         run: |
           echo "Free space:"
           df -h

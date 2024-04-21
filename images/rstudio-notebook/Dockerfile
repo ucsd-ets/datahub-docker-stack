@@ -23,8 +23,10 @@ RUN ln -s /opt/conda/bin/R /usr/bin/R && \
     chmod -R g=u /var/lib/rstudio-server && \
     service rstudio-server restart
 
-#RUN pip install jupyter-rsession-proxy
-RUN pip install git+https://github.com/ucsd-ets/datahub-jupyter-rsession-proxy.git
+RUN pip install jupyter-rsession-proxy
+# currently we have an issue where the user's default working dir is ALWAYS /home/jovyan.
+# perhaps fix in our fork below? 
+#RUN pip install git+https://github.com/ucsd-ets/datahub-jupyter-rsession-proxy.git
 
 RUN mkdir -p /etc/rstudio && echo 'auth-minimum-user-id=100' >> /etc/rstudio/rserver.conf
 
@@ -37,10 +39,6 @@ ENV PATH="${PATH}:/usr/lib/rstudio-server/bin" \
     LD_LIBRARY_PATH="/usr/lib/R/lib:/lib:/usr/lib/x86_64-linux-gnu:/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/amd64/server:/opt/conda/lib/R/lib"
 
 COPY ./lib /opt/k8s-support/lib
-
-#RUN R -e "install.packages('rjson', repos='http://cran.rstudio.com/')" && \
-#    R -e "install.packages('session', repos='http://cran.rstudio.com/')" && \
-#    R -e "install.packages('rmarkdown', repos='http://cran.rstudio.com/')"
 
 COPY ./test ./integration_tests /home/jovyan/
 
