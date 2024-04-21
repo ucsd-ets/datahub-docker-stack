@@ -3,8 +3,6 @@ FROM ghcr.io/ucsd-ets/datascience-notebook:${BASE_TAG}
 
 USER root
 
-COPY logging.conf /etc/rstudio/logging.conf
-
 # RStudio Setup
 
 # Ubuntu 22 setup with v 2023.12.1
@@ -25,7 +23,8 @@ RUN ln -s /opt/conda/bin/R /usr/bin/R && \
     chmod -R g=u /var/lib/rstudio-server && \
     service rstudio-server restart
 
-RUN pip install jupyter-rsession-proxy
+#RUN pip install jupyter-rsession-proxy
+RUN pip install git+https://github.com/ucsd-ets/datahub-jupyter-rsession-proxy.git
 
 RUN mkdir -p /etc/rstudio && echo 'auth-minimum-user-id=100' >> /etc/rstudio/rserver.conf
 
