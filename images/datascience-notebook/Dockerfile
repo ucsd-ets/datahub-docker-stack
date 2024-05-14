@@ -59,7 +59,7 @@ RUN /usr/share/datahub/scripts/install-python-all.sh && \
     pip install nltk \
     pyarrow \
     pip install statsmodels==0.14.1 \
-    nbconvert==7.8.0 \
+    nbconvert==7.2.1 \
     jupyterhub==$JUPYTERHUB_VERSION && \
     mamba install -c conda-forge rise -y && \
     fix-permissions $CONDA_DIR && \
