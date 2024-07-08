@@ -1,0 +1,65 @@
+name: AUTO Build and Test
+
+env:
+  DOCKER_CLIENT_TIMEOUT: "300"
+  COMPOSE_HTTP_TIMEOUT: "300"
+
+on:
+  push:
+    paths:
+      - "images/**"
+      - "model/**"
+      - "scripts/**"
+      - "dodo.py"
+      - ".github/workflows/main.yml"
+
+  pull_request:
+    branches: [ main ]
+    paths:
+      - "images/**"
+      - "model/**"
+      - "scripts/**"
+      - "dodo.py"
+      - ".github/workflows/main.yml"
+
+  workflow_dispatch:
+
+jobs:
+  docker-pipeline:
+    runs-on: ubuntu-latest
+    if: >
+      !contains(github.event.head_commit.message , 'skip ci') &&
+      !contains(github.event.pull_request.title, 'skip ci')
+    steps:
+      - name: Checkout after Free Space
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Check Free Space 0
+        run: |
+          echo "Free space:"
+          df -h
+
+      - name: Docker/ENV cleanup Cleanup
+        run: |
+          docker image prune -a -f
+          docker container prune -f
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "/usr/local/share/boost"
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+      
+      - name: Log in to the Container registry
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker push
+        run: |
+          docker pull docker pull ucsdets/scipy-ml-notebook:2021.3-stable
+          docker tag docker.io/ucsdets/scipy-ml-notebook:2021.3-stable ghcr.io/ucsd-ets/scipy-ml-notebook:2021.3-stable
+          docker push ghcr.io/ucsd-ets/scipy-ml-notebook:2021.3-stable
