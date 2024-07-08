@@ -1,4 +1,4 @@
-name: AUTO Build and Test
+name: migrate scipy
 
 env:
   DOCKER_CLIENT_TIMEOUT: "300"
