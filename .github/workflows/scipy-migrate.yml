@@ -61,6 +61,6 @@ jobs:
 
       - name: Docker push
         run: |
-          docker pull docker pull ucsdets/scipy-ml-notebook:2021.3-stable
+          docker pull ucsdets/scipy-ml-notebook:2021.3-stable
           docker tag docker.io/ucsdets/scipy-ml-notebook:2021.3-stable ghcr.io/ucsd-ets/scipy-ml-notebook:2021.3-stable
           docker push ghcr.io/ucsd-ets/scipy-ml-notebook:2021.3-stable
