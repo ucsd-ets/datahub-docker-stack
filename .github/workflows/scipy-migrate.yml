@@ -3,6 +3,7 @@ name: migrate scipy
 env:
   DOCKER_CLIENT_TIMEOUT: "300"
   COMPOSE_HTTP_TIMEOUT: "300"
+  REGISTRY: ghcr.io
 
 on:
   push:
