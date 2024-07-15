@@ -1,10 +1,14 @@
+# If you are building manually, pass PYTHON_VERSION/PY_VER_SHORT/JUPYTERHUB_VERSION with --build-arg
 ARG PYTHON_VERSION=python-3.11.9
+ARG PY_VER_SHORT=3.11
+ARG JUPYTERHUB_VERSION=4.1.5
+
 FROM quay.io/jupyter/datascience-notebook:$PYTHON_VERSION
 USER root
 
 # Setup datascience apt pkgs + env vars
 ## see https://github.com/phusion/baseimage-docker/issues/319#issuecomment-1058835363
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 ENV DEBCONF_NOWARNINGS="yes"
 RUN apt-get update -y && \
     apt-get -qq install -y --no-install-recommends \
@@ -50,9 +54,8 @@ COPY /test/test_r_func.R /opt/manual_tests
 USER jovyan
 
 # Python/Mamba Deps
-ARG PY_VER_SHORT=3.11
 ## Package versions
-ARG JUPYTERSERVER_VERSION=2.14.2 JUPYTERHUB_VERSION=4.1.5 JUPYTERLAB_VERSION=4.2.3 NBCONVERT_VERSION=7.16.4 NOTEBOOK_VERSION=7.2.1 NBCLASSIC_VERSION=1.0.0
+ARG JUPYTERSERVER_VERSION=2.14.2 JUPYTERLAB_VERSION=4.2.3 NBCONVERT_VERSION=7.16.4 NOTEBOOK_VERSION=7.2.1 NBCLASSIC_VERSION=1.0.0
 ARG PANDAS_VERSION=2.2.2 STATSMODELS_VERSION=0.14.1
 
 # Install essential+datascience pip packages 
