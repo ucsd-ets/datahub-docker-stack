@@ -4,7 +4,7 @@ images:
   datascience-notebook:
     image_name: ghcr.io/ucsd-ets/datascience-notebook
     build_args:
-      PYTHON_VERSION: python-3.11.9
+      PYTHON_VERSION: python-3.11.8
       PY_VER_SHORT: "3.11"
       JUPYTERHUB_VERSION: 4.1.5
     info_cmds: [PY_VER, PIP_LIST, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
