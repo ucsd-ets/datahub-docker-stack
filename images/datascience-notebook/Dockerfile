@@ -74,7 +74,8 @@ RUN mamba install -c conda-forge pillow typing-extensions tzlocal appdirs gputil
 # Install jupyterlab+extensions
 RUN mamba install -c conda-forge jupyterhub=$JUPYTERHUB_VERSION jupyter_server=$JUPYTERSERVER_VERSION && \
     mamba install -c conda-forge jupyterlab=$JUPYTERLAB_VERSION notebook=$NOTEBOOK_VERSION nbclassic=$NBCLASSIC_VERSION && \
-    mamba install -c conda-forge jupyterlab_rise jupyter_server_terminals jupyter-collaboration && \
+    # (TODO: Re-enable collab once RTC is fixed) mamba install -c conda-forge jupyterlab_rise jupyter_server_terminals jupyter-collaboration && \
+    mamba install -c conda-forge jupyterlab_rise jupyter_server_terminals && \
     mamba install -c conda-forge jupyterlab-github jupyterlab-latex jupyterlab-git jupyterlab-fasta jupyterlab-geojson && \
     mamba install -c conda-forge nbconvert=$NBCONVERT_VERSION nbgrader=$NBGRADER_VERSION && \
     fix-permissions $CONDA_DIR && \

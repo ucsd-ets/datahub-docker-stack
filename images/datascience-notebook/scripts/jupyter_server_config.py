@@ -11,10 +11,9 @@ from jupyter_core.paths import jupyter_data_dir
 c = get_config()  # noqa: F821
 c.ServerApp.ip = "0.0.0.0"
 c.ServerApp.open_browser = False
-c.ServerApp.tornado_settings = {'headers': {'Content-Security-Policy': "frame-ancestors *;"}}
 
-# TEMP: Disable RTC until bugs fixed with URL modification
-c.YDocExtension.disable_rtc = True
+# Fix iframes (formgrader) as of jhub 4.1.0
+c.ServerApp.tornado_settings = {'headers': {'Content-Security-Policy': "frame-ancestors *;"}}
 
 # to output both image/svg+xml and application/pdf plot formats in the notebook file
 c.InlineBackend.figure_formats = {"png", "jpeg", "svg", "pdf"}
