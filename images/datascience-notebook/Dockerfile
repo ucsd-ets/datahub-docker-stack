@@ -6,7 +6,7 @@ ARG JUPYTERHUB_VERSION=4.1.5
 FROM quay.io/jupyter/datascience-notebook:$PYTHON_VERSION
 USER root
 
-# Setup datascience apt pkgs + env vars
+# Setup datascience apt pkgs + env vars 
 ## see https://github.com/phusion/baseimage-docker/issues/319#issuecomment-1058835363
 ENV DEBIAN_FRONTEND=noninteractive
 ENV DEBCONF_NOWARNINGS="yes"
