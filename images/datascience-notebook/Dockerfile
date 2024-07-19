@@ -40,7 +40,6 @@ RUN apt-get update -y && \
 # Jupyter/datahub/nbgrader setup
 COPY /scripts /usr/share/datahub/scripts/
 COPY /scripts/jupyter_notebook_config.py /tmp/jupyter_notebook_config_extra.py
-COPY /scripts/jupyter_server_config.py /tmp/jupyter_server_config_extra.py
 COPY /scripts/nbgrader_config.py /etc/jupyter/nbgrader_config.py
 RUN cat /tmp/jupyter_notebook_config_extra.py >> /etc/jupyter/jupyter_notebook_config.py && \
     chmod -R uga+x /usr/share/datahub/scripts/ && \
