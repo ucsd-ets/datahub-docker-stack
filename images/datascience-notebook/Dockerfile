@@ -43,10 +43,8 @@ COPY /scripts/jupyter_notebook_config.py /tmp/jupyter_notebook_config_extra.py
 COPY /scripts/jupyter_server_config.py /tmp/jupyter_server_config_extra.py
 COPY /scripts/nbgrader_config.py /etc/jupyter/nbgrader_config.py
 RUN cat /tmp/jupyter_notebook_config_extra.py >> /etc/jupyter/jupyter_notebook_config.py && \
-cat /tmp/jupyter_server_config_extra.py >> /etc/jupyter/jupyter_server_config.py && \
     chmod -R uga+x /usr/share/datahub/scripts/ && \
     chmod -R uga+x /etc/jupyter/jupyter_notebook_config.py && \
-    chmod -R uga+x /etc/jupyter/jupyter_server_config.py && \
     chmod -R uga+x /etc/jupyter/nbgrader_config.py
 
 # Copy over R tests to /opt/manual_tests
