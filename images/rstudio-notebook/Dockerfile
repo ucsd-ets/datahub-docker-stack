@@ -44,9 +44,6 @@ COPY ./test ./integration_tests /home/jovyan/
 
 RUN chmod 777 /var/ -R
 
-# (Temp fix?) Make jovyan accessible so that RStudio does not complain
-RUN chmod 777 /home/jovyan/ -R
-
 USER $NB_USER
 
 # Cleanup
