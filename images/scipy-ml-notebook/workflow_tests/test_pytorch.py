@@ -106,7 +106,7 @@ def length_of_dataset_no_cuda():
 
     # Download and load the training data
     train_data = datasets.MNIST(
-        root='./data', train=True, download=True, transform=transform)
+        root='/tmp', train=True, download=True, transform=transform)
 
     # Check the size of the training set
     ld = len(train_data)
@@ -131,9 +131,9 @@ def mean_pixel_value_cuda():
     transform = transforms.Compose(
         [transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))])
     train_set = datasets.MNIST(
-        root='./data', train=True, download=True, transform=transform)
+        root='/tmp', train=True, download=True, transform=transform)
     test_set = datasets.MNIST(
-        root='./data', train=False, download=True, transform=transform)
+        root='/tmp', train=False, download=True, transform=transform)
 
     # Move dataset to device
     train_loader = torch.utils.data.DataLoader(
@@ -171,7 +171,7 @@ def multiply_dataset_calculate_mean_cuda():
     transform = transforms.Compose(
         [transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))])
     train_dataset = datasets.MNIST(
-        './data', train=True, download=True, transform=transform)
+        '/tmp', train=True, download=True, transform=transform)
 
     # Create a DataLoader for the dataset
     train_loader = torch.utils.data.DataLoader(

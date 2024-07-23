@@ -30,7 +30,10 @@ RUN chmod +x /run_jupyter.sh
 # Scripts setup
 COPY cudatoolkit_env_vars.sh cudnn_env_vars.sh tensorrt_env_vars.sh /etc/datahub-profile.d/
 COPY activate.sh /tmp/activate.sh
-COPY workflow_tests /opt/workflow_tests
+
+# Add tests
+RUN mkdir -p /opt/workflow_tests
+COPY workflow_tests/* /opt/workflow_tests
 ADD manual_tests /opt/manual_tests
 
 RUN chmod 777 /etc/datahub-profile.d/*.sh /tmp/activate.sh
