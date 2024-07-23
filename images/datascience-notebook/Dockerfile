@@ -56,7 +56,7 @@ COPY /test/test_r_func.R /opt/manual_tests
 
 # Add additional tests
 RUN mkdir -p /opt/workflow_tests
-COPY workflow_tests/* /opt/workflow_tests
+COPY workflow_tests/* /opt/workflow_tests/
 
 USER jovyan
 
