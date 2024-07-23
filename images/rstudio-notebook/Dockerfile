@@ -5,9 +5,9 @@ USER root
 
 # RStudio Setup
 
-# Ubuntu 22 setup with v 2023.12.1
+# Ubuntu 22 setup with v 2024.04.2-764
 ## Follow instructions at https://www.rstudio.com/products/rstudio/download-server/
-ENV RSTUDIO_PKG=rstudio-server-2023.12.1-402-amd64.deb
+ENV RSTUDIO_PKG=rstudio-server-2024.04.2-764-amd64.deb
 ENV RSTUDIO_URL=https://download2.rstudio.org/server/jammy/amd64/${RSTUDIO_PKG}
 
 ## rstudio installation expects R to live in /usr/bin, /bin/, etc.
@@ -24,9 +24,6 @@ RUN ln -s /opt/conda/bin/R /usr/bin/R && \
     service rstudio-server restart
 
 RUN pip install jupyter-rsession-proxy
-# currently we have an issue where the user's default working dir is ALWAYS /home/jovyan.
-# perhaps fix in our fork below? 
-#RUN pip install git+https://github.com/ucsd-ets/datahub-jupyter-rsession-proxy.git
 
 RUN mkdir -p /etc/rstudio && echo 'auth-minimum-user-id=100' >> /etc/rstudio/rserver.conf
 
@@ -43,9 +40,6 @@ COPY ./lib /opt/k8s-support/lib
 COPY ./test ./integration_tests /home/jovyan/
 
 RUN chmod 777 /var/ -R
-
-# (Temp fix?) Make jovyan accessible so that RStudio does not complain
-RUN chmod 777 /home/jovyan/ -R
 
 USER $NB_USER
 
