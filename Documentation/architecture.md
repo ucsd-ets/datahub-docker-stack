@@ -86,7 +86,7 @@ to run the pipeline. For testing, we use pytest.
 │   │   ├── manual_tests
 │   │   │   ├── pytorch_mtest.ipynb
 │   │   │   └── tensorflow_mtest.ipynb
-│   │   ├── old_tests
+│   │   ├── test
 │   │   │   ├── __init__.py
 │   │   │   ├── data
 │   │   │   │   └── test_tf.ipynb
