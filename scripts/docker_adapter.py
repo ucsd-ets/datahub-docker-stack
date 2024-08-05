@@ -149,43 +149,56 @@ def image_tag_exists(node: Node) -> bool:
     return len(image_tag_list) > 0
 
 
-def push(node: Node) -> Tuple[bool, str]:
+def push(node: Node, http_delay_attempts: int = 3) -> Tuple[bool, str]:
 
-    try:
-        # login to GHCR
-        # push
+    return_tuple = (False, "")
+    for attempt in range(http_delay_attempts):
+        try:
+            # login to GHCR
+            # push
+            stream = __docker_client.images.push(
+                node.image_name, node.image_tag, stream=True, decode=True)
 
-        stream = __docker_client.images.push(
-            node.image_name, node.image_tag, stream=True, decode=True)
+            res = ""
+            for chunk in stream:
+                # logger.info(chunk)
 
-        res = ""
-        for chunk in stream:
-            # logger.info(chunk)
+                if 'status' in chunk:
+                    # "The push refers to repository XXX_repo"
+                    if node.image_name in chunk['status']:
+                        res += chunk['status']
+                        logger.info(chunk['status'])
 
-            if 'status' in chunk:
-                # "The push refers to repository XXX_repo"
-                if node.image_name in chunk['status']:
-                    res += chunk['status']
-                    logger.info(chunk['status'])
+                    # "XXX_tag: digest: sha256:XXX size: XXX"
+                    elif node.image_tag in chunk['status']:
+                        formatted_log = '\n' + chunk['status']
+                        res += formatted_log
+                        logger.info(formatted_log)
 
-                # "XXX_tag: digest: sha256:XXX size: XXX"
-                elif node.image_tag in chunk['status']:
-                    formatted_log = '\n' + chunk['status']
-                    res += formatted_log
-                    logger.info(formatted_log)
+                    # regular progress; skip
+                    else:
+                        continue
 
-                # regular progress; skip
-                else:
-                    continue
-
-        return True, res
-    except Exception as e:
-        logger.error(e)
-        return False, res
-
-    finally:
-        __docker_client.close()
-
+            return_tuple = (True, res)
+            break
+            #return True, res
+        except Exception as e:
+            if "UnixHTTPConnectionPool" in str(e) and "Read timed out" in str(e):
+                # We keep getting this error sometimes.
+                # Retry if we encounter it.
+                logger.warning(e)
+                logger.warning(f"Retrying upload...{attempt+1}/{http_delay_attempts}")
+                return_tuple = (False, res)
+            else:
+                # If it is any other error, fail immediately.
+                logger.error(e)
+                return_tuple = (False, res)
+                break
+                #return False, res
+            
+    # Cleanup and return
+    __docker_client.close()
+    return return_tuple
 
 def get_image_obj(node: Node) -> docker_client.models.images.Image:
     # check (if str in List) before get image object
