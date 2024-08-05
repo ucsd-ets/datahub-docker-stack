@@ -181,9 +181,12 @@ def push(node: Node, http_delay_attempts: int = 3) -> Tuple[bool, str]:
 
             return_tuple = (True, res)
             break
-            #return True, res
         except Exception as e:
-            if "UnixHTTPConnectionPool" in str(e) and "Read timed out" in str(e):
+            if (attempt+1 == 3):
+                logger.error(e)
+                return_tuple = (False, res)
+                break
+            elif "UnixHTTPConnectionPool" in str(e) and "Read timed out" in str(e):
                 # We keep getting this error sometimes.
                 # Retry if we encounter it.
                 logger.warning(e)
@@ -194,7 +197,6 @@ def push(node: Node, http_delay_attempts: int = 3) -> Tuple[bool, str]:
                 logger.error(e)
                 return_tuple = (False, res)
                 break
-                #return False, res
             
     # Cleanup and return
     __docker_client.close()
