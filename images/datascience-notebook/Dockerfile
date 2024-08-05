@@ -101,7 +101,7 @@ RUN /usr/share/datahub/scripts/install-python-all.sh && \
 RUN jupyter labextension disable @jupyterlab/extensionmanager-extension
 
 # Cleanup
-## nbgrader requires some variables set to just run the notebook server
+## nbgrader requires these variables set to just run the notebook server
 ENV NBGRADER_COURSEID="NA"
 ENV JUPYTERHUB_USER=${NB_USER}
 
