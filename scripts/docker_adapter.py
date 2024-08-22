@@ -74,7 +74,6 @@ def build(node: Node) -> Tuple[bool, str]:
             # line is of type dict
             content_str = line.get('stream', '').strip()    # sth like 'Step 1/20 : ARG PYTHON_VERSION=python-3.9.5'
             error_str = line.get('error', '').strip()
-            
             if error_str:
                 raise docker_client.errors.BuildError(build_log=error_str, reason=error_str)
             

@@ -3,6 +3,7 @@ ARG PYTHON_VERSION=python-3.11.8
 ARG PY_VER_SHORT=3.11
 ARG JUPYTERHUB_VERSION=4.1.5
 
+# Jupyter has changed where it has stored its images
 FROM quay.io/jupyter/datascience-notebook:$PYTHON_VERSION
 USER root
 
@@ -63,13 +64,13 @@ USER jovyan
 # Python/Mamba Deps
 ## Package versions
 ARG JUPYTERSERVER_VERSION=2.14.2 NBGRADER_VERSION=0.9.3 JUPYTERLAB_VERSION=4.2.4 NBCONVERT_VERSION=7.16.4 NOTEBOOK_VERSION=7.2.1 NBCLASSIC_VERSION=1.1.0
-ARG PANDAS_VERSION=2.2.2 STATSMODELS_VERSION=0.14.2
+ARG PANDAS_VERSION=2.2.2 STATSMODELS_VERSION=0.14.2 BOTTLENECK_VERSION=1.3.6 NUMEXPR_VERSION=2.8.4
 
 # Install essential+datascience pip packages 
 ## mistune added for nbgrader issues
 RUN mamba install -c conda-forge pillow typing-extensions tzlocal appdirs gputil mock pytest umap-learn && \
     mamba install -c conda-forge nltk statsmodels=$STATSMODELS_VERSION pandas=$PANDAS_VERSION mistune && \
-    mamba install -c conda-forge dpkt nose datascience && \
+    mamba install -c conda-forge dpkt nose datascience pyarrow bottleneck=$BOTTLENECK_VERSION umap-learn numexpr=$NUMEXPR_VESION && \
     python -c 'import matplotlib.pyplot' && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \

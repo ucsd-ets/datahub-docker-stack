@@ -50,6 +50,7 @@ USER jovyan
 
 # CUDA setup w/mamba
 ## TODO: Investigate this command, seems to duplicate cuda packages for nvidia (pypi + conda-forge). 
+# cuda-toolkit is a skeleton package on CUDA 12, unlike CUDA <= 11
 RUN mamba install -c "nvidia/label/cuda-12.0.0" cuda-nvcc \
     cuda-toolkit=$CUDA_VERSION \
     # For CUDA 11: cudatoolkit=$CUDA_VERSION \
@@ -89,6 +90,8 @@ RUN pip install nvidia-cudnn-cu12==$CUDNN_VERSION torch==$TORCH_VERSION torchvis
   fix-permissions /home/$NB_USER && \
   mamba clean -a -y && \
   pip cache purge
+
+RUN pip install transformers datasets accelerate huggingface-cli timm && pip cache purge
 
 USER $NB_UID:$NB_GID
 ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
