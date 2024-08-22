@@ -91,7 +91,11 @@ RUN pip install nvidia-cudnn-cu12==$CUDNN_VERSION torch==$TORCH_VERSION torchvis
   mamba clean -a -y && \
   pip cache purge
 
-RUN pip install transformers datasets accelerate huggingface-cli timm && pip cache purge
+RUN pip install transformers datasets accelerate huggingface-hub timm && \
+  fix-permissions $CONDA_DIR && \
+  fix-permissions /home/$NB_USER && \
+  mamba clean -a -y && \
+  pip cache purge
 
 USER $NB_UID:$NB_GID
 ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
