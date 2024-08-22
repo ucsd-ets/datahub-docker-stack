@@ -9,6 +9,7 @@ from scripts.tree import Node
 from scripts.utils import get_logger, store_var, get_time_duration
 import os
 import datetime
+import re
 
 
 logger = get_logger()
@@ -58,10 +59,12 @@ def build(node: Node) -> Tuple[bool, str]:
         # causing unknown behavior.
         step = 0
         last_t = datetime.datetime.now()
+        image_tag = node.image_name + ':' + node.image_tag
+        build_start_time = datetime.datetime.now()
         for line in __docker_client.api.build(
             path=node.filepath,
             dockerfile=node.dockerfile,
-            tag=node.image_name + ':' + node.image_tag,
+            tag=image_tag,
             buildargs=node.build_args,
             nocache=False,
             decode=True,
@@ -71,32 +74,37 @@ def build(node: Node) -> Tuple[bool, str]:
             # line is of type dict
             content_str = line.get('stream', '').strip()    # sth like 'Step 1/20 : ARG PYTHON_VERSION=python-3.9.5'
             error_str = line.get('error', '').strip()
-
             if error_str:
                 raise docker_client.errors.BuildError(build_log=error_str, reason=error_str)
-            if content_str:
+            
+            if content_str:     # if not empty string
                 # time each major step (Step 1/23 : xxx)
                 if content_str[:4] == "Step":
                     last_t, m, s = get_time_duration(last_t)
                     report += f'Step {step} took [{m} min {s} sec] \n'
                     step += 1
-
                 report += content_str + '\n'
+                
         # time for last step
         last_t, m, s = get_time_duration(last_t)
         report += f'Step {step} took [{m} min {s} sec] \n'
-        logger.info(f"Now we have these images: { __docker_client.images.list()}")
-
+        
+        # check if image was *actually* built
+        images = __docker_client.images.list()
+        logger.info(f"Now we have these images: { images}")
         return True, report
 
     except docker_client.errors.BuildError as build_e:
-        logger.error(f"Error during build of {node.image_name},\n {build_e}")
+        logger.error(f"Docker failed to build {node.image_name},\n {build_e}")
         return False, report
     except docker_client.errors.APIError as api_e:
-        logger.error(f"Server returns error during build of {node.image_name},\n {api_e}")
+        logger.error(f"Docker returned API error during build of {node.image_name},\n {api_e}")
+        return False, report
+    except docker_client.errors.DockerException as docker_e:
+        logger.error(f"Docker returned generic error during build of {node.image_name},\n {docker_e}")
         return False, report
     except Exception as e:
-        logger.error("Unrecognized error; \n" + str(e))
+        logger.error("Unrecognized exception; \n" + str(e))
         return False, report
     
     finally:
@@ -140,43 +148,58 @@ def image_tag_exists(node: Node) -> bool:
     return len(image_tag_list) > 0
 
 
-def push(node: Node) -> Tuple[bool, str]:
+def push(node: Node, http_delay_attempts: int = 3) -> Tuple[bool, str]:
 
-    try:
-        # login to GHCR
-        # push
+    return_tuple = (False, "")
+    for attempt in range(http_delay_attempts):
+        try:
+            # login to GHCR
+            # push
+            stream = __docker_client.images.push(
+                node.image_name, node.image_tag, stream=True, decode=True)
 
-        stream = __docker_client.images.push(
-            node.image_name, node.image_tag, stream=True, decode=True)
+            res = ""
+            for chunk in stream:
+                # logger.info(chunk)
 
-        res = ""
-        for chunk in stream:
-            # logger.info(chunk)
+                if 'status' in chunk:
+                    # "The push refers to repository XXX_repo"
+                    if node.image_name in chunk['status']:
+                        res += chunk['status']
+                        logger.info(chunk['status'])
 
-            if 'status' in chunk:
-                # "The push refers to repository XXX_repo"
-                if node.image_name in chunk['status']:
-                    res += chunk['status']
-                    logger.info(chunk['status'])
+                    # "XXX_tag: digest: sha256:XXX size: XXX"
+                    elif node.image_tag in chunk['status']:
+                        formatted_log = '\n' + chunk['status']
+                        res += formatted_log
+                        logger.info(formatted_log)
 
-                # "XXX_tag: digest: sha256:XXX size: XXX"
-                elif node.image_tag in chunk['status']:
-                    formatted_log = '\n' + chunk['status']
-                    res += formatted_log
-                    logger.info(formatted_log)
+                    # regular progress; skip
+                    else:
+                        continue
 
-                # regular progress; skip
-                else:
-                    continue
-
-        return True, res
-    except Exception as e:
-        logger.error(e)
-        return False, res
-
-    finally:
-        __docker_client.close()
-
+            return_tuple = (True, res)
+            break
+        except Exception as e:
+            if (attempt+1 == 3):
+                logger.error(e)
+                return_tuple = (False, res)
+                break
+            elif "UnixHTTPConnectionPool" in str(e) and "Read timed out" in str(e):
+                # We keep getting this error sometimes.
+                # Retry if we encounter it.
+                logger.warning(e)
+                logger.warning(f"Retrying upload...{attempt+1}/{http_delay_attempts}")
+                return_tuple = (False, res)
+            else:
+                # If it is any other error, fail immediately.
+                logger.error(e)
+                return_tuple = (False, res)
+                break
+            
+    # Cleanup and return
+    __docker_client.close()
+    return return_tuple
 
 def get_image_obj(node: Node) -> docker_client.models.images.Image:
     # check (if str in List) before get image object

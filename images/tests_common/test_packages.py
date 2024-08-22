@@ -48,15 +48,28 @@ PACKAGE_MAPPING = {
     # Python
     "matplotlib-base": "matplotlib",
     "beautifulsoup4": "bs4",
+    "gputil": "GPUtil",
+    "jupyterlab-github": "jupyterlab_github",
+    "jupyterlab-latex": "jupyterlab_latex",
+    "jupyterlab-fasta": "jupyterlab_fasta",
+    "jupyterlab-geojson": "jupyterlab_geojson",
+    "jupyter-collaboration": "jupyter_collaboration",
     "scikit-learn": "sklearn",
     "scikit-image": "skimage",
     "spylon-kernel": "spylon_kernel",
+    "typing-extensions": "typing_extensions",
     "pytables": "tables",
+    "pyqt": "PyQt5",
+    "pillow": "PIL",
+    "nltk_data": "nltk",
+    "pytorch": "torch",
+    "umap-learn": "umap",
     # R
     "randomforest": "randomForest",
     "rsqlite": "DBI",
     "rcurl": "RCurl",
     "rodbc": "RODBC",
+    "dt": "DT",
 }
 
 # List of packages that cannot be tested in a standard way
@@ -73,8 +86,14 @@ EXCLUDED_PACKAGES = [
     "ca-certificates",
     "cudnn",
     "nccl",
+    "cuda-toolkit",
     "cudatoolkit",
-    "cuda-nvcc"
+    "cuda-version",
+    "cuda-nvcc",
+    "pytorch-cuda",
+    "jupyterlab_rise[version='<0.40.0']",
+    "jupyterlab-git",
+    "jupyter-pluto-proxy",
 ]
 
 

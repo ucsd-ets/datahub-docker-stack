@@ -1,6 +1,6 @@
 # DataHub Docker Stack: GitHub Actions
 
-The images used to be built and pushed to [our organization at DockerHub](https://hub.docker.com/orgs/ucsdets/members) through GitHub Actions, but are now published as packages within this repo instead. We also use GitHub Actions for testing and pushing our stable images to production. [You may also check out scripts.md](/Documentation/scripts.md) for a more indepth look at the Python code underlying these actions.
+The images used to be built and pushed to [our organization at DockerHub](https://hub.docker.com/orgs/ucsdets/members) through GitHub Actions, but are now published as packages within this repo instead. We also use GitHub Actions for testing and pushing our stable images to production. [You may also check out scripts.md](/Documentation/scripts.md) for a more in-depth look at the Python code underlying these actions.
 
 We have four actions that we use to develop, test, and deploy our Docker Stack.
 

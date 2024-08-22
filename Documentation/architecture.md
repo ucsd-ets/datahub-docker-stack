@@ -56,6 +56,11 @@ to run the pipeline. For testing, we use pytest.
 │   │   ├── Dockerfile  # image definition for docker
 │   │   ├── scripts     # .sh & .py scripts used for container setup
 │   │   │   └── ...
+│   │   ├── workflow_tests
+│   │       ├── test_matplotlib.py
+│   │       ├── test_nltk.py
+│   │       ├── test_pandas.py
+│   │       └── test_statsmodels.py
 │   │   └── test    # image acceptance tests
 │   │       ├── data
 │   │       │   └── test-notebook.ipynb
@@ -77,16 +82,17 @@ to run the pipeline. For testing, we use pytest.
 │   │   ├── activate.sh
 │   │   ├── cudatoolkit_env_vars.sh
 │   │   ├── cudnn_env_vars.sh
+│   │   ├── run_jupyter.sh
 │   │   ├── manual_tests
 │   │   │   ├── pytorch_mtest.ipynb
 │   │   │   └── tensorflow_mtest.ipynb
-│   │   ├── run_jupyter.sh
 │   │   ├── test
 │   │   │   ├── __init__.py
 │   │   │   ├── data
 │   │   │   │   └── test_tf.ipynb
 │   │   │   └── test_tf.py
 │   │   └── workflow_tests
+│   │       ├── test_keras.py
 │   │       ├── test_pytorch.py
 │   │       └── test_tf.py
 │   ├── spec.yml        # image definition metadata (for all images)

@@ -1,4 +1,6 @@
+import io, urllib
 import torch
+import torchaudio
 
 
 def can_access_cuda():
@@ -104,7 +106,7 @@ def length_of_dataset_no_cuda():
 
     # Download and load the training data
     train_data = datasets.MNIST(
-        root='./data', train=True, download=True, transform=transform)
+        root='/tmp', train=True, download=True, transform=transform)
 
     # Check the size of the training set
     ld = len(train_data)
@@ -129,9 +131,9 @@ def mean_pixel_value_cuda():
     transform = transforms.Compose(
         [transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))])
     train_set = datasets.MNIST(
-        root='./data', train=True, download=True, transform=transform)
+        root='/tmp', train=True, download=True, transform=transform)
     test_set = datasets.MNIST(
-        root='./data', train=False, download=True, transform=transform)
+        root='/tmp', train=False, download=True, transform=transform)
 
     # Move dataset to device
     train_loader = torch.utils.data.DataLoader(
@@ -169,7 +171,7 @@ def multiply_dataset_calculate_mean_cuda():
     transform = transforms.Compose(
         [transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))])
     train_dataset = datasets.MNIST(
-        './data', train=True, download=True, transform=transform)
+        '/tmp', train=True, download=True, transform=transform)
 
     # Create a DataLoader for the dataset
     train_loader = torch.utils.data.DataLoader(
@@ -189,6 +191,42 @@ def multiply_dataset_calculate_mean_cuda():
                 return ("Test passed!")
             else:
                 raise Exception("Test failed...output was " + str(exactFloat))
+            
+def load_dummy_audio_file():
+    # Download an example audio file
+    url = "https://pytorch.org/tutorials/_static/img/steam-train-whistle-daniel_simon-converted-from-mp3.wav"
+    
+    # Load the audio file into memory
+    with urllib.request.urlopen(url) as response:
+        data = response.read()
+    
+    # Create a BytesIO object from the audio data
+    audio_file = io.BytesIO(data)
+    
+    # Load the audio file from memory
+    waveform, sample_rate = torchaudio.load(audio_file)
+    
+    # Check the shape and sample rate
+    if waveform.shape == (2, 276858) and sample_rate == 44100:
+        return "Test passed!"
+    else:
+        raise Exception(f"Test failed...waveform shape: {waveform.shape}, sample rate: {sample_rate}")
+    
+def resample_dummy_audio_sample():
+    # Create a dummy audio signal
+    waveform = torch.rand(1, 16000)
+    sample_rate = 16000
+
+    # Resample to 8000 Hz
+    new_sample_rate = 8000
+    resampler = torchaudio.transforms.Resample(sample_rate, new_sample_rate)
+    resampled_waveform = resampler(waveform)
+
+    # Check the new shape
+    if resampled_waveform.shape == (1, 8000):
+        return "Test passed!" 
+    else:
+        raise Exception(f"Test failed...resampled waveform shape: {resampled_waveform.shape}")
 
 
 def test_can_access_cuda():
@@ -223,4 +261,12 @@ def test_mean_pixel_value_cuda():
 
 def test_multiply_dataset_calculate_mean_cuda():
     result = multiply_dataset_calculate_mean_cuda()
+    assert result == "Test passed!"
+
+def test_load_dummy_audio_file():
+    result = load_dummy_audio_file()
+    assert result == "Test passed!"
+    
+def test_resample_dummy_audio_sample():
+    result = resample_dummy_audio_sample()
     assert result == "Test passed!"

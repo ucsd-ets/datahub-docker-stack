@@ -105,3 +105,46 @@ def test_arithmetic():
     output = result.numpy()
 
     assert output == 7.0
+
+def test_tensorrt():
+    # Make sure tensorflow sees tensorRT
+
+    import tensorflow.compiler as tf_cc
+    linked_trt_ver=tf_cc.tf2tensorrt._pywrap_py_utils.get_linked_tensorrt_version()
+    assert linked_trt_ver != "(0, 0, 0)", "TensorRT not recognized by tensorflow"
+
+    loaded_trt_ver=tf_cc.tf2tensorrt._pywrap_py_utils.get_loaded_tensorrt_version()
+    assert loaded_trt_ver != "(0, 0, 0)", "TensorRT not recognized by tensorflow"
+    
+    assert linked_trt_ver == loaded_trt_ver # If this is not true, tensorflow will crash
+
+def test_cublas():
+    a = tf.random.uniform([1000, 1000], dtype=tf.float32)
+    b = tf.random.uniform([1000, 1000], dtype=tf.float32)
+
+    # Perform matrix multiplication
+    c = tf.matmul(a, b)
+
+    assert c.shape == (1000, 1000), "Matrix multiplication result shape mismatch"
+
+def test_cudnn():
+    # Create a simple convolutional layer
+    conv_layer = tf.keras.layers.Conv2D(filters=32, kernel_size=3, activation='relu')
+
+    input_tensor = tf.random.uniform([1, 28, 28, 1], dtype=tf.float32)
+
+    output = conv_layer(input_tensor)
+
+    # Verify the shape of the convolution output
+    assert output.shape == (1, 26, 26, 32), "Convolution result shape mismatch"
+
+def test_cufft():
+    x = tf.random.uniform([1024], dtype=tf.float32)
+
+    # Perform FFT
+    fft_result = tf.signal.fft(tf.cast(tf.complex(x, tf.zeros_like(x)), tf.complex64))
+
+    ifft_result = tf.signal.ifft(fft_result)
+
+    # Ensure the inverse FFT returns to the original tensor
+    assert np.allclose(x.numpy(), tf.math.real(ifft_result).numpy(), atol=1e-4), "Inverse FFT result mismatch"   

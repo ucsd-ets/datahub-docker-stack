@@ -25,8 +25,33 @@ on:
   workflow_dispatch:
 
 jobs:
-  docker-pipeline:
+  start-runner:
+    name: Start self-hosted EC2 runner
     runs-on: ubuntu-latest
+    outputs:
+      label: ${{ steps.start-ec2-runner.outputs.label }}
+      ec2-instance-id: ${{ steps.start-ec2-runner.outputs.ec2-instance-id }}
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+      - name: Start EC2 runner
+        id: start-ec2-runner
+        uses: machulav/ec2-github-runner@v2
+        with:
+          mode: start
+          github-token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+          ec2-image-id: ami-079a0c9425d45e778
+          ec2-instance-type: t3.2xlarge
+          subnet-id: subnet-0c4a81ef57cf2ebe3
+          security-group-id: sg-01cb8c0cb0de3ba00
+  
+  docker-pipeline:
+    needs: start-runner # required to start the main job when the runner is ready
+    runs-on: ${{ needs.start-runner.outputs.label }}
     if: >
       !contains(github.event.head_commit.message , 'skip ci') &&
       !contains(github.event.pull_request.title, 'skip ci')
@@ -35,11 +60,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-
-      - name: Check Free Space 0
-        run: |
-          echo "Free space:"
-          df -h
 
       - name: Docker/ENV cleanup Cleanup
         run: |
@@ -51,20 +71,11 @@ jobs:
           sudo rm -rf "/usr/local/share/boost"
           sudo rm -rf "$AGENT_TOOLSDIRECTORY"
 
-      - name: Check Free Space 1
-        run: |
-          echo "Free space:"
-          df -h
-
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v3
-        with:
-          python-version: 3.8
-
       - name: Install pip dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install -r scripts/requirements.txt
+          sudo dnf -y install python-pip
+          sudo dnf remove python3-requests -y
+          python3 -m pip install -r scripts/requirements.txt
       
       - name: Install selenium dependecies for r studio
         run: |
@@ -99,11 +110,6 @@ jobs:
         with:
           repository: ${{github.repository}}.wiki
           path: wiki
-
-      - name: Check Free Space 2
-        run: |
-          echo "Free space:"
-          df -h
       
       - name: Build stack
         env:
@@ -116,7 +122,7 @@ jobs:
         run: |
           python3 scripts/main.py
 
-      - name: Check Free Space 3
+      - name: Check Free Space
         run: |
           echo "Free space:"
           df -h
@@ -143,3 +149,24 @@ jobs:
             artifacts
             logs
             manifests
+  stop-runner:
+    name: Stop self-hosted EC2 runner
+    needs:
+      - start-runner # required to get output from the start-runner job
+      - docker-pipeline # required to wait when the main job is done
+    runs-on: ubuntu-latest
+    if: ${{ always() }} # required to stop the runner even if the error happened in the previous jobs
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+      - name: Stop EC2 runner
+        uses: machulav/ec2-github-runner@v2
+        with:
+          mode: stop
+          github-token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+          label: ${{ needs.start-runner.outputs.label }}
+          ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}

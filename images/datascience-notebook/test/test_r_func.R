@@ -2,7 +2,7 @@ library(testthat)
 
 ### IMPORTS HERE
 library(randomForest)
-library(tidyverse)
+suppressPackageStartupMessages(library(tidyverse))
 library(markdown)
 library(lubridate)
 library(DT)
