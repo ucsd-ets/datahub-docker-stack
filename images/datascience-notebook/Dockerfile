@@ -50,6 +50,11 @@ RUN cat /tmp/jupyter_notebook_config_extra.py >> /etc/jupyter/jupyter_notebook_c
     chmod -R uga+x /etc/jupyter/jupyter_server_config.py && \
     chmod -R uga+x /etc/jupyter/nbgrader_config.py
 
+# Copy our default configuration for jupyterlab extensions
+COPY /scripts/jupyter_settings_overrides.json /opt/conda/share/jupyter/lab/settings/overrides.json
+RUN chown -R jovyan:users /opt/conda/share/jupyter/lab/settings && \
+    chmod 644 /opt/conda/share/jupyter/lab/settings/overrides.json
+
 # Copy over R tests to /opt/manual_tests
 RUN mkdir /opt/manual_tests
 COPY /test/test_r_dump_packages.R /opt/manual_tests
@@ -82,6 +87,7 @@ RUN mamba install -c conda-forge jupyterhub=$JUPYTERHUB_VERSION jupyter_server=$
     # (TODO: Re-enable collab once RTC is fixed) mamba install -c conda-forge jupyterlab_rise jupyter_server_terminals jupyter-collaboration && \
     mamba install -c conda-forge jupyterlab_rise jupyter_server_terminals && \
     mamba install -c conda-forge jupyterlab-github jupyterlab-latex jupyterlab-git jupyterlab-fasta jupyterlab-geojson && \
+    mamba install -c conda-forge jupyterlab_code_formatter isort black jupyter-archive jupyterlab_autoversion jupyterlab-lsp python-lsp-server r-languageserver && \
     mamba install -c conda-forge nbconvert=$NBCONVERT_VERSION nbgrader=$NBGRADER_VERSION && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
