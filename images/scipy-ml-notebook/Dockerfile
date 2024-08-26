@@ -1,5 +1,5 @@
 ARG BASE_TAG=latest
-FROM ghcr.io/ucsd-ets/datascience-notebook:2024.4-main
+FROM ghcr.io/ucsd-ets/datascience-notebook:${BASE_TAG}
 
 USER root
 
