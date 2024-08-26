@@ -3,7 +3,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 import numpy as np
 
-
 def get_GPU_context():
     # Check if GPU is available
     if tf.config.list_physical_devices('GPU'):
@@ -18,9 +17,11 @@ def get_GPU_context():
 
     return tf.device(device)
 
+def test_run_find_GPUs():
+    gpu = get_GPU_context()
+    assert gpu != None
 
 def run_SLR_model():
-
     # Set fixed seed for tf and np
     np.random.seed(12345)
     tf.random.set_seed(12345)
@@ -60,9 +61,11 @@ def run_SLR_model():
 
     return ("Test succeeded")
 
+def test_run_SLR_model():
+    result = run_SLR_model()
+    assert result == "Test succeeded"
 
 def multiply_matrices():
-
     # Perform a simple matrix multiplication on the GPU
     with get_GPU_context():
         a = tf.constant([[1.0, 2.0], [3.0, 4.0]])
@@ -78,33 +81,22 @@ def multiply_matrices():
         return
     return ("Test Succeeded")
 
-
-def test_run_find_GPUs():
-    gpu = get_GPU_context()
-    assert gpu != None
-
-
-def test_run_SLR_model():
-    result = run_SLR_model()
-    assert result == "Test succeeded"
-
-
 def test_multiply_matrices():
     result = multiply_matrices()
     assert result == "Test Succeeded"
 
-
 def test_arithmetic():
-    # Define the TensorFlow graph
-    a = tf.constant(2.0, dtype=tf.float32)
-    b = tf.constant(3.0, dtype=tf.float32)
-    c = tf.constant(1.0, dtype=tf.float32)
-    result = tf.add(tf.multiply(a, b), c)
+    with get_GPU_context():
+        # Define the TensorFlow graph
+        a = tf.constant(2.0, dtype=tf.float32)
+        b = tf.constant(3.0, dtype=tf.float32)
+        c = tf.constant(1.0, dtype=tf.float32)
+        result = tf.add(tf.multiply(a, b), c)
 
-    # Execute the graph using eager execution
-    output = result.numpy()
+        # Execute the graph using eager execution
+        output = result.numpy()
 
-    assert output == 7.0
+        assert output == 7.0
 
 def test_tensorrt():
     # Make sure tensorflow sees tensorRT
@@ -119,32 +111,37 @@ def test_tensorrt():
     assert linked_trt_ver == loaded_trt_ver # If this is not true, tensorflow will crash
 
 def test_cublas():
-    a = tf.random.uniform([1000, 1000], dtype=tf.float32)
-    b = tf.random.uniform([1000, 1000], dtype=tf.float32)
+    with get_GPU_context():
+        a = tf.random.uniform([1000, 1000], dtype=tf.float32)
+        b = tf.random.uniform([1000, 1000], dtype=tf.float32)
 
-    # Perform matrix multiplication
-    c = tf.matmul(a, b)
+        # Perform matrix multiplication
+        c = tf.matmul(a, b)
 
-    assert c.shape == (1000, 1000), "Matrix multiplication result shape mismatch"
+        assert c.shape == (1000, 1000), "Matrix multiplication result shape mismatch"
 
 def test_cudnn():
-    # Create a simple convolutional layer
-    conv_layer = tf.keras.layers.Conv2D(filters=32, kernel_size=3, activation='relu')
+    with get_GPU_context():
+        # Create a simple input tensor
+        input_data = tf.random.normal([1, 28, 28, 3])  # Batch size 1, 28x28 image, 3 channels
 
-    input_tensor = tf.random.uniform([1, 28, 28, 1], dtype=tf.float32)
+        # Create a convolutional layer
+        conv_layer = tf.keras.layers.Conv2D(filters=32, kernel_size=3, activation='relu')
 
-    output = conv_layer(input_tensor)
+        # Apply the convolutional layer to the input data
+        output_data = conv_layer(input_data)
 
-    # Verify the shape of the convolution output
-    assert output.shape == (1, 26, 26, 32), "Convolution result shape mismatch"
+        # Check that the output has the expected shape
+        assert output_data.shape == (1, 26, 26, 32), "Output shape is incorrect"
 
 def test_cufft():
-    x = tf.random.uniform([1024], dtype=tf.float32)
+    with get_GPU_context():
+        x = tf.random.uniform([1024], dtype=tf.float32)
 
-    # Perform FFT
-    fft_result = tf.signal.fft(tf.cast(tf.complex(x, tf.zeros_like(x)), tf.complex64))
+        # Perform FFT
+        fft_result = tf.signal.fft(tf.cast(tf.complex(x, tf.zeros_like(x)), tf.complex64))
 
-    ifft_result = tf.signal.ifft(fft_result)
+        ifft_result = tf.signal.ifft(fft_result)
 
-    # Ensure the inverse FFT returns to the original tensor
-    assert np.allclose(x.numpy(), tf.math.real(ifft_result).numpy(), atol=1e-4), "Inverse FFT result mismatch"   
+        # Ensure the inverse FFT returns to the original tensor
+        assert np.allclose(x.numpy(), tf.math.real(ifft_result).numpy(), atol=1e-4), "Inverse FFT result mismatch"  

@@ -3,9 +3,12 @@ import pytest
 
 def setup_module(module):
     nltk.download('punkt', download_dir='/tmp/nltk_data')
+    nltk.download('punkt_tab', download_dir='/tmp/nltk_data')
     nltk.download('maxent_ne_chunker', download_dir='/tmp/nltk_data')
     nltk.download('words', download_dir='/tmp/nltk_data')
     nltk.download('averaged_perceptron_tagger', download_dir='/tmp/nltk_data')
+    nltk.download('averaged_perceptron_tagger_eng', download_dir='/tmp/nltk_data')
+    nltk.download('maxent_ne_chunker_tab', download_dir='/tmp/nltk_data')
     nltk.data.path.append('/tmp/nltk_data')
 
 def test_tokenization():
