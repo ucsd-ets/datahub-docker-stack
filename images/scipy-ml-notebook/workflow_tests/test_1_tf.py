@@ -2,26 +2,30 @@ import tensorflow as tf
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 import numpy as np
+import pytest
 
-def get_GPU_context():
+@pytest.fixture(scope='session')
+def gpu():
     # Check if GPU is available
     if tf.config.list_physical_devices('GPU'):
         device = '/GPU:0'
 
         # Prevent TF from using all available NVRAM...
         gpus = tf.config.list_physical_devices('GPU')
-#         for gpu in gpus:
-#             tf.config.experimental.set_memory_growth(gpu, True)
+        
+        # This prevents a GPU OOM crash with pytorch.
+        # It does however "lock in" this experimental setting until the pod is restarted.
+        #for gpu in gpus:
+        #    tf.config.experimental.set_memory_growth(gpu, True)
     else:
         raise Exception("Test failed, TensorFlow could not detect GPU.")
 
     return tf.device(device)
 
-def test_run_find_GPUs():
-    gpu = get_GPU_context()
+def test_run_find_GPUs(gpu):
     assert gpu != None
 
-def run_SLR_model():
+def run_SLR_model(gpu):
     # Set fixed seed for tf and np
     np.random.seed(12345)
     tf.random.set_seed(12345)
@@ -34,7 +38,7 @@ def run_SLR_model():
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42)
 
-    with get_GPU_context():
+    with gpu:
         # Create a simple linear regression modelLoaded cuDNN version 8600
         model = tf.keras.Sequential([
             tf.keras.layers.Dense(1, input_shape=(1,))
@@ -61,13 +65,13 @@ def run_SLR_model():
 
     return ("Test succeeded")
 
-def test_run_SLR_model():
-    result = run_SLR_model()
+def test_run_SLR_model(gpu):
+    result = run_SLR_model(gpu)
     assert result == "Test succeeded"
 
-def multiply_matrices():
+def multiply_matrices(gpu):
     # Perform a simple matrix multiplication on the GPU
-    with get_GPU_context():
+    with gpu:
         a = tf.constant([[1.0, 2.0], [3.0, 4.0]])
         b = tf.constant([[1.0, 1.0], [0.0, 1.0]])
         c = tf.matmul(a, b)
@@ -81,12 +85,12 @@ def multiply_matrices():
         return
     return ("Test Succeeded")
 
-def test_multiply_matrices():
-    result = multiply_matrices()
+def test_multiply_matrices(gpu):
+    result = multiply_matrices(gpu)
     assert result == "Test Succeeded"
 
-def test_arithmetic():
-    with get_GPU_context():
+def test_arithmetic(gpu):
+    with gpu:
         # Define the TensorFlow graph
         a = tf.constant(2.0, dtype=tf.float32)
         b = tf.constant(3.0, dtype=tf.float32)
@@ -98,7 +102,7 @@ def test_arithmetic():
 
         assert output == 7.0
 
-def test_tensorrt():
+def test_tensorrt(gpu):
     # Make sure tensorflow sees tensorRT
 
     import tensorflow.compiler as tf_cc
@@ -110,8 +114,8 @@ def test_tensorrt():
     
     assert linked_trt_ver == loaded_trt_ver # If this is not true, tensorflow will crash
 
-def test_cublas():
-    with get_GPU_context():
+def test_cublas(gpu):
+    with gpu:
         a = tf.random.uniform([1000, 1000], dtype=tf.float32)
         b = tf.random.uniform([1000, 1000], dtype=tf.float32)
 
@@ -120,8 +124,8 @@ def test_cublas():
 
         assert c.shape == (1000, 1000), "Matrix multiplication result shape mismatch"
 
-def test_cudnn():
-    with get_GPU_context():
+def test_cudnn(gpu):
+    with gpu:
         # Create a simple input tensor
         input_data = tf.random.normal([1, 28, 28, 3])  # Batch size 1, 28x28 image, 3 channels
 
@@ -134,8 +138,8 @@ def test_cudnn():
         # Check that the output has the expected shape
         assert output_data.shape == (1, 26, 26, 32), "Output shape is incorrect"
 
-def test_cufft():
-    with get_GPU_context():
+def test_cufft(gpu):
+    with gpu:
         x = tf.random.uniform([1024], dtype=tf.float32)
 
         # Perform FFT

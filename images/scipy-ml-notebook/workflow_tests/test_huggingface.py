@@ -3,6 +3,9 @@
 
 # The results of these tests are somewhat subject to randomness. It's possible that values will change as models change. You can always run these from the container to see what's wrong with them.
 
+# 8/27/24 - It looks like this test directly interferes with the environment of test_0_tf.py if it is ran first.
+# Investigate? This may be fixed by later versions of huggingface/tensorflow.
+
 from transformers import pipeline
 from transformers import AutoTokenizer
 
