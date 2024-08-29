@@ -47,7 +47,6 @@ jobs:
       inherit
     
   tagging:
-    runs-on: ubuntu-latest
     needs: 
       - gpu_test
       - start-runner
