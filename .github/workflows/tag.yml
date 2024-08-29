@@ -61,8 +61,10 @@ jobs:
 
       - name: Install pip dependencies
         run: |
+          sudo dnf -y install python-pip
+          sudo dnf remove python3-requests -y
           python3 -m pip install --upgrade pip
-          pip install -r scripts/requirements.txt
+          python3 -m pip install -r scripts/requirements.txt
 
       - name: Install pydoit fixed
         run: |
