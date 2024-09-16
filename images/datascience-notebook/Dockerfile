@@ -81,7 +81,7 @@ RUN mamba install -c conda-forge jupyterhub=$JUPYTERHUB_VERSION jupyter_server=$
     mamba install -c conda-forge jupyterlab=$JUPYTERLAB_VERSION notebook=$NOTEBOOK_VERSION nbclassic=$NBCLASSIC_VERSION && \
     # (TODO: Re-enable collab once RTC is fixed) mamba install -c conda-forge jupyterlab_rise jupyter_server_terminals jupyter-collaboration && \
     mamba install -c conda-forge jupyterlab_rise jupyter_server_terminals && \
-    mamba install -c conda-forge jupyterlab-github jupyterlab-latex jupyterlab-git jupyterlab-fasta jupyterlab-geojson && \
+    mamba install -c conda-forge jupyterlab-latex jupyterlab-git jupyterlab-fasta jupyterlab-geojson && \
     mamba install -c conda-forge nbconvert=$NBCONVERT_VERSION nbgrader=$NBGRADER_VERSION && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
