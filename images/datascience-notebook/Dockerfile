@@ -29,6 +29,7 @@ RUN apt-get update -y && \
     strace \
     openssh-client \
     openssh-server \
+    netcat-openbsd \
     p7zip \
     apt-utils \
     jq \
