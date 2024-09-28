@@ -1,5 +1,5 @@
 ARG BASE_TAG=latest
-FROM ghcr.io/ucsd-ets/datascience-notebook:2024.4-stable
+FROM ghcr.io/ucsd-ets/datascience-notebook:${BASE_TAG}
 
 USER root
 
@@ -12,7 +12,7 @@ USER root
 ## tf 2.13 does not work with torch 2.2.1. Both require conflicting versions of typing-extensions
 ## CUDA 11: ARG CUDA_VERSION=11.8 CUDNN_VERSION=8.7.0.84 \
 ARG CUDA_VERSION=12.1 CUDNN_VERSION=8.9.2.26 LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7 \
-  TENSORFLOW_VERSION=2.16.2 KERAS_VERSION=3.5.0 TENSORRT_VERSION=8.6.1 TORCH_VERSION=2.3.1 \
+  TENSORFLOW_VERSION=2.17.0 KERAS_VERSION=3.5.0 TENSORRT_VERSION=8.6.1 TORCH_VERSION=2.3.1 \
   PROTOBUF_VERSION=3.20.3 
 
 # apt deps
@@ -85,7 +85,7 @@ RUN mamba install -c conda-forge pyqt pycocotools pillow scapy && \
 ## Beware of potentially needing to update these if we update the drivers.
 ## Check tensorrt_env_vars.sh if you have to bump tensorrt!
 RUN pip install nvidia-cudnn-cu12==$CUDNN_VERSION torch==$TORCH_VERSION torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121 && \
-  pip install tensorflow==$TENSORFLOW_VERSION tensorflow-datasets tensorrt==$TENSORRT_VERSION keras==$KERAS_VERSION && \
+  pip install tensorflow==$TENSORFLOW_VERSION tensorflow-datasets tensorrt==$TENSORRT_VERSION keras==$KERAS_VERSION tf-keras==$TENSORFLOW_VERSION && \
   fix-permissions $CONDA_DIR && \
   fix-permissions /home/$NB_USER && \
   mamba clean -a -y && \
