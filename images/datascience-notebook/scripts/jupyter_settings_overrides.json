@@ -1,0 +1,24 @@
+{
+    "@jupyterlab/completer-extension:manager": {
+        "autoCompletion": true
+    },
+    "@jupyter-lsp/jupyterlab-lsp:plugin": {
+        "language_servers": {
+            "pylsp": {
+                "serverSettings": {
+                    "pylsp.plugins.pycodestyle.enabled": false
+                }
+            }
+        }
+    },
+    "@jupyter-lsp/jupyterlab-lsp:completion": {
+        "suppressTriggerCharacterIn": [
+            "Comment",
+            "BlockComment",
+            "LineComment",
+            "String",
+            ":",
+            ")"
+        ]
+    }
+}

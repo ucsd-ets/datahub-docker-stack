@@ -51,6 +51,11 @@ RUN cat /tmp/jupyter_notebook_config_extra.py >> /etc/jupyter/jupyter_notebook_c
     chmod -R uga+x /etc/jupyter/jupyter_server_config.py && \
     chmod -R uga+x /etc/jupyter/nbgrader_config.py
 
+# Copy our default configuration for jupyterlab extensions
+COPY /scripts/jupyter_settings_overrides.json /opt/conda/share/jupyter/lab/settings/overrides.json
+RUN chown -R jovyan:users /opt/conda/share/jupyter/lab/settings && \
+    chmod 644 /opt/conda/share/jupyter/lab/settings/overrides.json
+
 # Copy over R tests to /opt/manual_tests
 RUN mkdir /opt/manual_tests
 COPY /test/test_r_dump_packages.R /opt/manual_tests
@@ -64,7 +69,7 @@ USER jovyan
 
 # Python/Mamba Deps
 ## Package versions
-ARG JUPYTERSERVER_VERSION=2.14.2 NBGRADER_VERSION=0.9.3 JUPYTERLAB_VERSION=4.2.4 NBCONVERT_VERSION=7.16.4 NOTEBOOK_VERSION=7.2.1 NBCLASSIC_VERSION=1.1.0
+ARG JUPYTERSERVER_VERSION=2.14.2 NBGRADER_VERSION=0.9.3 JUPYTERLAB_VERSION=4.2.5 NBCONVERT_VERSION=7.16.4 NOTEBOOK_VERSION=7.2.1 NBCLASSIC_VERSION=1.1.0
 ARG PANDAS_VERSION=2.2.2 STATSMODELS_VERSION=0.14.2 BOTTLENECK_VERSION=1.3.6 NUMEXPR_VERSION=2.8.4
 
 # Install essential+datascience pip packages 
@@ -83,6 +88,7 @@ RUN mamba install -c conda-forge jupyterhub=$JUPYTERHUB_VERSION jupyter_server=$
     # (TODO: Re-enable collab once RTC is fixed) mamba install -c conda-forge jupyterlab_rise jupyter_server_terminals jupyter-collaboration && \
     mamba install -c conda-forge jupyterlab_rise jupyter_server_terminals && \
     mamba install -c conda-forge jupyterlab-latex jupyterlab-git jupyterlab-fasta jupyterlab-geojson && \
+    mamba install -c conda-forge jupyterlab_code_formatter isort black jupyter-archive jupyterlab-lsp python-lsp-server r-languageserver && \
     mamba install -c conda-forge nbconvert=$NBCONVERT_VERSION nbgrader=$NBGRADER_VERSION && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
@@ -101,6 +107,12 @@ RUN /usr/share/datahub/scripts/install-python-all.sh && \
 
 # Disable the jupyterlab extensions manager
 RUN jupyter labextension disable @jupyterlab/extensionmanager-extension
+
+## EXPERIMENTAL: "Enable" pluto NB/julia
+RUN chgrp -R users /opt/julia && \
+    chmod -R g+rw /opt/julia && \
+    chgrp -R users /opt/julia-1.10.2 && \
+    chmod -R g+rw /opt/julia-1.10.2
 
 # Cleanup
 ## nbgrader requires these variables set to just run the notebook server

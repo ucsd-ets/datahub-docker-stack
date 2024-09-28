@@ -1,5 +1,5 @@
 ARG BASE_TAG=latest
-FROM ghcr.io/ucsd-ets/datascience-notebook:${BASE_TAG}
+FROM ghcr.io/ucsd-ets/datascience-notebook:2024.4-stable
 
 USER root
 
@@ -11,8 +11,8 @@ USER root
 ## Package versions
 ## tf 2.13 does not work with torch 2.2.1. Both require conflicting versions of typing-extensions
 ## CUDA 11: ARG CUDA_VERSION=11.8 CUDNN_VERSION=8.7.0.84 \
-ARG CUDA_VERSION=12.0 CUDNN_VERSION=8.9.2.26 LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7 \
-  TENSORFLOW_VERSION=2.15.0 KERAS_VERSION=2.15.0 TENSORRT_VERSION=8.6.1 TORCH_VERSION=2.2.1 \
+ARG CUDA_VERSION=12.1 CUDNN_VERSION=8.9.2.26 LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7 \
+  TENSORFLOW_VERSION=2.16.2 KERAS_VERSION=3.5.0 TENSORRT_VERSION=8.6.1 TORCH_VERSION=2.3.1 \
   PROTOBUF_VERSION=3.20.3 
 
 # apt deps
@@ -51,9 +51,8 @@ USER jovyan
 # CUDA setup w/mamba
 ## TODO: Investigate this command, seems to duplicate cuda packages for nvidia (pypi + conda-forge). 
 # cuda-toolkit is a skeleton package on CUDA 12, unlike CUDA <= 11
-RUN mamba install -c "nvidia/label/cuda-12.0.0" cuda-nvcc \
+RUN mamba install -c "nvidia/label/cuda-12.1.1" cuda-nvcc \
     cuda-toolkit=$CUDA_VERSION \
-    # For CUDA 11: cudatoolkit=$CUDA_VERSION \
     cuda-version=$CUDA_VERSION \
     nccl \
     -y && \
@@ -81,6 +80,7 @@ RUN mamba install -c conda-forge pyqt pycocotools pillow scapy && \
     mamba clean --all
 
 # Install CUDA/Torch/Tensorflow/Keras w/pip
+# TF Compatibility Matrix: https://www.tensorflow.org/install/source?hl=en#gpu
 ## no purge required but no-cache-dir is used. pip purge will actually break the build here!
 ## Beware of potentially needing to update these if we update the drivers.
 ## Check tensorrt_env_vars.sh if you have to bump tensorrt!

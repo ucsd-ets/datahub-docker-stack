@@ -64,6 +64,8 @@ PACKAGE_MAPPING = {
     "nltk_data": "nltk",
     "pytorch": "torch",
     "umap-learn": "umap",
+    "jupyter-archive": "jupyter_archive",
+    "jupyterlab-lsp": "jupyterlab_lsp",
     # R
     "randomforest": "randomForest",
     "rsqlite": "DBI",
@@ -94,6 +96,7 @@ EXCLUDED_PACKAGES = [
     "jupyterlab_rise[version='<0.40.0']",
     "jupyterlab-git",
     "jupyter-pluto-proxy",
+    "python-lsp-server",
 ]
 
 
