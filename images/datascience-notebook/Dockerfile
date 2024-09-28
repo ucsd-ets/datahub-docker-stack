@@ -109,10 +109,9 @@ RUN /usr/share/datahub/scripts/install-python-all.sh && \
 RUN jupyter labextension disable @jupyterlab/extensionmanager-extension
 
 ## EXPERIMENTAL: "Enable" pluto NB/julia
-RUN chgrp -R users /opt/julia && \
-    chmod -R g+rw /opt/julia && \
-    chgrp -R users /opt/julia-1.10.2 && \
-    chmod -R g+rw /opt/julia-1.10.2
+RUN chmod 777 /opt/conda/share/jupyter/lab/settings && \
+    chmod -R 777 /opt/julia && \
+    chmod -R 777 /opt/julia-1.10.2
 
 # Cleanup
 ## nbgrader requires these variables set to just run the notebook server
