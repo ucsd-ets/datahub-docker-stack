@@ -47,6 +47,9 @@ RUN chmod 777 /etc/datahub-profile.d/*.sh /tmp/activate.sh
 
 USER jovyan
 
+# Install nvdashboard for GPU monitoring
+RUN mamba install -c rapidsai-nightly -c conda-forge jupyterlab-nvdashboard
+
 # CUDA setup w/mamba
 ## TODO: Investigate this command, seems to duplicate cuda packages for nvidia (pypi + conda-forge). 
 # cuda-toolkit is a skeleton package on CUDA 12, unlike CUDA <= 11
