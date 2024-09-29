@@ -66,6 +66,7 @@ PACKAGE_MAPPING = {
     "umap-learn": "umap",
     "jupyter-archive": "jupyter_archive",
     "jupyterlab-lsp": "jupyterlab_lsp",
+    "jupyterlab-nvdashboard": "jupyterlab_nvdashboard",
     # R
     "randomforest": "randomForest",
     "rsqlite": "DBI",
