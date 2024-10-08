@@ -28,7 +28,7 @@ RUN pip install jupyter-rsession-proxy
 RUN mkdir -p /etc/rstudio && echo 'auth-minimum-user-id=100' >> /etc/rstudio/rserver.conf
 
 ## Shim in our nss-wrapper so that user getpwent() lookups succeed
-RUN ( echo 'LD_PRELOAD=/opt/k8s-support/lib/libnss_wrapper.so'; echo 'NSS_WRAPPER_PASSWD=/tmp/passwd.wrap'; echo 'NSS_WRAPPER_GROUP=/tmp/group.wrap'; echo 'CURL=/usr/bin/curl') >> /opt/conda/lib/R/etc/Renviron.site
+RUN ( echo 'LD_PRELOAD=/opt/k8s-support/lib/libnss_wrapper.so'; echo 'NSS_WRAPPER_PASSWD=/tmp/passwd.wrap'; echo 'NSS_WRAPPER_GROUP=/tmp/group.wrap'; echo 'PATH=/usr/bin:$PATH') >> /opt/conda/lib/R/etc/Renviron.site
 
 ## The desktop package uses /usr/lib/rstudio/bin
 ENV PATH="${PATH}:/usr/lib/rstudio-server/bin" \
