@@ -10,8 +10,6 @@ USER root
 ENV RSTUDIO_PKG=rstudio-server-2024.04.2-764-amd64.deb
 ENV RSTUDIO_URL=https://download2.rstudio.org/server/jammy/amd64/${RSTUDIO_PKG}
 
-RUN mamba install openssl=3.0.2
-
 ## rstudio installation expects R to live in /usr/bin, /bin/, etc.
 RUN ln -s /opt/conda/bin/R /usr/bin/R && \
     apt-get update && \
@@ -36,7 +34,7 @@ RUN ( echo 'LD_PRELOAD=/opt/k8s-support/lib/libnss_wrapper.so'; echo 'NSS_WRAPPE
 ## The desktop package uses /usr/lib/rstudio/bin
 ENV PATH="${PATH}:/usr/lib/rstudio-server/bin" \
     SHELL=/bin/bash \
-    LD_LIBRARY_PATH="/usr/lib/x86_64-linux-gnu:/opt/conda/lib"
+    LD_LIBRARY_PATH="/opt/conda/lib:/usr/lib/x86_64-linux-gnu"
 
 COPY ./lib /opt/k8s-support/lib
 
