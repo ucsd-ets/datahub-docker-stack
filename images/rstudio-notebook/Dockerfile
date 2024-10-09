@@ -10,6 +10,8 @@ USER root
 ENV RSTUDIO_PKG=rstudio-server-2024.04.2-764-amd64.deb
 ENV RSTUDIO_URL=https://download2.rstudio.org/server/jammy/amd64/${RSTUDIO_PKG}
 
+RUN mamba install openssl=3.0.2
+
 ## rstudio installation expects R to live in /usr/bin, /bin/, etc.
 RUN ln -s /opt/conda/bin/R /usr/bin/R && \
     apt-get update && \
