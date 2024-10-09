@@ -26,8 +26,8 @@ RUN ln -s /opt/conda/bin/R /usr/bin/R && \
 RUN pip install jupyter-rsession-proxy
 
 RUN mkdir -p /etc/rstudio && \
-    echo 'auth-minimum-user-id=100' >> /etc/rstudio/rserver.conf
-    #echo 'rsession-ld-library-path=/opt/conda/lib' >> /etc/rstudio/rserver.conf
+    echo 'auth-minimum-user-id=100' >> /etc/rstudio/rserver.conf && \
+    echo 'rsession-ld-library-path=/opt/conda/lib' >> /etc/rstudio/rserver.conf
 
 ## Shim in our nss-wrapper so that user getpwent() lookups succeed
 RUN ( echo 'LD_PRELOAD=/opt/k8s-support/lib/libnss_wrapper.so'; echo 'NSS_WRAPPER_PASSWD=/tmp/passwd.wrap'; echo 'NSS_WRAPPER_GROUP=/tmp/group.wrap') >> /opt/conda/lib/R/etc/Renviron.site
