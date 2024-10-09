@@ -34,8 +34,8 @@ RUN ( echo 'LD_PRELOAD=/opt/k8s-support/lib/libnss_wrapper.so'; echo 'NSS_WRAPPE
 
 ## The desktop package uses /usr/lib/rstudio/bin
 ENV PATH="${PATH}:/usr/lib/rstudio-server/bin" \
-    SHELL=/bin/bash 
-    #LD_LIBRARY_PATH="/usr/lib/x86_64-linux-gnu:/opt/conda/lib/R/lib"
+    SHELL=/bin/bash \
+    LD_LIBRARY_PATH=""
 
 COPY ./lib /opt/k8s-support/lib
 
