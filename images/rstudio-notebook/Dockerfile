@@ -45,7 +45,7 @@ RUN echo '#!/bin/bash' > /usr/bin/ssh-keygen && \
     echo 'exec /usr/bin/ssh-keygen.orig "$@"' >> /usr/bin/ssh-keygen && \
     chmod +x /usr/bin/ssh-keygen
 
-RUN mv /usr/bin/git /usr/bin/git.org
+RUN mv /usr/bin/git /usr/bin/git.orig
 RUN echo '#!/bin/bash' > /usr/bin/git && \
     echo 'export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu' >> /usr/bin/git && \
     echo 'exec /usr/bin/git.orig "$@"' >> /usr/bin/git && \
