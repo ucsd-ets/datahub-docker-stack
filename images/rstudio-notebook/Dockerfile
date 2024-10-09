@@ -26,16 +26,24 @@ RUN ln -s /opt/conda/bin/R /usr/bin/R && \
 RUN pip install jupyter-rsession-proxy
 
 RUN mkdir -p /etc/rstudio && \
-    echo 'auth-minimum-user-id=100' >> /etc/rstudio/rserver.conf && \
-    echo 'rsession-ld-library-path=/opt/conda/lib' >> /etc/rstudio/rserver.conf
+    echo 'auth-minimum-user-id=100' >> /etc/rstudio/rserver.conf
 
 ## Shim in our nss-wrapper so that user getpwent() lookups succeed
 RUN ( echo 'LD_PRELOAD=/opt/k8s-support/lib/libnss_wrapper.so'; echo 'NSS_WRAPPER_PASSWD=/tmp/passwd.wrap'; echo 'NSS_WRAPPER_GROUP=/tmp/group.wrap') >> /opt/conda/lib/R/etc/Renviron.site
 
 ## The desktop package uses /usr/lib/rstudio/bin
 ENV PATH="${PATH}:/usr/lib/rstudio-server/bin" \
-    SHELL=/bin/bash 
-    #LD_LIBRARY_PATH="/usr/lib/x86_64-linux-gnu:/opt/conda/lib/R/lib"
+    SHELL=/bin/bash \
+    LD_LIBRARY_PATH="/opt/conda/lib:/usr/lib/x86_64-linux-gnu"
+
+# Move the original ssh-keygen binary
+RUN mv /usr/bin/ssh-keygen /usr/bin/ssh-keygen.orig
+
+# Create a wrapper script for ssh-keygen
+RUN echo '#!/bin/bash' > /usr/bin/ssh-keygen && \
+    echo 'export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu' >> /usr/bin/ssh-keygen && \
+    echo 'exec /usr/bin/ssh-keygen.orig "$@"' >> /usr/bin/ssh-keygen && \
+    chmod +x /usr/bin/ssh-keygen
 
 COPY ./lib /opt/k8s-support/lib
 
