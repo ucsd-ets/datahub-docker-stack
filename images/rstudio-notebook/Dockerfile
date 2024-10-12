@@ -37,19 +37,26 @@ ENV PATH="${PATH}:/usr/lib/rstudio-server/bin" \
     LD_LIBRARY_PATH="/opt/conda/lib:/usr/lib/x86_64-linux-gnu"
 
 ### OpenSSL Conda Workarounds
-# Move the original binary
+# ssh-keygen
 RUN mv /usr/bin/ssh-keygen /usr/bin/ssh-keygen.orig
-# Create a wrapper script
 RUN echo '#!/bin/bash' > /usr/bin/ssh-keygen && \
     echo 'export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu' >> /usr/bin/ssh-keygen && \
     echo 'exec /usr/bin/ssh-keygen.orig "$@"' >> /usr/bin/ssh-keygen && \
     chmod +x /usr/bin/ssh-keygen
 
+# git
 RUN mv /usr/bin/git /usr/bin/git.orig
 RUN echo '#!/bin/bash' > /usr/bin/git && \
     echo 'export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu' >> /usr/bin/git && \
     echo 'exec /usr/bin/git.orig "$@"' >> /usr/bin/git && \
     chmod +x /usr/bin/git
+
+# ssh
+RUN mv /usr/bin/ssh /usr/bin/ssh.orig
+RUN echo '#!/bin/bash' > /usr/bin/ssh && \
+    echo 'export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu' >> /usr/bin/ssh && \
+    echo 'exec /usr/bin/git.orig "$@"' >> /usr/bin/ssh && \
+    chmod +x /usr/bin/ssh
 
 COPY ./lib /opt/k8s-support/lib
 
