@@ -37,26 +37,19 @@ ENV PATH="${PATH}:/usr/lib/rstudio-server/bin" \
     LD_LIBRARY_PATH="/opt/conda/lib:/usr/lib/x86_64-linux-gnu"
 
 ### OpenSSL Conda Workarounds
-# ssh-keygen
-RUN mv /usr/bin/ssh-keygen /usr/bin/ssh-keygen.orig
-RUN echo '#!/bin/bash' > /usr/bin/ssh-keygen && \
-    echo 'export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu' >> /usr/bin/ssh-keygen && \
-    echo 'exec /usr/bin/ssh-keygen.orig "$@"' >> /usr/bin/ssh-keygen && \
-    chmod +x /usr/bin/ssh-keygen
+# List of binaries you want to wrap
+ENV FORCED_BINARIES="ssh ssh-add ssh-agent ssh-copy-id ssh-keygen ssh-keyscan sshd git"
 
-# git
-RUN mv /usr/bin/git /usr/bin/git.orig
-RUN echo '#!/bin/bash' > /usr/bin/git && \
-    echo 'export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu' >> /usr/bin/git && \
-    echo 'exec /usr/bin/git.orig "$@"' >> /usr/bin/git && \
-    chmod +x /usr/bin/git
-
-# ssh
-RUN mv /usr/bin/ssh /usr/bin/ssh.orig
-RUN echo '#!/bin/bash' > /usr/bin/ssh && \
-    echo 'export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu' >> /usr/bin/ssh && \
-    echo 'exec /usr/bin/ssh.orig "$@"' >> /usr/bin/ssh && \
-    chmod +x /usr/bin/ssh
+# Loop over each binary and apply the wrapper
+RUN for bin in $FORCED_BINARIES; do \
+      if [ -f /usr/bin/$bin ]; then \
+        mv /usr/bin/$bin /usr/bin/$bin.orig && \
+        echo '#!/bin/bash' > /usr/bin/$bin && \
+        echo 'export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu' >> /usr/bin/$bin && \
+        echo 'exec /usr/bin/'$bin'.orig "$@"' >> /usr/bin/$bin && \
+        chmod +x /usr/bin/$bin; \
+      fi; \
+    done
 
 COPY ./lib /opt/k8s-support/lib
 
