@@ -55,7 +55,7 @@ RUN echo '#!/bin/bash' > /usr/bin/git && \
 RUN mv /usr/bin/ssh /usr/bin/ssh.orig
 RUN echo '#!/bin/bash' > /usr/bin/ssh && \
     echo 'export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu' >> /usr/bin/ssh && \
-    echo 'exec /usr/bin/git.orig "$@"' >> /usr/bin/ssh && \
+    echo 'exec /usr/bin/ssh.orig "$@"' >> /usr/bin/ssh && \
     chmod +x /usr/bin/ssh
 
 COPY ./lib /opt/k8s-support/lib
