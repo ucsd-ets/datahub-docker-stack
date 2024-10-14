@@ -11,6 +11,10 @@ on:
         type: boolean
         description: 'dry-run: retrieve original image names ONLY'
         required: true
+      skipGPUTest:
+        type: boolean
+        description: 'skip-gpu-test: Skips testing via the GPU. Never use this unless dsmlp-login is encountering issues!'
+        required: true
       
 
 jobs:
@@ -43,6 +47,7 @@ jobs:
     with:
       originalTag: ${{ github.event.inputs.originalTag }}
       dryRun: ${{ github.event.inputs.dryRun == 'true' }}
+      skipGPUTest: ${{ github.event.inputs.skipGPUTest == 'false' }}
     secrets:
       inherit
     
