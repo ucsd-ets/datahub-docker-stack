@@ -44,10 +44,10 @@ jobs:
           
   gpu_test:
     uses: ./.github/workflows/test_gpu.yml
+    if: ${{ github.event.inputs.skipGPUTest == 'false' }}
     with:
       originalTag: ${{ github.event.inputs.originalTag }}
       dryRun: ${{ github.event.inputs.dryRun == 'true' }}
-      skipGPUTest: ${{ github.event.inputs.skipGPUTest == 'false' }}
     secrets:
       inherit
     
