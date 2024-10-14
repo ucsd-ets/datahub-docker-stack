@@ -52,9 +52,8 @@ jobs:
       inherit
     
   tagging:
-    needs: 
-      - gpu_test
-      - start-runner
+    needs: start-runner
+    if: ${{ github.event.inputs.skipGPUTest == 'true' || needs.gpu_test.result == 'success' }}
     runs-on: ${{ needs.start-runner.outputs.label }}
     steps:
       - uses: actions/checkout@v3
