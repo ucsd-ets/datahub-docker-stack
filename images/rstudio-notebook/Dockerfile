@@ -37,6 +37,15 @@ ENV PATH="${PATH}:/usr/lib/rstudio-server/bin" \
     LD_LIBRARY_PATH="/opt/conda/lib:/usr/lib/x86_64-linux-gnu"
 
 ### OpenSSL Conda Workarounds
+# When we upgraded to Python3.11/JLab 4 upstreamed from Jupyter, our distro was also upgraded from Ubuntu 20 to 22. 
+# This introduced a new issue where RStudio would prefer /opt/conda/lib's OpenSSL instead of /usr/lib when trying to download packages using internet.so (internal RStudio lib).
+# https://github.com/rstudio/rstudio/issues/14060 - the fix described was setting LD_LIBRARY_PATH to /opt/conda/lib:/usr/lib/x86_64-linux-gnu (globally or just for RStudio).
+# However, this fix is problematic because many executables such as SSH*/git rely on the OpenSSL version being installed by apt (since they are installed by apt).
+# Post-fix, when you tried to launch ssh/git in the RStudio Termina, you would receieve an "OpenSSL mismatch" error.
+# To fix this, we simply added a bash wrapper for all affected binaries that forces them to always use the correct LD_LIBRARY_PATH (apt). 
+# If another binary encounters a "OpenSSL mismatch error," add it here.
+# Hopefully a better fix can be found - the core issue here seems to be conda and its obtrusiveness
+
 # List of binaries you want to wrap
 ENV FORCED_BINARIES="ssh ssh-add ssh-agent ssh-copy-id ssh-keygen ssh-keyscan sshd git"
 
