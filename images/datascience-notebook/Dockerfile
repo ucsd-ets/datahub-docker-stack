@@ -83,7 +83,7 @@ RUN mamba install -c conda-forge pillow typing-extensions tzlocal appdirs gputil
     python -c 'import matplotlib.pyplot' && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
-    mamba clean --all
+    mamba clean -a -y
 
 # Install jupyterlab+extensions
 RUN mamba install -c conda-forge jupyterhub=$JUPYTERHUB_VERSION jupyter_server=$JUPYTERSERVER_VERSION && \
@@ -91,14 +91,14 @@ RUN mamba install -c conda-forge jupyterhub=$JUPYTERHUB_VERSION jupyter_server=$
     # (TODO: Re-enable collab once RTC is fixed) mamba install -c conda-forge jupyterlab_rise jupyter_server_terminals jupyter-collaboration && \
     mamba install -c conda-forge jupyterlab_rise jupyter_server_terminals && \
     mamba install -c conda-forge jupyterlab-latex jupyterlab-git jupyterlab-fasta jupyterlab-geojson && \
- #   mamba install -c conda-forge jupyter_scheduler jupyterlab_code_formatter isort black jupyter-archive jupyterlab-lsp python-lsp-server r-languageserver && \
+    mamba install -c conda-forge jupyter_scheduler jupyterlab_code_formatter isort black jupyter-archive jupyterlab-lsp python-lsp-server r-languageserver && \
     mamba install -c conda-forge nbconvert=$NBCONVERT_VERSION nbgrader=$NBGRADER_VERSION && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
-    mamba clean --all
+    mamba clean -a -y
 
 # Install R packages
-RUN mamba install -c conda-forge r-markdown r-covr r-git2r r-crosstalk r-dt -y && \
+RUN mamba install -c conda-forge r-markdown r-git2r r-covr r-dt r-crosstalk --freeze-installed && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
     mamba clean -a -y
@@ -113,8 +113,7 @@ RUN jupyter labextension disable @jupyterlab/extensionmanager-extension
 
 ## EXPERIMENTAL: "Enable" pluto NB/julia
 RUN chmod -R 777 /opt/conda/share/jupyter/lab/settings && \
-    chmod -R 777 /opt/julia && \
-    chmod -R 777 /opt/julia-1.10.2
+    chmod -R 777 /opt/julia*
 
 # Cleanup
 ## nbgrader requires these variables set to just run the notebook server
