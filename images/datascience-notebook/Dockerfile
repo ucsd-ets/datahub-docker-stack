@@ -1,7 +1,7 @@
 # If you are building manually, pass PYTHON_VERSION/PY_VER_SHORT/JUPYTERHUB_VERSION with --build-arg
-ARG PYTHON_VERSION=python-3.11.8
+ARG PYTHON_VERSION=python-3.11.10
 ARG PY_VER_SHORT=3.11
-ARG JUPYTERHUB_VERSION=4.1.5
+ARG JUPYTERHUB_VERSION=4.1.6
 
 # Jupyter has changed where it stores its images
 FROM quay.io/jupyter/datascience-notebook:$PYTHON_VERSION
@@ -34,6 +34,9 @@ RUN apt-get update -y && \
     apt-utils \
     jq \
     build-essential \
+    iputils-ping \
+    emacs \
+    zip \
     p7zip-full && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
     chmod g-s /usr/bin/screen && \
@@ -69,8 +72,8 @@ USER jovyan
 
 # Python/Mamba Deps
 ## Package versions
-ARG JUPYTERSERVER_VERSION=2.14.2 NBGRADER_VERSION=0.9.3 JUPYTERLAB_VERSION=4.2.5 NBCONVERT_VERSION=7.16.4 NOTEBOOK_VERSION=7.2.1 NBCLASSIC_VERSION=1.1.0
-ARG PANDAS_VERSION=2.2.2 STATSMODELS_VERSION=0.14.2 BOTTLENECK_VERSION=1.3.6 NUMEXPR_VERSION=2.8.4
+ARG JUPYTERSERVER_VERSION=2.14.2 NBGRADER_VERSION=0.9.3 JUPYTERLAB_VERSION=4.3.3 NBCONVERT_VERSION=7.16.4 NOTEBOOK_VERSION=7.2.1 NBCLASSIC_VERSION=1.1.0
+ARG PANDAS_VERSION=2.2.3 STATSMODELS_VERSION=0.14.4 BOTTLENECK_VERSION=1.4.2 NUMEXPR_VERSION=2.10.2
 
 # Install essential+datascience pip packages 
 ## mistune added for nbgrader issues
@@ -88,7 +91,7 @@ RUN mamba install -c conda-forge jupyterhub=$JUPYTERHUB_VERSION jupyter_server=$
     # (TODO: Re-enable collab once RTC is fixed) mamba install -c conda-forge jupyterlab_rise jupyter_server_terminals jupyter-collaboration && \
     mamba install -c conda-forge jupyterlab_rise jupyter_server_terminals && \
     mamba install -c conda-forge jupyterlab-latex jupyterlab-git jupyterlab-fasta jupyterlab-geojson && \
-    mamba install -c conda-forge jupyter_scheduler jupyterlab_code_formatter isort black jupyter-archive jupyterlab-lsp python-lsp-server r-languageserver && \
+ #   mamba install -c conda-forge jupyter_scheduler jupyterlab_code_formatter isort black jupyter-archive jupyterlab-lsp python-lsp-server r-languageserver && \
     mamba install -c conda-forge nbconvert=$NBCONVERT_VERSION nbgrader=$NBGRADER_VERSION && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \

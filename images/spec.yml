@@ -4,9 +4,9 @@ images:
   datascience-notebook:
     image_name: ghcr.io/ucsd-ets/datascience-notebook
     build_args:
-      PYTHON_VERSION: python-3.11.8
+      PYTHON_VERSION: python-3.11.10
       PY_VER_SHORT: "3.11"
-      JUPYTERHUB_VERSION: 4.1.5
+      JUPYTERHUB_VERSION: 4.1.6
     info_cmds: [PY_VER, PIP_LIST, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
 
   rstudio-notebook:
@@ -25,7 +25,7 @@ images:
     #prepull: false #-- uncomment to disable prepulling behavior for scipy-ml. gives you space on machine in exchange for build time.
 
 tag:
-  prefix: "2024.4"
+  prefix: "2025.1"
 
 all_info_cmds:
   PY_VER:
