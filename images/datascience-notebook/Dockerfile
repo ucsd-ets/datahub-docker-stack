@@ -98,6 +98,8 @@ RUN mamba install -c conda-forge jupyterhub=$JUPYTERHUB_VERSION jupyter_server=$
     mamba clean -a -y
 
 # Install R packages
+# --freeze-installed prevents mamba from taking too long during package resolution
+# This only seems to happen with our R packages as of 12/18/24
 RUN mamba install -c conda-forge r-markdown r-git2r r-covr r-dt r-crosstalk --freeze-installed && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
