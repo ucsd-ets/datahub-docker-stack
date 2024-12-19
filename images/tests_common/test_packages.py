@@ -98,6 +98,7 @@ EXCLUDED_PACKAGES = [
     "jupyterlab-git",
     "jupyter-pluto-proxy",
     "python-lsp-server",
+    "mamba",
 ]
 
 
