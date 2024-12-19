@@ -14,7 +14,7 @@ ARG PROTOBUF_VERSION=3.20.3
 
 # apt deps
 RUN apt-get update && \
-  apt-get install -y libtinfo5 build-essential && \
+  apt-get install -y libtinfo6 build-essential && \
   apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Symbolic link for Stata 17 dependency on libncurses5
