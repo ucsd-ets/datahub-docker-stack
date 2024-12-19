@@ -3,7 +3,7 @@ ARG PYTHON_VERSION=python-3.11.10
 ARG PY_VER_SHORT=3.11
 ARG JUPYTERHUB_VERSION=4.1.6
 
-# Jupyter has changed where it stores its images
+# Jupyter has changed image URL
 FROM quay.io/jupyter/datascience-notebook:$PYTHON_VERSION
 USER root
 
