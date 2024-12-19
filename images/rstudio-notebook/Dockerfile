@@ -33,12 +33,13 @@ RUN pip install jupyter-rsession-proxy
 RUN mkdir -p /etc/rstudio && \
     echo 'auth-minimum-user-id=100' >> /etc/rstudio/rserver.conf
 
-## Shim in our LD_LIBRARY_PATH for OpenSSL + nss-wrapper so that user getpwent() lookups succeed
-RUN ( echo LD_LIBRARY_PATH="/opt/conda/lib:/usr/lib/x86_64-linux-gnu"; echo 'LD_PRELOAD=/opt/k8s-support/lib/libnss_wrapper.so'; echo 'NSS_WRAPPER_PASSWD=/tmp/passwd.wrap'; echo 'NSS_WRAPPER_GROUP=/tmp/group.wrap') >> /opt/conda/lib/R/etc/Renviron.site
+## Shim in our nss-wrapper so that user getpwent() lookups succeed
+RUN ( echo 'LD_PRELOAD=/opt/k8s-support/lib/libnss_wrapper.so'; echo 'NSS_WRAPPER_PASSWD=/tmp/passwd.wrap'; echo 'NSS_WRAPPER_GROUP=/tmp/group.wrap') >> /opt/conda/lib/R/etc/Renviron.site
 
 ## The desktop package uses /usr/lib/rstudio/bin
 ENV PATH="${PATH}:/usr/lib/rstudio-server/bin" \
-    SHELL=/bin/bash 
+    SHELL=/bin/bash \
+    LD_LIBRARY_PATH="/opt/conda/lib:/usr/lib/x86_64-linux-gnu" 
 
 ### OpenSSL Conda Workarounds
 # When we upgraded to Python3.11/JLab 4 upstreamed from Jupyter, our distro was also upgraded from Ubuntu 20 to 22. 
