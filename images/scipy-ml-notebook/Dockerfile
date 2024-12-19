@@ -8,7 +8,6 @@ USER root
 # https://www.tensorflow.org/install/source#linux
 
 # Python/Mamba deps
-## Package versions
 ## tf 2.13 does not work with torch 2.2.1. Both require conflicting versions of typing-extensions
 ARG CUDA_VERSION=12.1 CUDNN_VERSION=8.9.2.26 LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7 \
   TENSORFLOW_VERSION=2.17.0 KERAS_VERSION=3.5.0 TENSORRT_VERSION=8.6.1 TORCH_VERSION=2.3.1 \
