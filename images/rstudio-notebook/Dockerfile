@@ -7,17 +7,22 @@ USER root
 
 # Ubuntu 22 setup with v 2024.04.2-764
 ## Follow instructions at https://www.rstudio.com/products/rstudio/download-server/
+## https://posit.co/code-signing/ - find latest pubkey here
 ENV RSTUDIO_PKG=rstudio-server-2024.09.1-394-amd64.deb
 ENV RSTUDIO_URL=https://download2.rstudio.org/server/jammy/amd64/${RSTUDIO_PKG}
+ENV RSTUDIO_PUBKEY=51C0B5BB19F92D60
 
 ## rstudio installation expects R to live in /usr/bin, /bin/, etc.
 RUN ln -s /opt/conda/bin/R /usr/bin/R && \
     apt-get update && \
-    apt-get -qq install -y apt-utils gdebi-core dpkg-sig && \
+    apt-get -qq install -y apt-utils gdebi-core wget gnupg && \
     wget ${RSTUDIO_URL} && \
+    gpg --keyserver keys.openpgp.org --recv-keys ${RSTUDIO_PUBKEY} && \
+    gpg --verify ${RSTUDIO_PKG} && \
     gdebi -n ${RSTUDIO_PKG} && \
     rm -f ${RSTUDIO_PKG} && \
-    echo '/opt/conda/lib/R/lib' > /etc/ld.so.conf.d/r.conf && /sbin/ldconfig -v && \
+    echo '/opt/conda/lib/R/lib' > /etc/ld.so.conf.d/r.conf && \
+    /sbin/ldconfig -v && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
     rm -f /usr/bin/R && \
     chmod -R g=u /var/lib/rstudio-server && \
