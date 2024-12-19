@@ -1,4 +1,4 @@
-ARG BASE_TAG=2025.1-main
+ARG BASE_TAG=latest
 FROM ghcr.io/ucsd-ets/datascience-notebook:${BASE_TAG}
 
 USER root
