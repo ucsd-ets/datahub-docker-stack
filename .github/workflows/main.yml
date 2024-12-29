@@ -3,6 +3,7 @@ name: AUTO Build and Test
 env:
   DOCKER_CLIENT_TIMEOUT: "300"
   COMPOSE_HTTP_TIMEOUT: "300"
+  SKIP_PREPULL: "false"
 
 on:
   push:
@@ -23,6 +24,11 @@ on:
       - ".github/workflows/main.yml"
 
   workflow_dispatch:
+    inputs:
+      prepull_images:
+        description: "Prepull images prior to build"
+        required: false
+        default: "false"
 
 jobs:
   start-runner:
@@ -57,9 +63,16 @@ jobs:
       !contains(github.event.pull_request.title, 'skip ci')
     steps:
       - name: Checkout after Free Space
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      
+      - name: Setup ENV vars
+        run: |
+          if [[ "${{ github.event.inputs.prepull_images || 'false' }}" == "true" ]]; then
+            echo "SKIP_PREPULL=true" >> $GITHUB_ENV
+          else
+            echo "SKIP_PREPULL=false" >> $GITHUB_ENV
 
       - name: Docker/ENV cleanup Cleanup
         run: |
@@ -77,10 +90,10 @@ jobs:
           sudo dnf remove python3-requests -y
           python3 -m pip install -r scripts/requirements.txt
       
-      - name: Install selenium dependecies for r studio
-        run: |
-          chmod +x ./scripts/selenium_setup.sh 
-          ./scripts/selenium_setup.sh
+      #- name: Install selenium dependecies for r studio
+      #  run: |
+      #    chmod +x ./scripts/selenium_setup.sh 
+      #    ./scripts/selenium_setup.sh
           
       - name: Install pydoit fixed
         run: |
@@ -106,7 +119,7 @@ jobs:
           mkdir -p logs
 
       - name: Clone Wiki
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: ${{github.repository}}.wiki
           path: wiki
@@ -142,7 +155,7 @@ jobs:
 
       - name: Archive artifacts and logs
         if: ${{ always() }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
           path: |

@@ -201,10 +201,17 @@ def build_and_test_containers(
     # prepull images inorder to use cache
     # AND mark rebuild for those without cache yet
     last_t = datetime.datetime.now()  # to log timestamp
+    skip_prepull = os.getenv('SKIP_PREPULL', 'false')
+    skip_prepull = skip_prepull.lower() == 'true'
+    
     for i, node in enumerate(node_order):
-        if not docker_adapter.pull_build_cache(node):
-            # self doesn't exist on Dockerhub, rebuild
-            logger.info(f"{node.full_image_name} doesn't exist on Dockerhub. \
+        if skip_prepull:
+            node.prepull = False
+            node_order[i].rebuild = True
+            logger.info(f"Skipping prepull for {node.full_image_name}.")
+        if not skip_prepull and not docker_adapter.pull_build_cache(node):
+            # self doesn't exist on GHCR, rebuild
+            logger.info(f"{node.full_image_name} doesn't exist on GHCR. \
                 It will be built from stable image's cache and save future build time.")
             node_order[i].rebuild = True
     last_t, m, s = get_time_duration(last_t)

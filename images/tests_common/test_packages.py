@@ -98,7 +98,11 @@ EXCLUDED_PACKAGES = [
     "jupyterlab-git",
     "jupyter-pluto-proxy",
     "python-lsp-server",
-     "mamba[version='<2.0.0']",
+    "mamba[version='<2.0.0']",
+    "mamba",
+    "jupyterhub-singleuser",
+    "conda-forge::blas=[build",
+    "nose"
 ]
 
 
