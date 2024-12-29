@@ -80,13 +80,16 @@ RUN pip install --no-cache-dir \
     torch==${TORCH_VERSION} \
     torchvision \
     torchaudio \
-    --index-url https://download.pytorch.org/whl/cu124
-
-RUN pip install tensorflow==$TENSORFLOW_VERSION tensorflow-datasets tensorrt==$TENSORRT_VERSION keras==$KERAS_VERSION tf-keras==$TENSORFLOW_VERSION && \
+    --index-url https://download.pytorch.org/whl/cu124 && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
-    mamba clean -a -y && \
-    pip cache purge
+    mamba clean -a -y
+
+RUN pip install --no-cache-dir \
+    tensorflow==$TENSORFLOW_VERSION tensorflow-datasets tensorrt==$TENSORRT_VERSION keras==$KERAS_VERSION tf-keras==$TENSORFLOW_VERSION && \
+    fix-permissions $CONDA_DIR && \
+    fix-permissions /home/$NB_USER && \
+    mamba clean -a -y
 
 RUN pip install transformers datasets accelerate huggingface-hub timm && \
     fix-permissions $CONDA_DIR && \
