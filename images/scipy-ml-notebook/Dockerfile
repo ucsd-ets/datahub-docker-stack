@@ -1,4 +1,4 @@
-ARG BASE_TAG=latest
+ARG BASE_TAG=2025.4-py312-cuda124-exp
 FROM ghcr.io/ucsd-ets/datascience-notebook:${BASE_TAG}
 
 USER root
@@ -9,9 +9,8 @@ USER root
 
 # Python/Mamba deps
 ## tf 2.13 does not work with torch 2.2.1. Both require conflicting versions of typing-extensions
-ARG CUDA_VERSION=12.4 LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7 \
-  TENSORFLOW_VERSION=2.17.0 KERAS_VERSION=3.5.0 TENSORRT_VERSION=8.6.1 TORCH_VERSION=2.5.1 \
-  PROTOBUF_VERSION=3.20.3 
+ARG CUDA_VERSION=12.4 \
+  TENSORFLOW_VERSION=2.18.0 KERAS_VERSION=3.7.0 TENSORRT_VERSION=10.7.0 TORCH_VERSION=2.5.1
 
 # apt deps
 RUN apt-get update && \
@@ -47,34 +46,16 @@ RUN mamba install -c rapidsai-nightly -c conda-forge jupyterlab-nvdashboard \
 
 # CUDA setup w/mamba
 # cuda-toolkit is a skeleton package on CUDA 12, unlike CUDA <= 11
-RUN mamba install -c "nvidia/label/cuda-12.4" \
+RUN mamba install -c "nvidia/label/cuda-${CUDA_VERSION}" \
     -c conda-forge \
     cuda-nvcc \
-    cuda-toolkit=$CUDA_VERSION \
-    cuda-version=$CUDA_VERSION \
-    cudnn \
-    libcublas \
-    nccl \
-    -y && \
-    fix-permissions $CONDA_DIR && \
-    fix-permissions /home/$NB_USER && \
-    mamba clean -a -y
-
-RUN mamba install -c conda-forge -c pytorch \
-    pytorch=$TORCH_VERSION \
-    pytorch-cuda=$CUDA_VERSION \
-    torchvision \
-    torchaudio \
+    cuda-version=${CUDA_VERSION} \
     -y && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
     mamba clean -a -y
 
 # Install scipy pip packages
-## install protobuf to avoid weird base type error. seems like if we don't then it'll be installed twice.
-## https://github.com/spesmilo/electrum/issues/7825
-## pip cache purge didnt work here for some reason.
-RUN pip install --no-cache-dir protobuf==$PROTOBUF_VERSION
 ## cuda-python installed to have parity with tensorflow and cudnn
 ## Install pillow<7 due to dependency issue https://github.com/pytorch/vision/issues/1712
 ## tensorrt installed to fix not having libnvinfer that has caused tensorflow issues.
@@ -95,7 +76,12 @@ RUN mamba install -c conda-forge pyqt pycocotools pillow scapy && \
 ## Beware of potentially needing to update these if we update the drivers.
 ## Check tensorrt_env_vars.sh if you have to bump tensorrt!
 ## We install torch and its dependencies EXCLUDING any nvidia* deps. These are handled by our conda env.
-#RUN pip install nvidia-cudnn-cu12==$CUDNN_VERSION torch==$TORCH_VERSION torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121 && \
+RUN pip install --no-cache-dir \
+    torch==${TORCH_VERSION} \
+    torchvision \
+    torchaudio \
+    --index-url https://download.pytorch.org/whl/cu124
+
 RUN pip install tensorflow==$TENSORFLOW_VERSION tensorflow-datasets tensorrt==$TENSORRT_VERSION keras==$KERAS_VERSION tf-keras==$TENSORFLOW_VERSION && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
@@ -116,15 +102,6 @@ ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
 RUN mkdir -p $CONDA_DIR/lib/nvvm/libdevice && \
     cp $CONDA_DIR/nvvm/libdevice/libdevice.10.bc $CONDA_DIR/lib/nvvm/libdevice/
     #CUDA 11: cp $CONDA_DIR/lib/libdevice.10.bc $CONDA_DIR/lib/nvvm/libdevice/
-
-# TensorRT fix for tensorflow
-## https://github.com/tensorflow/tensorflow/issues/61468 (could not find TensorRT)
-## This will most definitely have to be changed after 8.6.1...
-RUN ln -s /opt/conda/lib/python3.11/site-packages/tensorrt_libs/libnvinfer_plugin.so.8 /opt/conda/lib/python3.11/site-packages/tensorrt_libs/libnvinfer_plugin.so.$TENSORRT_VERSION && \
-    ln -s /opt/conda/lib/python3.11/site-packages/tensorrt_libs/libnvinfer.so.8 /opt/conda/lib/python3.11/site-packages/tensorrt_libs/libnvinfer.so.$TENSORRT_VERSION
-
-# Cleanup unnecessary pkgs TODO
-# RUN pip uninstall nvidia-cuda-runtime-cu12 nvidia-cublas-cu12-12.6.4.1 nvidia-cudnn-cu12
 
 # Run datahub scripts
 RUN . /tmp/activate.sh
