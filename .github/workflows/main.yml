@@ -26,7 +26,7 @@ on:
   workflow_dispatch:
     inputs:
       prepull_images:
-        description: "Prepull images prior to build"
+        description: "Skip image prepull prior to build"
         required: false
         type: boolean
         default: false

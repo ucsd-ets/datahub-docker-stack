@@ -215,7 +215,8 @@ def build_and_test_containers(
                 It will be built from stable image's cache and save future build time.")
             node_order[i].rebuild = True
     last_t, m, s = get_time_duration(last_t)
-    logger.info(f"TIME: Prepull took {m} mins {s} secs")
+    if not skip_prepull:
+        logger.info(f"TIME: Prepull took {m} mins {s} secs")
 
     # MAIN loop: look at image one by one
     for node in node_order:

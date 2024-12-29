@@ -7,7 +7,7 @@ from packaging import version
 LOGGER = logging.getLogger('datahub_docker_stacks')
 
 
-def test_python_version(container, python_next_version="3.12"):
+def test_python_version(container, python_next_version="3.13"):
     """Check that python version is lower than the next version"""
     LOGGER.info(f"Checking that python version is lower than {python_next_version}")
     c = container.run(
