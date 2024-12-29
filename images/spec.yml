@@ -4,9 +4,9 @@ images:
   datascience-notebook:
     image_name: ghcr.io/ucsd-ets/datascience-notebook
     build_args:
-      PYTHON_VERSION: python-3.11.10
-      PY_VER_SHORT: "3.11"
-      JUPYTERHUB_VERSION: 4.1.6
+      PYTHON_VERSION: python-3.12.8
+      PY_VER_SHORT: "3.12"
+      JUPYTERHUB_VERSION: 5.2.1
     info_cmds: [PY_VER, PIP_LIST, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
 
   rstudio-notebook:
@@ -25,7 +25,7 @@ images:
     #prepull: false #-- uncomment to disable prepulling behavior for scipy-ml. gives you space on machine in exchange for build time.
 
 tag:
-  prefix: "2025.1"
+  prefix: "2025.4"
 
 all_info_cmds:
   PY_VER:
@@ -39,10 +39,10 @@ all_info_cmds:
     command: conda info
   CONDA_LIST:
     description: Conda Packages
-    command: conda list
+    command: mamba list
   APT_PKG_LIST:
     description: System Packages
     command: apt list --installed
   CUDA_VERSION:
     description: CUDA Version
-    command: bash -c 'conda list | grep "cuda\|cudnn\|nccl"'
+    command: bash -c 'mamba list | grep "cuda\|cudnn\|nccl"'

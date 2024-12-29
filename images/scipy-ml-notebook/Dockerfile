@@ -9,8 +9,8 @@ USER root
 
 # Python/Mamba deps
 ## tf 2.13 does not work with torch 2.2.1. Both require conflicting versions of typing-extensions
-ARG CUDA_VERSION=12.1 CUDNN_VERSION=8.9.2.26 LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7 \
-  TENSORFLOW_VERSION=2.17.0 KERAS_VERSION=3.5.0 TENSORRT_VERSION=8.6.1 TORCH_VERSION=2.3.1 \
+ARG CUDA_VERSION=12.4 LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7 \
+  TENSORFLOW_VERSION=2.17.0 KERAS_VERSION=3.5.0 TENSORRT_VERSION=8.6.1 TORCH_VERSION=2.5.1 \
   PROTOBUF_VERSION=3.20.3 
 
 # apt deps
@@ -39,15 +39,32 @@ RUN chmod 777 /etc/datahub-profile.d/*.sh /tmp/activate.sh
 USER jovyan
 
 # Install nvdashboard for GPU monitoring
-RUN mamba install -c rapidsai-nightly -c conda-forge jupyterlab-nvdashboard
+RUN mamba install -c rapidsai-nightly -c conda-forge jupyterlab-nvdashboard \
+    -y && \
+    fix-permissions $CONDA_DIR && \
+    fix-permissions /home/$NB_USER && \
+    mamba clean -a -y
 
 # CUDA setup w/mamba
-## TODO: Investigate this command, seems to duplicate cuda packages for nvidia (pypi + conda-forge). 
 # cuda-toolkit is a skeleton package on CUDA 12, unlike CUDA <= 11
-RUN mamba install -c "nvidia/label/cuda-12.1.1" cuda-nvcc \
+RUN mamba install -c "nvidia/label/cuda-12.4" \
+    -c conda-forge \
+    cuda-nvcc \
     cuda-toolkit=$CUDA_VERSION \
     cuda-version=$CUDA_VERSION \
+    cudnn \
+    libcublas \
     nccl \
+    -y && \
+    fix-permissions $CONDA_DIR && \
+    fix-permissions /home/$NB_USER && \
+    mamba clean -a -y
+
+RUN mamba install -c conda-forge -c pytorch \
+    pytorch=$TORCH_VERSION \
+    pytorch-cuda=$CUDA_VERSION \
+    torchvision \
+    torchaudio \
     -y && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
@@ -77,18 +94,19 @@ RUN mamba install -c conda-forge pyqt pycocotools pillow scapy && \
 ## no purge required but no-cache-dir is used. pip purge will actually break the build here!
 ## Beware of potentially needing to update these if we update the drivers.
 ## Check tensorrt_env_vars.sh if you have to bump tensorrt!
-RUN pip install nvidia-cudnn-cu12==$CUDNN_VERSION torch==$TORCH_VERSION torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121 && \
-  pip install tensorflow==$TENSORFLOW_VERSION tensorflow-datasets tensorrt==$TENSORRT_VERSION keras==$KERAS_VERSION tf-keras==$TENSORFLOW_VERSION && \
-  fix-permissions $CONDA_DIR && \
-  fix-permissions /home/$NB_USER && \
-  mamba clean -a -y && \
-  pip cache purge
+## We install torch and its dependencies EXCLUDING any nvidia* deps. These are handled by our conda env.
+#RUN pip install nvidia-cudnn-cu12==$CUDNN_VERSION torch==$TORCH_VERSION torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121 && \
+RUN pip install tensorflow==$TENSORFLOW_VERSION tensorflow-datasets tensorrt==$TENSORRT_VERSION keras==$KERAS_VERSION tf-keras==$TENSORFLOW_VERSION && \
+    fix-permissions $CONDA_DIR && \
+    fix-permissions /home/$NB_USER && \
+    mamba clean -a -y && \
+    pip cache purge
 
 RUN pip install transformers datasets accelerate huggingface-hub timm && \
-  fix-permissions $CONDA_DIR && \
-  fix-permissions /home/$NB_USER && \
-  mamba clean -a -y && \
-  pip cache purge
+    fix-permissions $CONDA_DIR && \
+    fix-permissions /home/$NB_USER && \
+    mamba clean -a -y && \
+    pip cache purge
 
 USER $NB_UID:$NB_GID
 ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
@@ -104,6 +122,9 @@ RUN mkdir -p $CONDA_DIR/lib/nvvm/libdevice && \
 ## This will most definitely have to be changed after 8.6.1...
 RUN ln -s /opt/conda/lib/python3.11/site-packages/tensorrt_libs/libnvinfer_plugin.so.8 /opt/conda/lib/python3.11/site-packages/tensorrt_libs/libnvinfer_plugin.so.$TENSORRT_VERSION && \
     ln -s /opt/conda/lib/python3.11/site-packages/tensorrt_libs/libnvinfer.so.8 /opt/conda/lib/python3.11/site-packages/tensorrt_libs/libnvinfer.so.$TENSORRT_VERSION
+
+# Cleanup unnecessary pkgs TODO
+# RUN pip uninstall nvidia-cuda-runtime-cu12 nvidia-cublas-cu12-12.6.4.1 nvidia-cudnn-cu12
 
 # Run datahub scripts
 RUN . /tmp/activate.sh
