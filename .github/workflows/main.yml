@@ -28,7 +28,8 @@ on:
       prepull_images:
         description: "Prepull images prior to build"
         required: false
-        default: "false"
+        type: boolean
+        default: false
 
 jobs:
   start-runner:
@@ -69,10 +70,11 @@ jobs:
       
       - name: Setup ENV vars
         run: |
-          if [[ "${{ github.event.inputs.prepull_images || 'false' }}" == "true" ]]; then
+          if [[ "${{ github.event.inputs.prepull_images }}" == "true" ]]; then
             echo "SKIP_PREPULL=true" >> $GITHUB_ENV
           else
             echo "SKIP_PREPULL=false" >> $GITHUB_ENV
+          fi
 
       - name: Docker/ENV cleanup Cleanup
         run: |
