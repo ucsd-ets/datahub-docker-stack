@@ -8,9 +8,9 @@ USER root
 # https://www.tensorflow.org/install/source#linux
 
 # Python/Mamba deps
-## tf 2.13 does not work with torch 2.2.1. Both require conflicting versions of typing-extensions
+## tf 2.18+ does not work with cu124 pytorch. tf 2.18 needs cudnn 9.3+, torch installs cudnn 9.1
 ARG CUDA_VERSION=12.4 \
-  TENSORFLOW_VERSION=2.18.0 KERAS_VERSION=3.7.0 TENSORRT_VERSION=10.7.0 TORCH_VERSION=2.5.1
+  TENSORFLOW_VERSION=2.17.0 KERAS_VERSION=3.7.0 TENSORRT_VERSION=10.7.0 TORCH_VERSION=2.5.1
 
 # apt deps
 RUN apt-get update && \
