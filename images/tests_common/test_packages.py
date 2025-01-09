@@ -102,7 +102,8 @@ EXCLUDED_PACKAGES = [
     "mamba",
     "jupyterhub-singleuser",
     "conda-forge::blas=[build",
-    "nose"
+    "nose",
+    "libcublas",
 ]
 
 
