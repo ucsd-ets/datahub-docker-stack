@@ -46,13 +46,9 @@ RUN mamba install -c rapidsai-nightly -c conda-forge jupyterlab-nvdashboard \
 
 # CUDA setup w/mamba
 # cuda-toolkit is a skeleton package on CUDA 12, unlike CUDA <= 11
-RUN mamba install -c "nvidia/label/cuda-${CUDA_VERSION}" \
-    -c conda-forge \
-    cuda-nvcc \
+RUN mamba install -c "nvidia/label/cuda-$CUDA_VERSION" cuda-nvcc \
     cuda-toolkit=$CUDA_VERSION \
     cuda-version=$CUDA_VERSION \
-    cudnn \
-    libcublas \
     nccl \
     -y && \
     fix-permissions $CONDA_DIR && \
@@ -84,13 +80,14 @@ RUN pip install --no-cache-dir \
     torch==${TORCH_VERSION} \
     torchvision \
     torchaudio \
-    --index-url https://download.pytorch.org/whl/cu124 && \
-    fix-permissions $CONDA_DIR && \
-    fix-permissions /home/$NB_USER && \
-    mamba clean -a -y
+    --index-url https://download.pytorch.org/whl/cu124 
 
 RUN pip install --no-cache-dir \
-    tensorflow==$TENSORFLOW_VERSION tensorflow-datasets tensorrt==$TENSORRT_VERSION keras==$KERAS_VERSION tf-keras==$TENSORFLOW_VERSION && \
+    tensorflow==$TENSORFLOW_VERSION \
+    tensorflow-datasets \
+    tensorrt==$TENSORRT_VERSION \
+    keras==$KERAS_VERSION \
+    tf-keras==$TENSORFLOW_VERSION && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
     mamba clean -a -y
