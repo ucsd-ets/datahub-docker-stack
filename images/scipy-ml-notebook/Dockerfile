@@ -41,12 +41,8 @@ RUN mamba install -c rapidsai-nightly -c conda-forge jupyterlab-nvdashboard
 
 # CUDA setup w/mamba
 RUN mamba install -c "nvidia/label/cuda-12.1.1" \
-    cuda-nvcc \
     cuda-version=$CUDA_VERSION \
     cuda-toolkit=$CUDA_VERSION \
-    nccl \
-    cudnn \
-    libcublas \
     -y && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
@@ -70,7 +66,7 @@ RUN mamba install -c conda-forge pyqt pycocotools pillow scapy && \
 ## no purge required but no-cache-dir is used. pip purge will actually break the build here!
 ## Beware of potentially needing to update these if we update the drivers.
 ## Check tensorrt_env_vars.sh if you have to bump tensorrt!
-RUN pip install torch==$TORCH_VERSION torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121 --no-cache-dir && \
+RUN pip install nvidia-cudnn-cu12==$CUDNN_VERSION torch==$TORCH_VERSION torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121 --no-cache-dir && \
   pip install tensorflow==$TENSORFLOW_VERSION tensorflow-datasets tensorrt==$TENSORRT_VERSION keras==$KERAS_VERSION tf-keras==$TENSORFLOW_VERSION --no-cache-dir && \
   fix-permissions $CONDA_DIR && \
   fix-permissions /home/$NB_USER && \
