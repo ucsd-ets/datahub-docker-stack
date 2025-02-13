@@ -43,6 +43,7 @@ RUN mamba install -c rapidsai-nightly -c conda-forge jupyterlab-nvdashboard
 RUN mamba install -c "nvidia/label/cuda-12.1.1" \
     cuda-version=$CUDA_VERSION \
     cuda-toolkit=$CUDA_VERSION \
+    nccl \
     -y && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
