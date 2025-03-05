@@ -14,8 +14,8 @@ USER root
 
 ## keras 3>= doesn't work with transformers as of 3-5-25. Check this when building future stable images.
 ARG CUDA_VERSION=12.6 CUDNN_VERSION=9.5.1.17 LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7 \
-  TENSORFLOW_VERSION=2.18.0 KERAS_VERSION=2.18.0 TENSORRT_VERSION=10.7.0 TORCH_VERSION=2.6.0 \
-  PROTOBUF_VERSION=3.20.3 
+  TENSORFLOW_VERSION=2.18.0 KERAS_VERSION=3.9.0 TENSORRT_VERSION=10.7.0 TORCH_VERSION=2.6.0 \
+  PROTOBUF_VERSION=3.20.3 TF_KERAS_VERSION=2.18.0
 
 # apt deps
 RUN apt-get update && \
@@ -89,7 +89,7 @@ RUN mamba install -c conda-forge pyqt pycocotools pillow scapy && \
 
 ## tf-keras is keras 2.x for higher versions of tensorflow that would normally require keras 3
 RUN pip install nvidia-cudnn-cu12==$CUDNN_VERSION torch==$TORCH_VERSION torchvision torchaudio --index-url https://download.pytorch.org/whl/cu126 && \
-  pip install tensorflow==$TENSORFLOW_VERSION tensorflow-datasets tensorrt==$TENSORRT_VERSION tf-keras==$KERAS_VERSION && \
+  pip install tensorflow==$TENSORFLOW_VERSION tensorflow-datasets tensorrt==$TENSORRT_VERSION keras==$KERAS_VERSION tf-keras==$TF_KERAS_VERSION && \
   fix-permissions $CONDA_DIR && \
   fix-permissions /home/$NB_USER && \
   mamba clean -a -y && \

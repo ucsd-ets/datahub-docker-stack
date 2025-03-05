@@ -15,8 +15,8 @@ def test_model_training(simple_model):
     x_train = np.random.random((100, 5))
     y_train = np.random.randint(2, size=(100, 1))
     simple_model.fit(x_train, y_train, epochs=1, batch_size=32, verbose=0)
-    assert simple_model.layers[0].input_shape == (None, 5)
-    assert simple_model.layers[1].output_shape == (None, 1)
+    assert simple_model.layers[0].input.shape == (None, 5)
+    assert simple_model.layers[1].output.shape == (None, 1)
 
 def test_model_evaluation(simple_model):
     x_test = np.random.random((20, 5))
