@@ -11,6 +11,8 @@ USER root
 ## Package versions
 ## tf 2.13 does not work with torch 2.2.1. Both require conflicting versions of typing-extensions
 ## CUDA 11: ARG CUDA_VERSION=11.8 CUDNN_VERSION=8.7.0.84 \
+
+## keras 3>= doesn't work with transformers as of 3-5-25. Check this when building future stable images.
 ARG CUDA_VERSION=12.6 CUDNN_VERSION=9.5.1.17 LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7 \
   TENSORFLOW_VERSION=2.18.0 KERAS_VERSION=2.15.0 TENSORRT_VERSION=10.7.0 TORCH_VERSION=2.6.0 \
   PROTOBUF_VERSION=3.20.3 
