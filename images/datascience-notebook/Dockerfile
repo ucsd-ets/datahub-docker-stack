@@ -81,12 +81,7 @@ RUN pip3 install --no-cache-dir --upgrade uv
 #     mamba clean --all
 
 
-RUN mamba install -c conda-forge typingextensions && \
-    fix-permissions $CONDA_DIR && \
-    fix-permissions /home/$NB_USER && \
-    mamba clean --all
-
-RUN uv pip install pillow tzlocal appdirs gputil mock pytest umap-learn --system && \
+RUN uv pip install pillow typing-extensions tzlocal appdirs gputil mock pytest umap-learn --system && \
     uv pip install nltk statsmodels=$STATSMODELS_VERSION pandas=$PANDAS_VERSION mistune --system && \
     uv pip install dpkt nose datascience pyarrow bottleneck=$BOTTLENECK_VERSION umap-learn numexpr=$NUMEXPR_VESION --system && \
     python -c 'import matplotlib.pyplot' && \
