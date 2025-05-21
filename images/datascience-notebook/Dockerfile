@@ -101,7 +101,7 @@ RUN uv pip install pillow typing-extensions tzlocal appdirs gputil mock pytest u
 #     mamba clean --all
 
 RUN uv pip install jupyterhub==$JUPYTERHUB_VERSION jupyter_server==$JUPYTERSERVER_VERSION --system && \
-    uv pip install jupyterlab==$JUPYTERLAB_VERSION notebook==$NOTEBOOK_VERSION nbclassic==$NBCLASSIC_VERSION --system $$ \
+    uv pip install jupyterlab==$JUPYTERLAB_VERSION notebook==$NOTEBOOK_VERSION nbclassic==$NBCLASSIC_VERSION --system && \
     # (TODO: Re-enable collab once RTC is fixed) uv pip install jupyterlab_rise jupyter_server_terminals jupyter-collaboration --system && \
     uv pip install jupyterlab_rise jupyter_server_terminals --system && \
     uv pip install jupyterlab-latex jupyterlab-git jupyterlab-fasta jupyterlab-geojson --system && \
