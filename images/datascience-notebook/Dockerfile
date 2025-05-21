@@ -82,8 +82,8 @@ RUN pip3 install --no-cache-dir --upgrade uv
 
 
 RUN uv pip install pillow typing-extensions tzlocal appdirs gputil mock pytest umap-learn --system && \
-    uv pip install nltk statsmodels=$STATSMODELS_VERSION pandas=$PANDAS_VERSION mistune --system && \
-    uv pip install dpkt nose datascience pyarrow bottleneck=$BOTTLENECK_VERSION umap-learn numexpr=$NUMEXPR_VESION --system && \
+    uv pip install nltk statsmodels==$STATSMODELS_VERSION pandas==$PANDAS_VERSION mistune --system && \
+    uv pip install dpkt nose datascience pyarrow bottleneck==$BOTTLENECK_VERSION umap-learn numexpr==$NUMEXPR_VESION --system && \
     python -c 'import matplotlib.pyplot' && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
@@ -100,10 +100,10 @@ RUN uv pip install pillow typing-extensions tzlocal appdirs gputil mock pytest u
 #     fix-permissions /home/$NB_USER && \
 #     mamba clean --all
 
-RUN uv pip install jupyterhub=$JUPYTERHUB_VERSION jupyter_server=$JUPYTERSERVER_VERSION --system && \
-    uv pip install jupyterlab=$JUPYTERLAB_VERSION notebook=$NOTEBOOK_VERSION nbclassic=$NBCLASSIC_VERSION --system $$ \
+RUN uv pip install jupyterhub==$JUPYTERHUB_VERSION jupyter_server==$JUPYTERSERVER_VERSION --system && \
+    uv pip install jupyterlab==$JUPYTERLAB_VERSION notebook==$NOTEBOOK_VERSION nbclassic==$NBCLASSIC_VERSION --system $$ \
     uv pip install jupyterlab-latex jupyterlab-git jupyterlab-fasta jupyterlab-geojson --system && \
-    uv pip install nbconvert=$NBCONVERT_VERSION nbgrader=$NBGRADER_VERSION --system && \
+    uv pip install nbconvert==$NBCONVERT_VERSION nbgrader==$NBGRADER_VERSION --system && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
     uv cache clean
