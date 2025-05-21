@@ -74,7 +74,7 @@ RUN pip3 install --no-cache-dir --upgrade uv
 ## mistune added for nbgrader issues
 # RUN mamba install -c conda-forge pillow typing-extensions tzlocal appdirs gputil mock pytest umap-learn && \
 #     mamba install -c conda-forge nltk statsmodels=$STATSMODELS_VERSION pandas=$PANDAS_VERSION mistune && \
-#     mamba install -c conda-forge dpkt nose datascience pyarrow bottleneck=$BOTTLENECK_VERSION umap-learn numexpr=$NUMEXPR_VESION && \
+#     mamba install -c conda-forge dpkt nose datascience pyarrow bottleneck=$BOTTLENECK_VERSION umap-learn numexpr=$NUMEXPR_VERSION && \
 #     python -c 'import matplotlib.pyplot' && \
 #     fix-permissions $CONDA_DIR && \
 #     fix-permissions /home/$NB_USER && \
@@ -83,7 +83,7 @@ RUN pip3 install --no-cache-dir --upgrade uv
 
 RUN uv pip install pillow typing-extensions tzlocal appdirs gputil mock pytest umap-learn --system && \
     uv pip install nltk statsmodels==$STATSMODELS_VERSION pandas==$PANDAS_VERSION mistune --system && \
-    uv pip install dpkt nose datascience pyarrow bottleneck==$BOTTLENECK_VERSION umap-learn numexpr==$NUMEXPR_VESION --system && \
+    uv pip install dpkt nose datascience pyarrow bottleneck==$BOTTLENECK_VERSION umap-learn numexpr==$NUMEXPR_VERSION --system && \
     python -c 'import matplotlib.pyplot' && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
