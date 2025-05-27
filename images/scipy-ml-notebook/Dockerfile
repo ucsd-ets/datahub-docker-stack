@@ -93,7 +93,7 @@ RUN uv pip install opencv-contrib-python-headless opencv-python --system && \
 #     fix-permissions /home/$NB_USER && \
 #     mamba clean --all
 
-RUN uv pip install pyqt pycocotools pillow scapy --system && \
+RUN uv pip install PyQt5 pycocotools pillow scapy --system && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
     uv cache clean
