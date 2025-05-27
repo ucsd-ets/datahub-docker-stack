@@ -67,20 +67,36 @@ RUN mamba install -c "nvidia/label/cuda-12.6.0" cuda-nvcc \
 ## install protobuf to avoid weird base type error. seems like if we don't then it'll be installed twice.
 ## https://github.com/spesmilo/electrum/issues/7825
 ## pip cache purge didnt work here for some reason.
-RUN pip install --no-cache-dir protobuf==$PROTOBUF_VERSION
+# RUN pip install --no-cache-dir protobuf==$PROTOBUF_VERSION
+
+RUN uv pip install --no-cache-dir protobuf==$PROTOBUF_VERSION --system && \
+    fix-permissions $CONDA_DIR && \ 
+    fix-permissions /home/$NB_USER && \
+    uv cache clean
+
 ## cuda-python installed to have parity with tensorflow and cudnn
 ## Install pillow<7 due to dependency issue https://github.com/pytorch/vision/issues/1712
 ## tensorrt installed to fix not having libnvinfer that has caused tensorflow issues.
-RUN pip install opencv-contrib-python-headless \
-    opencv-python && \
+# RUN pip install opencv-contrib-python-headless \
+#     opencv-python && \
+#     fix-permissions $CONDA_DIR && \ 
+#     fix-permissions /home/$NB_USER && \
+#     pip cache purge
+
+RUN uv pip install opencv-contrib-python-headless opencv-python --system && \
     fix-permissions $CONDA_DIR && \ 
     fix-permissions /home/$NB_USER && \
-    pip cache purge
+    uv cache clean
 
-RUN mamba install -c conda-forge pyqt pycocotools pillow scapy && \
+# RUN mamba install -c conda-forge pyqt pycocotools pillow scapy && \
+#     fix-permissions $CONDA_DIR && \
+#     fix-permissions /home/$NB_USER && \
+#     mamba clean --all
+
+RUN uv pip install pyqt pycocotools pillow scapy --system && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
-    mamba clean --all
+    uv cache clean
 
 # Install CUDA/Torch/Tensorflow/Keras w/pip
 ## no purge required but no-cache-dir is used. pip purge will actually break the build here!
@@ -88,18 +104,31 @@ RUN mamba install -c conda-forge pyqt pycocotools pillow scapy && \
 ## Check tensorrt_env_vars.sh if you have to bump tensorrt!
 
 ## tf-keras is keras 2.x for higher versions of tensorflow that would normally require keras 3
-RUN pip install nvidia-cudnn-cu12==$CUDNN_VERSION torch==$TORCH_VERSION torchvision torchaudio --index-url https://download.pytorch.org/whl/cu126 && \
-  pip install tensorflow==$TENSORFLOW_VERSION tensorflow-datasets tensorrt==$TENSORRT_VERSION keras==$KERAS_VERSION tf-keras==$TF_KERAS_VERSION && \
-  fix-permissions $CONDA_DIR && \
-  fix-permissions /home/$NB_USER && \
-  mamba clean -a -y && \
-  pip cache purge
+# RUN pip install nvidia-cudnn-cu12==$CUDNN_VERSION torch==$TORCH_VERSION torchvision torchaudio --index-url https://download.pytorch.org/whl/cu126 && \
+#   pip install tensorflow==$TENSORFLOW_VERSION tensorflow-datasets tensorrt==$TENSORRT_VERSION keras==$KERAS_VERSION tf-keras==$TF_KERAS_VERSION && \
+#   fix-permissions $CONDA_DIR && \
+#   fix-permissions /home/$NB_USER && \
+#   mamba clean -a -y && \
+#   pip cache purge
 
-RUN pip install transformers datasets accelerate huggingface-hub timm && \
+RUN uv pip install nvidia-cudnn-cu12==$CUDNN_VERSION torch==$TORCH_VERSION torchvision torchaudio --index-url https://download.pytorch.org/whl/cu126 --system && \
+  uv pip install tensorflow==$TENSORFLOW_VERSION tensorflow-datasets tensorrt==$TENSORRT_VERSION keras==$KERAS_VERSION tf-keras==$TF_KERAS_VERSION --system && \
   fix-permissions $CONDA_DIR && \
   fix-permissions /home/$NB_USER && \
   mamba clean -a -y && \
-  pip cache purge
+  uv cache clean
+
+# RUN pip install transformers datasets accelerate huggingface-hub timm && \
+#   fix-permissions $CONDA_DIR && \
+#   fix-permissions /home/$NB_USER && \
+#   mamba clean -a -y && \
+#   pip cache purge
+
+RUN uv pip install transformers datasets accelerate huggingface-hub timm --system && \
+  fix-permissions $CONDA_DIR && \
+  fix-permissions /home/$NB_USER && \
+  mamba clean -a -y && \
+  uv cache clean
 
 USER $NB_UID:$NB_GID
 ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
@@ -113,8 +142,8 @@ RUN mkdir -p $CONDA_DIR/lib/nvvm/libdevice && \
 # TensorRT fix for tensorflow
 ## https://github.com/tensorflow/tensorflow/issues/61468 (could not find TensorRT)
 ## This will most definitely have to be changed after 8.6.1...
-RUN ln -s /opt/conda/lib/python3.11/site-packages/tensorrt_libs/libnvinfer_plugin.so.8 /opt/conda/lib/python3.11/site-packages/tensorrt_libs/libnvinfer_plugin.so.$TENSORRT_VERSION && \
-    ln -s /opt/conda/lib/python3.11/site-packages/tensorrt_libs/libnvinfer.so.8 /opt/conda/lib/python3.11/site-packages/tensorrt_libs/libnvinfer.so.$TENSORRT_VERSION
+# RUN ln -s /opt/conda/lib/python3.11/site-packages/tensorrt_libs/libnvinfer_plugin.so.8 /opt/conda/lib/python3.11/site-packages/tensorrt_libs/libnvinfer_plugin.so.$TENSORRT_VERSION && \
+#     ln -s /opt/conda/lib/python3.11/site-packages/tensorrt_libs/libnvinfer.so.8 /opt/conda/lib/python3.11/site-packages/tensorrt_libs/libnvinfer.so.$TENSORRT_VERSION
 
 # Run datahub scripts
 RUN . /tmp/activate.sh
