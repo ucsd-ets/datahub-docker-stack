@@ -63,8 +63,7 @@ USER jovyan
 #     fix-permissions /home/$NB_USER && \
 #     mamba clean -a -y
 
-RUN uv pip install nvidia-pyindex --system && \
-    uv pip install nvidia-cuda-nvcc-cu12 nvidia-nccl-cu12 cuda-python --system && \
+RUN uv pip install --extra-index-url https://pypi.nvidia.com nvidia-cuda-nvcc-cu12 nvidia-nccl-cu12 cuda-python --system && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
     uv cache clean
