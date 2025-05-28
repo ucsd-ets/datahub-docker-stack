@@ -111,9 +111,9 @@ ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
 
 # CUDA fixes for CONDA
 ## Copy libdevice file to the required path
-RUN mkdir -p $CONDA_DIR/lib/nvvm/libdevice && \
-    cp $CONDA_DIR/nvvm/libdevice/libdevice.10.bc $CONDA_DIR/lib/nvvm/libdevice/
-    #CUDA 11: cp $CONDA_DIR/lib/libdevice.10.bc $CONDA_DIR/lib/nvvm/libdevice/
+# RUN mkdir -p $CONDA_DIR/lib/nvvm/libdevice && \
+#     cp $CONDA_DIR/nvvm/libdevice/libdevice.10.bc $CONDA_DIR/lib/nvvm/libdevice/
+#     #CUDA 11: cp $CONDA_DIR/lib/libdevice.10.bc $CONDA_DIR/lib/nvvm/libdevice/
 
 # Run datahub scripts
 RUN . /tmp/activate.sh
