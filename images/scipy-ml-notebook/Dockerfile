@@ -53,16 +53,6 @@ USER jovyan
 # CUDA setup w/mamba
 ## TODO: Investigate this command, seems to duplicate cuda packages for nvidia (pypi + conda-forge). 
 # cuda-toolkit is a skeleton package on CUDA 12, unlike CUDA <= 11
-# RUN mamba install -c "nvidia/label/cuda-12.6.0" cuda-nvcc \
-#     cuda-toolkit=$CUDA_VERSION \
-    # For CUDA 11: cudatoolkit=$CUDA_VERSION \
-#     cuda-version=$CUDA_VERSION \
-#     nccl \
-#     -y && \
-#     fix-permissions $CONDA_DIR && \
-#     fix-permissions /home/$NB_USER && \
-#     mamba clean -a -y
-
 RUN uv pip install --extra-index-url https://pypi.nvidia.com nvidia-cuda-nvcc-cu12 nvidia-nccl-cu12 cuda-python --system && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
@@ -108,12 +98,6 @@ RUN uv pip install transformers datasets accelerate huggingface-hub timm --syste
 
 USER $NB_UID:$NB_GID
 ENV PATH=${PATH}:/usr/local/nvidia/bin:/opt/conda/bin
-
-# CUDA fixes for CONDA
-## Copy libdevice file to the required path
-# RUN mkdir -p $CONDA_DIR/lib/nvvm/libdevice && \
-#     cp $CONDA_DIR/nvvm/libdevice/libdevice.10.bc $CONDA_DIR/lib/nvvm/libdevice/
-#     #CUDA 11: cp $CONDA_DIR/lib/libdevice.10.bc $CONDA_DIR/lib/nvvm/libdevice/
 
 # Run datahub scripts
 RUN . /tmp/activate.sh
