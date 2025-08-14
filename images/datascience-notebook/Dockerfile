@@ -102,6 +102,9 @@ RUN /usr/share/datahub/scripts/install-python-all.sh && \
     chown -R jovyan:users /opt/conda/etc/jupyter/nbconfig && \
     chmod -R +r /opt/conda/etc/jupyter/nbconfig
 
+RUN mamba remove --force libsqlite && \
+    mamba install -y libsqlite==3.46.1
+
 # Disable the jupyterlab extensions manager
 RUN jupyter labextension disable @jupyterlab/extensionmanager-extension
 
