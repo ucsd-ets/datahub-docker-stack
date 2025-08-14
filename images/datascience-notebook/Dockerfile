@@ -92,7 +92,10 @@ RUN uv pip install jupyterhub==$JUPYTERHUB_VERSION jupyter_server==$JUPYTERSERVE
     uv cache clean
 
 RUN mamba remove --force libsqlite && \
-    mamba -c conda-forge install -y libsqlite==3.46.1
+    mamba install -c conda-forge libsqlite==3.46.1 -y && \
+    fix-permissions $CONDA_DIR && \
+    fix-permissions /home/$NB_USER && \
+    mamba clean -a -y
 
 # Install R packages
 RUN mamba install -c conda-forge r-markdown r-covr r-git2r r-crosstalk r-dt r-sf -y && \
