@@ -103,9 +103,7 @@ RUN /usr/share/datahub/scripts/install-python-all.sh && \
     chmod -R +r /opt/conda/etc/jupyter/nbconfig
 
 # Disable the jupyterlab extensions manager
-RUN mamba remove --force sqlite && \
-    mamba install -y sqlite && \
-    jupyter labextension disable @jupyterlab/extensionmanager-extension
+RUN jupyter labextension disable @jupyterlab/extensionmanager-extension
 
 # Cleanup
 ## nbgrader requires these variables set to just run the notebook server
