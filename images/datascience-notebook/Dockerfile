@@ -91,6 +91,9 @@ RUN uv pip install jupyterhub==$JUPYTERHUB_VERSION jupyter_server==$JUPYTERSERVE
     fix-permissions /home/$NB_USER && \
     uv cache clean
 
+RUN mamba remove --force libsqlite && \
+    mamba -c conda-forge install -y libsqlite==3.46.1
+
 # Install R packages
 RUN mamba install -c conda-forge r-markdown r-covr r-git2r r-crosstalk r-dt r-sf -y && \
     fix-permissions $CONDA_DIR && \
@@ -101,9 +104,6 @@ RUN mamba install -c conda-forge r-markdown r-covr r-git2r r-crosstalk r-dt r-sf
 RUN /usr/share/datahub/scripts/install-python-all.sh && \
     chown -R jovyan:users /opt/conda/etc/jupyter/nbconfig && \
     chmod -R +r /opt/conda/etc/jupyter/nbconfig
-
-RUN mamba remove --force libsqlite && \
-    mamba install -y libsqlite==3.46.1
 
 # Disable the jupyterlab extensions manager
 RUN jupyter labextension disable @jupyterlab/extensionmanager-extension
