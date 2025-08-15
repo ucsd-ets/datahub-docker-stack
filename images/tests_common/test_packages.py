@@ -64,6 +64,7 @@ PACKAGE_MAPPING = {
     "nltk_data": "nltk",
     "pytorch": "torch",
     "umap-learn": "umap",
+    "sqlite": "sqlite3",
     # R
     "randomforest": "randomForest",
     "rsqlite": "DBI",
