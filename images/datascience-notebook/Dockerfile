@@ -89,7 +89,7 @@ RUN mamba install -c conda-forge jupyterhub=$JUPYTERHUB_VERSION jupyter_server=$
     mamba clean --all
 
 # Install R packages
-RUN mamba install -c conda-forge r-markdown r-covr r-git2r r-crosstalk r-dt r-sf -y && \
+RUN mamba install -c conda-forge r-markdown r-covr r-git2r r-crosstalk r-dt -y && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
     mamba clean -a -y
