@@ -71,7 +71,7 @@ ARG PANDAS_VERSION=2.2.3 STATSMODELS_VERSION=0.14.4 BOTTLENECK_VERSION=1.4.2 NUM
 ## mistune added for nbgrader issues
 RUN mamba install -c conda-forge pillow typing-extensions tzlocal appdirs gputil mock pytest umap-learn && \
     mamba install -c conda-forge nltk statsmodels=$STATSMODELS_VERSION pandas=$PANDAS_VERSION mistune && \
-    mamba install -c conda-forge dpkt nose datascience pyarrow bottleneck=$BOTTLENECK_VERSION umap-learn numexpr=$NUMEXPR_VESION && \
+    mamba install -c conda-forge dpkt nose datascience pyarrow bottleneck=$BOTTLENECK_VERSION umap-learn numexpr=$NUMEXPR_VERSION && \
     python -c 'import matplotlib.pyplot' && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
@@ -89,7 +89,7 @@ RUN mamba install -c conda-forge jupyterhub=$JUPYTERHUB_VERSION jupyter_server=$
     mamba clean --all
 
 # Install R packages
-RUN mamba install -c conda-forge r-markdown r-covr r-git2r r-crosstalk r-dt r-sf r-units sqlite>=3.45 -y && \
+RUN mamba install -c conda-forge r-markdown r-covr r-git2r r-crosstalk r-dt -y && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
     mamba clean -a -y
