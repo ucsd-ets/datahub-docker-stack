@@ -88,11 +88,8 @@ RUN mamba install -c conda-forge jupyterhub=$JUPYTERHUB_VERSION jupyter_server=$
     fix-permissions /home/$NB_USER && \
     mamba clean --all
 
-# Disable the jupyterlab extensions manager
-RUN jupyter labextension disable @jupyterlab/extensionmanager-extension
-
 # Install R packages
-RUN mamba install -c conda-forge r-markdown r-covr r-git2r r-crosstalk r-dt r-sf -y && \
+RUN mamba install -c conda-forge r-markdown r-covr r-git2r r-crosstalk r-dt r-sf r-units sqlite>=3.45 -y && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
     mamba clean -a -y
@@ -101,6 +98,9 @@ RUN mamba install -c conda-forge r-markdown r-covr r-git2r r-crosstalk r-dt r-sf
 RUN /usr/share/datahub/scripts/install-python-all.sh && \
     chown -R jovyan:users /opt/conda/etc/jupyter/nbconfig && \
     chmod -R +r /opt/conda/etc/jupyter/nbconfig
+
+# Disable the jupyterlab extensions manager
+RUN jupyter labextension disable @jupyterlab/extensionmanager-extension
 
 # Cleanup
 ## nbgrader requires these variables set to just run the notebook server
