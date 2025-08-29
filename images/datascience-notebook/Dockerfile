@@ -1,4 +1,4 @@
-# If you are building manually, pass PYTHON_VERSION/PY_VER_SHORT/JUPYTERHUB_VERSION with --build-arg
+# If you are building manually, pass PYTHON_VERSION/PY_VER_SHORT/JUPYTERHUB_VERSION with --build-arg 
 ARG PYTHON_VERSION=python-3.11.8
 ARG PY_VER_SHORT=3.11
 ARG JUPYTERHUB_VERSION=4.0.2
