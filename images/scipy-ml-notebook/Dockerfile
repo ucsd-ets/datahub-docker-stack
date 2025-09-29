@@ -95,6 +95,9 @@ RUN pip install nvidia-cudnn-cu12==$CUDNN_VERSION torch==$TORCH_VERSION torchvis
   mamba clean -a -y && \
   pip cache purge
 
+#upgrade scikit-learn
+RUN pip install --no-cache-dir --upgrade scikit-learn
+
 RUN pip install transformers datasets accelerate huggingface-hub timm && \
   fix-permissions $CONDA_DIR && \
   fix-permissions /home/$NB_USER && \
