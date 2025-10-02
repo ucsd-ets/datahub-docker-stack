@@ -14,6 +14,11 @@ ENV DEBCONF_NOWARNINGS="yes"
 RUN apt-get update -y && \
     apt-get -qq install -y --no-install-recommends \
     git \
+    libgdal-dev \ 
+    libproj-dev \
+    libgeos-dev \
+    libudunits2-dev \
+    pkg-config \ 
     curl \
     rsync \
     unzip \
