@@ -110,14 +110,13 @@ RUN uv pip install --no-cache \
     nbgrader=$NBGRADER_VERSION && \
     python -c 'import matplotlib.pyplot' && \
     fix-permissions $CONDA_DIR && \
-    fix-permissions /home/$NB_USER && \
+    fix-permissions /home/$NB_USER 
 
 # Install R packages
 RUN R -e "install.packages(c('sf', 'markdown', 'covr', 'git2r', 'crosstalk', 'DT'), repos='https://cloud.r-project.org')" && \
     fix-permissions $CONDA_DIR && \
-    fix-permissions /home/$NB_USER && \
-    mamba clean -a -y
-
+    fix-permissions /home/$NB_USER
+    
 # Run install-python + cleanup
 RUN /usr/share/datahub/scripts/install-python-all.sh && \
     chown -R jovyan:users /opt/conda/etc/jupyter/nbconfig && \
