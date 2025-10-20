@@ -18,7 +18,7 @@ RUN apt-get update -y && \
     libproj-dev \
     libgeos-dev \
     libudunits2-dev \
-    libgit2-dev \ 
+    libgit2-dev \
     pkg-config \
     curl \
     rsync \
