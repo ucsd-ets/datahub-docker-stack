@@ -12,7 +12,7 @@ USER root
 ENV DEBIAN_FRONTEND=noninteractive
 ENV DEBCONF_NOWARNINGS="yes"
 RUN apt-get update -y && \
-    apt-get -qq install -y --no-install-recommends \
+    apt-get install -y --no-install-recommends \
     git \
     libgdal-dev \
     libproj-dev \
