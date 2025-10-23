@@ -92,10 +92,9 @@ RUN uv pip install jupyterhub==$JUPYTERHUB_VERSION jupyter_server==$JUPYTERSERVE
     uv cache clean
 
 # Install R packages
-RUN mamba install -c conda-forge r-markdown r-covr r-git2r r-crosstalk r-dt r-sf -y && \
+RUN R -e "install.packages(c('sf', 'markdown', 'covr', 'git2r', 'crosstalk', 'DT'), repos='https://cloud.r-project.org')" && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
-    mamba clean -a -y
 
 # Run install-python + cleanup
 RUN /usr/share/datahub/scripts/install-python-all.sh && \
