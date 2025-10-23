@@ -14,6 +14,12 @@ ENV DEBCONF_NOWARNINGS="yes"
 RUN apt-get update -y && \
     apt-get -qq install -y --no-install-recommends \
     git \
+    libgdal-dev \
+    libproj-dev \
+    libgeos-dev \
+    libudunits-dev \
+    libgit2-dev \
+    pkg-config \
     curl \
     rsync \
     unzip \
@@ -94,15 +100,12 @@ RUN uv pip install jupyterhub==$JUPYTERHUB_VERSION jupyter_server==$JUPYTERSERVE
 # Install R packages
 RUN R -e "install.packages(c('sf', 'markdown', 'covr', 'git2r', 'crosstalk', 'DT'), repos='https://cloud.r-project.org')" && \
     fix-permissions $CONDA_DIR && \
-    fix-permissions /home/$NB_USER && \
+    fix-permissions /home/$NB_USER
 
 # Run install-python + cleanup
 RUN /usr/share/datahub/scripts/install-python-all.sh && \
     chown -R jovyan:users /opt/conda/etc/jupyter/nbconfig && \
     chmod -R +r /opt/conda/etc/jupyter/nbconfig
-
-RUN mamba remove --force libsqlite && \
-    mamba install -y libsqlite==3.46.1
 
 # Disable the jupyterlab extensions manager
 RUN jupyter labextension disable @jupyterlab/extensionmanager-extension
@@ -111,8 +114,5 @@ RUN jupyter labextension disable @jupyterlab/extensionmanager-extension
 ## nbgrader requires these variables set to just run the notebook server
 ENV NBGRADER_COURSEID="NA"
 ENV JUPYTERHUB_USER=${NB_USER}
-
-RUN pip cache purge
-RUN conda clean -t -p -i -y
 
 WORKDIR /home/jovyan
