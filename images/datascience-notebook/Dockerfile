@@ -17,7 +17,7 @@ RUN apt-get update -y && \
     libgdal-dev \
     libproj-dev \
     libgeos-dev \
-    libudunits-dev \
+    libudunits2-dev \
     libgit2-dev \
     pkg-config \
     curl \
