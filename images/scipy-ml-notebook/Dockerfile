@@ -54,25 +54,21 @@ RUN pip3 install --no-cache-dir --upgrade uv
 
 RUN uv pip install --system \
         --extra-index-url https://pypi.nvidia.com \
+        --extra-index-url https://download.pytorch.org/whl/cu126 \
         nvidia-cuda-nvcc-cu12 \
         nvidia-nccl-cu12 \
         cuda-python \
-        --index-url "" \
         protobuf==$PROTOBUF_VERSION \
-        # OpenCV
         opencv-contrib-python-headless \
         opencv-python \
-        # Other Utils
         PyQt5 \
         pycocotools \
         pillow \
         scapy \
-        --index-url https://download.pytorch.org/whl/cu126 \
         nvidia-cudnn-cu12==$CUDNN_VERSION \
         torch==$TORCH_VERSION \
         torchvision \
         torchaudio \
-        --index-url "" \
         tensorflow==$TENSORFLOW_VERSION \
         tensorflow-datasets \
         tensorrt==$TENSORRT_VERSION \
