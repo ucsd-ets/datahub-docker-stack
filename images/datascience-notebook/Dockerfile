@@ -1,4 +1,4 @@
-# If you are building manually, pass PYTHON_VERSION/PY_VER_SHORT/JUPYTERHUB_VERSION with --build-arg
+# If you are building manually, pass PYTHON_VERSION/PY_VER_SHORT/JUPYTERHUB_VERSION with --build-arg    
 ARG PYTHON_VERSION=python-3.11.8
 ARG PY_VER_SHORT=3.11
 ARG JUPYTERHUB_VERSION=4.1.5
@@ -14,6 +14,12 @@ ENV DEBCONF_NOWARNINGS="yes"
 RUN apt-get update -y && \
     apt-get -qq install -y --no-install-recommends \
     git \
+    libgdal-dev \
+    libproj-dev \
+    libgeos-dev \
+    libudunits2-dev \
+    libgit2-dev \
+    pkg-config \
     curl \
     rsync \
     unzip \
@@ -64,35 +70,37 @@ USER jovyan
 
 # Python/Mamba Deps
 ## Package versions
-ARG JUPYTERSERVER_VERSION=2.14.2 NBGRADER_VERSION=0.9.3 JUPYTERLAB_VERSION=4.2.4 NBCONVERT_VERSION=7.16.4 NOTEBOOK_VERSION=7.2.1 NBCLASSIC_VERSION=1.1.0
+ARG JUPYTERHUB_VERSION=4.1.5 JUPYTERSERVER_VERSION=2.14.2 NBGRADER_VERSION=0.9.3 JUPYTERLAB_VERSION=4.2.4 NBCONVERT_VERSION=7.16.4 NOTEBOOK_VERSION=7.2.1 NBCLASSIC_VERSION=1.1.0
 ARG PANDAS_VERSION=2.2.3 STATSMODELS_VERSION=0.14.4 BOTTLENECK_VERSION=1.4.2 NUMEXPR_VERSION=2.10.2
+
+# Install uv for faster package installations
+RUN pip3 install --no-cache-dir --upgrade uv
 
 # Install essential+datascience pip packages 
 ## mistune added for nbgrader issues
-RUN mamba install -c conda-forge pillow typing-extensions tzlocal appdirs gputil mock pytest umap-learn && \
-    mamba install -c conda-forge nltk statsmodels=$STATSMODELS_VERSION pandas=$PANDAS_VERSION mistune && \
-    mamba install -c conda-forge dpkt nose datascience pyarrow bottleneck=$BOTTLENECK_VERSION umap-learn numexpr=$NUMEXPR_VESION && \
+RUN uv pip install pillow typing-extensions tzlocal appdirs gputil mock pytest umap-learn --system && \
+    uv pip install nltk statsmodels==$STATSMODELS_VERSION pandas==$PANDAS_VERSION mistune --system && \
+    uv pip install dpkt nose datascience pyarrow bottleneck==$BOTTLENECK_VERSION umap-learn numexpr==$NUMEXPR_VERSION --system && \
     python -c 'import matplotlib.pyplot' && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
-    mamba clean --all
+    uv cache clean
 
 # Install jupyterlab+extensions
-RUN mamba install -c conda-forge jupyterhub=$JUPYTERHUB_VERSION jupyter_server=$JUPYTERSERVER_VERSION && \
-    mamba install -c conda-forge jupyterlab=$JUPYTERLAB_VERSION notebook=$NOTEBOOK_VERSION nbclassic=$NBCLASSIC_VERSION && \
-    # (TODO: Re-enable collab once RTC is fixed) mamba install -c conda-forge jupyterlab_rise jupyter_server_terminals jupyter-collaboration && \
-    mamba install -c conda-forge jupyterlab_rise jupyter_server_terminals && \
-    mamba install -c conda-forge jupyterlab-latex jupyterlab-git jupyterlab-fasta jupyterlab-geojson && \
-    mamba install -c conda-forge nbconvert=$NBCONVERT_VERSION nbgrader=$NBGRADER_VERSION && \
+RUN uv pip install jupyterhub==$JUPYTERHUB_VERSION jupyter_server==$JUPYTERSERVER_VERSION --system && \
+    uv pip install jupyterlab==$JUPYTERLAB_VERSION notebook==$NOTEBOOK_VERSION nbclassic==$NBCLASSIC_VERSION --system && \
+    # (TODO: Re-enable collab once RTC is fixed) uv pip install jupyterlab_rise jupyter_server_terminals jupyter-collaboration --system && \
+    uv pip install jupyterlab_rise jupyter_server_terminals --system && \
+    uv pip install jupyterlab-latex jupyterlab-git jupyterlab-fasta jupyterlab-geojson --system && \
+    uv pip install nbconvert==$NBCONVERT_VERSION nbgrader==$NBGRADER_VERSION --system && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
-    mamba clean --all
+    uv cache clean
 
 # Install R packages
-RUN mamba install -c conda-forge r-markdown r-covr r-git2r r-crosstalk r-dt -y && \
+RUN R -e "install.packages(c('sf', 'markdown', 'covr', 'git2r', 'crosstalk', 'DT'), repos='https://cloud.r-project.org')" && \
     fix-permissions $CONDA_DIR && \
-    fix-permissions /home/$NB_USER && \
-    mamba clean -a -y
+    fix-permissions /home/$NB_USER
 
 # Run install-python + cleanup
 RUN /usr/share/datahub/scripts/install-python-all.sh && \
@@ -106,8 +114,5 @@ RUN jupyter labextension disable @jupyterlab/extensionmanager-extension
 ## nbgrader requires these variables set to just run the notebook server
 ENV NBGRADER_COURSEID="NA"
 ENV JUPYTERHUB_USER=${NB_USER}
-
-RUN pip cache purge
-RUN conda clean -t -p -i -y
 
 WORKDIR /home/jovyan
