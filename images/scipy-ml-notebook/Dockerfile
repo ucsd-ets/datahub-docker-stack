@@ -14,8 +14,8 @@ USER root
 
 ## keras 3>= doesn't work with transformers as of 3-5-25. Check this when building future stable images.
 ARG CUDA_VERSION=12.6 CUDNN_VERSION=9.5.1.17 LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7 \
-  TENSORFLOW_VERSION=2.18.0 KERAS_VERSION=3.9.0 TENSORRT_VERSION=10.7.0 TORCH_VERSION=2.6.0 \
-  PROTOBUF_VERSION=3.20.3 TF_KERAS_VERSION=2.18.0
+   TENSORRT_VERSION=10.7.0 TORCH_VERSION=2.6.0
+
 
 # apt deps
 RUN apt-get update && \
@@ -54,26 +54,21 @@ RUN pip3 install --no-cache-dir --upgrade uv
 
 RUN uv pip install --system \
         --extra-index-url https://pypi.nvidia.com \
-        --extra-index-url https://download.pytorch.org/whl/cu126 \
+        --extra-index-url https://download.pytorch.org/whl/cu128 \
         nvidia-cuda-nvcc-cu12 \
         nvidia-nccl-cu12 \
         cuda-python \
-        protobuf==$PROTOBUF_VERSION \
         opencv-contrib-python-headless \
         opencv-python \
         PyQt5 \
         pycocotools \
         pillow \
         scapy \
-        nvidia-cudnn-cu12==$CUDNN_VERSION \
+        nvidia-cudnn-cu12 \
         torch==$TORCH_VERSION \
         torchvision \
         torchaudio \
-        tensorflow==$TENSORFLOW_VERSION \
-        tensorflow-datasets \
-        tensorrt==$TENSORRT_VERSION \
-        keras==$KERAS_VERSION \
-        tf-keras==$TF_KERAS_VERSION \
+        tensorrt \
         transformers \
         datasets \
         accelerate \
