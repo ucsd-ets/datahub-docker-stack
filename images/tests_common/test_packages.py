@@ -70,6 +70,7 @@ PACKAGE_MAPPING = {
     "rcurl": "RCurl",
     "rodbc": "RODBC",
     "dt": "DT",
+    "rmarkdown": "markdown"
 }
 
 # List of packages that cannot be tested in a standard way
