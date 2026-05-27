@@ -196,7 +196,7 @@ def python_packages(packages):
 
 """
 def test_r_packages(package_helper, r_packages, max_failures=0):
-    """Test the import of specified R packages"""
+    #Test the import of specified R packages
     return _import_packages(
         package_helper, r_packages, check_import_r_package, max_failures
     )
