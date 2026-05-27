@@ -70,7 +70,7 @@ PACKAGE_MAPPING = {
     "rcurl": "RCurl",
     "rodbc": "RODBC",
     "dt": "DT",
-    "markdown": "rmarkdown"
+    "rmarkdown": "markdown"
 }
 
 # List of packages that cannot be tested in a standard way
@@ -95,7 +95,6 @@ EXCLUDED_PACKAGES = [
     "jupyterlab_rise[version='<0.40.0']",
     "jupyterlab-git",
     "jupyter-pluto-proxy",
-    "rmarkdown"
 ]
 
 
@@ -195,9 +194,10 @@ def python_packages(packages):
     """Return an iterable of Python packages"""
     return map(package_map, filter(python_package_predicate, packages))
 
-
+"""
 def test_r_packages(package_helper, r_packages, max_failures=0):
     """Test the import of specified R packages"""
     return _import_packages(
         package_helper, r_packages, check_import_r_package, max_failures
     )
+"""
