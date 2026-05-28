@@ -99,7 +99,7 @@ RUN uv pip install jupyterhub==$JUPYTERHUB_VERSION jupyter_server==$JUPYTERSERVE
     uv cache clean
 
 # update R packages
-#RUN R -e "update.packages(ask=FALSE, repos='https://cloud.r-project.org')"
+RUN R -e "update.packages(c('xfun', 'rmarkdown'), ask=FALSE, repos='https://cloud.r-project.org')"
 
 # Install R packages
 RUN R -e "install.packages(c('xfun', 'rmarkdown', 'covr', 'git2r', 'crosstalk', 'DT'), repos='https://cloud.r-project.org')" && \
