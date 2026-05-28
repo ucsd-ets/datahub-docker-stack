@@ -20,6 +20,7 @@ RUN apt-get update -y && \
     libudunits2-dev \
     libgit2-dev \
     pkg-config \
+    libcurl4-gnutls-dev \
     curl \
     rsync \
     unzip \
@@ -101,7 +102,7 @@ RUN uv pip install jupyterhub==$JUPYTERHUB_VERSION jupyter_server==$JUPYTERSERVE
 RUN R -e "update.packages(ask=FALSE, repos='https://cloud.r-project.org')"
 
 # Install R packages
-RUN R -e "install.packages(c('xfun', 'rmarkdown', 'covr', 'git2r', 'crosstalk', 'DT'), repos='https://cloud.r-project.org'), dependencies=c('Depends','Imports')" && \
+RUN R -e "install.packages(c('xfun', 'rmarkdown', 'covr', 'git2r', 'crosstalk', 'DT'), repos='https://cloud.r-project.org')" && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER
 
