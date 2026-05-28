@@ -1,6 +1,6 @@
 # If you are building manually, pass PYTHON_VERSION/PY_VER_SHORT/JUPYTERHUB_VERSION with --build-arg    
-ARG PYTHON_VERSION=python-3.11.8
-ARG PY_VER_SHORT=3.11
+ARG PYTHON_VERSION=python-3.13.13
+ARG PY_VER_SHORT=3.13
 ARG JUPYTERHUB_VERSION=4.1.5
 
 # Jupyter has changed where it stores its images
@@ -98,13 +98,13 @@ RUN uv pip install jupyterhub==$JUPYTERHUB_VERSION jupyter_server==$JUPYTERSERVE
     fix-permissions /home/$NB_USER && \
     uv cache clean
 
-RUN R -e "remove.packages(c('xfun', 'rmarkdown'))"
+#RUN R -e "remove.packages(c('xfun', 'rmarkdown'))"
 
 # update R packages
-RUN R -e "update.packages(c('xfun', 'rmarkdown'), ask=FALSE, repos='https://cloud.r-project.org')"
+#RUN R -e "update.packages(c('xfun', 'rmarkdown'), ask=FALSE, repos='https://cloud.r-project.org')"
 
 # Install R packages
-RUN R -e "install.packages(c('xfun', 'rmarkdown', 'covr', 'git2r', 'crosstalk', 'DT'), repos='https://cloud.r-project.org')" && \
+RUN R -e "install.packages(c('rmarkdown', 'covr', 'git2r', 'crosstalk', 'DT'), repos='https://cloud.r-project.org')" && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER
 
