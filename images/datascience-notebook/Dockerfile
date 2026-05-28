@@ -98,6 +98,8 @@ RUN uv pip install jupyterhub==$JUPYTERHUB_VERSION jupyter_server==$JUPYTERSERVE
     fix-permissions /home/$NB_USER && \
     uv cache clean
 
+RUN R -e "remove.packages(c('xfun', 'rmarkdown'))"
+
 # update R packages
 RUN R -e "update.packages(c('xfun', 'rmarkdown'), ask=FALSE, repos='https://cloud.r-project.org')"
 
