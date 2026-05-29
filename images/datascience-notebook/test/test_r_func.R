@@ -3,7 +3,7 @@ library(testthat)
 ### IMPORTS HERE
 library(randomForest)
 suppressPackageStartupMessages(library(tidyverse))
-library(markdown)
+library(rmarkdown)
 library(lubridate)
 library(DT)
 library(MASS)
