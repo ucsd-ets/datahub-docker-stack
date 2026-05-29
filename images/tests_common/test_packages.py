@@ -93,8 +93,7 @@ EXCLUDED_PACKAGES = [
     "pytorch-cuda",
     "jupyterlab_rise[version='<0.40.0']",
     "jupyterlab-git",
-    "jupyter-pluto-proxy",
-    "rpy2"
+    "jupyter-pluto-proxy"
 ]
 
 
@@ -182,11 +181,11 @@ def r_packages(packages):
     )
 
 
-#def test_python_packages(package_helper, python_packages, max_failures=0):
-   # """Test the import of specified python packages"""
-    #return _import_packages(
-     #   package_helper, python_packages, check_import_python_package, max_failures
-    #)
+def test_python_packages(package_helper, python_packages, max_failures=0):
+    """Test the import of specified python packages"""
+    return _import_packages(
+        package_helper, python_packages, check_import_python_package, max_failures
+    )
 
 
 @pytest.fixture(scope="function")
@@ -194,8 +193,8 @@ def python_packages(packages):
     """Return an iterable of Python packages"""
     return map(package_map, filter(python_package_predicate, packages))
 
-#def test_r_packages(package_helper, r_packages, max_failures=0):
-  #  #Test the import of specified R packages
-   # return _import_packages(
-   #     package_helper, r_packages, check_import_r_package, max_failures
-    #)
+def test_r_packages(package_helper, r_packages, max_failures=0):
+    #Test the import of specified R packages
+    return _import_packages(
+        package_helper, r_packages, check_import_r_package, max_failures
+    )

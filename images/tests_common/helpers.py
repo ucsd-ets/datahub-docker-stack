@@ -76,7 +76,8 @@ class CondaPackageHelper:
             LOGGER.info("Grabing the list of specifications ...")
             self.specs = CondaPackageHelper._packages_from_json(
                 self._execute_command(
-                    CondaPackageHelper._conda_export_command(from_history=True)
+                    CondaPackageHelper._conda_export_command(from_history=False) 
+                    # changed to False because some old conda forge packages have been moved to pypi.
                 )
             )
         return self.specs
