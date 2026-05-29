@@ -1,6 +1,7 @@
 #!/bin/sh -x
 
-pip install --no-cache-dir pip install jupyter-resource-usage
+pip install --no-cache-dir jupyter-resource-usage
+
 #pip install --no-cache-dir git+https://github.com/ucsd-ets/nbresuse.git 
     # nbclassic
     #&& \ jupyter server extension enable --sys-prefix --py nbresuse && \
