@@ -94,6 +94,7 @@ EXCLUDED_PACKAGES = [
     "jupyterlab_rise[version='<0.40.0']",
     "jupyterlab-git",
     "jupyter-pluto-proxy",
+    "rpy2"
 ]
 
 
