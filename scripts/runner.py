@@ -347,7 +347,7 @@ if __name__ == '__main__':
         'images': {
             'datascience-notebook': {
                 'build_args': {
-                    'PYTHON_VERSION': 'python-3.11.8'
+                    'PYTHON_VERSION': 'python-3.13.13'
                 },
                 'info_cmds': [
                     'PY_VER',
