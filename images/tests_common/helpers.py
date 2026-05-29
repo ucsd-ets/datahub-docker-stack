@@ -79,10 +79,10 @@ class CondaPackageHelper:
             cmd.append("--from-history")
         return cmd
 
-    @staticmethod
     """
     Used to replace _conda_export_command, which is becoming outdated with our use of uv
     """
+    @staticmethod
     def _uv_export_command():
         """Return UV pip list command"""
         cmd = ["uv", "pip", "list", "--format=json", "|", "jq", "|'{dependencies: map(\"\\(.name)==\\(.version)\")}'"]
