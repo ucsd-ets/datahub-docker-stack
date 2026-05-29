@@ -13,7 +13,7 @@ LOGGER = logging.getLogger('datahub_docker_stacks')
         ("apt", "--version"),
         ("conda", "--version"),
         ("mamba", "--version"),
-        ("npm", "--version"),
+        #("npm", "--version"),
         ("pip", "--version"),
     ],
 )
