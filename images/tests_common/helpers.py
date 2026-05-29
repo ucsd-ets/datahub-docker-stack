@@ -53,6 +53,24 @@ class CondaPackageHelper:
             command=["start.sh", "bash", "-c", "sleep infinity"],
         )
 
+    """ Output like this:
+    {
+    "channels": [
+        "conda-forge"
+    ],
+    "dependencies": [
+        "python=3.11",
+        "mamba",
+        "jupyter_core",
+        "jupyterlab",
+        ...
+        "r-crayon",
+        "unixodbc"
+    ],
+    "name": "base",
+    "prefix": "/opt/conda"
+    }
+    """
     @staticmethod
     def _conda_export_command(from_history=False):
         """Return the conda export command with or without history"""
@@ -61,12 +79,22 @@ class CondaPackageHelper:
             cmd.append("--from-history")
         return cmd
 
+    @staticmethod
+    """
+    Used to replace _conda_export_command, which is becoming outdated with our use of uv
+    """
+    def _uv_export_command():
+        """Return UV pip list command"""
+        cmd = ["uv", "pip", "list", "--format=json", "|", "jq", "|'{dependencies: map(\"\\(.name)==\\(.version)\")}'"]
+        return cmd
+
+
     def installed_packages(self):
         """Return the installed packages"""
         if self.installed is None:
             LOGGER.info("Grabing the list of installed packages ...")
             self.installed = CondaPackageHelper._packages_from_json(
-                self._execute_command(CondaPackageHelper._conda_export_command())
+                self._execute_command(CondaPackageHelper._uv_export_command())
             )
         return self.installed
 
@@ -76,7 +104,7 @@ class CondaPackageHelper:
             LOGGER.info("Grabing the list of specifications ...")
             self.specs = CondaPackageHelper._packages_from_json(
                 self._execute_command(
-                    CondaPackageHelper._conda_export_command(from_history=False) 
+                    CondaPackageHelper._uv_export_command(from_history=False) 
                     # changed to False because some old conda forge packages have been moved to pypi.
                 )
             )
