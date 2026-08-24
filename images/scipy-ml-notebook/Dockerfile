@@ -20,10 +20,13 @@ ARG CUDA_VERSION=12.6 CUDNN_VERSION=9.5.1.17 LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_V
 # apt deps
 RUN apt-get update && \
   apt-get install -y \
-  libtinfo5 build-essential && \
+  build-essential && \
   apt-get clean && rm -rf /var/lib/apt/lists/*
-## Symbolic link for Stata 17 dependency on libncurses5
-RUN ln -s libncurses.so.6 /usr/lib/x86_64-linux-gnu/libncurses.so.5
+## Symbolic links for Stata 17's dependency on ncurses5/tinfo5.
+## Ubuntu 24.04 (noble) dropped libncurses5 and libtinfo5, so point the old
+## sonames at the v6 libraries that noble does ship.
+RUN ln -s libncurses.so.6 /usr/lib/x86_64-linux-gnu/libncurses.so.5 && \
+    ln -s libtinfo.so.6 /usr/lib/x86_64-linux-gnu/libtinfo.so.5
 
 # Jupyter setup
 COPY run_jupyter.sh /
