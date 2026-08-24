@@ -64,6 +64,13 @@ PACKAGE_MAPPING = {
     "nltk_data": "nltk",
     "pytorch": "torch",
     "umap-learn": "umap",
+    "pyjwt": "jwt",
+    "pysocks": "socks",
+    "backports-zstd": "backports.zstd",
+    "opencv-python": "cv2",
+    "opencv-contrib-python-headless": "cv2",
+    "pyqt5": "PyQt5",
+    "cuda-python": "cuda",
     # R
     "randomforest": "randomForest",
     "rsqlite": "DBI",
@@ -93,7 +100,12 @@ EXCLUDED_PACKAGES = [
     "pytorch-cuda",
     "jupyterlab_rise[version='<0.40.0']",
     "jupyterlab-git",
-    "jupyter-pluto-proxy"
+    "jupyter-pluto-proxy",
+    "nose",  # unmaintained; still installed for course code, but not importable on py3.13
+    # nvidia's pip wheels ship shared libraries, not importable modules
+    "nvidia-cuda-nvcc-cu12",
+    "nvidia-nccl-cu12",
+    "nvidia-cudnn-cu12"
 ]
 
 
@@ -111,7 +123,11 @@ def packages(package_helper):
 
 def package_map(package):
     """Perform a mapping between the python package name and the name used for the import"""
-    return PACKAGE_MAPPING.get(package, package)
+    if package in PACKAGE_MAPPING:
+        return PACKAGE_MAPPING[package]
+    # uv reports distribution names (importlib-metadata), whose importable module
+    # name usually only differs by dashes having become underscores
+    return package.replace("-", "_")
 
 
 def excluded_package_predicate(package):
