@@ -5,9 +5,8 @@ USER root
 
 # RStudio Setup
 
-# Ubuntu 22 setup with v 2024.04.2-764
 ## Follow instructions at https://www.rstudio.com/products/rstudio/download-server/
-ENV RSTUDIO_PKG=rstudio-server-2024.09.1-394-amd64.deb
+ENV RSTUDIO_PKG=rstudio-server-2026.08.1-195-amd64.deb
 ENV RSTUDIO_URL=https://download2.rstudio.org/server/jammy/amd64/${RSTUDIO_PKG}
 
 ## rstudio installation expects R to live in /usr/bin, /bin/, etc.
