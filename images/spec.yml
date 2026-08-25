@@ -11,13 +11,13 @@ images:
 
   # TEMPORARILY DISABLED: both images still need their Ubuntu 24.04 (noble)
   # fixes verified. Uncomment these two blocks to restore the full build.
-  # rstudio-notebook:
-  #   image_name: ghcr.io/ucsd-ets/rstudio-notebook
-  #   depend_on: datascience-notebook
-  #   integration_tests: true
-  #   info_cmds: [PY_VER, PIP_LIST, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
-  #   prune: true
-  #   prepull: false
+  rstudio-notebook:
+    image_name: ghcr.io/ucsd-ets/rstudio-notebook
+    depend_on: datascience-notebook
+    integration_tests: true
+    info_cmds: [PY_VER, PIP_LIST, CONDA_INFO, CONDA_LIST, APT_PKG_LIST]
+    prune: true
+    prepull: false
 
   # scipy-ml-notebook:
   #   image_name: ghcr.io/ucsd-ets/scipy-ml-notebook
