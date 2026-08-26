@@ -13,6 +13,9 @@ USER root
 ## CUDA 11: ARG CUDA_VERSION=11.8 CUDNN_VERSION=8.7.0.84 \
 
 ## keras 3>= doesn't work with transformers as of 3-5-25. Check this when building future stable images.
+## torchaudio declares no torch constraint in its wheel metadata, so leaving it
+## unpinned resolves to the newest wheel (2.11.0) and breaks against TORCH_VERSION's
+## ABI at import time. Keep it pinned to TORCH_VERSION; torchvision self-pins.
 ARG CUDA_VERSION=12.6 CUDNN_VERSION=9.5.1.17 LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7 \
   TENSORFLOW_VERSION=2.20.0 KERAS_VERSION=3.15.1 TENSORRT_VERSION=10.9.0.34 TORCH_VERSION=2.6.0 \
   PROTOBUF_VERSION=7.36.0 TF_KERAS_VERSION=2.20.1
@@ -71,7 +74,7 @@ RUN uv pip install --system \
         nvidia-cudnn-cu12==$CUDNN_VERSION \
         torch==$TORCH_VERSION \
         torchvision \
-        torchaudio \
+        torchaudio==$TORCH_VERSION \
         tensorflow==$TENSORFLOW_VERSION \
         tensorflow-datasets \
         tensorrt==$TENSORRT_VERSION \
