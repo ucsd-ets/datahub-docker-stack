@@ -33,8 +33,9 @@ def test_transcribe_mlk():
     
 def test_cat_recognition():
     vision_classifier = pipeline(model="google/vit-base-patch16-224")
+    # transformers 5.x renamed the pipeline's first argument to `inputs`; pass it positionally
     preds = vision_classifier(
-        images="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/pipeline-cat-chonk.jpeg"
+        "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/pipeline-cat-chonk.jpeg"
     )
     preds = [{"score": round(pred["score"], 4), "label": pred["label"]} for pred in preds]
     
@@ -51,7 +52,11 @@ def test_zero_shot_class():
     
 # the function will return a bunch of nonsense that we can't assert but will verify that
 # tensorflow probably works fine with transformer
+# transformers 5.x dropped the TensorFlow backend (return_tensors only accepts pt/np/mlx),
+# so tokenize to numpy and hand the result to tensorflow to check the two still interop.
 def test_tf_tokenizer():
+    import tensorflow as tf
+
     tokenizer = AutoTokenizer.from_pretrained("google-bert/bert-base-cased")
 
     batch_sentences = [
@@ -59,8 +64,10 @@ def test_tf_tokenizer():
         "Don't think he knows about second breakfast, Pip.",
         "What about elevensies?",
     ]
-    encoded_input = tokenizer(batch_sentences, padding=True, truncation=True, return_tensors="tf")
-    assert str(type(encoded_input["input_ids"])) == "<class 'tensorflow.python.framework.ops.EagerTensor'>"
+    encoded_input = tokenizer(batch_sentences, padding=True, truncation=True, return_tensors="np")
+    input_ids = tf.constant(encoded_input["input_ids"])
+    assert str(type(input_ids)) == "<class 'tensorflow.python.framework.ops.EagerTensor'>"
+    assert input_ids.shape[0] == len(batch_sentences)
     
 # the function will return a bunch of nonsense that we can't assert but will verify that
 # pytorch probably works fine with transformer
