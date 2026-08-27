@@ -1,4 +1,4 @@
-import io, urllib
+import io, urllib.request
 import torch
 import torchaudio
 
@@ -197,7 +197,9 @@ def load_dummy_audio_file():
     url = "https://pytorch.org/tutorials/_static/img/steam-train-whistle-daniel_simon-converted-from-mp3.wav"
     
     # Load the audio file into memory
-    with urllib.request.urlopen(url) as response:
+    # the CDN rejects urllib's default User-Agent with a 403, so send a browser-ish one
+    request = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+    with urllib.request.urlopen(request) as response:
         data = response.read()
     
     # Create a BytesIO object from the audio data

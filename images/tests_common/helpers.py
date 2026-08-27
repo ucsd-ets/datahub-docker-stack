@@ -53,6 +53,24 @@ class CondaPackageHelper:
             command=["start.sh", "bash", "-c", "sleep infinity"],
         )
 
+    """ Output like this:
+    {
+    "channels": [
+        "conda-forge"
+    ],
+    "dependencies": [
+        "python=3.11",
+        "mamba",
+        "jupyter_core",
+        "jupyterlab",
+        ...
+        "r-crayon",
+        "unixodbc"
+    ],
+    "name": "base",
+    "prefix": "/opt/conda"
+    }
+    """
     @staticmethod
     def _conda_export_command(from_history=False):
         """Return the conda export command with or without history"""
@@ -61,12 +79,28 @@ class CondaPackageHelper:
             cmd.append("--from-history")
         return cmd
 
+    """
+    Used to replace _conda_export_command, which is becoming outdated with our use of uv.
+    """
+    @staticmethod
+    def _uv_list_command():
+        """Return the command listing every installed package as JSON"""
+        return ["bash", "-c", "uv pip list --format=json 2>/dev/null"]
+
+    @staticmethod
+    def _uv_tree_command():
+        """Return the command listing only the top-level packages, i.e. the ones no
+        other package depends on. This is the uv equivalent of
+        `conda env export --from-history` and stands for the packages our Dockerfiles
+        explicitly asked for."""
+        return ["bash", "-c", "uv pip tree --depth 0 2>/dev/null"]
+
     def installed_packages(self):
         """Return the installed packages"""
         if self.installed is None:
             LOGGER.info("Grabing the list of installed packages ...")
-            self.installed = CondaPackageHelper._packages_from_json(
-                self._execute_command(CondaPackageHelper._conda_export_command())
+            self.installed = CondaPackageHelper._packages_from_uv_list(
+                self._execute_command(CondaPackageHelper._uv_list_command())
             )
         return self.installed
 
@@ -74,12 +108,27 @@ class CondaPackageHelper:
         """Return the specifications (i.e. packages installation requested)"""
         if self.specs is None:
             LOGGER.info("Grabing the list of specifications ...")
-            self.specs = CondaPackageHelper._packages_from_json(
-                self._execute_command(
-                    CondaPackageHelper._conda_export_command(from_history=True)
-                )
+            self.specs = CondaPackageHelper._packages_from_uv_tree(
+                self._execute_command(CondaPackageHelper._uv_tree_command())
             )
         return self.specs
+
+    @staticmethod
+    def _packages_from_uv_list(uv_output):
+        """Extract packages and versions from `uv pip list --format=json`"""
+        return {pkg["name"]: {pkg["version"]} for pkg in json.loads(uv_output)}
+
+    @staticmethod
+    def _packages_from_uv_tree(uv_output):
+        """Extract packages and versions from `uv pip tree --depth 0`,
+        whose lines look like `altair v6.1.0`"""
+        packages_dict = dict()
+        for line in uv_output.splitlines():
+            fields = line.split()
+            if len(fields) != 2 or not fields[1].startswith("v"):
+                continue
+            packages_dict[fields[0]] = {fields[1][1:]}
+        return packages_dict
 
     def _execute_command(self, command):
         """Execute a command on a running container"""

@@ -13,17 +13,23 @@ USER root
 ## CUDA 11: ARG CUDA_VERSION=11.8 CUDNN_VERSION=8.7.0.84 \
 
 ## keras 3>= doesn't work with transformers as of 3-5-25. Check this when building future stable images.
+## torchaudio declares no torch constraint in its wheel metadata, so leaving it
+## unpinned resolves to the newest wheel (2.11.0) and breaks against TORCH_VERSION's
+## ABI at import time. Keep it pinned to TORCH_VERSION; torchvision self-pins.
 ARG CUDA_VERSION=12.6 CUDNN_VERSION=9.5.1.17 LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7 \
-  TENSORFLOW_VERSION=2.18.0 KERAS_VERSION=3.9.0 TENSORRT_VERSION=10.7.0 TORCH_VERSION=2.6.0 \
-  PROTOBUF_VERSION=3.20.3 TF_KERAS_VERSION=2.18.0
+  TENSORFLOW_VERSION=2.20.0 KERAS_VERSION=3.15.1 TENSORRT_VERSION=10.9.0.34 TORCH_VERSION=2.6.0 \
+  PROTOBUF_VERSION=7.36.0 TF_KERAS_VERSION=2.20.1
 
 # apt deps
 RUN apt-get update && \
   apt-get install -y \
-  libtinfo5 build-essential && \
+  build-essential && \
   apt-get clean && rm -rf /var/lib/apt/lists/*
-## Symbolic link for Stata 17 dependency on libncurses5
-RUN ln -s libncurses.so.6 /usr/lib/x86_64-linux-gnu/libncurses.so.5
+## Symbolic links for Stata 17's dependency on ncurses5/tinfo5.
+## Ubuntu 24.04 (noble) dropped libncurses5 and libtinfo5, so point the old
+## sonames at the v6 libraries that noble does ship.
+RUN ln -s libncurses.so.6 /usr/lib/x86_64-linux-gnu/libncurses.so.5 && \
+    ln -s libtinfo.so.6 /usr/lib/x86_64-linux-gnu/libtinfo.so.5
 
 # Jupyter setup
 COPY run_jupyter.sh /
@@ -68,7 +74,7 @@ RUN uv pip install --system \
         nvidia-cudnn-cu12==$CUDNN_VERSION \
         torch==$TORCH_VERSION \
         torchvision \
-        torchaudio \
+        torchaudio==$TORCH_VERSION \
         tensorflow==$TENSORFLOW_VERSION \
         tensorflow-datasets \
         tensorrt==$TENSORRT_VERSION \

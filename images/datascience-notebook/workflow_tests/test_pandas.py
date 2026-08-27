@@ -13,9 +13,10 @@ def test_dataframe_creation():
     
     assert list(df.columns) == ['name', 'age', 'city']
     
-    assert df['name'].dtype == object
+    # pandas 3.0 infers a dedicated string dtype for text columns instead of object
+    assert pd.api.types.is_string_dtype(df['name'])
     assert df['age'].dtype == int
-    assert df['city'].dtype == object
+    assert pd.api.types.is_string_dtype(df['city'])
 
 def test_dataframe_indexing():
     # Create a sample DataFrame
