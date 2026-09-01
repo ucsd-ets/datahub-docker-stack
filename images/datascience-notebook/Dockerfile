@@ -94,6 +94,7 @@ RUN uv pip install jupyterhub==$JUPYTERHUB_VERSION jupyter_server==$JUPYTERSERVE
     uv pip install jupyterlab_rise jupyter_server_terminals --system && \
     uv pip install jupyterlab-latex jupyterlab-git jupyterlab-fasta jupyterlab-geojson --system && \
     uv pip install nbconvert==$NBCONVERT_VERSION nbgrader==$NBGRADER_VERSION --system && \
+    uv pip install dsmlp-jupyterlab-status-plugin && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
     uv cache clean
