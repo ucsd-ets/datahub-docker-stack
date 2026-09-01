@@ -106,7 +106,7 @@ RUN mamba install -y -q 'nodejs>=22.12,<23' && \
     git clone --depth 1 https://x-access-token:${GITHUB_TOKEN}@github.com/ucsd-ets/dsmlp-jupyterlab-status-plugin.git /tmp/status-plugin && \
     uv pip install /tmp/status-plugin --system && \
     rm -rf /tmp/status-plugin && \
-    mamba remove -y -q nodejs && \
+    mamba remove -y -q -p "${CONDA_DIR}" nodejs && \
     mamba clean -afy && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
