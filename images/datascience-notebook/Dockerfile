@@ -102,7 +102,7 @@ RUN uv pip install jupyterhub==$JUPYTERHUB_VERSION jupyter_server==$JUPYTERSERVE
 ## Private repo + not on PyPI, so clone it; GITHUB_TOKEN is injected by scripts/docker_adapter.py.
 ## Node is only needed for the labextension build, so it is added and removed in one layer.
 ARG GITHUB_TOKEN
-RUN mamba install -y -q nodejs && \
+RUN mamba install -y -q 'nodejs>=22.12,<23' && \
     git clone --depth 1 https://x-access-token:${GITHUB_TOKEN}@github.com/ucsd-ets/dsmlp-jupyterlab-status-plugin.git /tmp/status-plugin && \
     uv pip install /tmp/status-plugin --system && \
     rm -rf /tmp/status-plugin && \
