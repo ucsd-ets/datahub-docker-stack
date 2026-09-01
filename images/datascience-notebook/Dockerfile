@@ -94,7 +94,20 @@ RUN uv pip install jupyterhub==$JUPYTERHUB_VERSION jupyter_server==$JUPYTERSERVE
     uv pip install jupyterlab_rise jupyter_server_terminals --system && \
     uv pip install jupyterlab-latex jupyterlab-git jupyterlab-fasta jupyterlab-geojson --system && \
     uv pip install nbconvert==$NBCONVERT_VERSION nbgrader==$NBGRADER_VERSION --system && \
-    uv pip install dsmlp-jupyterlab-status-plugin --system && \
+    fix-permissions $CONDA_DIR && \
+    fix-permissions /home/$NB_USER && \
+    uv cache clean
+
+# Install the DSMLP status plugin from source.
+## Private repo + not on PyPI, so clone it; GITHUB_TOKEN is injected by scripts/docker_adapter.py.
+## Node is only needed for the labextension build, so it is added and removed in one layer.
+ARG GITHUB_TOKEN
+RUN mamba install -y -q nodejs && \
+    git clone --depth 1 https://x-access-token:${GITHUB_TOKEN}@github.com/ucsd-ets/dsmlp-jupyterlab-status-plugin.git /tmp/status-plugin && \
+    uv pip install /tmp/status-plugin --system && \
+    rm -rf /tmp/status-plugin && \
+    mamba remove -y -q nodejs && \
+    mamba clean -afy && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
     uv cache clean
