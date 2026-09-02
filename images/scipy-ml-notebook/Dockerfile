@@ -16,7 +16,7 @@ USER root
 ## torchaudio declares no torch constraint in its wheel metadata, so leaving it
 ## unpinned resolves to the newest wheel (2.11.0) and breaks against TORCH_VERSION's
 ## ABI at import time. Keep it pinned to TORCH_VERSION; torchvision self-pins.
-ARG CUDA_VERSION=12.5 CUDNN_VERSION=9.10.2.21 LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7 \
+ARG CUDA_VERSION=12.6 CUDNN_VERSION=9.10.2.21 LIBNVINFER=7.2.2 LIBNVINFER_MAJOR_VERSION=7 \
   TENSORFLOW_VERSION=2.21.0 KERAS_VERSION=3.15.1 TENSORRT_VERSION=10.9.0.34 TORCH_VERSION=2.8.0 \
   PROTOBUF_VERSION=7.36.0 TF_KERAS_VERSION=2.21.0 TENSORBOARD_VERSION=2.21.0
 
@@ -58,9 +58,11 @@ USER jovyan
 
 RUN pip3 install --no-cache-dir --upgrade uv
 
-RUN uv pip install --system \
+RUN CUDA_TAG="cu${CUDA_VERSION//./}" && \
+    echo "Installing PyTorch from wheel index ${CUDA_TAG} (CUDA_VERSION=${CUDA_VERSION})" && \
+    uv pip install --system \
         --extra-index-url https://pypi.nvidia.com \
-        --extra-index-url https://download.pytorch.org/whl/cu126 \
+        --extra-index-url "https://download.pytorch.org/whl/${CUDA_TAG}" \
         nvidia-cuda-nvcc-cu12 \
         nvidia-nccl-cu12 \
         cuda-python \
