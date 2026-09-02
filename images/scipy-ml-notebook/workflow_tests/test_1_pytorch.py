@@ -1,6 +1,11 @@
 import io, urllib.request
 import torch
 import torchaudio
+from torchvision import datasets
+
+# torchvision's first default MNIST mirror (yann.lecun.com/exdb/mnist/) now 404s,
+# so pin downloads to our fork at github.com/ucsd-ets/mnist. Files there match torchvision's md5s.
+datasets.MNIST.mirrors = ["https://raw.githubusercontent.com/ucsd-ets/mnist/master/"]
 
 
 def can_access_cuda():
