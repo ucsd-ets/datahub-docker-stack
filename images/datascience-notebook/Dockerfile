@@ -112,6 +112,12 @@ RUN mamba install -y -q 'nodejs>=22.12,<23' && \
     fix-permissions /home/$NB_USER && \
     uv cache clean
 
+RUN git clone --depth 1 https://x-access-token:${GITHUB_TOKEN}@github.com/ucsd-ets/dsmlp-vscode-status-extension.git /tmp/vscode-status-plugin && \
+    mkdir -p /opt/dsmlp-vscode-status && \
+    cp -r /tmp/vscode-status-plugin/. /opt/dsmlp-vscode-status/ && \
+    rm -rf /opt/dsmlp-vscode-status/.git /tmp/vscode-status-plugin && \
+    fix-permissions /opt/dsmlp-vscode-status
+
 #RUN R -e "remove.packages(c('xfun', 'rmarkdown'))"
 
 # update R packages
