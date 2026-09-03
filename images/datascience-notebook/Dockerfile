@@ -122,11 +122,16 @@ RUN mamba install -y -q 'nodejs>=22.12,<23' && \
     fix-permissions /home/$NB_USER && \
     uv cache clean
 
+# VS Code status extension sources
+## /opt is root-owned, so this layer needs root; the token must not survive the
+## layer, hence the .git removal and /tmp cleanup happen in the same RUN.
+USER root
 RUN git clone --depth 1 https://x-access-token:${GITHUB_TOKEN}@github.com/ucsd-ets/dsmlp-vscode-status-extension.git /tmp/vscode-status-plugin && \
     mkdir -p /opt/dsmlp-vscode-status && \
     cp -r /tmp/vscode-status-plugin/. /opt/dsmlp-vscode-status/ && \
     rm -rf /opt/dsmlp-vscode-status/.git /tmp/vscode-status-plugin && \
-    fix-permissions /opt/dsmlp-vscode-status
+    chmod -R a+rX /opt/dsmlp-vscode-status
+USER jovyan
 
 #RUN R -e "remove.packages(c('xfun', 'rmarkdown'))"
 
