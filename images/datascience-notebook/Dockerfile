@@ -100,8 +100,7 @@ RUN uv pip install jupyterhub==$JUPYTERHUB_VERSION jupyter_server==$JUPYTERSERVE
     uv cache clean
 
 # Install LiteLLM + the OpenAI SDK
-## No credentials are baked in: litellm reads OPENAI_API_KEY / OPENAI_API_BASE from
-## the environment at call time, and DSMLP injects those into the pod at spawn.
+## No credentials are baked in
 RUN uv pip install litellm==$LITELLM_VERSION openai==$OPENAI_VERSION --system && \
     python -c 'import litellm, openai' && \
     fix-permissions $CONDA_DIR && \
