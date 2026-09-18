@@ -42,6 +42,14 @@ def build(node: Node) -> Tuple[bool, str]:
         node (Node): node to build
     """
     logger.info(f"Build {node.image_name} now with buildargs = {node.build_args}")
+
+    # Token for cloning private ucsd-ets repos during the build (e.g. the DSMLP
+    # status plugin). Merged in *after* the log line above so it never lands in
+    # logs/ or the uploaded build artifacts.
+    buildargs = dict(node.build_args)
+    gh_token = os.environ.get('EXTENSION_TOKEN') or os.environ.get('GITHUB_TOKEN')
+    if gh_token:
+        buildargs['GITHUB_TOKEN'] = gh_token
     
     try:
         report = ''
@@ -65,7 +73,7 @@ def build(node: Node) -> Tuple[bool, str]:
             path=node.filepath,
             dockerfile=node.dockerfile,
             tag=image_tag,
-            buildargs=node.build_args,
+            buildargs=buildargs,
             nocache=False,
             decode=True,
             rm=False,

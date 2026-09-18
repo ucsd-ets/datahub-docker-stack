@@ -116,6 +116,9 @@ jobs:
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
           DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Cross-repo read for cloning the private status plugin; the automatic
+          # GITHUB_TOKEN above is scoped to this repo only and cannot see it.
+          EXTENSION_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
           GITHUB_USER: ${{ github.actor }}
           GRPC_CERT: ${{ secrets.GRPC_CERT }}
           PREPUSH_IMAGES: '["ghcr.io/ucsd-ets/scipy-ml-notebook"]'
