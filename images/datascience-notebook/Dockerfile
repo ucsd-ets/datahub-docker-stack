@@ -73,6 +73,7 @@ USER jovyan
 ## Package versions
 ARG JUPYTERHUB_VERSION=4.1.5 JUPYTERSERVER_VERSION=2.14.2 NBGRADER_VERSION=0.9.3 JUPYTERLAB_VERSION=4.2.4 NBCONVERT_VERSION=7.16.4 NOTEBOOK_VERSION=7.2.1 NBCLASSIC_VERSION=1.1.0
 ARG PANDAS_VERSION=3.0.3 STATSMODELS_VERSION=0.14.6 BOTTLENECK_VERSION=1.4.2 NUMEXPR_VERSION=2.14.1
+ARG LITELLM_VERSION=1.99.0 OPENAI_VERSION=2.54.0
 
 # Install uv for faster package installations
 RUN pip3 install --no-cache-dir --upgrade uv
@@ -97,6 +98,39 @@ RUN uv pip install jupyterhub==$JUPYTERHUB_VERSION jupyter_server==$JUPYTERSERVE
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
     uv cache clean
+
+# Install LiteLLM + the OpenAI SDK
+## No credentials are baked in
+RUN uv pip install litellm==$LITELLM_VERSION openai==$OPENAI_VERSION --system && \
+    python -c 'import litellm, openai' && \
+    fix-permissions $CONDA_DIR && \
+    fix-permissions /home/$NB_USER && \
+    uv cache clean
+
+# Install the DSMLP status plugin from source.
+## Private repo + not on PyPI, so clone it; GITHUB_TOKEN is injected by scripts/docker_adapter.py.
+## Node is only needed for the labextension build, so it is added and removed in one layer.
+ARG GITHUB_TOKEN
+RUN mamba install -y -q 'nodejs>=22.12,<23' && \
+    git clone --depth 1 https://x-access-token:${GITHUB_TOKEN}@github.com/ucsd-ets/dsmlp-jupyterlab-status-plugin.git /tmp/status-plugin && \
+    uv pip install /tmp/status-plugin --system && \
+    rm -rf /tmp/status-plugin && \
+    mamba remove -y -q -p "${CONDA_DIR}" nodejs && \
+    mamba clean -afy && \
+    fix-permissions $CONDA_DIR && \
+    fix-permissions /home/$NB_USER && \
+    uv cache clean
+
+# VS Code status extension sources
+## /opt is root-owned, so this layer needs root; the token must not survive the
+## layer, hence the .git removal and /tmp cleanup happen in the same RUN.
+USER root
+RUN git clone --depth 1 https://x-access-token:${GITHUB_TOKEN}@github.com/ucsd-ets/dsmlp-vscode-status-extension.git /tmp/vscode-status-plugin && \
+    mkdir -p /opt/dsmlp-vscode-status && \
+    cp -r /tmp/vscode-status-plugin/. /opt/dsmlp-vscode-status/ && \
+    rm -rf /opt/dsmlp-vscode-status/.git /tmp/vscode-status-plugin && \
+    chmod -R a+rX /opt/dsmlp-vscode-status
+USER jovyan
 
 #RUN R -e "remove.packages(c('xfun', 'rmarkdown'))"
 
